@@ -1,0 +1,469 @@
+{
+  "captured_at": "2026-10-29T07:21:57.636562+00:00",
+  "source_url": "https://fantasy.premierleague.com/api/bootstrap-static/",
+  "source_hash": "f1c614cd25235f85c625fc142ec48818222d06ebfccc9ae5dde068b32af06f5d",
+  "rules": {
+    "season": "2026/27",
+    "composition": {
+      "1": 2,
+      "2": 5,
+      "3": 5,
+      "4": 3
+    },
+    "minimum": {
+      "1": 1,
+      "2": 3,
+      "3": 2,
+      "4": 1
+    },
+    "maximum": {
+      "1": 1,
+      "2": 5,
+      "3": 5,
+      "4": 3
+    },
+    "club_limit": 3,
+    "ft_cap": 5,
+    "transfer_cap": 20,
+    "hit": 4,
+    "scoring": {
+      "assists": 3,
+      "bonus": 1,
+      "bps": 0,
+      "clean_sheets": {
+        "DEF": 4,
+        "FWD": 0,
+        "GKP": 4,
+        "MID": 1
+      },
+      "clearances_blocks_interceptions": 0,
+      "creativity": 0,
+      "defensive_contribution": {
+        "DEF": 2,
+        "FWD": 2,
+        "GKP": 0,
+        "MID": 2
+      },
+      "expected_assists": 0,
+      "expected_goal_involvements": 0,
+      "expected_goals": 0,
+      "expected_goals_conceded": 0,
+      "goals_conceded": {
+        "DEF": -1,
+        "FWD": 0,
+        "GKP": -1,
+        "MID": 0
+      },
+      "goals_scored": {
+        "DEF": 6,
+        "FWD": 4,
+        "GKP": 10,
+        "MID": 5
+      },
+      "ict_index": 0,
+      "influence": 0,
+      "long_play": 2,
+      "mng_clean_sheets": {
+        "DEF": 0,
+        "FWD": 0,
+        "GKP": 0,
+        "MID": 0
+      },
+      "mng_draw": {
+        "DEF": 0,
+        "FWD": 0,
+        "GKP": 0,
+        "MID": 0
+      },
+      "mng_goals_scored": {
+        "DEF": 0,
+        "FWD": 0,
+        "GKP": 0,
+        "MID": 0
+      },
+      "mng_loss": 0,
+      "mng_underdog_draw": {
+        "DEF": 0,
+        "FWD": 0,
+        "GKP": 0,
+        "MID": 0
+      },
+      "mng_underdog_win": {
+        "DEF": 0,
+        "FWD": 0,
+        "GKP": 0,
+        "MID": 0
+      },
+      "mng_win": {
+        "DEF": 0,
+        "FWD": 0,
+        "GKP": 0,
+        "MID": 0
+      },
+      "own_goals": -2,
+      "penalties_missed": -2,
+      "penalties_saved": 5,
+      "recoveries": 0,
+      "red_cards": -3,
+      "saves": 1,
+      "short_play": 1,
+      "special_multiplier": 1,
+      "starts": 0,
+      "tackles": 0,
+      "threat": 0,
+      "yellow_cards": -1
+    },
+    "chips": [
+      {
+        "chip_type": "transfer",
+        "id": 1,
+        "name": "wildcard",
+        "number": 1,
+        "overrides": {
+          "element_types": [],
+          "pick_multiplier": null,
+          "rules": {},
+          "scoring": {}
+        },
+        "start_event": 2,
+        "stop_event": 19
+      },
+      {
+        "chip_type": "transfer",
+        "id": 2,
+        "name": "wildcard",
+        "number": 1,
+        "overrides": {
+          "element_types": [],
+          "pick_multiplier": null,
+          "rules": {},
+          "scoring": {}
+        },
+        "start_event": 20,
+        "stop_event": 38
+      },
+      {
+        "chip_type": "transfer",
+        "id": 3,
+        "name": "freehit",
+        "number": 1,
+        "overrides": {
+          "element_types": [],
+          "pick_multiplier": null,
+          "rules": {},
+          "scoring": {}
+        },
+        "start_event": 2,
+        "stop_event": 19
+      },
+      {
+        "chip_type": "team",
+        "id": 4,
+        "name": "bboost",
+        "number": 1,
+        "overrides": {
+          "element_types": [],
+          "pick_multiplier": null,
+          "rules": {},
+          "scoring": {}
+        },
+        "start_event": 1,
+        "stop_event": 19
+      },
+      {
+        "chip_type": "team",
+        "id": 5,
+        "name": "3xc",
+        "number": 1,
+        "overrides": {
+          "element_types": [],
+          "pick_multiplier": null,
+          "rules": {},
+          "scoring": {}
+        },
+        "start_event": 1,
+        "stop_event": 19
+      },
+      {
+        "chip_type": "transfer",
+        "id": 6,
+        "name": "freehit",
+        "number": 1,
+        "overrides": {
+          "element_types": [],
+          "pick_multiplier": null,
+          "rules": {},
+          "scoring": {}
+        },
+        "start_event": 20,
+        "stop_event": 38
+      },
+      {
+        "chip_type": "team",
+        "id": 7,
+        "name": "bboost",
+        "number": 1,
+        "overrides": {
+          "element_types": [],
+          "pick_multiplier": null,
+          "rules": {},
+          "scoring": {}
+        },
+        "start_event": 20,
+        "stop_event": 38
+      },
+      {
+        "chip_type": "team",
+        "id": 8,
+        "name": "3xc",
+        "number": 1,
+        "overrides": {
+          "element_types": [],
+          "pick_multiplier": null,
+          "rules": {},
+          "scoring": {}
+        },
+        "start_event": 20,
+        "stop_event": 38
+      }
+    ],
+    "event_overrides": {
+      "1": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "2": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "3": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "4": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "5": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "6": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "7": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "8": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "9": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "10": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "11": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "12": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "13": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "14": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "15": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "16": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "17": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "18": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "19": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "20": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "21": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "22": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "23": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "24": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "25": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "26": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "27": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "28": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "29": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "30": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "31": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "32": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "33": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "34": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "35": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "36": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "37": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      },
+      "38": {
+        "element_types": [],
+        "pick_multiplier": null,
+        "rules": {},
+        "scoring": {}
+      }
+    },
+    "dc_threshold": {
+      "1": 9999,
+      "2": 10,
+      "3": 12,
+      "4": 12
+    },
+    "version": "official-overlay-v1"
+  },
+  "authority": "Current official game_config scoring and chip periods plus narrative overlay v1"
+}

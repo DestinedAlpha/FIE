@@ -1,0 +1,450 @@
+{
+  "verified_at": "2026-10-29T08:11:48.327312+00:00",
+  "season": "2026/27",
+  "market_players": 669,
+  "forecast_player_events": 20070,
+  "future_fixtures": 300,
+  "worlds": 2000,
+  "forecast_runtime_seconds": 36.266,
+  "snapshot_inputs": 670,
+  "forecast_id": "45a8cca85422bba00ec41085123492d08805378fb8f62d8583ce40029d7f81e1",
+  "state_status": "dated_seed",
+  "plan_id": "e2a8aea3885e8a3a57e8c397c699350c4be9cbd438b25c2abbfd84c2136432a3",
+  "events": 11,
+  "legality": {
+    "legal": true,
+    "affordable": true,
+    "independent_transition": true
+  },
+  "solver": {
+    "status": "Time limit reached",
+    "objective": 601.36,
+    "best_bound": 626.5927620353273,
+    "gap": 0.0419594952030851,
+    "nodes": 0,
+    "variables": 56613,
+    "constraints": 69988,
+    "runtime_seconds": 48.162,
+    "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+    "market_players": 563,
+    "screened_players": 0,
+    "terminal_value": "0.1 \u00d7 following four weeks squad xPts; sensitivity assumption, not learned value"
+  },
+  "forecast_evaluation": {
+    "created_at": "2026-10-29T07:50:09.341511+00:00",
+    "protocol_id": "dc34b8bef43a8f2a818e6703cf6f0db9865b51f0c6eb0f7da58c8cf207c146ce",
+    "feature_id": "aae7a96f6236a171670de039b9ad9f965cac0e759da1539ba15ae47319adb951",
+    "track": "historical_statistical_replay",
+    "events": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38
+    ],
+    "baseline": {
+      "n": 32866,
+      "mae": 1.3022641676328564,
+      "rmse": 2.0642081742002767,
+      "bias": 0.2588598297565223
+    },
+    "challenger": {
+      "n": 32866,
+      "mae": 1.0884135430130766,
+      "rmse": 2.01133492615194,
+      "bias": 0.04042303036150479
+    },
+    "paired_rmse_difference_95ci": [
+      -0.07050274413905179,
+      -0.04010668281737938
+    ],
+    "by_position": {
+      "1": {
+        "baseline": {
+          "n": 3754,
+          "mae": 1.0185696901646526,
+          "rmse": 1.5750938836399608,
+          "bias": 0.37178519323822995
+        },
+        "challenger": {
+          "n": 3754,
+          "mae": 0.6744434783641702,
+          "rmse": 1.4875169426974761,
+          "bias": 0.0010474557525981822
+        }
+      },
+      "2": {
+        "baseline": {
+          "n": 10742,
+          "mae": 1.454167541160936,
+          "rmse": 2.235272943900459,
+          "bias": 0.23053837607959612
+        },
+        "challenger": {
+          "n": 10742,
+          "mae": 1.2641407807565312,
+          "rmse": 2.1912371085101743,
+          "bias": 0.03277126791085146
+        }
+      },
+      "3": {
+        "baseline": {
+          "n": 14691,
+          "mae": 1.2568613103206148,
+          "rmse": 2.018536529799004,
+          "bias": 0.26399256626346534
+        },
+        "challenger": {
+          "n": 14691,
+          "mae": 1.0515350213258527,
+          "rmse": 1.9604250431493373,
+          "bias": 0.06364030109435649
+        }
+      },
+      "4": {
+        "baseline": {
+          "n": 3679,
+          "mae": 1.3295151615853262,
+          "rmse": 2.1620312704405706,
+          "bias": 0.2058297152862068
+        },
+        "challenger": {
+          "n": 3679,
+          "mae": 1.144995221990737,
+          "rmse": 2.1249691554203998,
+          "bias": 0.01023173245186336
+        }
+      }
+    },
+    "regular_starters": {
+      "baseline": {
+        "n": 8695,
+        "mae": 2.3258588304877286,
+        "rmse": 3.120784252814535,
+        "bias": -0.009697866323682632
+      },
+      "challenger": {
+        "n": 8695,
+        "mae": 2.305866712800829,
+        "rmse": 3.0939721370788975,
+        "bias": -0.005217171210424409
+      }
+    },
+    "start_brier": 0.1141133266162652,
+    "start_log_loss": 0.3732201358419953,
+    "promoted": true,
+    "champion": "direct",
+    "limitations": [
+      "Completed-match statistical replay, not frozen pre-deadline news",
+      "Prospective competitive strength requires future deadline outcomes"
+    ],
+    "id": "2c776d84844a3ac2b94c5ecab8bfa69f3bebf5b0fc1c88d5e6a14ad4c005716e"
+  },
+  "strategy_comparisons": [
+    {
+      "label": "E \u00b7 independent joint chip/transfer plan",
+      "expected_net_points": 597.692,
+      "policies": [
+        {
+          "rival_policies": [
+            "hold",
+            "hold"
+          ],
+          "joint_strict_win": 0.6535,
+          "mc_standard_error": 0.010640435846336371,
+          "joint_tie_mass": 0.0055
+        },
+        {
+          "rival_policies": [
+            "hold",
+            "greedy"
+          ],
+          "joint_strict_win": 0.2505,
+          "mc_standard_error": 0.009688904736862677,
+          "joint_tie_mass": 0.007
+        },
+        {
+          "rival_policies": [
+            "greedy",
+            "hold"
+          ],
+          "joint_strict_win": 0.1695,
+          "mc_standard_error": 0.008389569416841366,
+          "joint_tie_mass": 0.007
+        },
+        {
+          "rival_policies": [
+            "greedy",
+            "greedy"
+          ],
+          "joint_strict_win": 0.1285,
+          "mc_standard_error": 0.007482905518580333,
+          "joint_tie_mass": 0.0045
+        }
+      ],
+      "robust_joint_win": 0.1285
+    },
+    {
+      "label": "hold / roll",
+      "expected_net_points": 525.8615,
+      "policies": [
+        {
+          "rival_policies": [
+            "hold",
+            "hold"
+          ],
+          "joint_strict_win": 0.0735,
+          "mc_standard_error": 0.005835141386461857,
+          "joint_tie_mass": 0.0035
+        },
+        {
+          "rival_policies": [
+            "hold",
+            "greedy"
+          ],
+          "joint_strict_win": 0.0075,
+          "mc_standard_error": 0.0019292161620720473,
+          "joint_tie_mass": 0.002
+        },
+        {
+          "rival_policies": [
+            "greedy",
+            "hold"
+          ],
+          "joint_strict_win": 0.009,
+          "mc_standard_error": 0.002111752826445368,
+          "joint_tie_mass": 0.0
+        },
+        {
+          "rival_policies": [
+            "greedy",
+            "greedy"
+          ],
+          "joint_strict_win": 0.005,
+          "mc_standard_error": 0.0015771810295587506,
+          "joint_tie_mass": 0.001
+        }
+      ],
+      "robust_joint_win": 0.005
+    },
+    {
+      "label": "A \u00b7 FH GW9, Jo\u00e3o Pedro sold GW10",
+      "expected_net_points": 593.2895,
+      "policies": [
+        {
+          "rival_policies": [
+            "hold",
+            "hold"
+          ],
+          "joint_strict_win": 0.605,
+          "mc_standard_error": 0.010931033802893484,
+          "joint_tie_mass": 0.006
+        },
+        {
+          "rival_policies": [
+            "hold",
+            "greedy"
+          ],
+          "joint_strict_win": 0.1905,
+          "mc_standard_error": 0.008780938161722813,
+          "joint_tie_mass": 0.009
+        },
+        {
+          "rival_policies": [
+            "greedy",
+            "hold"
+          ],
+          "joint_strict_win": 0.1445,
+          "mc_standard_error": 0.007861925654698091,
+          "joint_tie_mass": 0.0075
+        },
+        {
+          "rival_policies": [
+            "greedy",
+            "greedy"
+          ],
+          "joint_strict_win": 0.091,
+          "mc_standard_error": 0.006431135203057078,
+          "joint_tie_mass": 0.008
+        }
+      ],
+      "robust_joint_win": 0.091
+    },
+    {
+      "label": "B \u00b7 FH GW12, Jo\u00e3o Pedro sold GW9",
+      "expected_net_points": 591.7825,
+      "policies": [
+        {
+          "rival_policies": [
+            "hold",
+            "hold"
+          ],
+          "joint_strict_win": 0.5975,
+          "mc_standard_error": 0.010965713611069733,
+          "joint_tie_mass": 0.0035
+        },
+        {
+          "rival_policies": [
+            "hold",
+            "greedy"
+          ],
+          "joint_strict_win": 0.1925,
+          "mc_standard_error": 0.008816001077586141,
+          "joint_tie_mass": 0.003
+        },
+        {
+          "rival_policies": [
+            "greedy",
+            "hold"
+          ],
+          "joint_strict_win": 0.113,
+          "mc_standard_error": 0.0070792301841372555,
+          "joint_tie_mass": 0.0075
+        },
+        {
+          "rival_policies": [
+            "greedy",
+            "greedy"
+          ],
+          "joint_strict_win": 0.07,
+          "mc_standard_error": 0.005705260730238366,
+          "joint_tie_mass": 0.0055
+        }
+      ],
+      "robust_joint_win": 0.07
+    },
+    {
+      "label": "C \u00b7 FH GW15, Jo\u00e3o Pedro sold GW9",
+      "expected_net_points": 597.2475,
+      "policies": [
+        {
+          "rival_policies": [
+            "hold",
+            "hold"
+          ],
+          "joint_strict_win": 0.643,
+          "mc_standard_error": 0.010713332814768708,
+          "joint_tie_mass": 0.0065
+        },
+        {
+          "rival_policies": [
+            "hold",
+            "greedy"
+          ],
+          "joint_strict_win": 0.2325,
+          "mc_standard_error": 0.009445733163709422,
+          "joint_tie_mass": 0.004
+        },
+        {
+          "rival_policies": [
+            "greedy",
+            "hold"
+          ],
+          "joint_strict_win": 0.152,
+          "mc_standard_error": 0.008027951170753344,
+          "joint_tie_mass": 0.007
+        },
+        {
+          "rival_policies": [
+            "greedy",
+            "greedy"
+          ],
+          "joint_strict_win": 0.1035,
+          "mc_standard_error": 0.006811304941052044,
+          "joint_tie_mass": 0.0045
+        }
+      ],
+      "robust_joint_win": 0.1035
+    },
+    {
+      "label": "D \u00b7 FH GW19, Jo\u00e3o Pedro sold GW9",
+      "expected_net_points": 594.7975,
+      "policies": [
+        {
+          "rival_policies": [
+            "hold",
+            "hold"
+          ],
+          "joint_strict_win": 0.611,
+          "mc_standard_error": 0.010901353127020516,
+          "joint_tie_mass": 0.0125
+        },
+        {
+          "rival_policies": [
+            "hold",
+            "greedy"
+          ],
+          "joint_strict_win": 0.19,
+          "mc_standard_error": 0.008772114910328067,
+          "joint_tie_mass": 0.0085
+        },
+        {
+          "rival_policies": [
+            "greedy",
+            "hold"
+          ],
+          "joint_strict_win": 0.137,
+          "mc_standard_error": 0.007688660481514319,
+          "joint_tie_mass": 0.0035
+        },
+        {
+          "rival_policies": [
+            "greedy",
+            "greedy"
+          ],
+          "joint_strict_win": 0.088,
+          "mc_standard_error": 0.006334666526345329,
+          "joint_tie_mass": 0.001
+        }
+      ],
+      "robust_joint_win": 0.088
+    }
+  ],
+  "prospective_completed_deadlines": 0,
+  "hosted_ai_authenticated": false,
+  "competitive_rank_claim": false,
+  "checks": {
+    "python_tests": 36,
+    "frontend_unit_tests": 2,
+    "desktop_and_mobile_journeys": 4,
+    "ruff": "passed",
+    "mypy": "passed",
+    "production_build": "passed",
+    "backup_restored_worlds_identical": 2000,
+    "independent_ledger_replay_events": 11,
+    "stale_async_job_protection": "passed"
+  }
+}

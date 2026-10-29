@@ -1,0 +1,54 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "player_id": {
+      "title": "Player Id",
+      "type": "integer"
+    },
+    "parameter": {
+      "enum": [
+        "p_start",
+        "goals90",
+        "assists90",
+        "start_minutes"
+      ],
+      "title": "Parameter",
+      "type": "string"
+    },
+    "value": {
+      "title": "Value",
+      "type": "number"
+    },
+    "reason": {
+      "maxLength": 2000,
+      "minLength": 8,
+      "title": "Reason",
+      "type": "string"
+    },
+    "expires_at": {
+      "title": "Expires At",
+      "type": "string"
+    },
+    "evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+    },
+    "known_at": {
+      "title": "Known At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "player_id",
+    "parameter",
+    "value",
+    "reason",
+    "expires_at",
+    "known_at"
+  ],
+  "title": "Belief",
+  "type": "object"
+}

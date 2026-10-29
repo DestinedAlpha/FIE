@@ -1,0 +1,87 @@
+{
+  "$defs": {
+    "Lineup": {
+      "additionalProperties": false,
+      "properties": {
+        "xi": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Xi",
+          "type": "array"
+        },
+        "bench": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Bench",
+          "type": "array"
+        },
+        "captain": {
+          "title": "Captain",
+          "type": "integer"
+        },
+        "vice": {
+          "title": "Vice",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "xi",
+        "bench",
+        "captain",
+        "vice"
+      ],
+      "title": "Lineup",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "sell": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Sell",
+      "type": "array"
+    },
+    "buy": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Buy",
+      "type": "array"
+    },
+    "chip": {
+      "anyOf": [
+        {
+          "enum": [
+            "wildcard",
+            "freehit",
+            "bboost",
+            "3xc"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Chip"
+    },
+    "lineup": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Lineup"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "title": "Action",
+  "type": "object"
+}

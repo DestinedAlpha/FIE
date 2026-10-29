@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-29T08:09:51.549580+00:00",
+  "job_status": "completed",
+  "stale_protection": true,
+  "isolated_backup_database": true,
+  "actual_optimizer_executed": true
+}

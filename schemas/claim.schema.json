@@ -1,0 +1,118 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "player_id": {
+      "title": "Player Id",
+      "type": "integer"
+    },
+    "claim_type": {
+      "enum": [
+        "unavailable",
+        "available",
+        "training",
+        "minutes_restriction",
+        "role_change",
+        "set_piece",
+        "suspension",
+        "fixture_change",
+        "lineup"
+      ],
+      "title": "Claim Type",
+      "type": "string"
+    },
+    "statement": {
+      "maxLength": 1200,
+      "minLength": 3,
+      "title": "Statement",
+      "type": "string"
+    },
+    "evidence_span": {
+      "maxLength": 3000,
+      "minLength": 3,
+      "title": "Evidence Span",
+      "type": "string"
+    },
+    "source_url": {
+      "title": "Source Url",
+      "type": "string"
+    },
+    "source_hash": {
+      "title": "Source Hash",
+      "type": "string"
+    },
+    "published_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Published At"
+    },
+    "known_at": {
+      "title": "Known At",
+      "type": "string"
+    },
+    "expires_at": {
+      "title": "Expires At",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "confirmed",
+        "reported",
+        "inferred",
+        "speculative"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "affected_events": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Affected Events",
+      "type": "array"
+    },
+    "supersedes": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Supersedes"
+    },
+    "contradicts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Contradicts",
+      "type": "array"
+    },
+    "origin": {
+      "title": "Origin",
+      "type": "string"
+    }
+  },
+  "required": [
+    "player_id",
+    "claim_type",
+    "statement",
+    "evidence_span",
+    "source_url",
+    "source_hash",
+    "known_at",
+    "expires_at",
+    "status",
+    "origin"
+  ],
+  "title": "Claim",
+  "type": "object"
+}

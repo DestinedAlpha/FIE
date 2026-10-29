@@ -1,0 +1,1245 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FPL Intelligence",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard": {
+      "get": {
+        "summary": "Dashboard",
+        "operationId": "dashboard_api_dashboard_get",
+        "parameters": [
+          {
+            "name": "event",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Event"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/refresh": {
+      "post": {
+        "summary": "Refresh",
+        "operationId": "refresh_api_refresh_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/forecast": {
+      "post": {
+        "summary": "Forecasts",
+        "operationId": "forecasts_api_forecast_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForecastRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/train": {
+      "post": {
+        "summary": "Train",
+        "operationId": "train_api_train_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rivals": {
+      "post": {
+        "summary": "Refresh Rivals",
+        "operationId": "refresh_rivals_api_rivals_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RivalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optimize": {
+      "post": {
+        "summary": "Optimization",
+        "operationId": "optimization_api_optimize_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OptimizeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/jobs/{identity}": {
+      "get": {
+        "summary": "Job",
+        "operationId": "job_api_jobs__identity__get",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/state": {
+      "post": {
+        "summary": "Save State",
+        "operationId": "save_state_api_state_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StateImport"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/state/seed": {
+      "post": {
+        "summary": "Seed State",
+        "operationId": "seed_state_api_state_seed_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transfers/check": {
+      "post": {
+        "summary": "Check Transfers",
+        "operationId": "check_transfers_api_transfers_check_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferCheck"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/evidence": {
+      "post": {
+        "summary": "Evidence",
+        "operationId": "evidence_api_evidence_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/beliefs": {
+      "post": {
+        "summary": "Belief",
+        "operationId": "belief_api_beliefs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Belief"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/players/{identity}/history": {
+      "get": {
+        "summary": "Player History",
+        "operationId": "player_history_api_players__identity__history_get",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identity"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/export/{identity}/{format}": {
+      "get": {
+        "summary": "Export Artifact",
+        "operationId": "export_artifact_api_export__identity___format__get",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "format",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Format"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/plans/{identity}": {
+      "get": {
+        "summary": "Get Plan",
+        "operationId": "get_plan_api_plans__identity__get",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/schema": {
+      "get": {
+        "summary": "Schema",
+        "operationId": "schema_api_schema_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Action": {
+        "properties": {
+          "sell": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Sell"
+          },
+          "buy": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Buy"
+          },
+          "chip": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "wildcard",
+                  "freehit",
+                  "bboost",
+                  "3xc"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chip"
+          },
+          "lineup": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Lineup"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Action"
+      },
+      "Belief": {
+        "properties": {
+          "player_id": {
+            "type": "integer",
+            "title": "Player Id"
+          },
+          "parameter": {
+            "type": "string",
+            "enum": [
+              "p_start",
+              "goals90",
+              "assists90",
+              "start_minutes"
+            ],
+            "title": "Parameter"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 8,
+            "title": "Reason"
+          },
+          "expires_at": {
+            "type": "string",
+            "title": "Expires At"
+          },
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Evidence Ids"
+          },
+          "known_at": {
+            "type": "string",
+            "title": "Known At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "player_id",
+          "parameter",
+          "value",
+          "reason",
+          "expires_at",
+          "known_at"
+        ],
+        "title": "Belief"
+      },
+      "ChipUse": {
+        "properties": {
+          "chip": {
+            "type": "string",
+            "enum": [
+              "wildcard",
+              "freehit",
+              "bboost",
+              "3xc"
+            ],
+            "title": "Chip"
+          },
+          "event": {
+            "type": "integer",
+            "maximum": 38.0,
+            "minimum": 1.0,
+            "title": "Event"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "chip",
+          "event"
+        ],
+        "title": "ChipUse"
+      },
+      "Claim": {
+        "properties": {
+          "player_id": {
+            "type": "integer",
+            "title": "Player Id"
+          },
+          "claim_type": {
+            "type": "string",
+            "enum": [
+              "unavailable",
+              "available",
+              "training",
+              "minutes_restriction",
+              "role_change",
+              "set_piece",
+              "suspension",
+              "fixture_change",
+              "lineup"
+            ],
+            "title": "Claim Type"
+          },
+          "statement": {
+            "type": "string",
+            "maxLength": 1200,
+            "minLength": 3,
+            "title": "Statement"
+          },
+          "evidence_span": {
+            "type": "string",
+            "maxLength": 3000,
+            "minLength": 3,
+            "title": "Evidence Span"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          },
+          "source_hash": {
+            "type": "string",
+            "title": "Source Hash"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "known_at": {
+            "type": "string",
+            "title": "Known At"
+          },
+          "expires_at": {
+            "type": "string",
+            "title": "Expires At"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "confirmed",
+              "reported",
+              "inferred",
+              "speculative"
+            ],
+            "title": "Status"
+          },
+          "affected_events": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Affected Events"
+          },
+          "supersedes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersedes"
+          },
+          "contradicts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Contradicts"
+          },
+          "origin": {
+            "type": "string",
+            "title": "Origin"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "player_id",
+          "claim_type",
+          "statement",
+          "evidence_span",
+          "source_url",
+          "source_hash",
+          "known_at",
+          "expires_at",
+          "status",
+          "origin"
+        ],
+        "title": "Claim"
+      },
+      "ClaimInput": {
+        "properties": {
+          "claim": {
+            "$ref": "#/components/schemas/Claim"
+          },
+          "source_text": {
+            "type": "string",
+            "maxLength": 60000,
+            "title": "Source Text"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "claim",
+          "source_text"
+        ],
+        "title": "ClaimInput"
+      },
+      "ForecastRequest": {
+        "properties": {
+          "end_event": {
+            "type": "integer",
+            "maximum": 38.0,
+            "minimum": 1.0,
+            "title": "End Event",
+            "default": 38
+          },
+          "worlds": {
+            "type": "integer",
+            "maximum": 20000.0,
+            "minimum": 100.0,
+            "title": "Worlds",
+            "default": 2000
+          },
+          "seed": {
+            "type": "integer",
+            "title": "Seed",
+            "default": 11
+          },
+          "use_beliefs": {
+            "type": "boolean",
+            "title": "Use Beliefs",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ForecastRequest"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "Lineup": {
+        "properties": {
+          "xi": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Xi"
+          },
+          "bench": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Bench"
+          },
+          "captain": {
+            "type": "integer",
+            "title": "Captain"
+          },
+          "vice": {
+            "type": "integer",
+            "title": "Vice"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "xi",
+          "bench",
+          "captain",
+          "vice"
+        ],
+        "title": "Lineup"
+      },
+      "Lot": {
+        "properties": {
+          "player_id": {
+            "type": "integer",
+            "title": "Player Id"
+          },
+          "purchase_price": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Price"
+          },
+          "sell_price": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Sell Price"
+          },
+          "quote_market_price": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Quote Market Price"
+          },
+          "provenance": {
+            "type": "string",
+            "title": "Provenance",
+            "default": "manual"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "player_id",
+          "sell_price",
+          "quote_market_price"
+        ],
+        "title": "Lot"
+      },
+      "OptimizeRequest": {
+        "properties": {
+          "state_id": {
+            "type": "string",
+            "title": "State Id"
+          },
+          "forecast_id": {
+            "type": "string",
+            "title": "Forecast Id"
+          },
+          "end_event": {
+            "type": "integer",
+            "maximum": 38.0,
+            "minimum": 1.0,
+            "title": "End Event"
+          },
+          "time_limit": {
+            "type": "number",
+            "maximum": 300.0,
+            "minimum": 1.0,
+            "title": "Time Limit",
+            "default": 30
+          },
+          "objective": {
+            "type": "string",
+            "enum": [
+              "expected_points",
+              "beat_both"
+            ],
+            "title": "Objective",
+            "default": "expected_points"
+          },
+          "sacrifice_budget": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Sacrifice Budget",
+            "default": 5
+          },
+          "chips": {
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "wildcard",
+                "freehit",
+                "bboost",
+                "3xc"
+              ]
+            },
+            "type": "object",
+            "title": "Chips"
+          },
+          "max_transfers": {
+            "type": "integer",
+            "maximum": 15.0,
+            "minimum": 0.0,
+            "title": "Max Transfers",
+            "default": 3
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "state_id",
+          "forecast_id",
+          "end_event"
+        ],
+        "title": "OptimizeRequest"
+      },
+      "RivalRequest": {
+        "properties": {
+          "league_id": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "League Id",
+            "default": 1873551
+          },
+          "entry_id": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Entry Id",
+            "default": 9375678
+          },
+          "compare_case": {
+            "type": "boolean",
+            "title": "Compare Case",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "RivalRequest"
+      },
+      "StateImport": {
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/TeamState"
+          },
+          "expected_state_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected State Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "state"
+        ],
+        "title": "StateImport"
+      },
+      "TeamState": {
+        "properties": {
+          "season": {
+            "type": "string",
+            "title": "Season"
+          },
+          "event": {
+            "type": "integer",
+            "maximum": 38.0,
+            "minimum": 1.0,
+            "title": "Event"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "default": "My team"
+          },
+          "entry_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entry Id"
+          },
+          "bank": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Bank"
+          },
+          "free_transfers": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 0.0,
+            "title": "Free Transfers"
+          },
+          "lots": {
+            "items": {
+              "$ref": "#/components/schemas/Lot"
+            },
+            "type": "array",
+            "title": "Lots"
+          },
+          "used_chips": {
+            "items": {
+              "$ref": "#/components/schemas/ChipUse"
+            },
+            "type": "array",
+            "title": "Used Chips"
+          },
+          "points": {
+            "type": "integer",
+            "title": "Points",
+            "default": 0
+          },
+          "transfers_made": {
+            "type": "integer",
+            "maximum": 20.0,
+            "minimum": 0.0,
+            "title": "Transfers Made",
+            "default": 0
+          },
+          "hit_paid": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Hit Paid",
+            "default": 0
+          },
+          "deadline_lots": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Lot"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline Lots"
+          },
+          "deadline_bank": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline Bank"
+          },
+          "initial": {
+            "type": "boolean",
+            "title": "Initial",
+            "default": false
+          },
+          "grandfathered_clubs": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Grandfathered Clubs"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "dated_seed",
+              "public_deadline",
+              "confirmed"
+            ],
+            "title": "Status",
+            "default": "confirmed"
+          },
+          "known_at": {
+            "type": "string",
+            "title": "Known At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "season",
+          "event",
+          "bank",
+          "free_transfers",
+          "lots",
+          "known_at"
+        ],
+        "title": "TeamState"
+      },
+      "TransferCheck": {
+        "properties": {
+          "state_id": {
+            "type": "string",
+            "title": "State Id"
+          },
+          "action": {
+            "$ref": "#/components/schemas/Action"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "state_id",
+          "action"
+        ],
+        "title": "TransferCheck"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

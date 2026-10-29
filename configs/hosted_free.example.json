@@ -1,0 +1,12 @@
+{
+  "provider": "gemini",
+  "model": "select-a-currently-eligible-model",
+  "free_text_verified": false,
+  "unbilled_account_attested": false,
+  "terms_eligible": false,
+  "verified_until": "2026-10-29T00:00:00+00:00",
+  "daily_calls": 20,
+  "daily_tokens": 100000,
+  "output_tokens": 2000,
+  "paid_provider_calls_allowed": false
+}

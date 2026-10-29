@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fpl-intelligence"
+version = "0.1.0"
+description = "Local, reproducible Fantasy Premier League forecasting and planning"
+requires-python = ">=3.12"
+dependencies = ["fastapi>=0.115", "uvicorn>=0.34", "httpx>=0.28", "pydantic>=2.10", "numpy>=2.1", "scipy>=1.15", "scikit-learn>=1.6", "lightgbm>=4.6", "polars>=1.20", "pyarrow>=19", "duckdb>=1.2", "highspy>=1.9", "typer>=0.15"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3", "hypothesis>=6.125", "ruff>=0.9", "mypy>=1.15"]
+
+[project.scripts]
+fpl = "fpl_intelligence.cli:app"
+
+[tool.ruff]
+line-length = 110
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.mypy]
+ignore_missing_imports = true
+check_untyped_defs = true

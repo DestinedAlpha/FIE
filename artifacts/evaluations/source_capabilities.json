@@ -1,0 +1,10 @@
+{
+  "captured_at": "2026-10-29T07:22:06.535534+00:00",
+  "players": 669,
+  "teams": 20,
+  "events": 38,
+  "histories_requested": true,
+  "errors": [],
+  "parser": "official-v1",
+  "core_hash": "f1c614cd25235f85c625fc142ec48818222d06ebfccc9ae5dde068b32af06f5d"
+}

@@ -1,0 +1,212 @@
+{
+  "$defs": {
+    "ChipUse": {
+      "additionalProperties": false,
+      "properties": {
+        "chip": {
+          "enum": [
+            "wildcard",
+            "freehit",
+            "bboost",
+            "3xc"
+          ],
+          "title": "Chip",
+          "type": "string"
+        },
+        "event": {
+          "maximum": 38,
+          "minimum": 1,
+          "title": "Event",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "chip",
+        "event"
+      ],
+      "title": "ChipUse",
+      "type": "object"
+    },
+    "Lot": {
+      "additionalProperties": false,
+      "properties": {
+        "player_id": {
+          "title": "Player Id",
+          "type": "integer"
+        },
+        "purchase_price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purchase Price"
+        },
+        "sell_price": {
+          "minimum": 0,
+          "title": "Sell Price",
+          "type": "integer"
+        },
+        "quote_market_price": {
+          "minimum": 0,
+          "title": "Quote Market Price",
+          "type": "integer"
+        },
+        "provenance": {
+          "default": "manual",
+          "title": "Provenance",
+          "type": "string"
+        }
+      },
+      "required": [
+        "player_id",
+        "sell_price",
+        "quote_market_price"
+      ],
+      "title": "Lot",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "season": {
+      "title": "Season",
+      "type": "string"
+    },
+    "event": {
+      "maximum": 38,
+      "minimum": 1,
+      "title": "Event",
+      "type": "integer"
+    },
+    "name": {
+      "default": "My team",
+      "title": "Name",
+      "type": "string"
+    },
+    "entry_id": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Entry Id"
+    },
+    "bank": {
+      "minimum": 0,
+      "title": "Bank",
+      "type": "integer"
+    },
+    "free_transfers": {
+      "maximum": 5,
+      "minimum": 0,
+      "title": "Free Transfers",
+      "type": "integer"
+    },
+    "lots": {
+      "items": {
+        "$ref": "#/$defs/Lot"
+      },
+      "title": "Lots",
+      "type": "array"
+    },
+    "used_chips": {
+      "items": {
+        "$ref": "#/$defs/ChipUse"
+      },
+      "title": "Used Chips",
+      "type": "array"
+    },
+    "points": {
+      "default": 0,
+      "title": "Points",
+      "type": "integer"
+    },
+    "transfers_made": {
+      "default": 0,
+      "maximum": 20,
+      "minimum": 0,
+      "title": "Transfers Made",
+      "type": "integer"
+    },
+    "hit_paid": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Hit Paid",
+      "type": "integer"
+    },
+    "deadline_lots": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/Lot"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Deadline Lots"
+    },
+    "deadline_bank": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Deadline Bank"
+    },
+    "initial": {
+      "default": false,
+      "title": "Initial",
+      "type": "boolean"
+    },
+    "grandfathered_clubs": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Grandfathered Clubs",
+      "type": "array"
+    },
+    "status": {
+      "default": "confirmed",
+      "enum": [
+        "dated_seed",
+        "public_deadline",
+        "confirmed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "known_at": {
+      "title": "Known At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "season",
+    "event",
+    "bank",
+    "free_transfers",
+    "lots",
+    "known_at"
+  ],
+  "title": "TeamState",
+  "type": "object"
+}
