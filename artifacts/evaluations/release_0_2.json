@@ -71,6 +71,13 @@
     "browser_journeys": 4,
     "ruff": true,
     "mypy": true,
-    "frontend_build": true
+    "frontend_build": true,
+    "linux_ci": "success",
+    "windows_ci": "success",
+    "ci_url": "https://github.com/DestinedAlpha/FIE/actions/runs/40869528819",
+    "relocated_backup_worlds_identical": 2000,
+    "calibrated_model_restore": true,
+    "original_research_integrity": true,
+    "publishable_file_credential_scan": true
   }
 }

@@ -8,6 +8,8 @@ import tempfile
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
+from dotenv import dotenv_values
+
 from fpl_intelligence.storage import Store
 
 
@@ -15,6 +17,12 @@ def main():
     root = Path(__file__).resolve().parents[1]
     output = root / "artifacts" / "runtime" / "FPL-Intelligence-Windows.zip"
     store = Store(root / "data")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    secrets = [
+        value.encode()
+        for name, value in dotenv_values(root / ".env").items()
+        if name.endswith("API_KEY") and value
+    ]
     files = set(
         subprocess.check_output(
             ["git", "ls-files", "--cached", "--others", "--exclude-standard"], cwd=root, text=True
@@ -46,6 +54,9 @@ def main():
         with ZipFile(output) as verify:
             assert "FPL-Intelligence/.env" not in verify.namelist()
             assert verify.testzip() is None
+            for entry in verify.infolist():
+                if any(secret in verify.read(entry) for secret in secrets):
+                    raise ValueError("Credential found in private handoff; publication blocked")
     print(json.dumps({"bundle": str(output), "bytes": output.stat().st_size, "contains_credentials": False}))
 
 
