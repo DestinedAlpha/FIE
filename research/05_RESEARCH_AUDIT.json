@@ -1,0 +1,293 @@
+{
+  "schema_version": "1.0",
+  "research_date": "2026-10-29",
+  "user_timezone": "Asia/Dubai",
+  "audit_generated_at_utc": "2026-10-29T06:25:49.4454020Z",
+  "scope": "Research and design. No predictive model training, optimizer run, or competitive benchmark is claimed.",
+  "direct_http_tests": [
+    {
+      "players": 669,
+      "parse": "JSON",
+      "season_asset_path": "https://fantasy.premierleague.com/gcs/plfpl-prod-static-content/plfpl-production/2026_27/",
+      "status": 200,
+      "url": "https://fantasy.premierleague.com/api/bootstrap-static/",
+      "events": 38,
+      "clubs": 20
+    },
+    {
+      "parse": "JSON",
+      "status": 200,
+      "url": "https://fantasy.premierleague.com/api/fixtures/"
+    },
+    {
+      "verified_fields": {
+        "points": 418,
+        "current_event": 8,
+        "name": "Skibidi FC"
+      },
+      "status": 200,
+      "private_account_state_verified": false,
+      "url": "https://fantasy.premierleague.com/api/entry/9375678/"
+    },
+    {
+      "history_rows": 8,
+      "history_fields": [
+        "element",
+        "fixture",
+        "opponent_team",
+        "total_points",
+        "was_home",
+        "kickoff_time",
+        "team_h_score",
+        "team_a_score",
+        "round",
+        "modified",
+        "minutes",
+        "goals_scored",
+        "assists",
+        "clean_sheets",
+        "goals_conceded",
+        "own_goals",
+        "penalties_saved",
+        "penalties_missed",
+        "yellow_cards",
+        "red_cards",
+        "saves",
+        "bonus",
+        "bps",
+        "influence",
+        "creativity",
+        "threat",
+        "ict_index",
+        "clearances_blocks_interceptions",
+        "recoveries",
+        "tackles",
+        "defensive_contribution",
+        "starts",
+        "expected_goals",
+        "expected_assists",
+        "expected_goal_involvements",
+        "expected_goals_conceded",
+        "value",
+        "transfers_balance",
+        "selected",
+        "transfers_in",
+        "transfers_out"
+      ],
+      "status": 200,
+      "url": "https://fantasy.premierleague.com/api/element-summary/411/"
+    },
+    {
+      "complete_all_player_multiweek_matrix": false,
+      "status": 200,
+      "source_generated_at": "2026-10-29T06:08:40.671Z",
+      "url": "https://fpl.solioanalytics.com/api/data/latest.json",
+      "gameweek": 9,
+      "top_projected_count": 30
+    },
+    {
+      "status": 200,
+      "note": "Returned application HTML shell, not a complete plain-text rules export. Official indexed FAQs, update articles and API config were also inspected.",
+      "url": "https://fantasy.premierleague.com/help/rules"
+    }
+  ],
+  "official_next_event": {
+    "id": 9,
+    "name": "Gameweek 9",
+    "deadline_time": "2026-10-31T11:00:00Z"
+  },
+  "official_gw19": {
+    "id": 19,
+    "name": "Gameweek 19",
+    "deadline_time": "2027-01-01T18:30:00Z"
+  },
+  "deadline_conflict": {
+    "captured_event_api_date": "2027-01-01T18:30:00Z",
+    "design_resolution": "Use current official event data for scheduling, refresh near deadline, preserve conflict and source versions.",
+    "article_date": "2027-01-02T13:30:00Z",
+    "article": "https://www.premierleague.com/en/news/4679873"
+  },
+  "scoring_config": {
+    "long_play": 2,
+    "short_play": 1,
+    "goals_conceded": {
+      "DEF": -1,
+      "FWD": 0,
+      "GKP": -1,
+      "MID": 0
+    },
+    "saves": 1,
+    "goals_scored": {
+      "DEF": 6,
+      "FWD": 4,
+      "GKP": 10,
+      "MID": 5
+    },
+    "assists": 3,
+    "clean_sheets": {
+      "DEF": 4,
+      "FWD": 0,
+      "GKP": 4,
+      "MID": 1
+    },
+    "penalties_saved": 5,
+    "penalties_missed": -2,
+    "yellow_cards": -1,
+    "red_cards": -3,
+    "own_goals": -2,
+    "bonus": 1,
+    "bps": 0,
+    "influence": 0,
+    "creativity": 0,
+    "threat": 0,
+    "ict_index": 0,
+    "special_multiplier": 1,
+    "tackles": 0,
+    "clearances_blocks_interceptions": 0,
+    "recoveries": 0,
+    "defensive_contribution": {
+      "DEF": 2,
+      "FWD": 2,
+      "GKP": 0,
+      "MID": 2
+    },
+    "starts": 0,
+    "mng_goals_scored": {
+      "DEF": 0,
+      "FWD": 0,
+      "GKP": 0,
+      "MID": 0
+    },
+    "mng_clean_sheets": {
+      "DEF": 0,
+      "FWD": 0,
+      "GKP": 0,
+      "MID": 0
+    },
+    "mng_win": {
+      "DEF": 0,
+      "FWD": 0,
+      "GKP": 0,
+      "MID": 0
+    },
+    "mng_draw": {
+      "DEF": 0,
+      "FWD": 0,
+      "GKP": 0,
+      "MID": 0
+    },
+    "mng_loss": 0,
+    "mng_underdog_win": {
+      "DEF": 0,
+      "FWD": 0,
+      "GKP": 0,
+      "MID": 0
+    },
+    "mng_underdog_draw": {
+      "DEF": 0,
+      "FWD": 0,
+      "GKP": 0,
+      "MID": 0
+    },
+    "expected_assists": 0,
+    "expected_goal_involvements": 0,
+    "expected_goals_conceded": 0,
+    "expected_goals": 0
+  },
+  "chip_windows": [
+    {
+      "name": "wildcard",
+      "start_event": 2,
+      "stop_event": 19
+    },
+    {
+      "name": "wildcard",
+      "start_event": 20,
+      "stop_event": 38
+    },
+    {
+      "name": "freehit",
+      "start_event": 2,
+      "stop_event": 19
+    },
+    {
+      "name": "bboost",
+      "start_event": 1,
+      "stop_event": 19
+    },
+    {
+      "name": "3xc",
+      "start_event": 1,
+      "stop_event": 19
+    },
+    {
+      "name": "freehit",
+      "start_event": 20,
+      "stop_event": 38
+    },
+    {
+      "name": "bboost",
+      "start_event": 20,
+      "stop_event": 38
+    },
+    {
+      "name": "3xc",
+      "start_event": 20,
+      "stop_event": 38
+    }
+  ],
+  "user_arithmetic": {
+    "pass": true,
+    "liquidation_units": 1007,
+    "selling_value_units": 1004,
+    "bank_units": 3
+  },
+  "snapshot_manifest": [
+    {
+      "name": "bootstrap.json",
+      "saved_at_utc": "2026-10-29T06:08:57.0888969Z",
+      "bytes": 1788426,
+      "sha256": "0c058a5c3992082ab8ef06a506fce2f86dd97a20cc42059f4c8909fb43554a8a"
+    },
+    {
+      "name": "element_sample.json",
+      "saved_at_utc": "2026-10-29T06:09:53.4103052Z",
+      "bytes": 16265,
+      "sha256": "797a651442c7e7b687e5da947e2f757511ee23f14f880d862a513d3f46cc8121"
+    },
+    {
+      "name": "entry.json",
+      "saved_at_utc": "2026-10-29T06:08:58.3838663Z",
+      "bytes": 8481,
+      "sha256": "8ab3bb9f7019a3307f198936e3d61251854281c9cbac1e949872f660f892376d"
+    },
+    {
+      "name": "fixtures.json",
+      "saved_at_utc": "2026-10-29T06:08:57.6816644Z",
+      "bytes": 300482,
+      "sha256": "97f982774008b950cc2414890c07582fedf82c549b8327fb4ef9d4c415c37ae8"
+    },
+    {
+      "name": "rules.html",
+      "saved_at_utc": "2026-10-29T06:08:58.0178712Z",
+      "bytes": 11791,
+      "sha256": "2f98abe76516bb93e87fd8ee907efa8991208280ddadfd603d50f4349738e2bf"
+    },
+    {
+      "name": "solio_public.json",
+      "saved_at_utc": "2026-10-29T06:08:57.3840107Z",
+      "bytes": 27005,
+      "sha256": "3dba07251de73cd99b3c77f8fbf29ff9793ef4ad05e02c13341ca7489f6b52b8"
+    }
+  ],
+  "execution_status": {
+    "attachment_read": true,
+    "optimizer_executed": false,
+    "live_core_feed_probes_performed": true,
+    "web_research_performed": true,
+    "model_trained": false,
+    "competitor_benchmark_reproduced": false,
+    "hosted_ai_account_capabilities_authenticated": false,
+    "context_arithmetic_performed": true
+  }
+}

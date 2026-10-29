@@ -1,0 +1,352 @@
+{
+  "schema_version": "1.0",
+  "research_date": "2026-10-29",
+  "timezone": "Asia/Dubai",
+  "currency_units": "GBP_0.1_million",
+  "purpose": "Personalization seed for a full-season FPL research and implementation project",
+  "season": "2026/27",
+  "constraints": {
+    "mandatory_paid_services": false,
+    "local_llm": false,
+    "local_embedding_model": false,
+    "hosted_free_ai": true,
+    "ordinary_local_numerical_compute": true,
+    "all_gameweeks": 38,
+    "all_clubs": 20,
+    "all_registered_players": true
+  },
+  "authorization": {
+    "fpl_scraping_grant": "User states they have a verified FPL grant covering required FPL data scraping; accepted for the design.",
+    "third_party_adapters": "Keep provider-specific access conditions and fallbacks separate."
+  },
+  "objectives": {
+    "primary_product": "Validated competitive forecasts and complete legal FPL decision policies",
+    "season_target": "Top 1% competitiveness; measured target, not a guaranteed result",
+    "immediate_horizon": {
+      "start_gw": 9,
+      "end_gw": 19,
+      "gameweeks": 11
+    },
+    "immediate_rival_objective": "Finish above both Ashwin and Raza by GW19 while showing the expected-points trade-off and preserving season value",
+    "default_optimization": "expected_net_points",
+    "alternative_optimization": "joint_probability_of_beating_both_rivals_with_expected_points_sacrifice_budget"
+  },
+  "team": {
+    "name": "SKIBIDI FC",
+    "entry_id": 9375678,
+    "league_name": "The Skibs",
+    "league_id": 1873551,
+    "supplied_points": 418,
+    "supplied_league_position": 3,
+    "available_ft_before_gw9": 1,
+    "bank_units": 3,
+    "total_selling_value_units": 1004,
+    "liquidation_value_units": 1007,
+    "purchase_lots_complete": false,
+    "state_status": "user_supplied_dated_snapshot_not_authenticated_current_account_state",
+    "chips_used": [
+      {
+        "name": "wildcard",
+        "gw": 5,
+        "period": "first_half",
+        "status": "user_supplied"
+      },
+      {
+        "name": "triple_captain",
+        "gw": 3,
+        "period": "first_half",
+        "status": "user_supplied"
+      }
+    ],
+    "chips_remaining_supplied": [
+      "first_half_free_hit",
+      "first_half_bench_boost"
+    ],
+    "squad": [
+      {
+        "name": "David Raya",
+        "position": "GK",
+        "selling_price_units": 61,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "Martin Dúbravka",
+        "position": "GK",
+        "selling_price_units": 40,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "Riccardo Calafiori",
+        "position": "DEF",
+        "selling_price_units": 59,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "Joško Gvardiol",
+        "position": "DEF",
+        "selling_price_units": 57,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "Maxim De Cuyper",
+        "position": "DEF",
+        "selling_price_units": 52,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "Jayden Bogle",
+        "position": "DEF",
+        "selling_price_units": 47,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "Jacob Greaves",
+        "position": "DEF",
+        "selling_price_units": 39,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "Cole Palmer",
+        "position": "MID",
+        "selling_price_units": 97,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "Rayan Cherki",
+        "position": "MID",
+        "selling_price_units": 79,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "Morgan Rogers",
+        "position": "MID",
+        "selling_price_units": 78,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "Pascal Groß",
+        "position": "MID",
+        "selling_price_units": 59,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "Will Hughes",
+        "position": "MID",
+        "selling_price_units": 43,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "Erling Haaland",
+        "position": "FWD",
+        "selling_price_units": 156,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "Dominic Calvert-Lewin",
+        "position": "FWD",
+        "selling_price_units": 60,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      },
+      {
+        "name": "João Pedro",
+        "position": "FWD",
+        "selling_price_units": 77,
+        "fpl_id": null,
+        "purchase_price_units": null,
+        "club": null,
+        "provenance": "user_supplied_pre_GW9_snapshot",
+        "requires_current_reconciliation": true
+      }
+    ]
+  },
+  "dated_claims": [
+    {
+      "entity": "João Pedro",
+      "claim": "Reported multi-week thigh injury",
+      "status": "user_supplied_requires_refresh"
+    },
+    {
+      "entity": "Riccardo Calafiori",
+      "claim": "Hip injury flag",
+      "status": "user_supplied_requires_refresh"
+    },
+    {
+      "entity": "Cole Palmer",
+      "claim": "Expected available GW9",
+      "status": "user_supplied_requires_refresh"
+    }
+  ],
+  "starting_security_questions": [
+    "Rayan Cherki",
+    "Joško Gvardiol",
+    "Riccardo Calafiori",
+    "Jacob Greaves",
+    "Will Hughes",
+    "Martin Dúbravka"
+  ],
+  "rivals": [
+    {
+      "name": "Ashwin",
+      "entry_id": null,
+      "supplied_points": 488,
+      "supplied_lead": 70,
+      "reported_chips_used": [
+        "wildcard"
+      ],
+      "unconfirmed_intention": "Free Hit GW9",
+      "squad": {
+        "GK": [
+          "David Raya",
+          "Alex Palmer"
+        ],
+        "DEF": [
+          "Ezri Konsa",
+          "Lewis Hall",
+          "Marc Guéhi",
+          "Maxim De Cuyper",
+          "Ryan Giles"
+        ],
+        "MID": [
+          "Morgan Rogers",
+          "Rayan Cherki",
+          "Bruno Fernandes",
+          "Will Hughes",
+          "Tayo Olusesi"
+        ],
+        "FWD": [
+          "Erling Haaland",
+          "Charalampos Kostoulas",
+          "João Pedro"
+        ]
+      },
+      "identity_note": "Alex Palmer is the goalkeeper, not Cole Palmer."
+    },
+    {
+      "name": "Raza",
+      "entry_id": null,
+      "supplied_points": 463,
+      "supplied_lead": 45,
+      "reported_chips_used": [
+        "wildcard",
+        "triple_captain"
+      ],
+      "squad": {
+        "GK": [
+          "David Raya",
+          "Djordje Petrović"
+        ],
+        "DEF": [
+          "Lewis Hall",
+          "Maxim De Cuyper",
+          "Riccardo Calafiori",
+          "Issa Diop",
+          "Joško Gvardiol"
+        ],
+        "MID": [
+          "Pascal Groß",
+          "Rayan Cherki",
+          "Pedro Neto",
+          "Alexis Mac Allister",
+          "Granit Xhaka"
+        ],
+        "FWD": [
+          "Alexander Isak",
+          "Erling Haaland",
+          "João Pedro"
+        ]
+      }
+    }
+  ],
+  "rival_state_policy": "Find actual entries through the league; snapshots are not confirmed future squads. Unknown bank, prices, transfers and chip choices remain explicit scenarios.",
+  "strategy_candidates": [
+    {
+      "id": "A",
+      "description": "Free Hit GW9, João Pedro sold GW10"
+    },
+    {
+      "id": "B",
+      "description": "João Pedro sold GW9, Free Hit GW12"
+    },
+    {
+      "id": "C",
+      "description": "João Pedro sold GW9, Free Hit GW15 or another favorable week"
+    },
+    {
+      "id": "D",
+      "description": "João Pedro sold GW9, Free Hit GW19"
+    },
+    {
+      "id": "E",
+      "description": "Independently discovered routes, including roll and different replacements"
+    }
+  ],
+  "research_time_observations": {
+    "public_entry_name": "Skibidi FC",
+    "public_entry_points": 418,
+    "public_entry_current_event": 8,
+    "public_entry_fields_match_supplied_name_and_points": true,
+    "private_current_squad_or_selling_values_independently_verified": false,
+    "arithmetic": {
+      "squad_selling_value_units": 1004,
+      "plus_bank_units": 1007,
+      "checks_pass": true
+    },
+    "live_deadlines_are_refreshable_not_permanent": true
+  }
+}
