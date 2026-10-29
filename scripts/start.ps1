@@ -51,13 +51,18 @@ if (-not (Test-Path "apps/web/dist/index.html")) {
     if ($LASTEXITCODE -ne 0) { throw "Frontend build failed." }
 }
 
-if (-not (Test-Path "data/state.sqlite")) {
+& $UvPath run python -c "from fpl_intelligence.storage import Store; s=Store(); raise SystemExit(0 if all(s.list(kind, 1) for kind in ('market', 'state', 'forecast', 'selected_plan')) else 1)"
+$NeedsInitialisation = $LASTEXITCODE -ne 0
+if ($NeedsInitialisation) {
     & $UvPath run fpl ingest
     if ($LASTEXITCODE -ne 0) { throw "Official data ingestion failed." }
-    if (Test-Path "data/account-confirmed.json") {
-        & $UvPath run fpl reconcile-team --path data/account-confirmed.json --confirmed
-    } else { & $UvPath run fpl reconcile-team }
-    if ($LASTEXITCODE -ne 0) { throw "Account import needs current valid selling quotes." }
+    & $UvPath run python -c "from fpl_intelligence.storage import Store; raise SystemExit(0 if Store().list('state', 1) else 1)"
+    if ($LASTEXITCODE -ne 0) {
+        if (Test-Path "data/account-confirmed.json") {
+            & $UvPath run fpl reconcile-team --path data/account-confirmed.json --confirmed
+        } else { & $UvPath run fpl reconcile-team }
+        if ($LASTEXITCODE -ne 0) { throw "Account import needs current valid selling quotes." }
+    }
     & $UvPath run fpl import-history --season 2025-26
     if ($LASTEXITCODE -ne 0) { throw "Historical import failed." }
     & $UvPath run fpl build-features
