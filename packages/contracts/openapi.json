@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "FPL Intelligence",
-    "version": "0.2.0"
+    "version": "0.3.0"
   },
   "paths": {
     "/api/health": {
@@ -121,6 +121,54 @@
       "post": {
         "summary": "Train",
         "operationId": "train_api_train_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/decision-audit": {
+      "post": {
+        "summary": "Decision Audit",
+        "operationId": "decision_audit_api_decision_audit_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/uncertainty-audit": {
+      "post": {
+        "summary": "Uncertainty Audit",
+        "operationId": "uncertainty_audit_api_uncertainty_audit_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/managers/benchmark": {
+      "post": {
+        "summary": "Manager Benchmark",
+        "operationId": "manager_benchmark_api_managers_benchmark_post",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -257,6 +305,22 @@
       "post": {
         "summary": "Chip Comparison",
         "operationId": "chip_comparison_api_chips_compare_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/compare-hits": {
+      "post": {
+        "summary": "Compare Hits",
+        "operationId": "compare_hits_api_compare_hits_post",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -973,7 +1037,7 @@
             "maximum": 20000.0,
             "minimum": 100.0,
             "title": "Worlds",
-            "default": 2000
+            "default": 4000
           },
           "seed": {
             "type": "integer",
@@ -1139,6 +1203,19 @@
             "minimum": 0.0,
             "title": "Max Transfers",
             "default": 3
+          },
+          "first_week_hit_budget": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 60.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Week Hit Budget"
           }
         },
         "additionalProperties": false,

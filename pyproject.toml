@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fpl-intelligence"
-version = "0.2.0"
+version = "0.3.0"
 description = "Local, reproducible Fantasy Premier League forecasting and planning"
 requires-python = ">=3.12"
 dependencies = [
@@ -15,6 +15,7 @@ dependencies = [
     "numpy>=2.1",
     "scipy>=1.15",
     "scikit-learn>=1.6",
+    "threadpoolctl>=3.6",
     "lightgbm>=4.6",
     "polars>=1.20",
     "pyarrow>=19",

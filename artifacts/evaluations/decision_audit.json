@@ -1,0 +1,44 @@
+{
+  "at": "2026-10-29T13:44:09.820329+00:00",
+  "decision_model_id": "39840e58f1e3096877578ce293cf817b00a6f88af5052644292eacdd51c8f65c",
+  "track": "out-of-fold historical decisions",
+  "oracle_use": "Diagnostic upper bound only; no hindsight target is added to model features or live fitting",
+  "budget": 1000,
+  "price_cohorts": {
+    "budget": {
+      "n": 6172,
+      "predicted": 2.77643453572002,
+      "actual": 2.749189889825016,
+      "bias": 0.027244645895003777
+    },
+    "midprice": {
+      "n": 2160,
+      "predicted": 3.3067363489220005,
+      "actual": 3.133796296296296,
+      "bias": 0.17294005262570422
+    },
+    "premium": {
+      "n": 195,
+      "predicted": 4.832269244952206,
+      "actual": 4.38974358974359,
+      "bias": 0.44252565520861703
+    }
+  },
+  "limits": [
+    "Archive registrations and prices are retrospective; not a strict historical account reconstruction",
+    "Perfect-hindsight teams intentionally overfit realized match variance and are not attainable forecasts"
+  ],
+  "captain_totals": {
+    "learned_bonus": 323,
+    "price_baseline_bonus": 274,
+    "shrinkage_bonus": 283,
+    "hindsight_best": 790,
+    "defender_captain_weeks": 1
+  },
+  "team_totals": {
+    "learned": 1791,
+    "shrinkage": 1681,
+    "oracle": 4638
+  },
+  "id": "260e1bf921f3db92c5cbe834a28e7e7a84bb583e0ed590860e263b73feb96603"
+}

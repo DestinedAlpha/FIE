@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-29T13:44:33.186598+00:00",
+  "decision_model_id": "39840e58f1e3096877578ce293cf817b00a6f88af5052644292eacdd51c8f65c",
+  "event": 8,
+  "season": "2026/27",
+  "retrieved": 50,
+  "missing": 0,
+  "prior_top10k_twice": 1,
+  "qualification": "At least two top-10,000 overall finishes in the three recorded PRIOR seasons",
+  "selection": "Frozen current-rank cohort; current-rank selection bias remains disclosed",
+  "mean_same_squad_lineup_delta": 0.34,
+  "entry_bootstrap_interval_95": [
+    -0.78,
+    1.48
+  ],
+  "training_effect": "None: manager choices are an external comparator, not assumed true or used as hindsight training labels",
+  "limits": [
+    "One released gameweek is a diagnostic, not a skill or season-performance proof",
+    "Current-rank selection is not a representative prior-elite sample",
+    "Unavailable historical news can favor real managers or the retrospective model in different ways"
+  ],
+  "id": "f84a42c6a189802f43b95d51fc558c83e9efb15ef3ded4006f01f70924d2d0ab"
+}

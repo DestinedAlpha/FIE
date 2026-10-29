@@ -282,7 +282,18 @@ def forecast(
     seed: int = 11,
     use_beliefs: bool = False,
     scenario: dict | None = None,
+    component_baseline: bool = False,
 ) -> dict:
+    if not component_baseline:
+        from .decision import learned_forecast
+
+        try:
+            store.get("decision_model")
+        except ValueError as error:
+            raise ValueError(
+                "Run fpl train-decisions before forecasting; the old component simulator is research-only"
+            ) from error
+        return learned_forecast(store, start_event, end_event, worlds, seed, use_beliefs, scenario)
     started = time.monotonic()
     cutoff = now()
     players, market = load_market(store)
@@ -521,7 +532,7 @@ def forecast(
     path.parent.mkdir(exist_ok=True)
     np.savez_compressed(path, **arrays)
     body["scenario_path"] = str(path)
-    body["id"] = store.put("scenario_forecast" if scenario else "forecast", body)
+    body["id"] = store.put("component_forecast", body)
     return body
 
 

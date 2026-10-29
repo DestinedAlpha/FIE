@@ -30,7 +30,7 @@ state_lock = threading.Lock()
 
 class ForecastRequest(Strict):
     end_event: int = Field(default=38, ge=1, le=38)
-    worlds: int = Field(default=2000, ge=100, le=20000)
+    worlds: int = Field(default=4000, ge=100, le=20000)
     seed: int = 11
     use_beliefs: bool = False
 
@@ -68,7 +68,7 @@ class ScenarioRequest(Strict):
 
 def create_app(root=None):
     load_environment()
-    app = FastAPI(title="FPL Intelligence", version="0.2.0")
+    app = FastAPI(title="FPL Intelligence", version="0.3.0")
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
 
     @app.middleware("http")
@@ -172,6 +172,13 @@ def create_app(root=None):
             "open_model_reproduction": None,
             "cohort": None,
             "chip_counterfactual": None,
+            "decision_model": None,
+            "decision_audit": None,
+            "decision_policy": None,
+            "provider_setup": None,
+            "decision_uncertainty": None,
+            "manager_audit": None,
+            "hit_comparison": None,
         }
         try:
             players, market = load_market(store)
@@ -203,15 +210,39 @@ def create_app(root=None):
             "open_model_reproduction",
             "cohort",
             "chip_counterfactual",
+            "decision_model",
+            "decision_audit",
+            "decision_policy",
+            "provider_setup",
+            "decision_uncertainty",
+            "manager_audit",
+            "hit_comparison",
         ):
             try:
                 artifact = store.get(kind)
+                if kind in (
+                    "decision_audit",
+                    "decision_policy",
+                    "decision_uncertainty",
+                    "manager_audit",
+                ) and artifact.get("decision_model_id") != (result["decision_model"] or {}).get("id"):
+                    continue
                 if kind == "forecast":
                     artifact = {k: v for k, v in artifact.items() if k not in ("match_audit", "fixtures")}
                     artifact["players"] = [r for r in artifact["players"] if r["event"] == event]
+                if kind == "decision_model":
+                    artifact = {
+                        k: v
+                        for k, v in artifact.items()
+                        if k not in ("predictions", "residuals", "curves", "minute_quantiles")
+                    }
+                if kind == "manager_audit":
+                    artifact = {k: v for k, v in artifact.items() if k not in ("comparisons", "errors")}
+                if kind == "decision_audit":
+                    artifact = {k: v for k, v in artifact.items() if k not in ("weeks", "captains")}
                 if kind == "evaluation":
                     artifact = {k: v for k, v in artifact.items() if k != "predictions"}
-                if kind == "policy_evaluation":
+                if kind in ("policy_evaluation", "decision_policy"):
                     artifact = {
                         **artifact,
                         "policies": {
@@ -229,6 +260,9 @@ def create_app(root=None):
                 selected_plan["state_id"] != (result["state"] or {}).get("id")
                 or selected_plan["forecast_id"] != (result["forecast"] or {}).get("id")
                 or selected_plan["market_id"] != market["id"]
+                or (result["forecast"] or {}).get("model_version") != "learned-points-v1"
+                or (result["forecast"] or {}).get("decision_model_id")
+                != (result["decision_model"] or {}).get("id")
             )
             if selected_plan["stale"]:
                 selected_plan["execution_ready"] = False
@@ -268,19 +302,39 @@ def create_app(root=None):
     @app.post("/api/train")
     def train():
         def work():
-            from .evaluation import train_evaluate
-            from .features import build_features
+            from threadpoolctl import threadpool_limits
 
-            players, market = load_market(store)
-            build_features(store, players, market)
-            from .models import fit_model_suite
-            from .strength import train_strength
+            from .decision import train_decisions
 
-            fit_model_suite(store)
-            train_strength(store)
-            return {"evaluation_id": train_evaluate(store)["id"]}
+            with threadpool_limits(limits=1):
+                result = train_decisions(store)
+            return {"decision_model_id": result["id"]}
 
         return launch("train", {}, work)
+
+    @app.post("/api/decision-audit")
+    def decision_audit():
+        from .decision_audit import evaluate_choices
+
+        return launch("decision-audit", {}, lambda: evaluate_choices(store))
+
+    @app.post("/api/uncertainty-audit")
+    def uncertainty_audit():
+        from threadpoolctl import threadpool_limits
+
+        from .decision import validate_uncertainty
+
+        def work():
+            with threadpool_limits(limits=1):
+                return validate_uncertainty(store)
+
+        return launch("uncertainty-audit", {}, work)
+
+    @app.post("/api/managers/benchmark")
+    def manager_benchmark():
+        from .manager_audit import benchmark_managers
+
+        return launch("manager-benchmark", {}, lambda: asyncio.run(benchmark_managers(store)))
 
     @app.post("/api/research/refresh")
     def refresh_research(request: ResearchRequest):
@@ -327,12 +381,20 @@ def create_app(root=None):
             "chip-counterfactual", {}, lambda: compare_chips(store, store.get("selected_plan")["plan_id"])
         )
 
+    @app.post("/api/compare-hits")
+    def compare_hits():
+        from .chips import compare_immediate_hit
+
+        return launch(
+            "compare-hits", {}, lambda: compare_immediate_hit(store, store.get("selected_plan")["plan_id"])
+        )
+
     @app.post("/api/policy-replay")
     def policy_replay():
-        from .policy_replay import continuous_replay
+        from .decision_audit import replay_policy
 
         def work():
-            result = continuous_replay(store)
+            result = replay_policy(store)
             return {
                 "evaluation_id": result["id"],
                 "policies": {k: v["realized_net_points"] for k, v in result["policies"].items()},
@@ -364,6 +426,7 @@ def create_app(root=None):
                 request.time_limit,
                 chips=request.chips or None,
                 max_transfers=request.max_transfers,
+                first_week_hit_budget=request.first_week_hit_budget,
             )
             hold = hold_plan(store, request.state_id, request.forecast_id, request.end_event)
             if request.objective == "beat_both":

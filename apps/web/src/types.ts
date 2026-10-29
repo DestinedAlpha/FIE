@@ -126,6 +126,50 @@ export type Dashboard = {
     belief_scenario: string[];
   } | null;
   plan: Plan | null;
+  decision_model?: {
+    promoted: boolean;
+    seasons: string[];
+    candidate: { n: number; rmse: number };
+    baseline: { rmse: number };
+    regular_starters: {
+      baseline: { rmse: number };
+      candidate: { rmse: number };
+    };
+    production_training_rows: number;
+    production_calibration_rows: number;
+    neural?: { metrics: { rmse: number }; paired_vs_gbm_95ci: number[] };
+  } | null;
+  decision_audit?: {
+    captain_totals: {
+      learned_bonus: number;
+      price_baseline_bonus: number;
+      shrinkage_bonus: number;
+    };
+    team_totals: { learned: number; shrinkage: number; oracle: number };
+  } | null;
+  decision_policy?: {
+    policies: Record<
+      string,
+      { realized_net_points: number; hits: number; transfers: number }
+    >;
+  } | null;
+  decision_uncertainty?: {
+    regular_starters: { coverage80: number; coverage90: number };
+  } | null;
+  manager_audit?: {
+    retrieved: number;
+    prior_top10k_twice: number;
+    mean_same_squad_lineup_delta: number;
+    entry_bootstrap_interval_95: number[];
+  } | null;
+  provider_setup?: {
+    providers: {
+      provider: string;
+      status: string;
+      http_status?: number;
+      message?: string;
+    }[];
+  } | null;
   model_suite?: {
     promoted: boolean;
     test_rows: number;
@@ -147,6 +191,15 @@ export type Dashboard = {
   } | null;
   extraction_benchmark?: {
     selected: { model: string; f1: number; status_accuracy: number } | null;
+  } | null;
+  hit_comparison?: {
+    base_plan_id: string;
+    alternative_plan_id: string;
+    base_mean: number;
+    alternative_mean: number;
+    net_mean_advantage: number;
+    alternative_immediate_chip: string | null;
+    alternative_gap: number;
   } | null;
   chip_counterfactual?: {
     base_plan_id: string;

@@ -57,6 +57,20 @@
       "minimum": 0,
       "title": "Max Transfers",
       "type": "integer"
+    },
+    "first_week_hit_budget": {
+      "anyOf": [
+        {
+          "maximum": 60,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "First Week Hit Budget"
     }
   },
   "required": [

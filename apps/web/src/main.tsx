@@ -35,6 +35,9 @@ import "./style.css";
 import {
   ResearchControls,
   ModelEvidence,
+  DecisionEvidence,
+  CaptainEvidence,
+  HitEvidence,
   ScenarioPanel,
   ChipPanel,
   CohortPanel,
@@ -610,11 +613,13 @@ function App() {
                       </div>
                       <h2>
                         {first
-                          ? first.buy.length
-                            ? `${first.buy.length} move${first.buy.length > 1 ? "s" : ""}. A stronger starting point.`
-                            : first.chip
-                              ? `Play your ${first.chip === "bboost" ? "Bench Boost" : first.chip === "freehit" ? "Free Hit" : first.chip}.`
-                              : "Hold your transfers. Keep your options."
+                          ? first.chip === "freehit"
+                            ? `Play your Free Hit for GW${first.event}.`
+                            : first.buy.length
+                              ? `${first.buy.length} move${first.buy.length > 1 ? "s" : ""}. A stronger starting point.`
+                              : first.chip
+                                ? `Play your ${first.chip === "bboost" ? "Bench Boost" : first.chip === "freehit" ? "Free Hit" : first.chip}.`
+                                : "Hold your transfers. Keep your options."
                           : "Turn the evidence into a plan."}
                       </h2>
                       <p className="recommendation-copy">
@@ -628,7 +633,11 @@ function App() {
                             first.buy.map((b, i) => (
                               <div className="transfer-pair" key={b.player_id}>
                                 <div>
-                                  <small>TRANSFER OUT</small>
+                                  <small>
+                                    {first.chip === "freehit"
+                                      ? "TEMPORARY OUT"
+                                      : "TRANSFER OUT"}
+                                  </small>
                                   <strong>
                                     {name(first.sell[i].player_id)}
                                   </strong>
@@ -636,7 +645,11 @@ function App() {
                                 </div>
                                 <ArrowRight size={20} />
                                 <div>
-                                  <small>TRANSFER IN</small>
+                                  <small>
+                                    {first.chip === "freehit"
+                                      ? "TEMPORARY IN"
+                                      : "TRANSFER IN"}
+                                  </small>
                                   <strong>{name(b.player_id)}</strong>
                                   <span>{money(b.units)}</span>
                                 </div>
@@ -674,7 +687,7 @@ function App() {
                           className="text-button forecast-link"
                           disabled={busy}
                           onClick={() =>
-                            action("/forecast", { end_event: 38, worlds: 2000 })
+                            action("/forecast", { end_event: 38, worlds: 4000 })
                           }
                         >
                           Generate full-season forecasts first →
@@ -729,7 +742,8 @@ function App() {
                         <div>
                           <b>Forecast confidence</b>
                           <small>
-                            Calibrated minutes · prospective evidence accruing
+                            Learned points and minutes · prospective evidence
+                            accruing
                           </small>
                         </div>
                       </div>
@@ -972,6 +986,17 @@ function App() {
               )}
               {tab === "Season planner" && (
                 <>
+                  <CaptainEvidence data={data} plan={plan} />
+                  <HitEvidence
+                    data={data}
+                    plan={plan}
+                    busy={busy}
+                    act={action}
+                    explore={async (id) => {
+                      setViewPlan(await api<Plan>(`/plans/${id}`));
+                      setTab("Season planner");
+                    }}
+                  />
                   <ChipPanel data={data} plan={plan} busy={busy} act={action} />
                   <ScenarioPanel
                     data={data}
@@ -1106,7 +1131,8 @@ function App() {
                                   {r.simulated_net_mean.toFixed(1)}
                                 </td>
                                 <td>
-                                  {r.net_quantiles[0]}–{r.net_quantiles[2]}
+                                  {r.net_quantiles[0].toFixed(1)}–
+                                  {r.net_quantiles[2].toFixed(1)}
                                 </td>
                               </tr>
                             ))}
@@ -1432,7 +1458,7 @@ function App() {
                       onClick={() =>
                         action("/forecast", {
                           end_event: 38,
-                          worlds: 2000,
+                          worlds: 4000,
                           use_beliefs: true,
                         })
                       }
@@ -1456,7 +1482,13 @@ function App() {
               )}
               {tab === "Model & data" && (
                 <>
-                  <ModelEvidence data={data} busy={busy} act={action} />
+                  <DecisionEvidence data={data} busy={busy} act={action} />
+                  <details className="panel">
+                    <summary>
+                      Earlier model experiments and open-model reproduction
+                    </summary>
+                    <ModelEvidence data={data} busy={busy} act={action} />
+                  </details>
                   <div className="stats-grid">
                     {stat(
                       "Market coverage",
@@ -1466,14 +1498,14 @@ function App() {
                     )}
                     {stat(
                       "Baseline RMSE",
-                      data.evaluation?.baseline.rmse.toFixed(3) || "—",
+                      data.decision_model?.baseline.rmse.toFixed(3) || "—",
                       "Held-out completed-match replay",
                       <ChartNoAxesCombined size={16} />,
                     )}
                     {stat(
-                      "Tabular RMSE",
-                      data.evaluation?.challenger.rmse.toFixed(3) || "—",
-                      `${data.evaluation?.baseline.n || 0} held-out fixture predictions`,
+                      "Production points RMSE",
+                      data.decision_model?.candidate.rmse.toFixed(3) || "—",
+                      `${data.decision_model?.candidate.n || 0} held-out fixture predictions`,
                       <FlaskConical size={16} />,
                     )}
                     {stat(
@@ -1500,59 +1532,13 @@ function App() {
                         Run evaluation
                       </button>
                     </div>
-                    {data.evaluation ? (
-                      <div className="evaluation">
-                        <div className="model-bar">
-                          <span>Shrinkage baseline</span>
-                          <div>
-                            <i
-                              style={{
-                                width: `${Math.min(100, (data.evaluation.baseline.rmse / 4) * 100)}%`,
-                              }}
-                            />
-                          </div>
-                          <b>{data.evaluation.baseline.rmse.toFixed(3)}</b>
-                        </div>
-                        <div className="model-bar challenger">
-                          <span>Tabular challenger</span>
-                          <div>
-                            <i
-                              style={{
-                                width: `${Math.min(100, (data.evaluation.challenger.rmse / 4) * 100)}%`,
-                              }}
-                            />
-                          </div>
-                          <b>{data.evaluation.challenger.rmse.toFixed(3)}</b>
-                        </div>
-                        <p>
-                          Deadline-block bootstrap 95% interval for RMSE
-                          difference:{" "}
-                          {data.evaluation.paired_rmse_difference_95ci
-                            .map((x) => x.toFixed(3))
-                            .join(" to ")}
-                          .{" "}
-                          {data.evaluation.promoted
-                            ? "The challenger passed the declared historical comparison."
-                            : "The challenger has not passed the promotion gate."}
-                        </p>
-                        {data.evaluation.limitations.map((l) => (
-                          <div className="model-limit" key={l}>
-                            <CircleHelp size={15} />
-                            {l}
-                          </div>
-                        ))}
-                        <div className="model-limit">
-                          <CircleHelp size={15} />
-                          Shared-match decision simulations use the component
-                          baseline, with a disclosed BPS proxy. Direct-model
-                          accuracy is a separate measured experiment.
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="empty-copy">
-                        Run an evaluation after ingesting player histories.
-                      </p>
-                    )}
+                    <p>
+                      Completed-match statistical replay uses earlier deadlines
+                      for every fold. The production points model, held-out
+                      captain choices and evolving transfer accounts are
+                      evaluated above. The earlier component simulator is
+                      available only as an explicit research baseline.
+                    </p>
                   </section>
                   <section className="panel">
                     <div className="section-title">
@@ -1567,7 +1553,7 @@ function App() {
                         className="button primary"
                         disabled={busy}
                         onClick={() =>
-                          action("/forecast", { end_event: 38, worlds: 2000 })
+                          action("/forecast", { end_event: 38, worlds: 4000 })
                         }
                       >
                         Rebuild forecasts <RefreshCw size={15} />

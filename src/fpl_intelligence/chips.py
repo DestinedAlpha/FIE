@@ -49,3 +49,34 @@ def compare_chips(store: Store, plan_id: str, seconds: float = 30) -> dict:
     }
     result["id"] = store.put("chip_counterfactual", result)
     return result
+
+
+def compare_immediate_hit(store: Store, plan_id: str, seconds: float = 90):
+    """Show the full-horizon tradeoff against a policy taking no new hit now."""
+    base = store.get("plan", plan_id)
+    forecast = store.get("forecast", base["forecast_id"])
+    alternative = optimize(
+        store, base["state_id"], base["forecast_id"], base["end_event"], seconds, first_week_hit_budget=0
+    )
+    first = alternative["ledger"][0]
+    if first["hit"] > 0:
+        raise ValueError("The no-hit counterfactual violates its immediate cost constraint")
+    delta = score_plan(store, base, forecast) - score_plan(store, alternative, forecast)
+    error = float(delta.std(ddof=1) / np.sqrt(len(delta)))
+    result = {
+        "at": now(),
+        "base_plan_id": plan_id,
+        "alternative_plan_id": alternative["id"],
+        "immediate_hit": base["ledger"][0]["hit"],
+        "alternative_immediate_hit": first["hit"],
+        "alternative_immediate_chip": first["chip"],
+        "base_mean": base["simulation"]["mean"],
+        "alternative_mean": alternative["simulation"]["mean"],
+        "net_mean_advantage": float(delta.mean()),
+        "paired_mc_interval_95": [float(delta.mean() - 1.96 * error), float(delta.mean() + 1.96 * error)],
+        "base_gap": base["solver"]["gap"],
+        "alternative_gap": alternative["solver"]["gap"],
+        "uncertainty": "Net of hits, same horizon and match worlds; model uncertainty and solver gaps are not inside this Monte Carlo interval",
+    }
+    result["id"] = store.put("hit_comparison", result)
+    return result

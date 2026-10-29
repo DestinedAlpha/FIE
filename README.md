@@ -1,100 +1,100 @@
 # FPL Intelligence
 
-A private local FPL workspace with independent player forecasts, exact account ledgers, full-market multiweek optimization, correlated match simulations and mini-league policy comparisons. Python runs the numerical engine; React/TypeScript provides the interface. No paid service or local language model is required.
+A private local FPL decision workspace: learned player-point distributions, exact account ledgers, full-market joint transfer/chip planning, explicit rival scenarios and source-grounded optional hosted research. Numerical training runs on a CPU; paid APIs and local language models are not required.
 
-The six supplied documents are preserved unchanged in [`research/`](research/). They are design inputs, not evidence that a model has achieved a particular season rank.
+The six supplied documents remain byte-for-byte unchanged in [`research/`](research/). Design documents are not evidence of competitive performance.
 
-## Run locally
+## Windows
 
-Requires Python 3.12+, [uv](https://docs.astral.sh/uv/) and Node 24. Commands below run from the repository root, on Windows or Linux.
+For an existing installation, extract the new private download into a **separate folder** and run **Update existing.cmd**. Select the existing folder containing Start.cmd. The updater backs up the database/application, preserves your `.env` and account data, updates the application, retrains against current completed data and recomputes the plan. It does not apply any FPL account transfer.
+
+For a fresh installation, double-click **Start.cmd** in the extracted package. The prepared ZIP contains the built interface, numerical data and a compressed consistent database. The launcher restores it before provider setup and opens a healthy loopback server. uv installs Python dependencies automatically; the prepared package does not require Node.
+
+**Configure keys.cmd** reruns secure provider prompts. Gemini and Groq authenticate independently. An invalid or unavailable optional provider is reported without stopping the numerical planner or disabling a working provider. Keys stay local and are excluded from source, downloads and reports.
+
+## Source installation
+
+Requires Python 3.12, [uv](https://docs.astral.sh/uv/) and Node 24. Run from the repository root:
 
 ```sh
 uv sync --frozen --extra dev
 npm --prefix apps/web ci --no-audit --no-fund
 npm --prefix apps/web run build
 uv run fpl ingest
-uv run fpl import-history --season 2025-26
 uv run fpl reconcile-team
-uv run fpl build-features
 uv run fpl train
-uv run fpl train-components
-uv run fpl forecast --end 38 --worlds 2000
-uv run fpl optimize --end 19 --seconds 60
+uv run fpl forecast --end 38 --worlds 4000
+uv run fpl optimize --end 19 --seconds 90
 uv run fpl serve
 ```
 
-For the prepared private Windows ZIP, extract it and double-click **Start.cmd**. It includes the built interface and the confirmed account snapshot. The launcher installs Python dependencies, securely prompts for optional provider keys and opens the local application. The public source checkout contains no private account database.
+Open http://127.0.0.1:8000. `reconcile-team` imports the **dated** research seed; confirm current account facts before acting. The private prepared package uses the user's separately confirmed selling quotes, bank, FT and chips. Unknown purchase prices remain null. The original seed cannot overwrite a confirmed account.
 
-Open **http://127.0.0.1:8000**. The UI also has refresh, forecast, evaluation, optimization and rivalry controls. For frontend development, run `npm --prefix apps/web run dev` alongside the API.
+`fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. After new matches, refresh data and retrain/reforecast/replan. Account transfers are never assumed to have been submitted; reconcile actual squad changes separately.
 
-`reconcile-team` imports the supplied **dated** SKIBIDI FC snapshot. Confirm your current squad, exact sell quotes, bank, chips and free transfers in **My squad → Edit account state** before executing a recommendation. The snapshot does not establish a current private account. Unknown purchase prices stay null. IDs are resolved against the current season and position; ambiguous identities fail validation.
+## What changed in 0.3
 
-For another account, pass `--entry` and `--league` to ingestion, then import a JSON `TeamState` conforming to [`schemas/state.schema.json`](schemas/state.schema.json). `fpl select-initial --event 9 --budget 1000` selects an initial/late-entry squad within the frozen forecast horizon. Adjust event and horizon flags for the actual season; GW9–19 is this supplied case, not a product limit.
+The former component simulator could produce repeated defender captaincies. Its points forecasts had not been tested by the separate direct-model benchmark. The production planner now consumes **the same learned-points model and outcome sampler that are evaluated**, with one shared feature transformation. Price, opponent strength, role, recent form and stable-code prior-season histories are inputs. Current/future outcomes and hindsight winner selections are excluded from historical feature cutoffs. Early 2022 fixtures whose starting indicators were all zero are treated as missing start labels.
 
-## What runs
+The former physics-style component simulator remains available only through explicit research-mode Python calls and cannot replace production forecasts or produce an execution-ready plan. The old benchmark artifacts are retained as earlier experiments, not current readiness evidence.
 
-- **Data:** official player registry, fixtures, all player histories, released entry/history/picks/transfers, event-live, paginated league standings, optional partial Solio comparator and historical season archives. Raw responses are compressed, immutable and hashed. SQLite stores versioned artifacts and append-only account events; Parquet and DuckDB support statistical features.
-- **Rules:** integer prices and gain sharing, original purchase lots, formations, club limits, FT rollover/caps, hits and refunds, chip windows, Free Hit restoration, captain/vice, autosubs, Bench Boost, Triple Captain, exact scoring thresholds and BPS tie awards. Plans are independently replayed outside the solver.
-- **Forecasts:** exposure-shrunk multi-season profiles, calibrated start/appearance and minutes bands, gated dynamic team strength, shared match tempo, finite football XIs, timed goal attribution, saves, overdispersed defensive actions, rare penalty misses/saves, discipline and match-contested bonus. Every registered player has a player/GW record through GW38, including blanks. Scenario samples are retained for replay.
-- **Planning:** full selectable market, ownership-lot accounting, bank balances, FT state network, transfers, captain, XI, temporary FH squads and joint chip timing in HiGHS. A legal incumbent survives time limits. Exact FPL autosubs and captain fallback are rescored in common worlds. Solver bounds/gaps and the terminal-value assumption stay visible.
-- **Rivals:** actual mini-league membership and released picks, effective exposure, hold/greedy opponent policies, joint win probabilities in identical worlds, ties and a visible expected-points sacrifice budget. The original five FH architecture families and hold are executable comparisons.
-- **Research:** official-domain source retrieval, supported claim schema, contradiction/supersession links, expiring manual beliefs and separate belief forecasts. Authenticated Gemini/Groq adapters validate JSON and quotes. Measured extraction selects Gemini 3.5 Flash Lite, with Groq GPT OSS 120B as fallback. Syndicated duplicates, stale claims and contradictions are handled explicitly. Unknown/paid capabilities fail closed; daily quota is reserved before dispatch. No account key is needed for the numerical application.
-- **Validation and adaptation:** pinned, hash-verified Dastan numerical model reproduction, released OpenFPL vector checks, chronological component calibration, evolving-account historical policy replay, observable price/injury/fixture branches with a shared decision prefix, whole-policy chip counterfactuals and pre-deadline shadow decisions. Fifty actually retrieved managers provide explicitly scoped exposure estimates with resampling intervals.
-- **Product:** recommendation, XI/bench, full market, transfer package checks, conditional season ledger, rival analysis, evidence, model/data health, JSON/CSV/Markdown exports and an authoritative deadline ICS calendar.
+## Executed evidence
 
-## Measured evidence
+| Check | Result |
+|---|---|
+| Held-out player-fixtures | 34,967, 2025/26 plus completed current-season events |
+| Point RMSE, rolling prior → learned | 2.0786 → 1.9752 |
+| Likely-starter RMSE | 3.1247 → 3.0335 |
+| Neural challenger RMSE | 1.9726; paired gain interval includes zero |
+| Held-out captain bonuses: learned / price / rolling prior | 323 / 274 / 283 |
+| 30-week transfer policy: learned / rolling prior | 1708 / 1527 observed net points |
+| Likely starters inside central 80% / 90% intervals | 87.9% / 94.1% |
+| Manager comparator | 50 actual squads; 1 qualifies on repeated prior top-10,000 finishes |
 
-The executed release run fetched **669 players, 20 clubs, 38 events, 669 histories and 300 future fixtures**, with no ingestion errors. It generated **20,070 player/GW distributions in 2,000 shared worlds**. All six GW9–19 candidate ledgers passed independent transition validation.
+The neural network was tested rather than presumed necessary. Its small RMSE difference did not establish a reliable gain over trees. Neither this comparison nor historical returns establish top-1% strength. Historical archives contain retrospective corrections/prices; these results are **statistical replay**, not strict historical news reconstruction or prospective outcomes. Current-rank sampling remains biased and is not relabeled as an elite-manager population.
 
-Deadline-grouped walk-forward evaluation used **32,866 held-out player-fixtures** from the 2025/26 archive and completed 2026/27 fixtures:
+Hindsight-budget teams are independently optimized as a diagnostic ceiling. Their realized winners are never used as privileged test-week training labels. Full source, protocol, bias cohorts and uncertainty measurements are in the [model card](docs/model-card.md) and [`artifacts/evaluations/`](artifacts/evaluations/).
 
-| Model | RMSE | MAE |
-|---|---:|---:|
-| Transparent shrinkage | 2.0642 | 1.3023 |
-| LightGBM direct challenger | 2.0113 | 1.0884 |
+## Capabilities
 
-The paired deadline-bootstrap 95% interval for RMSE difference was **−0.0705 to −0.0401**. The predeclared regular-starter cohort also improved (3.1208 → 3.0940 RMSE). This is **historical statistical replay**, with retrospective completed-match data. It is not a strict historical news replay or prospective competitive result. The v2 decision simulator uses the promoted chronological minutes model: held-out start Brier improves **0.1382 → 0.1082**, and appearance Brier **0.1497 → 0.1283**. Team-strength and mixture challengers failed their gates and remain inactive. A separate 30-gameweek continuous-account replay scored **1,529 / 1,523** for hold policies and **1,506 / 1,613** for transfer policies using shrinkage/direct forecasts respectively. These are observed archive points with identical starting squads and legal FT/bank transitions; chips were excluded to isolate forecast and transfer effects.
-
-Pinned Dastan packaging-holdout reproduction: **6,582 rows, RMSE 1.79445**. Released OpenFPL vectors: **18,173 rows, RMSE 2.01745**. Those datasets have different scopes and are not a cross-model ranking. Both hosted extractors passed six synthetic quote/injection cases; source-status accuracy was **5/6** for the selected Gemini model. This small benchmark is not a claim of perfect real-world extraction.
-
-See [`artifacts/evaluations/`](artifacts/evaluations/) and the [model card](docs/model-card.md) for actual scope and assumptions. Prospective forecasts are frozen; `fpl evaluate --prospective` only scores records issued before subsequently finalized deadlines. No future deadlines or top-1% results have been fabricated.
+- Official full-market registry, fixtures, all histories, entry/league data, immutable hashed raw snapshots, Parquet features and portable SQLite state.
+- Integer selling prices and gain sharing, acquisition lots, formations, club/FT limits, hits/refunds, chip windows, temporary Free Hit squads, restoration, captain/vice, autosubs and scoring. Every plan is independently replayed.
+- Full selectable-market multiweek HiGHS optimization, joint chips/transfers, legal warm incumbents, actual solver gaps, common-world rescoring and whole-policy chip counterfactuals. A timeout result is a feasible candidate, not a claim of global optimality.
+- Learned points/minutes distributions through GW38; empirical residual tails and measured within-team role dependence. These are statistical outcome worlds, not reconstructed match-event XIs. Rival probabilities remain conditional on an approximate joint model and explicit opponent policies.
+- Price, fixture and availability scenarios with a shared decision prefix until observation, adaptive controls, no invented branch probabilities and labelled conditional purchase-lot assumptions.
+- Supported official-source claims, freshness/quote/provenance validation, duplicate/contradiction handling, Gemini primary and eligible Groq fallback, free-only quota guards and no paid grounding/tools.
+- Captain comparison, bias/decision/uncertainty scorecards, actual-manager comparators, season ledger, JSON/CSV/Markdown/full-market exports, ICS deadlines, pre-deadline frozen shadow decisions and relocated backups.
 
 ## Useful commands
 
 ```sh
 uv run fpl doctor
-uv run fpl calibrate
-uv run fpl train-components
+uv run fpl decision-audit
 uv run fpl policy-replay
-uv run fpl open-benchmark
+uv run fpl uncertainty-audit
+uv run fpl manager-benchmark
 uv run fpl configure-providers --unbilled
 uv run fpl research-refresh
+uv run fpl rivals --case --seconds 45
 uv run fpl chip-comparison
 uv run fpl freeze
-uv run fpl rivals --case --seconds 45
-uv run fpl replay
-uv run fpl simulate
-uv run fpl export
-uv run fpl snapshot
-uv run fpl backup
 uv run fpl evaluate --prospective
+uv run fpl replay
+uv run fpl export
+uv run fpl backup
 ```
 
-Exports and backups live in `artifacts/runtime/`; raw data and account state live in `data/`. Both are ignored by Git. Optional hosted keys are loaded from a root `.env` or inherited environment, never from the browser. Only run `configure-providers --unbilled` for genuinely free, unbilled accounts. Capabilities expire after seven days, calls reserve local quotas before dispatch, and paid tools/grounding are disabled.
-
-The published repository contains source, contracts, the supplied research and measured aggregate validation artifacts. It does not contain provider keys, cookies or authenticated account exports.
+Only attest `--unbilled` for genuinely free, unbilled accounts. Capabilities expire after seven days; inference reserves local quotas and never escalates to paid features. Provider keys are automatically loaded from `.env` without overriding inherited variables. The numerical model does not rely on hosted AI.
 
 ## Verify
 
 ```sh
-uv run ruff check src tests
-uv run ruff format --check src tests
+uv run ruff check src scripts tests
+uv run ruff format --check src scripts tests
 uv run mypy src
 uv run pytest -q
 npm --prefix apps/web run build
 npm --prefix apps/web test
 ```
 
-For the live local user journeys, start the seeded application, run `npm --prefix apps/web exec playwright install chromium`, then `npm --prefix apps/web run test:e2e`. Desktop and mobile tests cover the recommendation, legal XI, all-market search, calendar, exports and account validation. CI runs the offline rules/oracle/API suite and frontend build/tests on Linux and Windows, and parses the Windows launcher. Browser journeys run against a seeded local server.
-
-See [operations](docs/operations.md), [methodology](docs/methodology.md) and [contracts](packages/contracts/openapi.json).
+Desktop/mobile Playwright journeys run against a seeded local server. CI runs offline backend/frontend checks on Linux and Windows, parses the PowerShell launch/update scripts, and starts the Windows server from a compressed packaged database. Runtime data and credentials are ignored by the public Git repository. See [operations](docs/operations.md), [methodology](docs/methodology.md) and [API contracts](packages/contracts/openapi.json).

@@ -1,5 +1,15 @@
 # Local operation and recovery
 
+## Updating a laptop installation
+
+Extract the new private package into a separate folder. Run `Update existing.cmd` and select the old folder containing `Start.cmd`. The updater stops only FPL servers whose interpreter is inside that folder, validates the application file manifest, creates a consistent account database/application backup, and copies application files while excluding `.env` and `data/`. It then starts the existing installation with `-RebuildModel`: current official data is refreshed, the four preceding archives are imported if absent, the learned-points model is trained/calibrated/evaluated, and a new forecast/plan is computed for the preserved account.
+
+The current account must still reflect actual submitted FPL actions. The updater cannot infer private transfers or acquisition prices. Model changes invalidate old forecasts/plans. A retired component forecast is never presented as execution-ready. Keep the `artifacts/runtime/before-update-*` backup until the new installation passes its checks.
+
+For a fresh installation use `Start.cmd`. The package contains `data/state.sqlite.gz`; the launcher restores it atomically **before** optional provider setup can create a database. The source checkout's readiness check tests actual data/forecast contents rather than the existence of an empty SQLite file. The prepared ZIP includes the built frontend; no Node installation is needed.
+
+`Configure keys.cmd` reopens secure key prompts. Per-provider HTTP/network failures are reported independently. A failed Groq key does not stop a valid Gemini provider or the numerical application. The original unremembered laptop error cannot be diagnosed precisely without its text; the setup path now has explicit nonfatal handling and credential-safe diagnostics.
+
 ## State and access
 
 The API binds to loopback only. Trusted host and origin checks reject cross-origin mutation and DNS-rebinding hosts. No credentials are sent to the browser. `FPL_DATA_DIR` selects the local data directory. Provider keys are optional environment variables; `.env.example` contains names only. Never commit account cookies, authenticated exports or a real `.env`.

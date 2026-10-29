@@ -16,7 +16,7 @@ export function ResearchControls({ data, busy, act }: Props) {
         <h3>Original sources, checked claims.</h3>
         <p>
           {selection
-            ? `${selection.model} selected from measured extraction tests; eligible free fallback available.`
+            ? `${selection.model} selected from measured extraction tests. Provider authentication status appears below.`
             : "Configure an eligible free provider to automate interpretation."}
         </p>
       </div>
@@ -28,6 +28,13 @@ export function ResearchControls({ data, busy, act }: Props) {
         <RefreshCw size={14} />
         Refresh research
       </button>
+      {data.provider_setup?.providers.map((p) => (
+        <p key={p.provider}>
+          {p.provider}: {p.status}
+          {p.http_status ? ` (HTTP ${p.http_status})` : ""}
+          {p.message ? ` · ${p.message}` : ""}
+        </p>
+      ))}
       {selection && (
         <small>
           Labelled extraction F1 {percent(selection.f1)} · source-status
@@ -438,6 +445,349 @@ export function ChipPanel({
           Freeze shadow decision
         </button>
       </div>
+    </section>
+  );
+}
+
+export function DecisionEvidence({ data, busy, act }: Props) {
+  const model = data.decision_model,
+    audit = data.decision_audit,
+    policy = data.decision_policy,
+    managers = data.manager_audit;
+  if (!model)
+    return (
+      <section className="panel">
+        <h3>Decision training required</h3>
+        <p>
+          Run chronological training before using the old simulator's
+          recommendations.
+        </p>
+      </section>
+    );
+  return (
+    <>
+      <section className="panel">
+        <div className="section-title">
+          <div>
+            <h3>The model that makes these decisions</h3>
+            <p>
+              The points model tested here supplies the forecast worlds and the
+              transfer planner.
+            </p>
+          </div>
+          <span className="pill green">
+            {model.promoted ? "Held-out gate passed" : "Gate failed"}
+          </span>
+        </div>
+        <div className="data-details">
+          <div>
+            <span>Historical seasons</span>
+            <b>{model.seasons.join(", ")}</b>
+          </div>
+          <div>
+            <span>Held-out player-fixtures</span>
+            <b>{model.candidate.n.toLocaleString()}</b>
+          </div>
+          <div>
+            <span>Points RMSE · lower is better</span>
+            <b>
+              {model.baseline.rmse.toFixed(3)} →{" "}
+              {model.candidate.rmse.toFixed(3)}
+            </b>
+          </div>
+          <div>
+            <span>Likely starters RMSE</span>
+            <b>
+              {model.regular_starters.baseline.rmse.toFixed(3)} →{" "}
+              {model.regular_starters.candidate.rmse.toFixed(3)}
+            </b>
+          </div>
+          <div>
+            <span>Production model fit</span>
+            <b>
+              {model.production_training_rows.toLocaleString()} earlier rows;{" "}
+              {model.production_calibration_rows.toLocaleString()} separate
+              calibration rows
+            </b>
+          </div>
+        </div>
+        <p>
+          Every test block uses earlier training and calibration deadlines.
+          Current-week outcomes and hindsight winners never enter its features.
+        </p>
+        {model.neural && (
+          <p>
+            Neural challenger RMSE {model.neural.metrics.rmse.toFixed(3)}. Its
+            paired difference interval [
+            {model.neural.paired_vs_gbm_95ci
+              .map((x) => x.toFixed(4))
+              .join(", ")}
+            ]{" "}
+            {model.neural.paired_vs_gbm_95ci[0] <= 0 &&
+            model.neural.paired_vs_gbm_95ci[1] >= 0
+              ? "includes zero; this run does not establish an advantage over the tree model."
+              : "must be reviewed together with decision returns before a production replacement."}
+          </p>
+        )}
+        <button
+          className="button secondary"
+          disabled={busy}
+          onClick={() => act("/train", {})}
+        >
+          Retrain and validate
+        </button>
+        <div className="form-row">
+          <button
+            className="button"
+            disabled={busy}
+            onClick={() => act("/decision-audit", {})}
+          >
+            Check captain and team choices
+          </button>
+          <button
+            className="button"
+            disabled={busy}
+            onClick={() => act("/policy-replay", {})}
+          >
+            Replay transfer policy
+          </button>
+          <button
+            className="button"
+            disabled={busy}
+            onClick={() => act("/uncertainty-audit", {})}
+          >
+            Check uncertainty
+          </button>
+          <button
+            className="button"
+            disabled={busy}
+            onClick={() => act("/managers/benchmark", {})}
+          >
+            Compare manager decisions
+          </button>
+        </div>
+      </section>
+      {audit && (
+        <section className="panel">
+          <h3>Choices, scored after the deadline</h3>
+          <div className="data-details">
+            <div>
+              <span>
+                Learned captain / price baseline / rolling-points baseline
+              </span>
+              <b>
+                {audit.captain_totals.learned_bonus} /{" "}
+                {audit.captain_totals.price_baseline_bonus} /{" "}
+                {audit.captain_totals.shrinkage_bonus} captain bonus points
+              </b>
+            </div>
+            <div>
+              <span>Single-week legal teams · same £100m budget</span>
+              <b>
+                {audit.team_totals.learned} learned /{" "}
+                {audit.team_totals.shrinkage} baseline
+              </b>
+            </div>
+            <div>
+              <span>Best with perfect hindsight</span>
+              <b>{audit.team_totals.oracle} · diagnostic upper bound</b>
+            </div>
+          </div>
+          <p>
+            The hindsight team knows who scored. Its gap includes unpredictable
+            match variance; the model is never trained to reproduce test-week
+            winners.
+          </p>
+          <button
+            className="button"
+            disabled={busy}
+            onClick={() => act("/decision-audit", {})}
+          >
+            Recheck decision quality
+          </button>
+        </section>
+      )}
+      {policy && (
+        <section className="panel">
+          <h3>Thirty weeks with a real transfer ledger</h3>
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Policy</th>
+                  <th>Observed net points</th>
+                  <th>Hit points</th>
+                  <th>Transfers</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(policy.policies).map(([name, p]) => (
+                  <tr key={name}>
+                    <td>{name}</td>
+                    <td>{p.realized_net_points}</td>
+                    <td>{p.hits}</td>
+                    <td>{p.transfers}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Same initial squad and bankroll. Earlier-fold predictions, actual
+            points, legal transfers and autosubs. Chips are excluded to isolate
+            forecast and transfer effects. Archive prices remain retrospective.
+          </p>
+        </section>
+      )}
+      {data.decision_uncertainty && (
+        <section className="panel">
+          <h3>Uncertainty checked on held-out outcomes</h3>
+          <p>
+            Likely starters:{" "}
+            {percent(data.decision_uncertainty.regular_starters.coverage80)} of
+            outcomes inside the central 80% interval;{" "}
+            {percent(data.decision_uncertainty.regular_starters.coverage90)}{" "}
+            inside the central 90% interval. Discrete points can make central
+            coverage conservative. Marginal calibration does not prove the rival
+            model's joint probabilities.
+          </p>
+        </section>
+      )}
+      {managers && (
+        <section className="panel">
+          <h3>Manager decisions as an independent comparator</h3>
+          <p>
+            {managers.retrieved} actual squads; {managers.prior_top10k_twice}{" "}
+            with at least two prior top-10,000 finishes. The sample was selected
+            by current rank, so it cannot stand in for all consistently strong
+            managers.
+          </p>
+          <p>
+            Same squad and chip, one released gameweek: model lineup difference{" "}
+            {managers.mean_same_squad_lineup_delta.toFixed(1)} points;
+            entry-resampling interval [
+            {managers.entry_bootstrap_interval_95
+              .map((x) => x.toFixed(2))
+              .join(", ")}
+            ]. This is a diagnostic, not a claim of manager superiority. Manager
+            choices are not treated as correct training labels.
+          </p>
+        </section>
+      )}
+    </>
+  );
+}
+
+export function CaptainEvidence({
+  data,
+  plan,
+}: {
+  data: Dashboard;
+  plan: Plan | null | undefined;
+}) {
+  const row = plan?.ledger[0];
+  if (!row || !data.forecast) return null;
+  const candidates = data.forecast.players
+    .filter(
+      (p) => p.event === row.event && row.playing_squad.includes(p.player_id),
+    )
+    .sort((a, b) => b.mean - a.mean)
+    .slice(0, 5);
+  if (!candidates.length) return null;
+  return (
+    <section className="panel">
+      <h3>Why this captain?</h3>
+      <p>
+        The highest projected return in the planned squad, with appearances and
+        captain fallback considered. Player reputation and ownership do not
+        force the choice.
+      </p>
+      <div className="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Candidate</th>
+              <th>Projected points</th>
+              <th>Chance of 60+ minutes</th>
+              <th>10–90% outcome</th>
+            </tr>
+          </thead>
+          <tbody>
+            {candidates.map((p) => (
+              <tr key={p.player_id}>
+                <td>
+                  {
+                    data.market?.players.find((v) => v.id === p.player_id)
+                      ?.web_name
+                  }
+                  {p.player_id === row.lineup.captain ? " · captain" : ""}
+                </td>
+                <td>{p.mean.toFixed(2)}</td>
+                <td>{percent(p.p_60)}</td>
+                <td>
+                  {p.point_quantiles[0].toFixed(1)}–
+                  {p.point_quantiles[2].toFixed(1)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p>
+        These are expectations with overlapping outcome ranges. A forecast
+        advantage does not guarantee a higher score this week.
+      </p>
+    </section>
+  );
+}
+
+export function HitEvidence({
+  data,
+  plan,
+  busy,
+  act,
+  explore,
+}: Props & { plan: Plan | null | undefined; explore: (id: string) => void }) {
+  if (!plan || !plan.ledger[0].hit) return null;
+  const comparison =
+    data.hit_comparison?.base_plan_id === plan.id ? data.hit_comparison : null;
+  return (
+    <section className="panel">
+      <h3>Is the immediate hit worth it?</h3>
+      <p>
+        This plan costs {plan.ledger[0].hit} points now. Compare it with a
+        full-horizon policy that takes no new hit this gameweek; chip timing and
+        future transfers can change.
+      </p>
+      {comparison && (
+        <>
+          <p>
+            Projected net points: {comparison.base_mean.toFixed(1)} with this
+            plan; {comparison.alternative_mean.toFixed(1)} with no immediate
+            hit. Difference {comparison.net_mean_advantage.toFixed(1)} points
+            after all hit costs.
+          </p>
+          <p>
+            Alternative immediate chip:{" "}
+            {comparison.alternative_immediate_chip || "none"}. Solver gap{" "}
+            {percent(comparison.alternative_gap)}. The model and solver
+            uncertainty are separate from simulation noise.
+          </p>
+          <button
+            className="button"
+            onClick={() => explore(comparison.alternative_plan_id)}
+          >
+            View no-hit alternative
+          </button>
+        </>
+      )}
+      <button
+        className="button secondary"
+        disabled={busy}
+        onClick={() => act("/compare-hits", {})}
+      >
+        Recheck hit tradeoff
+      </button>
     </section>
   );
 }

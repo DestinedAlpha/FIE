@@ -63,7 +63,7 @@ class MIP:
         self.row({v: 1, a: -1, b: -1}, lower=-1)
         return v
 
-    def solve(self, seconds, warm_start=None):
+    def solve(self, seconds, warm_start=None, relative_gap=0.01):
         count = len(self.costs)
         matrix = coo_matrix((self.values, (self.rows, self.cols)), shape=(len(self.row_lower), count)).tocsr()
         lp = highspy.HighsLp()
@@ -86,7 +86,7 @@ class MIP:
             solver.setOptionValue("output_flag", True)
             solver.setOptionValue("log_to_console", False)
         solver.setOptionValue("time_limit", seconds)
-        solver.setOptionValue("mip_rel_gap", 0.01)
+        solver.setOptionValue("mip_rel_gap", relative_gap)
         solver.setOptionValue("presolve", "on")
         solver.setOptionValue("random_seed", 11)
         solver.setOptionValue("threads", 2)
@@ -114,14 +114,24 @@ class MIP:
         }
 
 
-def select_squad(state, players, rules, means, seconds=1, initial_budget=1000):
+def select_squad(
+    state,
+    players,
+    rules,
+    means,
+    seconds=1,
+    initial_budget=1000,
+    diagnostics=None,
+    bench_weight=0.015,
+    relative_gap=0.01,
+):
     """Full-market one-week squad oracle used only to seed the multiweek solve."""
     owned = {lot.player_id: lot for lot in state.lots} if state is not None else {}
     ids = [p for p in players if players[p].selectable or p in owned]
     costs = {p: quote(owned[p], players[p].price) if p in owned else players[p].price for p in ids}
     budget = state.bank + sum(costs[p] for p in owned) if state is not None else initial_budget
     model = MIP()
-    y = {p: model.var(("y", p), cost=0.015 * means.get(p, 0)) for p in ids}
+    y = {p: model.var(("y", p), cost=bench_weight * means.get(p, 0)) for p in ids}
     x = {p: model.var(("x", p), cost=means.get(p, 0)) for p in ids}
     c = {p: model.var(("c", p), cost=means.get(p, 0)) for p in ids}
     model.equal([(y[p], 1) for p in ids], 15)
@@ -145,7 +155,9 @@ def select_squad(state, players, rules, means, seconds=1, initial_budget=1000):
             warm[y[p]] = 1
             warm[x[p]] = int(p in lineup.xi)
             warm[c[p]] = int(p == lineup.captain)
-    solution, _ = model.solve(seconds, warm)
+    solution, info = model.solve(seconds, warm, relative_gap=relative_gap)
+    if diagnostics is not None:
+        diagnostics.update(info)
     return [p for p in ids if solution[y[p]] > 0.5]
 
 
@@ -174,7 +186,10 @@ def greedy_bundle(state, players, rules, means, max_transfers=2):
                 if players[new].price > bank + proceeds:
                     continue
                 trial = current - {old} | {new}
-                if sum(players[p].team == players[new].team for p in trial) > 3:
+                if any(
+                    sum(players[p].team == club for p in trial) > rules.club_limit
+                    for club in {players[p].team for p in trial}
+                ):
                     continue
                 next_lineup = best_lineup(sorted(trial), means, players, rules)
                 value = sum(means.get(p, 0) for p in next_lineup.xi) + means.get(next_lineup.captain, 0)
@@ -200,17 +215,26 @@ def optimize(
     chips: Mapping[int, str] | None = None,
     max_transfers: int = 3,
     automatic_chips: bool = True,
-    forced_first: Action | None = None,
     pin_chips: Mapping[int, str] | None = None,
     forced_sell: dict[int, list[int]] | None = None,
     disabled_chips: tuple[str, ...] = (),
+    first_week_hit_budget: int | None = None,
 ) -> dict:
     started = time.monotonic()
+    if first_week_hit_budget is not None and first_week_hit_budget < 0:
+        raise ValueError("Immediate hit budget cannot be negative")
     if time_limit <= 0 or not 0 <= max_transfers <= 15:
         raise ValueError("Solve time must be positive and per-event transfers must be between 0 and 15")
     players, market = load_market(store)
     state = TeamState.model_validate({k: v for k, v in store.get("state", state_id).items() if k != "id"})
     forecast = store.get("forecast", forecast_id)
+    current_model = store.get("decision_model")
+    if (
+        not current_model.get("promoted")
+        or forecast.get("model_version") != "learned-points-v1"
+        or forecast.get("decision_model_id") != current_model["id"]
+    ):
+        raise ValueError("Forecast predates the validated current model; rebuild forecasts before solving")
     rules = Rules.from_bootstrap(store.latest("bootstrap")[0])
     validate_squad(state, players, rules)
     if forecast["market_id"] != market["id"] or forecast["rules_hash"] != rules.hash:
@@ -228,7 +252,7 @@ def optimize(
             t not in events or c not in ("wildcard", "freehit", "bboost", "3xc") for t, c in schedule.items()
         ):
             raise ValueError("Chip schedule is outside the plan horizon or contains an unknown chip")
-    means = {(r["event"], r["player_id"]): max(0, r["mean"]) for r in forecast["players"]}
+    means = {(r["event"], r["player_id"]): r["mean"] for r in forecast["players"]}
     lots = {lot.player_id: lot for lot in state.lots}
     old_ids = set(lots)
     sell_quotes = {p: quote(lot, players[p].price) for p, lot in lots.items()}
@@ -373,6 +397,8 @@ def optimize(
                         if preserve or (state.initial and t == state.event)
                         else max(0, n + prior_made - f) * rules.hit
                     ) - hit_paid
+                    if t == state.event and first_week_hit_budget is not None and hit > first_week_hit_budget:
+                        continue
                     v = mip.var(("arc", t, f, n, preserve), cost=-hit)
                     next_f = f if preserve else min(rules.ft_cap, max(0, f - n - prior_made) + 1)
                     allocation = rules.event_overrides.get(t + 1, {}).get("rules", {}).get("free_transfers")
@@ -391,10 +417,6 @@ def optimize(
     for chip in ("wildcard", "freehit", "bboost", "3xc"):
         for window in {(c["start_event"], c["stop_event"]) for c in rules.chips if c["name"] == chip}:
             mip.row([(chip_vars[t, chip], 1) for t in events if window[0] <= t <= window[1]], upper=1)
-    if forced_first:
-        for p in ids:
-            mip.equal({incoming[state.event, p]: 1}, int(p in forced_first.buy))
-            mip.equal({outgoing[state.event, p]: 1}, int(p in forced_first.sell))
     for event, sell_ids in (forced_sell or {}).items():
         for p in sell_ids:
             mip.equal({outgoing[event, p]: 1}, 1)
@@ -435,15 +457,11 @@ def optimize(
     for t in events:
         seed_chip = warm_chips.get(t)
         to_sell = (forced_sell or {}).get(t, [])
-        action = (
-            forced_first.model_copy(deep=True)
-            if forced_first and t == state.event
-            else Action(chip=cast(Chip | None, seed_chip))
-        )
+        action = Action(chip=cast(Chip | None, seed_chip))
         action.chip = cast(Chip | None, seed_chip)
         current_ids = {lot.player_id for lot in warm_state.lots}
         reserved = set(current_ids) - set(to_sell)
-        if not to_sell and not forced_first:
+        if not to_sell:
             if seed_chip in ("freehit", "wildcard"):
                 picked = select_squad(
                     warm_state, players, rules, {p: means.get((t, p), 0) for p in ids}, seconds=1
@@ -457,7 +475,18 @@ def optimize(
                     )
                     for p in ids
                 }
-                bundle = greedy_bundle(warm_state, players, rules, near, min(2, max_transfers))
+                warm_limit = min(2, max_transfers)
+                if t == state.event and first_week_hit_budget is not None and not state.initial:
+                    warm_limit = min(
+                        warm_limit,
+                        max(
+                            0,
+                            warm_state.free_transfers
+                            - warm_state.transfers_made
+                            + (first_week_hit_budget + warm_state.hit_paid) // rules.hit,
+                        ),
+                    )
+                bundle = greedy_bundle(warm_state, players, rules, near, warm_limit)
                 action.sell, action.buy = bundle.sell, bundle.buy
         if to_sell and not action.buy:
             allowance = warm_state.bank + sum(
@@ -582,11 +611,13 @@ def optimize(
         "ledger": ledger,
         "solver": diagnostics,
         "state_status": state.status,
-        "execution_ready": state.status == "confirmed",
+        "execution_ready": state.status == "confirmed"
+        and forecast.get("model_version") == "learned-points-v1",
         "rules_hash": rules.hash,
         "input_hashes": forecast["input_hashes"],
         "final_state": current.model_dump(),
         "objective": "expected_points",
+        "first_week_hit_budget": first_week_hit_budget,
         "validation": {"legal": True, "affordable": True, "independent_transition": True},
         "contingencies": [
             {

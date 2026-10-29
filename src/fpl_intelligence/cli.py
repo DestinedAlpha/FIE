@@ -115,12 +115,38 @@ def build_features():
 
 
 @app.command()
-def train():
-    """Run predeclared walk-forward baseline/challenger evaluation and fit a final challenger."""
-    from .evaluation import train_evaluate
+def train(legacy: bool = False, neural: bool = True):
+    """Train the actual decision forecaster; --legacy reproduces the old shadow benchmark."""
+    if legacy:
+        from .evaluation import train_evaluate
 
-    result = train_evaluate(Store())
-    show({k: v for k, v in result.items() if k != "predictions"})
+        result = train_evaluate(Store())
+    else:
+        from threadpoolctl import threadpool_limits
+
+        from .decision import train_decisions
+
+        with threadpool_limits(limits=1):
+            result = train_decisions(Store(), neural)
+    show({k: v for k, v in result.items() if k not in ("predictions", "residuals", "curves")})
+
+
+@app.command("uncertainty-audit")
+def uncertainty_audit():
+    from threadpoolctl import threadpool_limits
+
+    from .decision import validate_uncertainty
+
+    with threadpool_limits(limits=1):
+        show(validate_uncertainty(Store()))
+
+
+@app.command("manager-benchmark")
+def manager_benchmark():
+    from .manager_audit import benchmark_managers
+
+    result = asyncio.run(benchmark_managers(Store()))
+    show({k: v for k, v in result.items() if k not in ("comparisons", "errors")})
 
 
 @app.command("train-components")
@@ -153,11 +179,11 @@ def open_benchmark():
 
 
 @app.command("policy-replay")
-def policy_replay(season: str = "2025/26", start: int = 9, end: int = 38):
-    """Replay evolving squads against observed historical outcomes under four policies."""
-    from .policy_replay import continuous_replay
+def policy_replay():
+    """Replay the out-of-fold production model through a continuously evolving account."""
+    from .decision_audit import replay_policy
 
-    result = continuous_replay(Store(), season, start, end)
+    result = replay_policy(Store())
     show(
         {
             **result,
@@ -167,6 +193,15 @@ def policy_replay(season: str = "2025/26", start: int = 9, end: int = 38):
             },
         }
     )
+
+
+@app.command("decision-audit")
+def decision_audit():
+    """Compare held-out captains and budgeted teams with honest hindsight diagnostics."""
+    from .decision_audit import evaluate_choices
+
+    result = evaluate_choices(Store())
+    show({k: v for k, v in result.items() if k not in ("weeks", "captains")})
 
 
 @app.command("research-refresh")
@@ -180,70 +215,22 @@ def refresh_research(benchmark: bool = False):
 
 @app.command("configure-providers")
 def configure_providers(unbilled: bool = False):
-    """Verify authenticated model catalogs and configure only attested free text providers."""
-    import os
-    from datetime import datetime, timedelta, timezone
+    """Verify each optional free provider independently without printing credentials."""
+    from .providers import configure
 
-    import httpx
+    show(configure(Store(), unbilled))
 
-    from .research import FreeCapability
 
-    if not unbilled:
-        raise typer.BadParameter("Confirm free, unbilled accounts with --unbilled before enabling inference")
-    store = Store()
-    configured = []
-    for provider in ("gemini", "groq"):
-        key = os.getenv("GEMINI_API_KEY" if provider == "gemini" else "GROQ_API_KEY")
-        if not key:
-            continue
-        url = (
-            "https://generativelanguage.googleapis.com/v1beta/models"
-            if provider == "gemini"
-            else "https://api.groq.com/openai/v1/models"
-        )
-        headers = {"x-goog-api-key": key} if provider == "gemini" else {"Authorization": "Bearer " + key}
-        response = httpx.get(url, headers=headers, timeout=20)
-        if response.status_code != 200:
-            raise typer.BadParameter(
-                f"{provider} authentication failed (HTTP {response.status_code}); key value omitted"
-            )
-        payload = response.json()
-        catalog = {
-            m.get("id", m.get("name", "")).removeprefix("models/")
-            for m in payload.get("models", payload.get("data", []))
-        }
-        candidates = (
-            ("gemini-3.5-flash-lite", "gemini-3.8-flash")
-            if provider == "gemini"
-            else ("openai/gpt-oss-120b",)
-        )
-        for model in candidates:
-            if model not in catalog:
-                continue
-            capability = FreeCapability(
-                provider=provider,
-                model=model,
-                free_text_verified=True,
-                unbilled_account_attested=True,
-                terms_eligible=True,
-                verified_until=(datetime.now(timezone.utc) + timedelta(days=7)).isoformat(),
-                daily_calls=20,
-                daily_tokens=160000,
-                output_tokens=4000,
-            )
-            store.put("provider_capability", capability.model_dump())
-            configured.append({"provider": provider, "model": model})
-    if any(c["model"] == "gemini-3.5-flash-lite" for c in configured):
-        store.put(
-            "provider_selection",
-            {
-                "at": now(),
-                "provider": "gemini",
-                "model": "gemini-3.5-flash-lite",
-                "basis": "compatible free text model; request-boundary quota enforced",
-            },
-        )
-    show({"configured": configured, "paid_provider_calls_allowed": False})
+@app.command("train-decisions")
+def train_decisions(neural: bool = True):
+    """Train, calibrate and evaluate the points model that drives recommendations."""
+    from threadpoolctl import threadpool_limits
+
+    from .decision import train_decisions as run
+
+    with threadpool_limits(limits=1):
+        result = run(Store(), neural)
+    show({k: v for k, v in result.items() if k not in ("predictions", "residuals", "curves")})
 
 
 @app.command("scenario")
@@ -343,7 +330,7 @@ def calibrate():
 
 
 @app.command()
-def forecast(end: int = 38, worlds: int = 2000, seed: int = 11, beliefs: bool = False):
+def forecast(end: int = 38, worlds: int = 4000, seed: int = 11, beliefs: bool = False):
     """Freeze complete player-fixture distributions in coherent shared match worlds."""
     from .simulation import forecast as run
 

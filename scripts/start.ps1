@@ -1,4 +1,4 @@
-param([switch]$NoBrowser)
+param([switch]$NoBrowser, [switch]$ConfigureProviders, [switch]$RebuildModel)
 $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $ProjectRoot
@@ -17,7 +17,12 @@ if (-not $UvCommand) {
 & $UvPath sync --frozen
 if ($LASTEXITCODE -ne 0) { throw "Python dependencies could not be installed." }
 
-if (-not (Test-Path ".env")) {
+if ((Test-Path "data/state.sqlite.gz") -and -not (Test-Path "data/state.sqlite")) {
+    & $UvPath run python -c "import gzip,shutil; from pathlib import Path; p=Path('data/state.sqlite'); t=p.with_suffix('.restoring'); a=gzip.open('data/state.sqlite.gz','rb'); b=t.open('wb'); shutil.copyfileobj(a,b); a.close(); b.close(); t.replace(p)"
+    if ($LASTEXITCODE -ne 0) { throw "The packaged database could not be restored." }
+}
+
+if ($ConfigureProviders -or -not (Test-Path ".env")) {
     $Settings = New-Object System.Collections.Generic.List[string]
     foreach ($Provider in @("GEMINI", "GROQ")) {
         $SecureValue = Read-Host "$Provider API key (Enter skips hosted research)" -AsSecureString
@@ -37,7 +42,7 @@ if (-not (Test-Path ".env")) {
     $FreeAccounts = Read-Host "Are the entered keys for free, unbilled accounts? (Y/N)"
     if ($FreeAccounts -match "^[Yy]") {
         & $UvPath run fpl configure-providers --unbilled
-        if ($LASTEXITCODE -ne 0) { throw "Free provider verification failed; credentials were not printed." }
+        if ($LASTEXITCODE -ne 0) { Write-Warning "Hosted provider verification could not finish. Numerical forecasts remain available; run Configure keys.cmd to retry." }
     }
 }
 
@@ -51,8 +56,8 @@ if (-not (Test-Path "apps/web/dist/index.html")) {
     if ($LASTEXITCODE -ne 0) { throw "Frontend build failed." }
 }
 
-& $UvPath run python -c "from fpl_intelligence.storage import Store; s=Store(); raise SystemExit(0 if all(s.list(kind, 1) for kind in ('market', 'state', 'forecast', 'selected_plan')) else 1)"
-$NeedsInitialisation = $LASTEXITCODE -ne 0
+& $UvPath run python -c "from fpl_intelligence.storage import Store; s=Store(); raise SystemExit(0 if all(s.list(kind, 1) for kind in ('market', 'state', 'forecast', 'selected_plan')) and s.get('forecast').get('model_version') == 'learned-points-v1' else 1)"
+$NeedsInitialisation = ($LASTEXITCODE -ne 0) -or $RebuildModel
 if ($NeedsInitialisation) {
     & $UvPath run fpl ingest
     if ($LASTEXITCODE -ne 0) { throw "Official data ingestion failed." }
@@ -63,15 +68,9 @@ if ($NeedsInitialisation) {
         } else { & $UvPath run fpl reconcile-team }
         if ($LASTEXITCODE -ne 0) { throw "Account import needs current valid selling quotes." }
     }
-    & $UvPath run fpl import-history --season 2025-26
-    if ($LASTEXITCODE -ne 0) { throw "Historical import failed." }
-    & $UvPath run fpl build-features
-    if ($LASTEXITCODE -ne 0) { throw "Feature generation failed." }
     & $UvPath run fpl train
-    if ($LASTEXITCODE -ne 0) { throw "Forecast evaluation failed." }
-    & $UvPath run fpl train-components
-    if ($LASTEXITCODE -ne 0) { throw "Component calibration failed." }
-    & $UvPath run fpl forecast --end 38 --worlds 2000
+    if ($LASTEXITCODE -ne 0) { throw "Chronological decision training failed." }
+    & $UvPath run fpl forecast --end 38 --worlds 4000
     if ($LASTEXITCODE -ne 0) { throw "Forecast generation failed." }
     & $UvPath run fpl optimize --end 19 --seconds 60
     if ($LASTEXITCODE -ne 0) { throw "The initial planning pipeline failed; inspect the message above." }

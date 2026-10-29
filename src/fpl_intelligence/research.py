@@ -472,8 +472,15 @@ async def extract(store: Store, source: dict, cap: FreeCapability, entities: lis
 
 async def extract_with_fallback(store: Store, source: dict, entities: list[dict]) -> dict:
     capabilities = []
+    try:
+        setup = store.get("provider_setup")
+        blocked = {row["provider"] for row in setup["providers"] if row["status"] != "authenticated"}
+    except ValueError:
+        blocked = set()
     for item in store.list("provider_capability", 20):
         body = store.get("provider_capability", item["id"])
+        if body["provider"] in blocked:
+            continue
         capabilities.append(
             FreeCapability.model_validate({k: v for k, v in body.items() if k in FreeCapability.model_fields})
         )

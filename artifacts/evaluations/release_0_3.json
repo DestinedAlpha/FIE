@@ -1,0 +1,123 @@
+{
+  "at": "2026-10-29T14:06:54.620813+00:00",
+  "version": "0.3.0",
+  "production_model": "learned-points-v1",
+  "training_seasons": [
+    "2022/23",
+    "2023/24",
+    "2024/25",
+    "2025/26",
+    "2026/27"
+  ],
+  "held_out_rows": 34967,
+  "baseline": {
+    "n": 34967,
+    "rmse": 2.0786343891437786,
+    "mae": 1.2872937810641252,
+    "bias": 0.20688971271692705
+  },
+  "candidate": {
+    "n": 34967,
+    "rmse": 1.975220385488671,
+    "mae": 1.036404486856895,
+    "bias": 0.017001003614539795
+  },
+  "regular_starters": {
+    "baseline": {
+      "n": 8527,
+      "rmse": 3.1247042234782034,
+      "mae": 2.3564672043471453,
+      "bias": 0.019994735116377546
+    },
+    "candidate": {
+      "n": 8527,
+      "rmse": 3.0334831070908366,
+      "mae": 2.2745126763976584,
+      "bias": 0.07364805569381551
+    }
+  },
+  "neural": {
+    "metrics": {
+      "n": 34967,
+      "rmse": 1.9725722612705865,
+      "mae": 1.0341643342824325,
+      "bias": 0.014252676560853286
+    },
+    "paired_vs_gbm_95ci": [
+      -0.005641918722270772,
+      0.00011298252437268989
+    ],
+    "promotion": "An independently versioned production path is required before any neural replacement"
+  },
+  "captain_totals": {
+    "learned_bonus": 323,
+    "price_baseline_bonus": 274,
+    "shrinkage_bonus": 283,
+    "hindsight_best": 790,
+    "defender_captain_weeks": 1
+  },
+  "policy_totals": {
+    "transfer-learned": {
+      "realized_net_points": 1708,
+      "hits": 4,
+      "transfers": 31,
+      "final_bank": 5
+    },
+    "transfer-shrinkage": {
+      "realized_net_points": 1527,
+      "hits": 0,
+      "transfers": 12,
+      "final_bank": 2
+    },
+    "hold-learned": {
+      "realized_net_points": 1359,
+      "hits": 0,
+      "transfers": 0,
+      "final_bank": 0
+    },
+    "hold-shrinkage": {
+      "realized_net_points": 1352,
+      "hits": 0,
+      "transfers": 0,
+      "final_bank": 0
+    }
+  },
+  "uncertainty": {
+    "n": 8527,
+    "coverage80": 0.8788554004925531,
+    "coverage90": 0.9413627301512841,
+    "width80": 6.668417966459483,
+    "crps": 1.514433132801076,
+    "mean_sampling_bias": -0.0020333960098703886
+  },
+  "manager_sample": 50,
+  "prior_consistent_managers": 1,
+  "live_worlds": 4000,
+  "all_six_cases_independently_validated": true,
+  "immediate_hit_comparison": {
+    "at": "2026-10-29T13:58:05.313171+00:00",
+    "immediate_hit": 8,
+    "alternative_immediate_hit": 0,
+    "alternative_immediate_chip": "freehit",
+    "base_mean": 650.584,
+    "alternative_mean": 636.33975,
+    "net_mean_advantage": 14.24425,
+    "paired_mc_interval_95": [
+      13.38375149267006,
+      15.104748507329939
+    ],
+    "base_gap": 0.007222394012172976,
+    "alternative_gap": 0.04030040275795069,
+    "uncertainty": "Net of hits, same horizon and match worlds; model uncertainty and solver gaps are not inside this Monte Carlo interval"
+  },
+  "checks": {
+    "python_tests": 56,
+    "frontend_unit_tests": 2,
+    "desktop_mobile_journeys": 4,
+    "ruff": true,
+    "mypy": true
+  },
+  "future_rank_claim": false,
+  "bias_free_claim": false,
+  "credentials_published": false
+}

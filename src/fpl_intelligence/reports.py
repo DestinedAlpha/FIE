@@ -107,6 +107,25 @@ def render(store: Store, plan: dict) -> str:
         )
     lines += [
         "",
+        "## Captain comparison",
+        "",
+        "|Player|Expected points|P(60+)|10–90% points|",
+        "|---|---:|---:|---:|",
+    ]
+    for candidate in sorted(
+        (r for r in projections.values() if r["player_id"] in first["playing_squad"]),
+        key=lambda r: r["mean"],
+        reverse=True,
+    )[:5]:
+        lines.append(
+            f"|{name(candidate['player_id'])}|{candidate['mean']:.2f}|{candidate['p_60']:.0%}|{candidate['point_quantiles'][0]:.1f}–{candidate['point_quantiles'][2]:.1f}|"
+        )
+    lines += [
+        "",
+        f"Production forecast: `{forecast['model_version']}`. The tested points model supplies these SAME outcome worlds. Historical improvement does not guarantee future points.",
+    ]
+    lines += [
+        "",
         "## Execution audit",
         "",
         "```json",

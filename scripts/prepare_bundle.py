@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import gzip
 import json
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -31,7 +33,20 @@ def main():
     with tempfile.TemporaryDirectory() as temporary:
         backup = Path(temporary) / "state.sqlite"
         store.backup(backup)
+        application_files = sorted(
+            name
+            for name in files
+            if (root / name).is_file()
+            and not name.startswith(("data/", "artifacts/runtime/", ".github/"))
+            and not Path(name).name.startswith(".env")
+        )
+        application_files += [
+            path.relative_to(root).as_posix()
+            for path in (root / "apps/web/dist").rglob("*")
+            if path.is_file()
+        ]
         with ZipFile(output, "w", compression=ZIP_DEFLATED, compresslevel=3) as bundle:
+            bundle.writestr("FPL-Intelligence/app-files.json", json.dumps(application_files))
             for name in sorted(files):
                 path = root / name
                 if (
@@ -43,7 +58,10 @@ def main():
             for path in (root / "apps" / "web" / "dist").rglob("*"):
                 if path.is_file():
                     bundle.write(path, "FPL-Intelligence/" + path.relative_to(root).as_posix())
-            bundle.write(backup, "FPL-Intelligence/data/state.sqlite")
+            compressed = Path(temporary) / "state.sqlite.gz"
+            with backup.open("rb") as original, gzip.open(compressed, "wb", compresslevel=6) as packed:
+                shutil.copyfileobj(original, packed)
+            bundle.write(compressed, "FPL-Intelligence/data/state.sqlite.gz")
             for folder in ("raw", "scenarios", "models", "features", "normalized"):
                 for path in (store.root / folder).rglob("*"):
                     if path.is_file():
@@ -55,7 +73,10 @@ def main():
             assert "FPL-Intelligence/.env" not in verify.namelist()
             assert verify.testzip() is None
             for entry in verify.infolist():
-                if any(secret in verify.read(entry) for secret in secrets):
+                body = verify.read(entry)
+                if entry.filename.endswith(".gz"):
+                    body = gzip.decompress(body)
+                if any(secret in body for secret in secrets):
                     raise ValueError("Credential found in private handoff; publication blocked")
     print(json.dumps({"bundle": str(output), "bytes": output.stat().st_size, "contains_credentials": False}))
 

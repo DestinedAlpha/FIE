@@ -114,3 +114,4 @@ class OptimizeRequest(Strict):
     sacrifice_budget: float = Field(default=5, ge=0, le=100)
     chips: dict[int, Chip] = Field(default_factory=dict)
     max_transfers: int = Field(default=3, ge=0, le=15)
+    first_week_hit_budget: int | None = Field(default=None, ge=0, le=60)

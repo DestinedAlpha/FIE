@@ -25,6 +25,11 @@ def freeze(store: Store, plan_id: str) -> dict:
         raise ValueError("Cannot freeze a stale account or market plan")
     if forecast["id"] != store.get("forecast")["id"]:
         raise ValueError("Cannot freeze a superseded forecast")
+    if (
+        forecast.get("model_version") != "learned-points-v1"
+        or forecast.get("decision_model_id") != store.get("decision_model")["id"]
+    ):
+        raise ValueError("Cannot freeze a decision from a retired forecast model")
     result = {
         "frozen_at": now(),
         "event": event,
