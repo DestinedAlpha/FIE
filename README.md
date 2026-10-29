@@ -8,7 +8,7 @@ The six supplied documents remain byte-for-byte unchanged in [`research/`](resea
 
 For an existing installation, extract the new private download into a **separate folder** and run **Update existing.cmd**. Select the existing folder containing Start.cmd. The updater backs up the database/application, preserves your `.env` and account data, updates the application, retrains against current completed data and recomputes the plan. It does not apply any FPL account transfer.
 
-For a fresh installation, double-click **Start.cmd** in the extracted package. The prepared ZIP contains the built interface, numerical data and a compressed consistent database. The launcher restores it before provider setup and opens a healthy loopback server. uv installs Python dependencies automatically; the prepared package does not require Node.
+For a fresh installation, double-click **Start.cmd** in the extracted package. The prepared ZIP contains the built interface, numerical data and a compressed consistent database. The launcher restores it before provider setup and opens a healthy loopback server. uv installs Python dependencies, including CPU-only PyTorch for the neural-training controls, automatically; the prepared package does not require Node.
 
 **Configure keys.cmd** reruns secure provider prompts. Gemini and Groq authenticate independently. An invalid or unavailable optional provider is reported without stopping the numerical planner or disabling a working provider. Keys stay local and are excluded from source, downloads and reports.
 
@@ -32,13 +32,23 @@ Open http://127.0.0.1:8000. `reconcile-team` imports the **dated** research seed
 
 `fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. After new matches, refresh data and retrain/reforecast/replan. Account transfers are never assumed to have been submitted; reconcile actual squad changes separately.
 
+## What changed in 0.4
+
+Added a purpose-built temporal multi-source neural challenger, archived pre-deadline official news, verified prior-qualified manager inputs, current top-1,000 transfer-behavior analysis, all-competition workload, purged four-week values and legal random-account transfer learning. The Model & data and Rivals pages show completed comparisons and their actual source coverage.
+
+On the same 34,828 held-out player-fixtures, point RMSE improves from 1.9785 to 1.9095 for multi-source trees and 1.9195 for the neural network. The new transfer actor does not beat the reference in evolving-account replay, so the established transfer model remains active. A separate critic learns from 912 synthetic legal accounts; its later-test gain interval includes zero, and personalized alternatives stay labelled as research. Model size and a small score lead are not promotion evidence.
+
+The current-ranked cohort contains **1,000 actually retrieved managers and 8,000 released manager/gameweeks**. Their previous squads and transfers inform a conditional behavioral model and explicit rival branches. This is separate from the 100 managers qualified on prior-season results. Scout claims inform source-linked risk analysis; Reddit supplies leads to verifiable originals, without raw Reddit training or a blocked-access bypass.
+
+The optimizer reuses stronger validated feasible incumbents, and no-hit comparisons include already-known alternatives so a weak timeout result cannot exaggerate the benefit of hits. Provider reconfiguration and package updates preserve existing keys and account data. [Full methods, executed results and limits](docs/source-fusion.md).
+
 ## What changed in 0.3
 
 The former component simulator could produce repeated defender captaincies. Its points forecasts had not been tested by the separate direct-model benchmark. The production planner now consumes **the same learned-points model and outcome sampler that are evaluated**, with one shared feature transformation. Price, opponent strength, role, recent form and stable-code prior-season histories are inputs. Current/future outcomes and hindsight winner selections are excluded from historical feature cutoffs. Early 2022 fixtures whose starting indicators were all zero are treated as missing start labels.
 
 The former physics-style component simulator remains available only through explicit research-mode Python calls and cannot replace production forecasts or produce an execution-ready plan. The old benchmark artifacts are retained as earlier experiments, not current readiness evidence.
 
-## Executed evidence
+## Reference planner evidence (0.3 architecture)
 
 | Check | Result |
 |---|---|

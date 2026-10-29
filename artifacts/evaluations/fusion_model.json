@@ -1,0 +1,214 @@
+{
+  "at": "2026-10-29T16:03:37.327348+00:00",
+  "version": "fusion-v1",
+  "feature_id": "901a403b6c0fc8e14bad1214d331387a9b349df08061de3bb2a73eff540e7cf2",
+  "compared_decision_model_id": "39840e58f1e3096877578ce293cf817b00a6f88af5052644292eacdd51c8f65c",
+  "protocol": {
+    "test": "Expanding eight-deadline blocks from 2025/26, never shuffled",
+    "calibration": "Four immediately earlier deadlines excluded from fitting; neural early stopping and probability calibration share this earlier slice",
+    "neural": "Two-layer temporal transformer, hashed official news CNN, numerical/market/workload branches, two-layer masked source attention; minutes, conditional points, starters and component auxiliary heads",
+    "seed": 47,
+    "max_epochs": 20,
+    "promotion": "Upper deadline-bootstrap RMSE delta < 0 against existing production on identical rows; regular-starter improvement also required; tree and neural both disclosed",
+    "expert": "Only lagged choices from managers qualified on prior seasons; no current rank",
+    "social": "No raw Reddit training; specialist statements remain source evidence until prospectively validated",
+    "selection": "Choose one architecture by validation; no post-test optimized ensemble"
+  },
+  "folds": [
+    {
+      "test": [
+        "2025/26-GW01",
+        "2025/26-GW02",
+        "2025/26-GW03",
+        "2025/26-GW04",
+        "2025/26-GW05",
+        "2025/26-GW06",
+        "2025/26-GW07",
+        "2025/26-GW08"
+      ],
+      "train_rows": 79935,
+      "calibration_rows": 3123,
+      "test_rows": 5796,
+      "neural": {
+        "epochs": 5,
+        "selected_epoch": 1,
+        "calibration_rmse": 1.770456075668335,
+        "parameters": 324431
+      }
+    },
+    {
+      "test": [
+        "2025/26-GW09",
+        "2025/26-GW10",
+        "2025/26-GW11",
+        "2025/26-GW12",
+        "2025/26-GW13",
+        "2025/26-GW14",
+        "2025/26-GW15",
+        "2025/26-GW16"
+      ],
+      "train_rows": 85888,
+      "calibration_rows": 2966,
+      "test_rows": 6018,
+      "neural": {
+        "epochs": 6,
+        "selected_epoch": 2,
+        "calibration_rmse": 1.875018835067749,
+        "parameters": 324431
+      }
+    },
+    {
+      "test": [
+        "2025/26-GW17",
+        "2025/26-GW18",
+        "2025/26-GW19",
+        "2025/26-GW20",
+        "2025/26-GW21",
+        "2025/26-GW22",
+        "2025/26-GW23",
+        "2025/26-GW24"
+      ],
+      "train_rows": 91845,
+      "calibration_rows": 3027,
+      "test_rows": 6281,
+      "neural": {
+        "epochs": 8,
+        "selected_epoch": 4,
+        "calibration_rmse": 2.002936840057373,
+        "parameters": 324431
+      }
+    },
+    {
+      "test": [
+        "2025/26-GW25",
+        "2025/26-GW26",
+        "2025/26-GW27",
+        "2025/26-GW28",
+        "2025/26-GW29",
+        "2025/26-GW30",
+        "2025/26-GW31",
+        "2025/26-GW32"
+      ],
+      "train_rows": 97957,
+      "calibration_rows": 3196,
+      "test_rows": 6473,
+      "neural": {
+        "epochs": 13,
+        "selected_epoch": 9,
+        "calibration_rmse": 1.7734659910202026,
+        "parameters": 324431
+      }
+    },
+    {
+      "test": [
+        "2025/26-GW33",
+        "2025/26-GW34",
+        "2025/26-GW35",
+        "2025/26-GW36",
+        "2025/26-GW37",
+        "2025/26-GW38",
+        "2026/27-GW01",
+        "2026/27-GW02"
+      ],
+      "train_rows": 104501,
+      "calibration_rows": 3125,
+      "test_rows": 6291,
+      "neural": {
+        "epochs": 9,
+        "selected_epoch": 5,
+        "calibration_rmse": 1.8395215272903442,
+        "parameters": 324431
+      }
+    },
+    {
+      "test": [
+        "2026/27-GW03",
+        "2026/27-GW04",
+        "2026/27-GW05",
+        "2026/27-GW06",
+        "2026/27-GW07",
+        "2026/27-GW08"
+      ],
+      "train_rows": 111024,
+      "calibration_rows": 2893,
+      "test_rows": 3969,
+      "neural": {
+        "epochs": 12,
+        "selected_epoch": 8,
+        "calibration_rmse": 2.0182859897613525,
+        "parameters": 324431
+      }
+    }
+  ],
+  "baseline": {
+    "n": 34828,
+    "rmse": 1.9785422820887903,
+    "mae": 1.0382851963654562,
+    "bias": 0.015739509771645666
+  },
+  "regular_starter_baseline": {
+    "n": 8429,
+    "rmse": 3.04984518505546,
+    "mae": 2.293318057577913,
+    "bias": 0.06833202892147452
+  },
+  "candidates": {
+    "tree": {
+      "metrics": {
+        "n": 34828,
+        "rmse": 1.9095077788050185,
+        "mae": 0.9595305246191194,
+        "bias": 0.006461301497946039
+      },
+      "paired_vs_production_95ci": [
+        -0.08028542747282326,
+        -0.058479025566147085
+      ],
+      "regular_starters": {
+        "n": 8429,
+        "rmse": 2.9523045929957363,
+        "mae": 2.1553318014193414,
+        "bias": 0.05474406359973239
+      },
+      "passed": true
+    },
+    "network": {
+      "metrics": {
+        "n": 34828,
+        "rmse": 1.919499757566526,
+        "mae": 0.9661039460504258,
+        "bias": -0.0092942296809547
+      },
+      "paired_vs_production_95ci": [
+        -0.06849882169856328,
+        -0.050066993763627145
+      ],
+      "regular_starters": {
+        "n": 8429,
+        "rmse": 2.9615883393829368,
+        "mae": 2.1463232478660075,
+        "bias": -0.008086604275341405
+      },
+      "passed": true
+    }
+  },
+  "selected": "tree",
+  "promoted": false,
+  "source_coverage": {
+    "news": 1.0,
+    "expert_lag": 0.03889350728670071,
+    "workload": 0.15928100049495697
+  },
+  "limits": [
+    "Expert inputs cover current season only; no backfilled current-ranked expert cohort",
+    "Workload uses retrospective match facts with conservative completion cutoff, not archived publication times",
+    "Reddit leads and current specialist opinions have no validated numerical uplift",
+    "This is an architecture comparison, not proof of winning a league or absence of bias"
+  ],
+  "directory": "fusion-686c492f8d48fa476ed99143",
+  "production_fit_before": "2026/27-GW05",
+  "production_training_rows": 115225,
+  "production_calibration_rows": 2661,
+  "prediction_path": "data/models/fusion-686c492f8d48fa476ed99143/heldout.parquet",
+  "id": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d"
+}

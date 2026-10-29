@@ -97,8 +97,9 @@ def test_uncalibrated_legacy_forecast_requires_explicit_research_mode(tmp_path):
         forecast(Store(tmp_path))
 
 
+@pytest.mark.parametrize("fusion", [False, True])
 def test_live_means_components_and_optimizer_worlds_are_same_distribution(
-    tmp_path, market, rules, monkeypatch
+    tmp_path, market, rules, monkeypatch, fusion
 ):
     import fpl_intelligence.decision as module
 
@@ -115,6 +116,8 @@ def test_live_means_components_and_optimizer_worlds_are_same_distribution(
         "feature_id": "features",
         "seasons": ["2024/25", "2025/26"],
     }
+    if fusion:
+        spec["fusion_model_id"] = "verified-fusion"
     store.put("decision_model", spec)
     frozen = {
         "id": "market",
@@ -162,6 +165,24 @@ def test_live_means_components_and_optimizer_worlds_are_same_distribution(
         for p, player in market.items()
     ]
     monkeypatch.setattr(module, "future_inputs", lambda *a: (rows, []))
+    if fusion:
+
+        def fused_predictions(store, spec, supplied, market, players, scenario):
+            probability = np.tile([0, 0, 0, 1.0], (len(supplied), 1))
+            conditional = np.array(
+                [
+                    [
+                        0,
+                        1,
+                        7 if players[r["player_id"]].position == 4 else 3,
+                        7 if players[r["player_id"]].position == 4 else 3,
+                    ]
+                    for r in supplied
+                ]
+            )
+            return probability, conditional, np.ones(len(supplied))
+
+        monkeypatch.setattr("fpl_intelligence.fusion.production_predictions", fused_predictions)
     f = learned_forecast(store, start_event=9, end_event=9, worlds=500)
     with np.load(store.artifact_path(f["scenario_path"]), allow_pickle=False) as worlds:
         points = worlds["points_9"]
@@ -285,6 +306,21 @@ def test_no_immediate_hit_budget_is_enforced_by_solver_and_ledger(
     assert len(result["ledger"][0]["buy"]) == 1
     assert result["validation"]["legal"] and result["validation"]["affordable"]
 
+    from fpl_intelligence.domain import Action
+
+    monkeypatch.setattr(optimizer, "greedy_bundle", lambda *args, **kwargs: Action())
+    replayed = optimizer.optimize(
+        store, state_id, forecast_id, 9, 3, chips={}, automatic_chips=False, first_week_hit_budget=0
+    )
+    assert replayed["solver"]["reused_incumbent_plan_id"] == result["id"]
+    assert replayed["solver"]["selected_warm_objective"] > replayed["solver"]["initial_warm_objective"]
+    unrestricted = optimizer.optimize(store, state_id, forecast_id, 9, 3, chips={}, automatic_chips=False)
+    assert unrestricted["ledger"][0]["hit"] > 0
+    strict = optimizer.optimize(
+        store, state_id, forecast_id, 9, 3, chips={}, automatic_chips=False, first_week_hit_budget=0
+    )
+    assert strict["ledger"][0]["hit"] == 0
+    assert strict["solver"]["reused_incumbent_plan_id"] != unrestricted["id"]
     store.put("decision_model", {"promoted": True, "retrained": True})
     with pytest.raises(ValueError, match="current model"):
         optimizer.optimize(store, state_id, forecast_id, 9, 3, chips={}, automatic_chips=False)

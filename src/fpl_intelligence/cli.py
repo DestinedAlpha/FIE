@@ -126,8 +126,17 @@ def train(legacy: bool = False, neural: bool = True):
 
         from .decision import train_decisions
 
+        store = Store()
+        active = store.get("decision_model") if store.list("decision_model", 1) else {}
         with threadpool_limits(limits=1):
-            result = train_decisions(Store(), neural)
+            if active.get("fusion_model_id"):
+                from .context_archive import import_context
+                from .fusion import refit_active_fusion
+
+                asyncio.run(import_context(store))
+                result = refit_active_fusion(store)
+            else:
+                result = train_decisions(store, neural)
     show({k: v for k, v in result.items() if k not in ("predictions", "residuals", "curves")})
 
 
@@ -219,6 +228,35 @@ def configure_providers(unbilled: bool = False):
     from .providers import configure
 
     show(configure(Store(), unbilled))
+
+
+@app.command("sources-refresh")
+def sources_refresh():
+    """Refresh verified prior-qualified managers, workload facts and public source leads."""
+    from .intelligence import refresh_sources
+
+    show(asyncio.run(refresh_sources(Store())))
+
+
+@app.command("train-fusion")
+def train_fusion(epochs: int = 20):
+    """Evaluate the multi-source temporal neural model against the same-input tree model."""
+    from .context_archive import import_context
+    from .fusion import compare_live, review_fusion
+    from .fusion import train_fusion as run
+
+    if not 1 <= epochs <= 100:
+        raise typer.BadParameter("Epoch budget must be 1–100")
+    try:
+        __import__("torch")
+    except ImportError:
+        raise typer.BadParameter("Install CPU neural dependencies: uv sync --extra neural") from None
+    store = Store()
+    asyncio.run(import_context(store))
+    result = run(store, epochs)
+    review_fusion(store)
+    compare_live(store)
+    show({k: v for k, v in result.items() if k not in ("tree_spec", "network_spec")})
 
 
 @app.command("train-decisions")
@@ -563,3 +601,41 @@ def serve(host: str = "127.0.0.1", port: int = 8000):
     if host not in ("127.0.0.1", "::1", "localhost"):
         raise typer.BadParameter("Personal API binds to loopback only")
     uvicorn.run(create_app(), host=host, port=port)
+
+
+@app.command("managers-refresh")
+def manager_refresh():
+    """Retrieve all 1,000 current leaders and learn disclosed conditional transfer behavior."""
+    from .manager_behavior import collect_top_managers, train_behavior
+
+    store = Store()
+    asyncio.run(collect_top_managers(store))
+    result = train_behavior(store)
+    show(
+        {
+            k: v
+            for k, v in result.items()
+            if k not in ("predictions", "models", "ownership", "recent_purchases", "recent_sales")
+        }
+    )
+
+
+@app.command("train-transfer-value")
+def transfer_value(states: int = 24):
+    """Train purged four-week values and test legal random-account transfer decisions."""
+    from .horizon import train_horizon
+    from .policy_learning import train_policy
+
+    if not 8 <= states <= 128:
+        raise typer.BadParameter("Counterfactual states per deadline must be 8–128")
+    store = Store()
+    train_horizon(store)
+    show(train_policy(store, states))
+
+
+@app.command("analyze-transfers")
+def analyze_transfers():
+    """Rank legal personal transfer alternatives without replacing the selected plan."""
+    from .policy_learning import personalized_analysis
+
+    show(personalized_analysis(Store()))

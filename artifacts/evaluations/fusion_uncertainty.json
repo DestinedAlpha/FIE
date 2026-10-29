@@ -1,0 +1,27 @@
+{
+  "at": "2026-10-29T18:43:27.811990+00:00",
+  "fusion_model_id": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d",
+  "selected": "tree",
+  "worlds_per_row": 512,
+  "all": {
+    "n": 34828,
+    "coverage80": 0.9362581830710922,
+    "coverage90": 0.9664924773171012,
+    "crps": 0.6393238705965522,
+    "mean_sampling_bias": -0.0003016786729202009
+  },
+  "regular_starters": {
+    "n": 8429,
+    "coverage80": 0.8727013880650136,
+    "coverage90": 0.9368845651916005,
+    "crps": 1.4411479688819326,
+    "mean_sampling_bias": -0.001160685159229371
+  },
+  "track": "Exact production sampler; each test fold uses strictly earlier calibration residuals",
+  "limits": [
+    "Marginal intervals do not establish joint rival probability accuracy",
+    "Discrete coverage may be conservative"
+  ],
+  "passed": true,
+  "id": "fb52e31e75f84d4954206da5fcf1a43991730f3c346d658ced70425a5a1530a4"
+}

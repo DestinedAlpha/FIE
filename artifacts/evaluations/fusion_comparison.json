@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-29T17:59:17.926812+00:00",
+  "fusion_model_id": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d",
+  "decision_model_id": "39840e58f1e3096877578ce293cf817b00a6f88af5052644292eacdd51c8f65c",
+  "event": 9,
+  "source_sensitivity": {
+    "tree": {
+      "news": {
+        "mean_absolute_prediction_change": 1.2483165695032754,
+        "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
+      },
+      "market": {
+        "mean_absolute_prediction_change": 0.3031264802666519,
+        "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
+      },
+      "workload": {
+        "mean_absolute_prediction_change": 0.009615871840453647,
+        "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
+      }
+    },
+    "network": {
+      "news": {
+        "mean_absolute_prediction_change": 0.17608880363220136,
+        "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
+      },
+      "market": {
+        "mean_absolute_prediction_change": 0.15424612512059452,
+        "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
+      },
+      "workload": {
+        "mean_absolute_prediction_change": 0.06353055069464217,
+        "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
+      }
+    }
+  },
+  "decision": "Candidate predictions do not overwrite the production forecast before promotion",
+  "id": "458dbca112cb1c3bd02799dd8b1f80d5074ee661a8397acd6ac6cfd3db929434"
+}

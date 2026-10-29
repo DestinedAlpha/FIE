@@ -11,7 +11,7 @@ import numpy as np
 
 from .domain import Action, ChipUse, Lot, TeamState
 from .ingestion import Official, load_market
-from .optimization import hold_plan, optimize
+from .optimization import greedy_bundle, hold_plan, optimize
 from .rules import Rules, best_lineup, transition
 from .simulation import score_plan
 from .storage import Store, now
@@ -37,6 +37,12 @@ async def discover(store: Store, league_id: int, own_entry: int) -> dict:
         for member in members:
             identity = member["entry"]
             await asyncio.gather(
+                adapter.fetch(client, f"entry/{identity}/transfers/", f"transfers_{identity}"),
+                adapter.fetch(
+                    client,
+                    f"entry/{identity}/event/{max(1, current - 1)}/picks/",
+                    f"picks_{identity}_{max(1, current - 1)}",
+                ),
                 adapter.fetch(
                     client, f"entry/{identity}/event/{current}/picks/", f"picks_{identity}_{current}"
                 ),
@@ -89,11 +95,15 @@ def rival_policy(
     released = league["released_event"]
     picks, _ = store.latest(f"picks_{member['entry']}_{released}")
     history, _ = store.latest(f"entry_history_{member['entry']}")
+    if any(c["name"] == "freehit" and c["event"] == released for c in history["chips"]):
+        picks, _ = store.latest(f"picks_{member['entry']}_{released - 1}")
     ft = 1
     for row in history["current"]:
         gw = row["event"]
         chips = [c for c in history["chips"] if c["event"] == gw]
-        if not any(c["name"] in ("wildcard", "freehit") for c in chips):
+        if gw == 1:
+            ft = 1
+        elif not any(c["name"] in ("wildcard", "freehit") for c in chips):
             ft = min(rules.ft_cap, max(0, ft - row["event_transfers"]) + 1)
     state = TeamState(
         season=forecast["season"],
@@ -125,7 +135,13 @@ def rival_policy(
     for event in range(forecast["start_event"], end_event + 1):
         owned = [lot.player_id for lot in state.lots]
         chosen = Action()
-        if style != "hold" and state.free_transfers:
+        if style.startswith("behavior"):
+            maximum = int(style[-1]) if event == forecast["start_event"] else 1
+            chosen = greedy_bundle(
+                state, players, rules, {p: means.get((event, p), 0) for p in players}, maximum
+            )
+            owned = [p for p in owned if p not in chosen.sell] + chosen.buy
+        elif style != "hold" and state.free_transfers:
             base = best_lineup(owned, {p: means.get((event, p), 0) for p in players}, players, rules)
             base_value = sum(means[event, p] for p in base.xi) + means[event, base.captain]
             candidates = sorted(
@@ -194,6 +210,25 @@ def compare(
         for style in ("hold", "greedy"):
             policy = rival_policy(store, member, league, forecast, end_event, style)
             rival_worlds[member["entry"], style] = member["points"] + score_plan(store, policy, forecast)
+    behavior = None
+    try:
+        from .manager_behavior import rival_count_probabilities
+
+        behavior = store.get("manager_behavior")
+        if behavior["event"] != forecast["start_event"]:
+            behavior = None
+        else:
+            weights = {
+                member["entry"]: rival_count_probabilities(store, member["entry"]) for member in rivals
+            }
+            for member in rivals:
+                for count in range(4):
+                    policy = rival_policy(store, member, league, forecast, end_event, "behavior" + str(count))
+                    rival_worlds[member["entry"], "behavior" + str(count)] = member["points"] + score_plan(
+                        store, policy, forecast
+                    )
+    except ValueError:
+        behavior = None
     rows = []
     for plan in plans:
         outcomes = own_points + score_plan(store, plan, forecast)
@@ -213,6 +248,14 @@ def compare(
                 }
             )
             ties.append(float(tie.mean()))
+        behavior_probability = None
+        if behavior:
+            behavior_probability = 0.0
+            for ca, cb in product(range(4), repeat=2):
+                a = rival_worlds[rivals[0]["entry"], "behavior" + str(ca)]
+                b = rival_worlds[rivals[1]["entry"], "behavior" + str(cb)]
+                weight = weights[rivals[0]["entry"]][ca] * weights[rivals[1]["entry"]][cb]
+                behavior_probability += weight * float(((outcomes > a) & (outcomes > b)).mean())
         rows.append(
             {
                 "plan_id": plan["id"],
@@ -220,6 +263,7 @@ def compare(
                 "expected_net_points": plan["simulation"]["mean"],
                 "policies": probabilities,
                 "robust_joint_win": min(p["joint_strict_win"] for p in probabilities),
+                "behavior_conditioned_joint_win": behavior_probability,
             }
         )
     best_ev = max(row["expected_net_points"] for row in rows)
@@ -236,6 +280,14 @@ def compare(
         "optimization_scope": "Robust joint probability among generated feasible policies, not a global probability optimum",
         "ties": "Reported separately; strict-win probability excludes ties. Exact final rank needs final transfer tie-breaks.",
         "shared_worlds": True,
+        "manager_behavior_id": behavior["id"] if behavior else None,
+        "behavior_assumptions": [
+            "A top-1,000 conditional behavioral prior weights the first decision; calibration on these mini-league rivals is unproven and later actions follow an explicit greedy scenario",
+            "Count 3+ is represented by at most three greedy transfers; future rival chips are not forecast",
+            "Conditional independence of rival action types is an approximation; hold/greedy sensitivities remain visible",
+        ]
+        if behavior
+        else [],
         "worlds": forecast["worlds"],
     }
     result["id"] = store.put("rival_comparison", result)

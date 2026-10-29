@@ -1,0 +1,71 @@
+{
+  "at": "2026-10-29T17:59:03.716733+00:00",
+  "fusion_model_id": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d",
+  "captain_totals": {
+    "baseline": 323.0,
+    "tree": 368.0,
+    "network": 276.0
+  },
+  "captain_deadlines": 46,
+  "policies": {
+    "tree": {
+      "transfer-learned": {
+        "realized_net_points": 1609,
+        "hits": 12,
+        "transfers": 33,
+        "final_bank": 14
+      },
+      "transfer-shrinkage": {
+        "realized_net_points": 1735,
+        "hits": 12,
+        "transfers": 33,
+        "final_bank": 7
+      },
+      "hold-learned": {
+        "realized_net_points": 1601,
+        "hits": 0,
+        "transfers": 0,
+        "final_bank": 9
+      },
+      "hold-shrinkage": {
+        "realized_net_points": 1591,
+        "hits": 0,
+        "transfers": 0,
+        "final_bank": 9
+      }
+    },
+    "network": {
+      "transfer-learned": {
+        "realized_net_points": 1623,
+        "hits": 12,
+        "transfers": 33,
+        "final_bank": 1
+      },
+      "transfer-shrinkage": {
+        "realized_net_points": 1735,
+        "hits": 12,
+        "transfers": 33,
+        "final_bank": 7
+      },
+      "hold-learned": {
+        "realized_net_points": 1601,
+        "hits": 0,
+        "transfers": 0,
+        "final_bank": 9
+      },
+      "hold-shrinkage": {
+        "realized_net_points": 1591,
+        "hits": 0,
+        "transfers": 0,
+        "final_bank": 9
+      }
+    }
+  },
+  "limits": [
+    "Prior production and candidates share pre-deadline registry prices and the same initial account in each paired replay",
+    "No chips in this policy test",
+    "No prospective season-rank claim"
+  ],
+  "promotable": false,
+  "id": "bf823e5851f3ff130e69047e848174d0af99f4c52611bed31be3e77b474e8754"
+}

@@ -1,0 +1,164 @@
+{
+  "at": "2026-10-29T18:13:45.381362+00:00",
+  "horizon": 4,
+  "feature_id": "901a403b6c0fc8e14bad1214d331387a9b349df08061de3bb2a73eff540e7cf2",
+  "fusion_model_id": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d",
+  "parameters": {
+    "n_estimators": 240,
+    "num_leaves": 20,
+    "learning_rate": 0.035,
+    "min_child_samples": 100,
+    "reg_lambda": 20,
+    "random_state": 73,
+    "n_jobs": 1,
+    "verbosity": -1
+  },
+  "protocol": "Expanding eight-deadline test blocks; training and calibration target windows end strictly before the next partition starts; no random split",
+  "folds": [
+    {
+      "test": [
+        "2025/26-GW01",
+        "2025/26-GW02",
+        "2025/26-GW03",
+        "2025/26-GW04",
+        "2025/26-GW05",
+        "2025/26-GW06",
+        "2025/26-GW07",
+        "2025/26-GW08"
+      ],
+      "train_rows": 66022,
+      "calibration_rows": 2958,
+      "purged_training_label_end_before": "2024/25-GW32",
+      "calibration_label_end_before": "2025/26-GW01"
+    },
+    {
+      "test": [
+        "2025/26-GW09",
+        "2025/26-GW10",
+        "2025/26-GW11",
+        "2025/26-GW12",
+        "2025/26-GW13",
+        "2025/26-GW14",
+        "2025/26-GW15",
+        "2025/26-GW16"
+      ],
+      "train_rows": 71143,
+      "calibration_rows": 2885,
+      "purged_training_label_end_before": "2025/26-GW02",
+      "calibration_label_end_before": "2025/26-GW09"
+    },
+    {
+      "test": [
+        "2025/26-GW17",
+        "2025/26-GW18",
+        "2025/26-GW19",
+        "2025/26-GW20",
+        "2025/26-GW21",
+        "2025/26-GW22",
+        "2025/26-GW23",
+        "2025/26-GW24"
+      ],
+      "train_rows": 75454,
+      "calibration_rows": 3001,
+      "purged_training_label_end_before": "2025/26-GW10",
+      "calibration_label_end_before": "2025/26-GW17"
+    },
+    {
+      "test": [
+        "2025/26-GW25",
+        "2025/26-GW26",
+        "2025/26-GW27",
+        "2025/26-GW28",
+        "2025/26-GW29",
+        "2025/26-GW30",
+        "2025/26-GW31",
+        "2025/26-GW32"
+      ],
+      "train_rows": 81440,
+      "calibration_rows": 3115,
+      "purged_training_label_end_before": "2025/26-GW18",
+      "calibration_label_end_before": "2025/26-GW25"
+    },
+    {
+      "test": [
+        "2025/26-GW33",
+        "2025/26-GW34",
+        "2025/26-GW35",
+        "2026/27-GW01",
+        "2026/27-GW02",
+        "2026/27-GW03",
+        "2026/27-GW04",
+        "2026/27-GW05"
+      ],
+      "train_rows": 87628,
+      "calibration_rows": 3271,
+      "purged_training_label_end_before": "2025/26-GW26",
+      "calibration_label_end_before": "2025/26-GW33"
+    }
+  ],
+  "baseline": {
+    "n": 29908,
+    "rmse": 5.081505684102699,
+    "mae": 3.0254315149250783,
+    "bias": 0.1331268235146505
+  },
+  "candidates": {
+    "context": {
+      "metrics": {
+        "n": 29908,
+        "rmse": 4.746419027060905,
+        "mae": 2.8526750758731074,
+        "bias": -0.009084004398550182
+      },
+      "paired_vs_nextweek_repeated_95ci": [
+        -0.4372821666461011,
+        -0.2407525690766169
+      ]
+    },
+    "advanced": {
+      "metrics": {
+        "n": 29908,
+        "rmse": 4.741761427429673,
+        "mae": 2.8542767345294267,
+        "bias": -0.021214264194535738
+      },
+      "paired_vs_nextweek_repeated_95ci": [
+        -0.4452033315042584,
+        -0.24051609702934934
+      ]
+    }
+  },
+  "advanced_vs_context_95ci": [
+    -0.014979652460258341,
+    0.0035973792220156385
+  ],
+  "selected": "context",
+  "advanced_fields": [
+    "influence",
+    "creativity",
+    "threat",
+    "ict_index",
+    "expected_goal_involvements",
+    "expected_goals_conceded",
+    "penalties_saved",
+    "penalties_missed",
+    "defensive_contribution",
+    "goals_conceded"
+  ],
+  "limits": [
+    "Four-week labels are realized outcomes, never inference features",
+    "Only weeks with complete four-week outcomes are scored; current season evaluates starting GW1\u2013GW5",
+    "Historical archive/fixture registration limitations remain; this is statistical replay",
+    "Defensive-contribution expectation uses a declared current-profile prior, not invented historic action labels",
+    "Repeating a one-week reference is a horizon baseline, not a claim to reproduce the full multiweek optimizer"
+  ],
+  "directory": "horizon-68edd8f4521245bf09ad",
+  "offset": -0.20752644214480406,
+  "prediction_path": "data/models/horizon-68edd8f4521245bf09ad/heldout.parquet",
+  "model_hash": "1d8a4969b82949718a88937e3aac9be05e7f097284d791671aa96f1448d79a25",
+  "production_fit_label_end_before": "2026/27-GW02",
+  "production_training_rows": 97869,
+  "production_calibration_rows": 2583,
+  "uncertainty": "Circular moving-block bootstrap, length four deadlines, matching overlapping target horizon",
+  "id": "4013b58ab324478d8405673612a62c1913f3ea5feed814436c1b08629516e618"
+}

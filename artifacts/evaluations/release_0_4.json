@@ -1,0 +1,79 @@
+{
+  "version": "0.4.0",
+  "verified_at": "2026-10-29T19:47:26.826123+00:00",
+  "production_decision_model_id": "39840e58f1e3096877578ce293cf817b00a6f88af5052644292eacdd51c8f65c",
+  "fusion_model_id": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d",
+  "fusion_review": {
+    "at": "2026-10-29T17:59:03.745429+00:00",
+    "fusion_model_id": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d",
+    "forecast_selected": "tree",
+    "decisions_id": "bf823e5851f3ff130e69047e848174d0af99f4c52611bed31be3e77b474e8754",
+    "promoted": false,
+    "reason": "Forecast or matched captain/policy gate failed; previous production retained",
+    "id": "b619cdf2993271e26047a172bedf084cfccdd8515d0194f901fdc83c51b73c14"
+  },
+  "manager_behavior_id": "55262d47e657bc9e849f7f3c4938f2eb112a4fdf3bdcdd544c86f6a0f46cf60a",
+  "manager_behavior_metrics": {
+    "rows": 2000,
+    "events": [
+      7,
+      8
+    ],
+    "model_log_loss": 1.1435032233364433,
+    "frequency_log_loss": 1.3549758356059176,
+    "model_accuracy": 0.431,
+    "frequency_accuracy": 0.354,
+    "basic_log_loss": 1.1535420747841545,
+    "rich_log_loss": 1.14214805423599
+  },
+  "manager_history": {
+    "managers": 1000,
+    "manager_gameweeks": 8000,
+    "qualified_prior_cohort": 100
+  },
+  "horizon_model_id": "4013b58ab324478d8405673612a62c1913f3ea5feed814436c1b08629516e618",
+  "transfer_policy_model_id": "555782378dc7002a419e667985cd0293f6e82a782c0eaad4acbdb5984f2884d0",
+  "transfer_learning": {
+    "legal_synthetic_accounts": 912,
+    "heldout_accounts": 288,
+    "mean_gain": 6.243055555555555,
+    "block_interval_95": [
+      -0.32291666666666674,
+      13.440972222222223
+    ],
+    "promoted": false
+  },
+  "current_season_usage": "GW1\u2013GW8 all used; separate earlier fitting and later calibration/testing roles; four-week labels only when fully observed",
+  "selected_plan_id": "735952cdccd87579c5df617452b6aee57f39b0afdfb15998898122c99d8db22c",
+  "selected_plan_scope": "Robust joint probability among generated feasible policies, not a global probability optimum",
+  "legal_gameweeks_replayed": 11,
+  "solver_gap": 0.00394309030832043,
+  "immediate_hit": 8,
+  "hit_vs_best_known_nohit": {
+    "difference": 0.5325,
+    "paired_mc_interval_95": [
+      -0.2709900399124806,
+      1.3359900399124807
+    ]
+  },
+  "checks": {
+    "backend_tests": 79,
+    "frontend_tests": 2,
+    "browser_journeys": 6,
+    "browser_devices": [
+      "desktop",
+      "mobile"
+    ],
+    "ruff": "passed",
+    "mypy": "passed",
+    "frontend_build": "passed",
+    "account_state_unchanged": true
+  },
+  "limits": [
+    "Complete transfer-policy gates rejected both new one-week forecasters despite better point RMSE; reference remains active",
+    "Random-account critic confidence interval includes zero; it is research analysis, not the deployed actor",
+    "Reddit is discovery only; unavailable feeds and paywalled material are not invented",
+    "Rival behavior and joint win probabilities remain conditional scenario estimates",
+    "Finite solver gaps and forecast uncertainty prevent a guarantee of globally optimal outcomes"
+  ]
+}

@@ -157,8 +157,16 @@ def evaluate_choices(store: Store, seconds=1.0):
     return report
 
 
-def replay_policy(store: Store, season="2025/26", start=9, end=38):
-    spec = store.get("decision_model")
+def replay_policy(
+    store: Store,
+    season="2025/26",
+    start=9,
+    end=38,
+    spec=None,
+    artifact_kind="decision_policy",
+    reference_transfers=False,
+):
+    spec = spec or store.get("decision_model")
     groups = defaultdict(list)
     for row in spec["predictions"]:
         if row["season"] == season:
@@ -221,8 +229,11 @@ def replay_policy(store: Store, season="2025/26", start=9, end=38):
             counts = Counter(known[lot.player_id].team for lot in state.lots)
             state.grandfathered_clubs = [club for club, count in counts.items() if count > 3]
             forecast = means["learned" if name.endswith("learned") else "shrinkage"]
+            transfer_target = means["shrinkage"] if reference_transfers else forecast
             action = (
-                greedy_bundle(state, known, rules, forecast, 2) if name.startswith("transfer") else Action()
+                greedy_bundle(state, known, rules, transfer_target, 2)
+                if name.startswith("transfer")
+                else Action()
             )
             squad = sorted({lot.player_id for lot in state.lots} - set(action.sell) | set(action.buy))
             action.lineup = best_lineup(squad, forecast, known, rules)
@@ -256,9 +267,9 @@ def replay_policy(store: Store, season="2025/26", start=9, end=38):
             "No guarantee of rank or future returns",
         ],
     }
-    report["id"] = store.put("decision_policy", report)
+    report["id"] = store.put(artifact_kind, report)
     atomic_json(
-        Path("artifacts/evaluations/decision_policy.json"),
+        Path("artifacts/evaluations/" + artifact_kind + ".json"),
         {
             **report,
             "policies": {

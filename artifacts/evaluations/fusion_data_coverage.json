@@ -1,0 +1,125 @@
+{
+  "at": "2026-10-29T15:15:42.819073+00:00",
+  "version": "fusion-inputs-v1",
+  "rows": 117886,
+  "excluded_not_registered_before_deadline": 594,
+  "numerical_features": [
+    "position",
+    "home",
+    "p_start",
+    "p_cameo",
+    "start_minutes",
+    "goals90",
+    "assists90",
+    "actions90",
+    "saves90",
+    "yellow90",
+    "points_mean",
+    "exposure",
+    "rest_days",
+    "price_lag",
+    "goals_actual90",
+    "assists_actual90",
+    "bonus90",
+    "last3_minutes",
+    "last5_points",
+    "long_probability",
+    "team_attack",
+    "team_defence",
+    "opponent_attack",
+    "opponent_defence",
+    "season_week",
+    "history_missing"
+  ],
+  "sequence_length": 12,
+  "sequence_fields": [
+    [
+      "minutes",
+      90
+    ],
+    [
+      "starts",
+      1
+    ],
+    [
+      "expected_goals",
+      1
+    ],
+    [
+      "expected_assists",
+      1
+    ],
+    [
+      "goals_scored",
+      1
+    ],
+    [
+      "assists",
+      1
+    ],
+    [
+      "total_points",
+      10
+    ],
+    [
+      "saves",
+      5
+    ],
+    [
+      "clearances_blocks_interceptions",
+      15
+    ],
+    [
+      "tackles",
+      8
+    ],
+    [
+      "recoveries",
+      15
+    ],
+    [
+      "bps",
+      40
+    ],
+    [
+      "bonus",
+      3
+    ],
+    [
+      "yellow_cards",
+      1
+    ],
+    [
+      "red_cards",
+      1
+    ],
+    [
+      "goals_conceded",
+      4
+    ]
+  ],
+  "token_buckets": 4096,
+  "text_length": 40,
+  "sources": {
+    "news_deadlines": 160,
+    "verified_prior_managers": 100,
+    "manager_gameweeks": 800
+  },
+  "inputs_path": "data/features/fusion-56fd15f9e53226d36c2184e8.npz",
+  "metadata_path": "data/features/fusion-f0cb5a834e02c28f165add84.parquet",
+  "hash": "56fd15f9e53226d36c2184e85c4b9c74e3987c034b46be82381a748d8584de3a",
+  "coverage": {
+    "news": 1.0,
+    "expert_lag": 0.03889350728670071,
+    "workload": 0.15928100049495697
+  },
+  "rules": "Archived news has pre-deadline capture proof; expert choices lag one deadline; workload uses retrospective match facts and a four-hour completion cutoff, not original publication proof",
+  "missing_policy": "Explicit masks; unavailable workload and expert history are never treated as observed zero",
+  "metadata_hash": "f0cb5a834e02c28f165add84d82fd4263318c68fefab095a0e72c2ee24c0d720",
+  "lineage": {
+    "context_archive": "97862e1553a8a57571fa42243aa064ec957cfddb200234bfdf5034e4bc3b1ca6",
+    "elite_cohort": "2d6b5a84aae61a22406d6c3f6303c2dd5611405267b837188292110f08f860d4",
+    "workload": "7c6c7de49ae3dbd07cbfd5a815f0bd0e09236945957606ee6a30ff405451fcc3"
+  },
+  "id": "901a403b6c0fc8e14bad1214d331387a9b349df08061de3bb2a73eff540e7cf2"
+}

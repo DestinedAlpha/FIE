@@ -1,0 +1,65 @@
+{
+  "at": "2026-10-29T19:45:41.468248+00:00",
+  "reviewed": [
+    {
+      "claim_id": "25b937ae476a9ac759a3f520d9c464b8ed107cb6105bb9d3c8d44f9e33e50e2a",
+      "status": "retained"
+    },
+    {
+      "claim_id": "59cd6bf7ecf75b9047a0bf6208eb2873007b45b5be7481dd09ef2ea6c1e416c9",
+      "status": "retained"
+    },
+    {
+      "claim_id": "8f0bfc6788ff1e8507bbefcd9eb4eed69bb37a43a7a43c2021ac47b7153acef9",
+      "status": "retained"
+    },
+    {
+      "claim_id": "f150aef6bb4b129f5be96fabd1c6a3466480d6fd168aac9b0d699e059a9be140",
+      "status": "retained"
+    },
+    {
+      "claim_id": "4721cd552435d7732980e6733524a9f21a62535a0ad49ea35b51a863f04de397",
+      "status": "source_corrected",
+      "replacement": "8f0bfc6788ff1e8507bbefcd9eb4eed69bb37a43a7a43c2021ac47b7153acef9"
+    },
+    {
+      "claim_id": "edc8ee5c5966f056665000f2ad1b284b2d991de911d469ed4f65fda65779663d",
+      "status": "source_corrected",
+      "replacement": "59cd6bf7ecf75b9047a0bf6208eb2873007b45b5be7481dd09ef2ea6c1e416c9"
+    },
+    {
+      "claim_id": "cbb4e6157dc24666d94189570b4f9913005548a8f21463ebe162a1e6597e7886",
+      "status": "quarantined",
+      "reason": "Claim quote must unambiguously identify exactly its supplied player"
+    },
+    {
+      "claim_id": "e15da6129ab5350475093fba2394023da118d0274854e9575176192f7a07d078",
+      "status": "source_corrected",
+      "replacement": "25b937ae476a9ac759a3f520d9c464b8ed107cb6105bb9d3c8d44f9e33e50e2a"
+    },
+    {
+      "claim_id": "e9c21de199c831d714dabcc1e4551aba3403fcc6da837ae4253d7391c906980f",
+      "status": "quarantined",
+      "reason": "Claim quote must unambiguously identify exactly its supplied player"
+    },
+    {
+      "claim_id": "93d858b57403df779bf149926dae3e2e9ea565a568d99d6c3a6b5d0bcc5c1651",
+      "status": "quarantined",
+      "reason": "Claim quote must unambiguously identify exactly its supplied player"
+    },
+    {
+      "claim_id": "4a02c0a943de42bd4dfc1f052d4ee6e2f2a07d8c0fce8186c9b0727c8b33b8d2",
+      "status": "source_corrected",
+      "replacement": "59cd6bf7ecf75b9047a0bf6208eb2873007b45b5be7481dd09ef2ea6c1e416c9"
+    },
+    {
+      "claim_id": "88bc07f897914c81fe90a1d73920f865a2d8b124706726f7c914dcad4b3b47ea",
+      "status": "source_corrected",
+      "replacement": "8f0bfc6788ff1e8507bbefcd9eb4eed69bb37a43a7a43c2021ac47b7153acef9"
+    }
+  ],
+  "active_claims": 4,
+  "rule": "A source quote must resolve exactly the supplied player; ambiguous pronouns and cross-player spans are rejected",
+  "id": "5c6caa737ff01732ec90fd27a7f733375394628a52cfbc960a4530f2a33d8ad7",
+  "active_claims_after_review": 4
+}

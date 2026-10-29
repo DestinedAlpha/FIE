@@ -34,6 +34,9 @@ import {
 import "./style.css";
 import {
   ResearchControls,
+  SourceCoverage,
+  ManagerSignals,
+  TransferLearning,
   ModelEvidence,
   DecisionEvidence,
   CaptainEvidence,
@@ -1214,6 +1217,7 @@ function App() {
               )}
               {tab === "Rivals" && (
                 <>
+                  <ManagerSignals data={data} busy={busy} act={action} />
                   <CohortPanel data={data} busy={busy} act={action} />
                   <div className="rival-controls">
                     <button
@@ -1272,6 +1276,7 @@ function App() {
                                 <th>Policy</th>
                                 <th>Net xPts</th>
                                 <th>Robust joint win</th>
+                                <th>Learned-count scenario</th>
                                 <th>Explore</th>
                               </tr>
                             </thead>
@@ -1291,6 +1296,13 @@ function App() {
                                       />
                                       <b>{percent(r.robust_joint_win)}</b>
                                     </div>
+                                  </td>
+                                  <td>
+                                    {r.behavior_conditioned_joint_win == null
+                                      ? "—"
+                                      : percent(
+                                          r.behavior_conditioned_joint_win,
+                                        )}
                                   </td>
                                   <td>
                                     <button
@@ -1316,6 +1328,9 @@ function App() {
                           {data.rivals.optimization_scope}. {data.rivals.ties}{" "}
                           Rival hold and greedy-transfer assumptions do not
                           reveal their private future moves.
+                          {data.rivals.behavior_assumptions?.map((note) => (
+                            <p key={note}>{note}</p>
+                          ))}
                         </div>
                       </>
                     ) : (
@@ -1332,6 +1347,7 @@ function App() {
               {tab === "Research" && (
                 <>
                   <ResearchControls data={data} busy={busy} act={action} />
+                  <SourceCoverage data={data} busy={busy} act={action} />
                   <section className="panel">
                     <div className="section-title">
                       <div>
@@ -1483,6 +1499,9 @@ function App() {
               {tab === "Model & data" && (
                 <>
                   <DecisionEvidence data={data} busy={busy} act={action} />
+                  <TransferLearning data={data} busy={busy} act={action} />
+                  <ManagerSignals data={data} busy={busy} act={action} />
+                  <SourceCoverage data={data} busy={busy} act={action} />
                   <details className="panel">
                     <summary>
                       Earlier model experiments and open-model reproduction

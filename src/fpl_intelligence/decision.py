@@ -675,7 +675,7 @@ def sample_point_outcomes(
     outcomes = np.zeros(count)
     for k in range(1, 4):
         mask = band == k
-        pool = np.asarray(residual_pools[f"{position}:{k}"])
+        pool = np.asarray(residual_pools[f"{int(position)}:{k}"])
         levels = np.linspace(0, 1, len(pool))
         pool = pool - np.trapezoid(pool, levels)
         outcomes[mask] = conditional[k] + np.interp(residual_uniform[mask], levels, pool)
@@ -707,11 +707,18 @@ def learned_forecast(
     rows, scheduled = future_inputs(store, market, players, start, end_event, scenario, beliefs)
     if not rows:
         raise ValueError("No scheduled fixtures in forecast horizon")
-    bundle = load_bundle(store, spec)
-    matrix = np.asarray([r["x"] for r in rows])
-    _, probabilities, conditional = predict_models(bundle, matrix, [r["dc_probability"] for r in rows])
-    raw_start = bundle["starter"].predict(matrix, num_threads=1)
-    starts = curve_apply(raw_start, spec["curves"]["start"])
+    if spec.get("fusion_model_id"):
+        from .fusion import production_predictions
+
+        probabilities, conditional, starts = production_predictions(
+            store, spec, rows, market, players, scenario
+        )
+    else:
+        bundle = load_bundle(store, spec)
+        matrix = np.asarray([r["x"] for r in rows])
+        _, probabilities, conditional = predict_models(bundle, matrix, [r["dc_probability"] for r in rows])
+        raw_start = bundle["starter"].predict(matrix, num_threads=1)
+        starts = curve_apply(raw_start, spec["curves"]["start"])
     ids = sorted(players)
     index = {p: i for i, p in enumerate(ids)}
     arrays: dict[str, Any] = {}

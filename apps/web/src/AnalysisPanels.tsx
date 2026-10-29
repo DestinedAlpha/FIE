@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Activity, FlaskConical, RefreshCw, ShieldCheck } from "lucide-react";
-import { Dashboard, Plan, percent } from "./types";
+import { Dashboard, Plan, money, percent } from "./types";
 
 type Props = {
   data: Dashboard;
@@ -515,7 +515,7 @@ export function DecisionEvidence({ data, busy, act }: Props) {
           Every test block uses earlier training and calibration deadlines.
           Current-week outcomes and hindsight winners never enter its features.
         </p>
-        {model.neural && (
+        {model.neural && !data.fusion_model && (
           <p>
             Neural challenger RMSE {model.neural.metrics.rmse.toFixed(3)}. Its
             paired difference interval [
@@ -770,9 +770,18 @@ export function HitEvidence({
           <p>
             Alternative immediate chip:{" "}
             {comparison.alternative_immediate_chip || "none"}. Solver gap{" "}
-            {percent(comparison.alternative_gap)}. The model and solver
-            uncertainty are separate from simulation noise.
+            {comparison.alternative_gap == null
+              ? "not available"
+              : percent(comparison.alternative_gap)}
+            . The model and solver uncertainty are separate from simulation
+            noise.
           </p>
+          {comparison.paired_mc_interval_95[0] <= 0 && (
+            <p>
+              The paired simulation does not establish a clear advantage for
+              taking the hit. Forecast and solver uncertainty are additional.
+            </p>
+          )}
           <button
             className="button"
             onClick={() => explore(comparison.alternative_plan_id)}
@@ -788,6 +797,402 @@ export function HitEvidence({
       >
         Recheck hit tradeoff
       </button>
+    </section>
+  );
+}
+
+export function SourceCoverage({ data, busy, act }: Props) {
+  const c = data.source_coverage;
+  const f = data.fusion_model;
+  return (
+    <section className="panel">
+      <div className="section-title">
+        <div>
+          <h3>Sources and neural validation</h3>
+          <p>
+            Retrieved evidence, numerical influence and missing history are
+            shown separately.
+          </p>
+        </div>
+        <button
+          className="button secondary"
+          disabled={busy}
+          onClick={() => act("/intelligence/refresh", {})}
+        >
+          Refresh sources
+        </button>
+      </div>
+      <div className="data-details">
+        <div>
+          <span>Archived official news</span>
+          <b>
+            {c?.context_archive?.retrieved_deadlines ?? 0} verified deadlines
+          </b>
+        </div>
+        <div>
+          <span>Prior-qualified managers</span>
+          <b>
+            {c?.elite_cohort?.retrieved_managers ?? 0} managers ·{" "}
+            {c?.elite_cohort?.retrieved_manager_gameweeks ?? 0} released
+            gameweeks
+          </b>
+        </div>
+        <div>
+          <span>Other competitions</span>
+          <b>
+            {c?.workload?.accepted_player_matches ?? 0} player matches ·{" "}
+            {c?.workload?.rejected_player_matches ?? 0} rejected records
+          </b>
+        </div>
+        <div>
+          <span>Public specialist evidence</span>
+          <b>
+            {c?.intelligence_refresh?.claims ?? 0} supported claims in latest
+            refresh
+          </b>
+        </div>
+      </div>
+      <p>
+        Manager choices lag one gameweek. Reddit posts supply leads to original
+        evidence; raw Reddit text does not train the model. Unvalidated opinions
+        receive no points uplift.
+      </p>
+      {c?.intelligence_refresh?.source_health?.map((source) => (
+        <p key={source.source}>
+          <b>{source.source}</b>: {source.status}
+          {source.retrieved !== undefined ? ` · ${source.retrieved} items` : ""}
+          {source.reason ? ` · ${source.reason}` : ""}
+        </p>
+      ))}
+      {f ? (
+        <>
+          <p>
+            <b>Purpose-built temporal fusion network</b>: match-history
+            attention, official-news branch, manager/market and workload
+            branches, masked source attention, and minutes/points/component
+            training heads. {f.folds[0]?.neural.parameters.toLocaleString()}{" "}
+            trainable parameters.
+          </p>
+          <p>
+            {f.baseline.n.toLocaleString()} matched held-out observations.
+            Reference model RMSE {f.baseline.rmse.toFixed(3)}.
+          </p>
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Candidate</th>
+                  <th>RMSE ↓</th>
+                  <th>Difference vs production · 95% interval</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(f.candidates).map(([key, row]) => (
+                  <tr key={key}>
+                    <td>
+                      {key === "network"
+                        ? "Temporal neural fusion"
+                        : "Same-source boosted trees"}
+                    </td>
+                    <td>{row.metrics.rmse.toFixed(3)}</td>
+                    <td>
+                      {row.paired_vs_production_95ci
+                        .map((v) => v.toFixed(4))
+                        .join(" to ")}
+                    </td>
+                    <td>
+                      {row.passed
+                        ? "Forecast gate passed"
+                        : "Production retained"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p>
+            {f.promoted
+              ? `Active multi-source model: ${f.selected}.`
+              : "These candidates have not replaced the validated production model."}
+          </p>
+          {f.review?.reason && <p>{f.review.reason}</p>}
+          {f.decision_validation && (
+            <div className="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Matched strategy</th>
+                    <th>30-week net points</th>
+                    <th>Captain bonus points</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(f.decision_validation.policies).map(
+                    ([kind, policy]) => (
+                      <tr key={kind}>
+                        <td>
+                          {kind === "network"
+                            ? "Neural fusion"
+                            : "Same-source trees"}
+                        </td>
+                        <td>
+                          {policy["transfer-learned"].realized_net_points} vs{" "}
+                          {policy["transfer-shrinkage"].realized_net_points}{" "}
+                          reference
+                        </td>
+                        <td>
+                          {f.decision_validation?.captain_totals[kind]} vs{" "}
+                          {f.decision_validation?.captain_totals.baseline}{" "}
+                          reference
+                        </td>
+                      </tr>
+                    ),
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+          {f.uncertainty && (
+            <p>
+              Held-out likely-starter interval coverage:{" "}
+              {percent(f.uncertainty.regular_starters.coverage80)} inside the
+              central 80% interval;{" "}
+              {percent(f.uncertainty.regular_starters.coverage90)} inside the
+              central 90% interval.
+            </p>
+          )}
+          <details>
+            <summary>Coverage and validation limits</summary>
+            {f.limits.map((limit) => (
+              <p key={limit}>{limit}</p>
+            ))}
+          </details>
+        </>
+      ) : (
+        <p>
+          The multi-source model has not completed its chronological evaluation
+          yet.
+        </p>
+      )}
+      {data.fusion_comparison && (
+        <details>
+          <summary>GW{data.fusion_comparison.event} model comparison</summary>
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Production xPts</th>
+                  <th>Tree candidate</th>
+                  <th>Neural candidate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.fusion_comparison.players.slice(0, 15).map((row) => (
+                  <tr key={row.player_id}>
+                    <td>{row.name}</td>
+                    <td>{row.production.toFixed(2)}</td>
+                    <td>{row.tree.toFixed(2)}</td>
+                    <td>{row.network.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      )}
+    </section>
+  );
+}
+
+export function ManagerSignals({ data, busy, act }: Props) {
+  const model = data.manager_behavior,
+    coverage = data.source_coverage?.top_manager_history;
+  const name = (id: number) =>
+    data.market?.players.find((p) => p.id === id)?.web_name || String(id);
+  return (
+    <section className="panel">
+      <div className="section-title">
+        <div>
+          <h3>Top-1,000 manager behavior</h3>
+          <p>
+            {coverage?.retrieved_managers ?? 0} actual managers ·{" "}
+            {coverage?.retrieved_manager_gameweeks ?? 0} released
+            manager/gameweeks. Current rank is distinct from prior-season
+            expertise.
+          </p>
+        </div>
+        <button
+          className="button secondary"
+          disabled={busy}
+          onClick={() => act("/managers/refresh", {})}
+        >
+          Refresh histories
+        </button>
+      </div>
+      {model ? (
+        <>
+          <p>
+            Conditional GW{model.event} transfer-count forecast. Earlier weeks
+            choose the model mixture; GW{model.metrics.events.join("–")} tests:
+            log loss {model.metrics.frequency_log_loss.toFixed(3)} →{" "}
+            {model.metrics.model_log_loss.toFixed(3)}.
+          </p>
+          <div className="data-details">
+            {model.classes.map((label, i) => (
+              <div key={label}>
+                <span>{label.replaceAll("_", " ")}</span>
+                <b>{percent(model.aggregate_probabilities[i])}</b>
+              </div>
+            ))}
+          </div>
+          <p>
+            Team exposure and past purchase/sale patterns carry{" "}
+            {percent(model.rich_weight)} of the calibrated mixture. These are
+            conditional scenarios, not knowledge of hidden transfers.
+          </p>
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Recently bought</th>
+                  <th>Observed purchases</th>
+                  <th>Recently sold</th>
+                  <th>Observed sales</th>
+                </tr>
+              </thead>
+              <tbody>
+                {model.recent_purchases.slice(0, 6).map((row, i) => (
+                  <tr key={row.player_id}>
+                    <td>{name(row.player_id)}</td>
+                    <td>{row.managers}</td>
+                    <td>
+                      {model.recent_sales[i]
+                        ? name(model.recent_sales[i].player_id)
+                        : "—"}
+                    </td>
+                    <td>{model.recent_sales[i]?.managers ?? "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <details>
+            <summary>Sampling and forecast limits</summary>
+            {model.limits.map((limit) => (
+              <p key={limit}>{limit}</p>
+            ))}
+          </details>
+        </>
+      ) : (
+        <p>Refresh released histories to fit a disclosed behavioral prior.</p>
+      )}
+    </section>
+  );
+}
+
+export function TransferLearning({ data, busy, act }: Props) {
+  const horizon = data.horizon_model,
+    policy = data.transfer_policy_model,
+    personal = data.personalized_policy_analysis;
+  return (
+    <section className="panel">
+      <div className="section-title">
+        <div>
+          <h3>Learning transfer value across four weeks</h3>
+          <p>
+            Legal random accounts, observed outcomes, purged target windows and
+            separate later tests.
+          </p>
+        </div>
+        <button
+          className="button secondary"
+          disabled={busy || !policy}
+          onClick={() => act("/policy/analyze", {})}
+        >
+          Analyze my alternatives
+        </button>
+      </div>
+      {horizon && (
+        <p>
+          Four-week point RMSE: {horizon.baseline.rmse.toFixed(3)} reference →{" "}
+          {horizon.candidates[horizon.selected].metrics.rmse.toFixed(3)} direct
+          value model. Extra advanced-statistics difference interval:{" "}
+          {horizon.advanced_vs_context_95ci
+            .map((v) => v.toFixed(4))
+            .join(" to ")}
+          .
+        </p>
+      )}
+      {policy && (
+        <p>
+          {policy.test_decisions} held-out account decisions;{" "}
+          {policy.invalid_actions} invalid actions. Average four-week gain{" "}
+          {policy.mean_heldout_gain.toFixed(2)} points; 95% block interval{" "}
+          {policy.four_deadline_block_gain_95ci
+            .map((v) => v.toFixed(2))
+            .join(" to ")}
+          .{" "}
+          {policy.promoted
+            ? "Confidence gate passed."
+            : "The interval includes zero; the transfer critic remains a challenger."}
+        </p>
+      )}
+      {personal && (
+        <>
+          <p>
+            GW{personal.event}: {personal.status}. These alternatives do not
+            replace the selected plan.
+          </p>
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Candidate</th>
+                  <th>Estimated four-week gain</th>
+                  <th>Hit</th>
+                  <th>Bank</th>
+                </tr>
+              </thead>
+              <tbody>
+                {personal.candidates.map((row, i) => (
+                  <tr key={i}>
+                    <td>
+                      {row.transfers.length
+                        ? row.transfers
+                            .map((t) => `${t.out} → ${t.in}`)
+                            .join("; ")
+                        : "Roll"}
+                    </td>
+                    <td>{row.estimated_fourweek_gain.toFixed(2)}</td>
+                    <td>{row.hit}</td>
+                    <td>
+                      {money(row.bank)}
+                      {row.confirmed_absence_lineup_sensitivity !== undefined &&
+                        row.confirmed_absence_lineup_sensitivity < -0.05 && (
+                          <small>
+                            {" "}
+                            · confirmed-absence lineup stress{" "}
+                            {row.confirmed_absence_lineup_sensitivity.toFixed(
+                              1,
+                            )}{" "}
+                            pts
+                          </small>
+                        )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The historical interval is about average tested gains; it is not a
+            confidence interval for an individual transfer. The main planner
+            evaluates full chip policies separately.
+          </p>
+        </>
+      )}
     </section>
   );
 }

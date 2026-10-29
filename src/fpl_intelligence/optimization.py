@@ -454,6 +454,52 @@ def optimize(
                 warm_chips[max(allowed_events, key=lambda t: max(means.get((t, p), 0) for p in old_ids))] = (
                     kind
                 )
+
+    def fill_warm(vector, t, before, action, after, row, survivors):
+        warm = vector
+        warm_state = before
+        next_warm = after
+        surviving_original = survivors
+        seed_chip = action.chip
+        playing = row["playing_squad"]
+        permanent = {lot.player_id for lot in next_warm.lots}
+        ordinary_buy = [] if seed_chip == "freehit" else action.buy
+        ordinary_sell = [] if seed_chip == "freehit" else action.sell
+        sold_old = surviving_original & set(ordinary_sell)
+        surviving_original -= sold_old
+        for p in ids:
+            for kind, on in [
+                ("squad", p in permanent),
+                ("playing_squad", p in playing),
+                ("xi", p in action.lineup.xi),
+                ("captain", p == action.lineup.captain),
+                ("buy", p in ordinary_buy),
+                ("sell", p in ordinary_sell),
+                ("bb_squad", seed_chip == "bboost" and p in playing and p not in action.lineup.xi),
+                ("bb_xi", False),
+                ("tc", seed_chip == "3xc" and p == action.lineup.captain),
+            ]:
+                warm[mip.keys[kind, t, p]] = int(on)
+            if p in old_ids:
+                warm[original[t, p]] = int(p in surviving_original)
+                warm[sold_original[t, p]] = int(p in sold_old)
+                retained_key = ("fh_retained", t, p)
+                if retained_key in mip.keys:
+                    warm[mip.keys[retained_key]] = int(p in (surviving_original | sold_old) and p in playing)
+        warm[bank[t]] = next_warm.bank
+        warm[ft_next[t]] = next_warm.free_transfers
+        if seed_chip:
+            warm[chip_vars[t, seed_chip]] = 1
+        arc_key = (
+            "arc",
+            t,
+            warm_state.free_transfers,
+            len(ordinary_buy),
+            seed_chip in ("wildcard", "freehit"),
+        )
+        if arc_key in mip.keys:
+            warm[mip.keys[arc_key]] = 1
+
     for t in events:
         seed_chip = warm_chips.get(t)
         to_sell = (forced_sell or {}).get(t, [])
@@ -514,45 +560,64 @@ def optimize(
         playing = sorted(current_ids - set(action.sell) | set(action.buy))
         action.lineup = best_lineup(playing, {p: means.get((t, p), 0) for p in ids}, players, rules)
         next_warm, warm_row = transition(warm_state, action, players, rules)
-        permanent = {lot.player_id for lot in next_warm.lots}
-        ordinary_buy = [] if seed_chip == "freehit" else action.buy
-        ordinary_sell = [] if seed_chip == "freehit" else action.sell
-        sold_old = surviving_original & set(ordinary_sell)
-        surviving_original -= sold_old
-        for p in ids:
-            for kind, on in [
-                ("squad", p in permanent),
-                ("playing_squad", p in playing),
-                ("xi", p in action.lineup.xi),
-                ("captain", p == action.lineup.captain),
-                ("buy", p in ordinary_buy),
-                ("sell", p in ordinary_sell),
-                ("bb_squad", seed_chip == "bboost" and p in playing and p not in action.lineup.xi),
-                ("bb_xi", False),
-                ("tc", seed_chip == "3xc" and p == action.lineup.captain),
-            ]:
-                warm[mip.keys[kind, t, p]] = int(on)
-            if p in old_ids:
-                warm[original[t, p]] = int(p in surviving_original)
-                warm[sold_original[t, p]] = int(p in sold_old)
-                retained_key = ("fh_retained", t, p)
-                if retained_key in mip.keys:
-                    warm[mip.keys[retained_key]] = int(p in (surviving_original | sold_old) and p in playing)
-        warm[bank[t]] = next_warm.bank
-        warm[ft_next[t]] = next_warm.free_transfers
-        if seed_chip:
-            warm[chip_vars[t, seed_chip]] = 1
-        arc_key = (
-            "arc",
-            t,
-            warm_state.free_transfers,
-            len(ordinary_buy),
-            seed_chip in ("wildcard", "freehit"),
-        )
-        if arc_key in mip.keys:
-            warm[mip.keys[arc_key]] = 1
+        fill_warm(warm, t, warm_state, action, next_warm, warm_row, surviving_original)
         warm_state = next_warm
+    reused_plan = None
+    objective_before = float(np.dot(mip.costs, warm))
+    warm_value = objective_before
+    candidate_count = 0
+    for item in store.list("plan", 100):
+        cached = store.get("plan", item["id"])
+        prior = cached.get("ledger", [])
+        if (
+            cached.get("state_id") != state_id
+            or not cached.get("validation", {}).get("legal")
+            or [r["event"] for r in prior] != events
+        ):
+            continue
+        vector = np.zeros(len(mip.costs))
+        trial = state.model_copy(deep=True)
+        survivors = set(old_ids)
+        try:
+            for t, row in zip(events, prior):
+                action = Action(
+                    sell=[r["player_id"] for r in row["sell"]],
+                    buy=[r["player_id"] for r in row["buy"]],
+                    chip=row["chip"],
+                )
+                playing = sorted({lot.player_id for lot in trial.lots} - set(action.sell) | set(action.buy))
+                action.lineup = best_lineup(playing, {p: means.get((t, p), 0) for p in ids}, players, rules)
+                following, checked = transition(trial, action, players, rules)
+                fill_warm(vector, t, trial, action, following, checked, survivors)
+                trial = following
+            lhs = np.bincount(
+                np.asarray(mip.rows),
+                weights=np.asarray(mip.values) * vector[np.asarray(mip.cols)],
+                minlength=len(mip.row_lower),
+            )
+            feasible = (
+                np.all(vector >= np.asarray(mip.lower) - 1e-6)
+                and np.all(vector <= np.asarray(mip.upper) + 1e-6)
+                and np.all(lhs >= np.asarray(mip.row_lower) - 1e-6)
+                and np.all(lhs <= np.asarray(mip.row_upper) + 1e-6)
+            )
+            if not feasible:
+                continue
+        except (ValueError, KeyError):
+            continue
+        candidate_count += 1
+        value = float(np.dot(mip.costs, vector))
+        if value > warm_value + 1e-7:
+            warm = vector
+            warm_value = value
+            reused_plan = item["id"]
     solution, diagnostics = mip.solve(time_limit, warm)
+    diagnostics.update(
+        initial_warm_objective=objective_before,
+        selected_warm_objective=warm_value,
+        reused_incumbent_plan_id=reused_plan,
+        validated_cached_incumbents=candidate_count,
+    )
     ledger = []
     current = state
     with np.load(store.artifact_path(forecast["scenario_path"]), allow_pickle=False) as worlds:

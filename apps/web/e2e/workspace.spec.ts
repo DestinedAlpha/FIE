@@ -76,3 +76,37 @@ test("squad editor validates and transfer checker rejects unaffordable moves", a
     page.getByText("Completed-match statistical replay", { exact: false }),
   ).toBeVisible();
 });
+
+test("manager behavior, source fusion and transfer learning are visible", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/");
+  await navigate(page, "Rivals");
+  await expect(
+    page.getByRole("heading", { name: "Top-1,000 manager behavior" }),
+  ).toBeVisible();
+  await expect(page.getByText(/1000 actual managers/)).toBeVisible();
+  await expect(
+    page.getByText("Learned-count scenario", { exact: true }),
+  ).toBeVisible();
+  await navigate(page, "Model & data");
+  await expect(
+    page.getByRole("heading", { name: "Sources and neural validation" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Learning transfer value across four weeks",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Temporal neural fusion", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText(/288 held-out account decisions/)).toBeVisible();
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > window.innerWidth + 1,
+  );
+  expect(overflow).toBe(false);
+  expect(errors).toEqual([]);
+});

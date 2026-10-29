@@ -1,0 +1,60 @@
+{
+  "at": "2026-10-29T18:32:24.138387+00:00",
+  "dataset_id": "9c99d85c5feb51f4b6df0a94a8772c0d0da97e3d7387e882c430db19309493b7",
+  "horizon_model_id": "4013b58ab324478d8405673612a62c1913f3ea5feed814436c1b08629516e618",
+  "protocol": "Train label windows end before GW20; calibrate GW20\u201324; test starts GW28 after a three-week purge; current season GW1\u20135 also held out",
+  "features": [
+    "nextweek_gain",
+    "reference_gain",
+    "fourweek_gain",
+    "hit",
+    "transfers",
+    "free_transfers",
+    "bank_before",
+    "bank_after",
+    "mean_in_price",
+    "mean_out_price",
+    "forecast_disagreement"
+  ],
+  "parameters": {
+    "n_estimators": 160,
+    "num_leaves": 10,
+    "min_child_samples": 100,
+    "learning_rate": 0.03,
+    "reg_lambda": 30,
+    "random_state": 83,
+    "n_jobs": 1,
+    "verbosity": -1
+  },
+  "training_action_rows": 2131,
+  "calibration_action_rows": 725,
+  "test_decisions": 288,
+  "shrinkage_weight": 0.25,
+  "calibration_gain_by_weight": {
+    "0": 3.2083333333333335,
+    "0.25": 3.341666666666667,
+    "0.5": 2.691666666666667,
+    "1.0": 0.9416666666666667
+  },
+  "mean_heldout_gain": 6.243055555555555,
+  "four_deadline_block_gain_95ci": [
+    -0.32291666666666674,
+    13.440972222222223
+  ],
+  "selected_mean": 210.27777777777777,
+  "reference_mean": 204.03472222222223,
+  "best_searched_mean": 220.14236111111111,
+  "promoted": false,
+  "invalid_actions": 0,
+  "limits": [
+    "Random squads are plausible synthetic states, not sampled private accounts",
+    "Four-week fixed-lineup hold isolates transfer value; it does not model all subsequent actions or chips",
+    "No accrued price profits; starting quotes are genuine pre-deadline registered prices",
+    "Controlled experiment excludes blank-week player rows without current fixture features",
+    "Overlapping four-week labels use deadline blocks, not independent player-row confidence intervals",
+    "Any selected final weights are fitted on all subsequently observed training windows only after this fixed held-out comparison"
+  ],
+  "directory": "policy-61b932675b8944358763",
+  "model_hash": "170cb116130274876eb3924a3f223121b80c95ed34e93230415e5d5e8f52aa38",
+  "id": "555782378dc7002a419e667985cd0293f6e82a782c0eaad4acbdb5984f2884d0"
+}

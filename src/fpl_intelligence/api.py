@@ -68,7 +68,7 @@ class ScenarioRequest(Strict):
 
 def create_app(root=None):
     load_environment()
-    app = FastAPI(title="FPL Intelligence", version="0.3.0")
+    app = FastAPI(title="FPL Intelligence", version="0.4.0")
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
 
     @app.middleware("http")
@@ -84,6 +84,11 @@ def create_app(root=None):
 
     store = Store(root)
     app.state.store = store
+    if store.list("claim", 1) and store.list("market", 1) and not store.list("claim_identity_migration", 1):
+        from .research import audit_claim_identities
+
+        review = audit_claim_identities(store)
+        store.put("claim_identity_migration", {"version": 1, "review_id": review["id"], "at": now()})
     # Restart recovery is explicit; an interrupted job is never shown as running forever.
     with store.db() as db:
         db.execute(
@@ -179,6 +184,13 @@ def create_app(root=None):
             "decision_uncertainty": None,
             "manager_audit": None,
             "hit_comparison": None,
+            "manager_behavior": None,
+            "horizon_model": None,
+            "transfer_policy_model": None,
+            "personalized_policy_analysis": None,
+            "source_coverage": {},
+            "fusion_model": None,
+            "fusion_comparison": None,
         }
         try:
             players, market = load_market(store)
@@ -217,6 +229,10 @@ def create_app(root=None):
             "decision_uncertainty",
             "manager_audit",
             "hit_comparison",
+            "manager_behavior",
+            "horizon_model",
+            "transfer_policy_model",
+            "personalized_policy_analysis",
         ):
             try:
                 artifact = store.get(kind)
@@ -226,6 +242,15 @@ def create_app(root=None):
                     "decision_uncertainty",
                     "manager_audit",
                 ) and artifact.get("decision_model_id") != (result["decision_model"] or {}).get("id"):
+                    continue
+                if kind == "manager_behavior":
+                    artifact = {k: v for k, v in artifact.items() if k not in ("predictions", "models")}
+                if kind == "personalized_policy_analysis" and (
+                    artifact.get("state_id") != (result["state"] or {}).get("id")
+                    or artifact.get("market_id") != market["id"]
+                    or artifact.get("policy_model_id") != (result["transfer_policy_model"] or {}).get("id")
+                    or artifact.get("horizon_model_id") != (result["horizon_model"] or {}).get("id")
+                ):
                     continue
                 if kind == "forecast":
                     artifact = {k: v for k, v in artifact.items() if k not in ("match_audit", "fixtures")}
@@ -273,8 +298,42 @@ def create_app(root=None):
             result["rivals"] = store.get("rival_comparison")
         except ValueError:
             pass
+        from .intelligence import source_coverage
+
+        result["source_coverage"] = source_coverage(store)
+        try:
+            fusion = store.get("fusion_model")
+            result["fusion_model"] = {
+                k: v for k, v in fusion.items() if k not in ("tree_spec", "network_spec")
+            }
+            result["fusion_model"]["promoted"] = (result["decision_model"] or {}).get(
+                "fusion_model_id"
+            ) == fusion["id"]
+            for field, kind in (
+                ("decision_validation", "fusion_decisions"),
+                ("review", "fusion_review"),
+                ("uncertainty", "fusion_uncertainty"),
+            ):
+                try:
+                    checked = store.get(kind)
+                    if checked.get("fusion_model_id") == fusion["id"]:
+                        result["fusion_model"][field] = checked
+                except ValueError:
+                    pass
+            comparison = store.get("fusion_comparison")
+            if comparison.get("fusion_model_id") == fusion["id"] and comparison.get("decision_model_id") == (
+                result["decision_model"] or {}
+            ).get("id"):
+                result["fusion_comparison"] = comparison
+        except ValueError:
+            pass
         for name, kind in [("evidence", "claim"), ("beliefs", "belief")]:
-            result[name] = [store.get(kind, r["id"]) for r in store.list(kind, 100)]
+            if kind == "claim":
+                from .research import active_claims
+
+                result[name] = active_claims(store)
+            else:
+                result[name] = [store.get(kind, r["id"]) for r in store.list(kind, 100)]
         return result
 
     @app.post("/api/refresh")
@@ -307,7 +366,15 @@ def create_app(root=None):
             from .decision import train_decisions
 
             with threadpool_limits(limits=1):
-                result = train_decisions(store)
+                active = store.get("decision_model") if store.list("decision_model", 1) else {}
+                if active.get("fusion_model_id"):
+                    from .context_archive import import_context
+                    from .fusion import refit_active_fusion
+
+                    asyncio.run(import_context(store))
+                    result = refit_active_fusion(store)
+                else:
+                    result = train_decisions(store)
             return {"decision_model_id": result["id"]}
 
         return launch("train", {}, work)
@@ -345,6 +412,47 @@ def create_app(root=None):
             request.model_dump(),
             lambda: asyncio.run(research_refresh(store, request.urls, request.limit)),
         )
+
+    @app.post("/api/managers/refresh")
+    def manager_refresh():
+        from .manager_behavior import collect_top_managers, train_behavior
+
+        def work():
+            asyncio.run(collect_top_managers(store))
+            result = train_behavior(store)
+            return {"manager_behavior_id": result["id"]}
+
+        return launch("top-managers", {}, work)
+
+    @app.post("/api/policy/analyze")
+    def policy_analysis():
+        from .policy_learning import personalized_analysis
+
+        return launch("policy-analysis", {}, lambda: personalized_analysis(store))
+
+    @app.post("/api/intelligence/refresh")
+    def refresh_intelligence_sources():
+        from .intelligence import refresh_sources
+
+        return launch("sources-refresh", {}, lambda: asyncio.run(refresh_sources(store)))
+
+    @app.post("/api/fusion/train")
+    def fusion_train():
+        def work():
+            try:
+                __import__("torch")
+            except ImportError:
+                raise ValueError("Advanced CPU training requires: uv sync --extra neural") from None
+            from .context_archive import import_context
+            from .fusion import compare_live, review_fusion, train_fusion
+
+            asyncio.run(import_context(store))
+            result = train_fusion(store)
+            review_fusion(store)
+            compare_live(store)
+            return {"fusion_model_id": result["id"], "selected": result["selected"]}
+
+        return launch("fusion-train", {}, work)
 
     @app.post("/api/scenarios")
     def scenarios(request: ScenarioRequest):

@@ -1,3 +1,5 @@
+The active transfer forecaster below remains the reference architecture. Version 0.4 adds independently trained multi-source/neural analysis, manager behavior and four-week counterfactual learning. Its executed results and promotion decisions are documented in [source-fusion.md](source-fusion.md); new point-error gains are not presented as a validated improvement in full transfer policies.
+
 # Model card · 0.3 · executed 29 October 2026
 
 ## The validated production path

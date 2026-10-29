@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-29T17:59:03.745429+00:00",
+  "fusion_model_id": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d",
+  "forecast_selected": "tree",
+  "decisions_id": "bf823e5851f3ff130e69047e848174d0af99f4c52611bed31be3e77b474e8754",
+  "promoted": false,
+  "reason": "Forecast or matched captain/policy gate failed; previous production retained",
+  "id": "b619cdf2993271e26047a172bedf084cfccdd8515d0194f901fdc83c51b73c14"
+}

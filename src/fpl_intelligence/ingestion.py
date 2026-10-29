@@ -59,6 +59,9 @@ class Official:
             if not isinstance(bootstrap, dict) or not isinstance(fixtures, list):
                 raise ValueError("Core refresh failed; retained prior snapshots are unchanged")
             normalize(self.store, bootstrap, fixtures)
+            from .context_archive import capture_live_context
+
+            capture_live_context(self.store, bootstrap)
             current = next((e["id"] for e in bootstrap["events"] if e.get("is_current")), None)
             tasks: list[Any] = []
             if histories:

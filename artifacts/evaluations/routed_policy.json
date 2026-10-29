@@ -1,0 +1,41 @@
+{
+  "at": "2026-10-29T18:37:11.260534+00:00",
+  "decision_model_id": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d",
+  "season": "2025/26",
+  "events": 30,
+  "shared_initial_state": true,
+  "invalid_exported_actions": 0,
+  "track": "out-of-fold evolving-account replay; no test outcome used in decisions",
+  "policies": {
+    "transfer-learned": {
+      "realized_net_points": 1733,
+      "hits": 12,
+      "transfers": 33,
+      "final_bank": 7
+    },
+    "transfer-shrinkage": {
+      "realized_net_points": 1735,
+      "hits": 12,
+      "transfers": 33,
+      "final_bank": 7
+    },
+    "hold-learned": {
+      "realized_net_points": 1601,
+      "hits": 0,
+      "transfers": 0,
+      "final_bank": 9
+    },
+    "hold-shrinkage": {
+      "realized_net_points": 1591,
+      "hits": 0,
+      "transfers": 0,
+      "final_bank": 9
+    }
+  },
+  "limits": [
+    "No chips, to isolate forecast/transfer effects",
+    "Historical archived quotes are not guaranteed captured before deadline",
+    "No guarantee of rank or future returns"
+  ],
+  "id": "2dbb88608ed16b3197cda2e6fee0f805a99adb24c7c68721cedc45e646da6a14"
+}

@@ -141,7 +141,7 @@ class Store:
         with self.db() as db:
             row = db.execute(
                 "SELECT body,id FROM objects WHERE kind=? "
-                + ("AND id=?" if identity else "ORDER BY rowid DESC LIMIT 1"),
+                + ("AND id=?" if identity else "ORDER BY created_at DESC,rowid DESC LIMIT 1"),
                 (kind, identity) if identity else (kind,),
             ).fetchone()
         if row is None:
@@ -153,7 +153,7 @@ class Store:
             return [
                 dict(r)
                 for r in db.execute(
-                    "SELECT id,created_at FROM objects WHERE kind=? ORDER BY rowid DESC LIMIT ?",
+                    "SELECT id,created_at FROM objects WHERE kind=? ORDER BY created_at DESC,rowid DESC LIMIT ?",
                     (kind, limit),
                 )
             ]
@@ -173,6 +173,10 @@ class Store:
 
     def artifact_path(self, reference: str) -> Path:
         value = Path(reference)
+        if ".." in value.parts:
+            raise ValueError("Unrecognized local artifact reference")
+        if len(value.parts) >= 3 and value.parts[-3] == "models":
+            return self.root / "models" / value.parts[-2] / value.name
         if len(value.parts) < 2 or value.parts[-2] not in {"scenarios", "models", "features", "normalized"}:
             raise ValueError("Unrecognized local artifact reference")
         return self.root / value.parts[-2] / value.name

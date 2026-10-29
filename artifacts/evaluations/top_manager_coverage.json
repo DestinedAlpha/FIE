@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-29T18:06:53.471631+00:00",
+  "season": "2026/27",
+  "selection": "First 1,000 entries in current official overall-rank order; ties and actual retrieval counts retained",
+  "selection_event": 8,
+  "requested": 1000,
+  "retrieved_managers": 1000,
+  "retrieved_manager_gameweeks": 8000,
+  "complete_managers": 1000,
+  "events": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "temporal_track": "Current-ranked retrospective analysis; never presented as pre-season expertise or an unbiased past top-1,000 cohort",
+  "feature_rule": "At target GW g use only released picks/history/transfers with event < g; current rank never enters numeric features",
+  "future_transfers": "Unknown; model outputs conditional feasible branches, not private account actions",
+  "id": "35e5d065c3dd9925887ccf5a38bd9237c3f1d4bf690a9e62c280b70a1247d65d"
+}

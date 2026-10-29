@@ -14,22 +14,33 @@ if (-not $UvCommand) {
     if (-not (Test-Path $UvPath)) { throw "Restart the terminal after installing uv, then run Start.cmd again." }
 } else { $UvPath = $UvCommand.Source }
 
-& $UvPath sync --frozen
+& $UvPath sync --frozen --extra neural
 if ($LASTEXITCODE -ne 0) { throw "Python dependencies could not be installed." }
 
 if ((Test-Path "data/state.sqlite.gz") -and -not (Test-Path "data/state.sqlite")) {
-    & $UvPath run python -c "import gzip,shutil; from pathlib import Path; p=Path('data/state.sqlite'); t=p.with_suffix('.restoring'); a=gzip.open('data/state.sqlite.gz','rb'); b=t.open('wb'); shutil.copyfileobj(a,b); a.close(); b.close(); t.replace(p)"
+    & $UvPath run --extra neural python -c "import gzip,shutil; from pathlib import Path; p=Path('data/state.sqlite'); t=p.with_suffix('.restoring'); a=gzip.open('data/state.sqlite.gz','rb'); b=t.open('wb'); shutil.copyfileobj(a,b); a.close(); b.close(); t.replace(p)"
     if ($LASTEXITCODE -ne 0) { throw "The packaged database could not be restored." }
 }
 
 if ($ConfigureProviders -or -not (Test-Path ".env")) {
+    $ExistingProviderLines = @{}
+    $RetainedConfigLines = New-Object System.Collections.Generic.List[string]
+    if (Test-Path ".env") {
+        foreach ($Line in [IO.File]::ReadAllLines((Join-Path $ProjectRoot ".env"))) {
+            if ($Line -match "^\s*(GEMINI|GROQ)_API_KEY\s*=.+$") { $ExistingProviderLines[$Matches[1]] = $Line }
+            else { $RetainedConfigLines.Add($Line) }
+        }
+    }
     $Settings = New-Object System.Collections.Generic.List[string]
+    foreach ($Line in $RetainedConfigLines) { $Settings.Add($Line) }
     foreach ($Provider in @("GEMINI", "GROQ")) {
-        $SecureValue = Read-Host "$Provider API key (Enter skips hosted research)" -AsSecureString
+        $SecureValue = Read-Host "$Provider API key (Enter keeps an existing key or skips)" -AsSecureString
         $PlainValue = (New-Object System.Net.NetworkCredential("", $SecureValue)).Password
         if ($PlainValue) {
             if ($PlainValue -match "[\r\n]") { throw "API keys must contain a single line." }
             $Settings.Add("${Provider}_API_KEY=$PlainValue")
+        } elseif ($ExistingProviderLines.ContainsKey($Provider)) {
+            $Settings.Add($ExistingProviderLines[$Provider])
         }
         $PlainValue = $null
     }
@@ -41,7 +52,7 @@ if ($ConfigureProviders -or -not (Test-Path ".env")) {
     Set-Acl ".env" $Acl
     $FreeAccounts = Read-Host "Are the entered keys for free, unbilled accounts? (Y/N)"
     if ($FreeAccounts -match "^[Yy]") {
-        & $UvPath run fpl configure-providers --unbilled
+        & $UvPath run --extra neural fpl configure-providers --unbilled
         if ($LASTEXITCODE -ne 0) { Write-Warning "Hosted provider verification could not finish. Numerical forecasts remain available; run Configure keys.cmd to retry." }
     }
 }
@@ -56,23 +67,23 @@ if (-not (Test-Path "apps/web/dist/index.html")) {
     if ($LASTEXITCODE -ne 0) { throw "Frontend build failed." }
 }
 
-& $UvPath run python -c "from fpl_intelligence.storage import Store; s=Store(); raise SystemExit(0 if all(s.list(kind, 1) for kind in ('market', 'state', 'forecast', 'selected_plan')) and s.get('forecast').get('model_version') == 'learned-points-v1' else 1)"
+& $UvPath run --extra neural python -c "from fpl_intelligence.storage import Store; s=Store(); raise SystemExit(0 if all(s.list(kind, 1) for kind in ('market', 'state', 'forecast', 'selected_plan')) and s.get('forecast').get('model_version') == 'learned-points-v1' else 1)"
 $NeedsInitialisation = ($LASTEXITCODE -ne 0) -or $RebuildModel
 if ($NeedsInitialisation) {
-    & $UvPath run fpl ingest
+    & $UvPath run --extra neural fpl ingest
     if ($LASTEXITCODE -ne 0) { throw "Official data ingestion failed." }
-    & $UvPath run python -c "from fpl_intelligence.storage import Store; raise SystemExit(0 if Store().list('state', 1) else 1)"
+    & $UvPath run --extra neural python -c "from fpl_intelligence.storage import Store; raise SystemExit(0 if Store().list('state', 1) else 1)"
     if ($LASTEXITCODE -ne 0) {
         if (Test-Path "data/account-confirmed.json") {
-            & $UvPath run fpl reconcile-team --path data/account-confirmed.json --confirmed
-        } else { & $UvPath run fpl reconcile-team }
+            & $UvPath run --extra neural fpl reconcile-team --path data/account-confirmed.json --confirmed
+        } else { & $UvPath run --extra neural fpl reconcile-team }
         if ($LASTEXITCODE -ne 0) { throw "Account import needs current valid selling quotes." }
     }
-    & $UvPath run fpl train
+    & $UvPath run --extra neural fpl train
     if ($LASTEXITCODE -ne 0) { throw "Chronological decision training failed." }
-    & $UvPath run fpl forecast --end 38 --worlds 4000
+    & $UvPath run --extra neural fpl forecast --end 38 --worlds 4000
     if ($LASTEXITCODE -ne 0) { throw "Forecast generation failed." }
-    & $UvPath run fpl optimize --end 19 --seconds 60
+    & $UvPath run --extra neural fpl optimize --end 19 --seconds 60
     if ($LASTEXITCODE -ne 0) { throw "The initial planning pipeline failed; inspect the message above." }
 }
 
@@ -93,4 +104,4 @@ if (-not $NoBrowser) {
         }
     }
 }
-& $UvPath run fpl serve --port $Port
+& $UvPath run --extra neural fpl serve --port $Port

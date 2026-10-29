@@ -126,6 +126,126 @@ export type Dashboard = {
     belief_scenario: string[];
   } | null;
   plan: Plan | null;
+  manager_behavior?: {
+    event: number;
+    aggregate_probabilities: number[];
+    classes: string[];
+    rich_weight: number;
+    metrics: {
+      rows: number;
+      events: number[];
+      model_log_loss: number;
+      frequency_log_loss: number;
+      model_accuracy: number;
+    };
+    recent_purchases: { player_id: number; managers: number }[];
+    recent_sales: { player_id: number; managers: number }[];
+    limits: string[];
+  } | null;
+  horizon_model?: {
+    horizon: number;
+    baseline: { rmse: number };
+    selected: string;
+    candidates: Record<string, { metrics: { rmse: number } }>;
+    advanced_vs_context_95ci: number[];
+  } | null;
+  transfer_policy_model?: {
+    test_decisions: number;
+    mean_heldout_gain: number;
+    four_deadline_block_gain_95ci: number[];
+    promoted: boolean;
+    invalid_actions: number;
+  } | null;
+  personalized_policy_analysis?: {
+    event: number;
+    status: string;
+    heldout_gain_95ci: number[];
+    candidates: {
+      source: string;
+      transfers: { out: string; in: string }[];
+      estimated_fourweek_gain: number;
+      hit: number;
+      bank: number;
+      confirmed_absence_lineup_sensitivity?: number;
+      evidence?: {
+        player_id: number;
+        claim_type: string;
+        statement: string;
+        source_url: string;
+        status: string;
+      }[];
+    }[];
+  } | null;
+  source_coverage?: {
+    top_manager_history?: {
+      retrieved_managers?: number;
+      retrieved_manager_gameweeks?: number;
+      selection_event?: number;
+    };
+    context_archive?: {
+      retrieved_deadlines?: number;
+      requested_deadlines?: number;
+    };
+    elite_cohort?: {
+      retrieved_managers?: number;
+      retrieved_manager_gameweeks?: number;
+    };
+    workload?: {
+      accepted_player_matches?: number;
+      rejected_player_matches?: number;
+    };
+    intelligence_refresh?: {
+      claims?: number;
+      community_leads?: number;
+      source_health?: {
+        source: string;
+        status: string;
+        retrieved?: number;
+        reason?: string;
+      }[];
+    };
+    fusion_features?: {
+      rows?: number;
+      coverage?: { news: number; expert_lag: number; workload: number };
+    };
+  };
+  fusion_model?: {
+    id: string;
+    promoted: boolean;
+    selected: string | null;
+    baseline: { n: number; rmse: number };
+    candidates: Record<
+      string,
+      {
+        metrics: { rmse: number };
+        paired_vs_production_95ci: number[];
+        passed: boolean;
+      }
+    >;
+    folds: {
+      neural: { parameters: number; epochs: number; selected_epoch: number };
+    }[];
+    limits: string[];
+    decision_validation?: {
+      captain_totals: Record<string, number>;
+      policies: Record<string, Record<string, { realized_net_points: number }>>;
+      promotable: boolean;
+    };
+    review?: { reason?: string; promoted: boolean };
+    uncertainty?: {
+      regular_starters: { coverage80: number; coverage90: number };
+    };
+  } | null;
+  fusion_comparison?: {
+    event: number;
+    players: {
+      player_id: number;
+      name: string;
+      production: number;
+      tree: number;
+      network: number;
+    }[];
+  } | null;
   decision_model?: {
     promoted: boolean;
     seasons: string[];
@@ -198,8 +318,9 @@ export type Dashboard = {
     base_mean: number;
     alternative_mean: number;
     net_mean_advantage: number;
+    paired_mc_interval_95: number[];
     alternative_immediate_chip: string | null;
-    alternative_gap: number;
+    alternative_gap: number | null;
   } | null;
   chip_counterfactual?: {
     base_plan_id: string;
@@ -254,6 +375,7 @@ export type Dashboard = {
       label: string;
       expected_net_points: number;
       robust_joint_win: number;
+      behavior_conditioned_joint_win?: number | null;
       policies: {
         rival_policies: string[];
         joint_strict_win: number;
@@ -261,6 +383,7 @@ export type Dashboard = {
       }[];
     }[];
     optimization_scope: string;
+    behavior_assumptions?: string[];
     ties: string;
   } | null;
   evidence: {

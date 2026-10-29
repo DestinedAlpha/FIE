@@ -1,0 +1,60 @@
+{
+  "at": "2026-10-29T15:01:30.678691+00:00",
+  "market_id": "f879d787dc7c4dae78c8ad41ebbd8e81c80dbb7adac04a1a1ee0530fe7babf12",
+  "source_health": [
+    {
+      "source": "scout",
+      "url": "https://www.fantasyfootballscout.co.uk/feed",
+      "status": "available",
+      "retrieved": 12,
+      "usage": "specialist"
+    },
+    {
+      "source": "fpl_analytics",
+      "url": "https://www.reddit.com/r/fplAnalytics/.rss?limit=15",
+      "status": "available",
+      "retrieved": 15,
+      "usage": "community_lead"
+    },
+    {
+      "source": "fantasypl",
+      "url": "https://www.reddit.com/r/FantasyPL/.rss?limit=15",
+      "status": "unavailable",
+      "reason": "Client error '429 Too Many Requests' for url 'https://www.reddit.com/r/FantasyPL/.rss?limit=15'\nFor more information check: https://developer.mozilla.org/en-US/",
+      "usage": "community_lead"
+    }
+  ],
+  "specialist_sources": [
+    {
+      "url": "https://www.fantasyfootballscout.co.uk/2026/10/29/fpl-gameweek-9-team-news-thursdays-live-injury-updates-2",
+      "status": "unavailable",
+      "reason": "Verified free providers unavailable; source queued and numerical planner remains available"
+    },
+    {
+      "url": "https://www.fantasyfootballscout.co.uk/2026/10/29/fpl-notes-pedro-latest-lacroix-injury-rogers-pen-isak-rested",
+      "source_id": "826f24808ae9e8c5bb9a1142c8497d9b32c6f09095bc42bfa2a65d693d3de0f4",
+      "status": "extracted",
+      "source_tier": "specialist",
+      "claim_ids": [
+        "93d858b57403df779bf149926dae3e2e9ea565a568d99d6c3a6b5d0bcc5c1651",
+        "e9c21de199c831d714dabcc1e4551aba3403fcc6da837ae4253d7391c906980f",
+        "e15da6129ab5350475093fba2394023da118d0274854e9575176192f7a07d078",
+        "cbb4e6157dc24666d94189570b4f9913005548a8f21463ebe162a1e6597e7886"
+      ],
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "fallback_failures": [
+        {
+          "provider": "gemini",
+          "reason": "Free research quota exhausted; numerical planner remains available"
+        }
+      ]
+    }
+  ],
+  "community_leads": 15,
+  "claims": 2,
+  "influence_policy": "Community is a lead; supported specialist facts become timestamped context; speculative recommendations are not hard-coded point uplifts",
+  "claims_before_identity_review": 4,
+  "claim_identity_audit_id": "8c794cd733860c21a5173c6d3f5bebcdde40e63fa4e731b63e5587c9ac5038d9",
+  "id": "ee979d77e913ffab9d686873f5ff0a6b0fd6af9f392cdbd3b3e953c944dbad2b"
+}

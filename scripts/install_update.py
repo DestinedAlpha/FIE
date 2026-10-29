@@ -3,11 +3,90 @@
 from __future__ import annotations
 
 import argparse
+import gzip
 import json
 import shutil
 import sqlite3
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
+
+RESEARCH_KINDS = {
+    "top_manager_history",
+    "manager_behavior",
+    "horizon_model",
+    "transfer_policy_model",
+    "policy_features",
+    "context_archive",
+    "elite_cohort",
+    "workload",
+    "fusion_features",
+    "fusion_model",
+    "fusion_decisions",
+    "fusion_comparison",
+    "fusion_review",
+    "fusion_uncertainty",
+    "routed_policy",
+    "archive_import",
+    "intelligence_refresh",
+    "claim_identity_audit",
+    "claim_rejection",
+    "claim",
+    "source_text",
+    "community_lead",
+    "fusion_policy_tree",
+    "fusion_policy_network",
+}
+
+
+def merge_research(source: Path, target: Path):
+    """Merge immutable research artifacts without replacing any account/model selection."""
+    packed = source / "data/state.sqlite.gz"
+    destination = target / "data/state.sqlite"
+    if not packed.is_file() or not destination.is_file():
+        return 0
+    with tempfile.TemporaryDirectory() as temporary:
+        restored = Path(temporary) / "research.sqlite"
+        with gzip.open(packed, "rb") as original, restored.open("wb") as output:
+            shutil.copyfileobj(original, output)
+        with sqlite3.connect(restored) as original, sqlite3.connect(destination) as existing:
+            if not existing.execute("SELECT 1 FROM sqlite_master WHERE name='objects'").fetchone():
+                return 0
+            if original.execute("PRAGMA quick_check").fetchone()[0] != "ok":
+                raise ValueError("Packaged research database failed integrity verification")
+            for folder in ("raw", "features", "models"):
+                for path in (source / "data" / folder).rglob("*"):
+                    if path.is_file():
+                        relative = path.relative_to(source / "data")
+                        destination_file = target / "data" / relative
+                        if not destination_file.exists():
+                            destination_file.parent.mkdir(parents=True, exist_ok=True)
+                            shutil.copy2(path, destination_file)
+            count = 0
+            for row in original.execute("SELECT kind,id,created_at,body FROM objects ORDER BY rowid"):
+                if row[0] in RESEARCH_KINDS:
+                    existing.execute("INSERT OR IGNORE INTO objects VALUES(?,?,?,?)", row)
+                    count += 1
+            for row in original.execute(
+                "SELECT source,url,captured_at,source_published_at,hash,path,status FROM snapshots ORDER BY id"
+            ):
+                if row[0].startswith(
+                    (
+                        "context_",
+                        "elite_",
+                        "workload_",
+                        "intelligence_feed_",
+                        "research_",
+                        "topk_",
+                        "archive_",
+                        "history_",
+                    )
+                ):
+                    existing.execute(
+                        "INSERT OR IGNORE INTO snapshots(source,url,captured_at,source_published_at,hash,path,status) VALUES(?,?,?,?,?,?,?)",
+                        row,
+                    )
+    return count
 
 
 def install(source: Path, target: Path):
@@ -50,11 +129,13 @@ def install(source: Path, target: Path):
             shutil.copy2(old, backup / "app" / relative)
         old.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source / relative, old)
+    imported = merge_research(source, target)
     return {
         "updated_files": len(files),
         "backup": str(backup),
         "account_database_replaced": False,
         "provider_keys_replaced": False,
+        "research_artifacts_merged": imported,
     }
 
 

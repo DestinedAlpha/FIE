@@ -1,0 +1,77 @@
+{
+  "at": "2026-10-29T19:34:52.565811+00:00",
+  "population_id": "35e5d065c3dd9925887ccf5a38bd9237c3f1d4bf690a9e62c280b70a1247d65d",
+  "selection_event": 8,
+  "event": 9,
+  "classes": [
+    "roll",
+    "one",
+    "two",
+    "three_or_more"
+  ],
+  "metrics": {
+    "rows": 2000,
+    "events": [
+      7,
+      8
+    ],
+    "model_log_loss": 1.1435032233364433,
+    "frequency_log_loss": 1.3549758356059176,
+    "model_accuracy": 0.431,
+    "frequency_accuracy": 0.354,
+    "basic_log_loss": 1.1535420747841545,
+    "rich_log_loss": 1.14214805423599
+  },
+  "protocol": "Expanding earlier-event fits; choose basic/richer mixture on GW5\u20136, report GW7\u20138 separately; final refit uses all eight released weeks",
+  "calibration_loss_by_rich_weight": {
+    "0": 0.953881731942149,
+    "0.25": 0.953255323871205,
+    "0.5": 0.9596482520164241,
+    "0.75": 0.972403508217371,
+    "1": 0.9918112730056412
+  },
+  "rich_weight": 0.25,
+  "promoted_over_frequency": true,
+  "aggregate_probabilities": [
+    0.3683455914062419,
+    0.4202393557643218,
+    0.1689894252842759,
+    0.04242562754516051
+  ],
+  "models": {
+    "basic": {
+      "path": "data/models/manager-behavior/basic-58f1e8854232ad36ed64b023.txt",
+      "hash": "58f1e8854232ad36ed64b0230da1aaa802bd6b33f628a6a64d54b45deb4c68c9",
+      "width": 10,
+      "classes": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "rich": {
+      "path": "data/models/manager-behavior/rich-785bb601dc9fb599925eb824.txt",
+      "hash": "785bb601dc9fb599925eb8244732974bdf66aaee87ed3a95b5ff7e0781d61ac1",
+      "width": 23,
+      "classes": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  },
+  "input_groups": [
+    "Lagged FT/bank/value/points and transfers/hits",
+    "Released squads, injury/premium/club exposure, captain continuity and turnover",
+    "Past incoming/outgoing prices, spending and rapid resales"
+  ],
+  "limits": [
+    "Current top-1,000 selection uses present ranks; these are conditional retrospective behavior diagnostics, not unbiased elite-skill validation",
+    "Only two later test deadlines; prospective transfer calibration remains unproven",
+    "Transfer-count probabilities and feasible forecast-guided branches cannot reveal private future purchases",
+    "Richer source features only affect probabilities to the extent selected on earlier calibration weeks"
+  ],
+  "id": "55262d47e657bc9e849f7f3c4938f2eb112a4fdf3bdcdd544c86f6a0f46cf60a"
+}

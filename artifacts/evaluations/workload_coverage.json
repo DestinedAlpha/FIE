@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-29T15:07:06.253694+00:00",
+  "source": "olbauday/FPL-Core-Insights",
+  "commit": "23a36995e4888facdb69858ecaf551316dfe81b3",
+  "requested_files": 178,
+  "retrieved_files": 178,
+  "accepted_player_matches": 3238,
+  "rejected_player_matches": 1698,
+  "zero_minutes_policy": "Explicit minutes_played=0 is a bench nonappearance; never derived from start/finish timestamps",
+  "limits": [
+    "Retrospective match enrichment, not original pre-deadline source capture",
+    "Conflicting fixture dates are excluded, not guessed",
+    "Unobserved competitions, travel and international minutes remain missing"
+  ],
+  "id": "7c6c7de49ae3dbd07cbfd5a815f0bd0e09236945957606ee6a30ff405451fcc3"
+}

@@ -3,14 +3,135 @@
   "authority_policy": "Current official event deadlines and API scoring override explanatory articles; narrative edge cases are versioned overlays. Preserve conflicts.",
   "fpl_access_scope": "User-stated verified grant for required FPL scraping; other services have separate adapters.",
   "sources": [
-    {"id":"bootstrap","url":"https://fantasy.premierleague.com/api/bootstrap-static/","fields":"all registered players, clubs, events, prices, scoring, chip periods","units":"integer GBP 0.1m; minutes; probabilities 0..1 after normalization","refresh_hours":6,"access":"public covered FPL interface","free":true,"parser":"official-v1","fallback":"last immutable snapshot with age"},
-    {"id":"fixtures","url":"https://fantasy.premierleague.com/api/fixtures/","fields":"all 380 fixtures and event assignments","refresh_hours":6,"free":true,"fallback":"last immutable snapshot; null-event fixtures remain unassigned"},
-    {"id":"history","url":"https://fantasy.premierleague.com/api/element-summary/{id}/","fields":"fixture-level official scoring, xG/xA, starts/minutes, defensive actions","refresh":"after matches and revisions","free":true,"fallback":"position priors, wider uncertainty and explicit missingness"},
-    {"id":"entry","url":"https://fantasy.premierleague.com/api/entry/{id}/","fields":"public entry/history/transfers/released picks","refresh":"weekly and on demand","free":true,"fallback":"dated structured import; never infer private future squad"},
-    {"id":"league","url":"https://fantasy.premierleague.com/api/leagues-classic/{id}/standings/","fields":"paginated actual membership and points","refresh":"weekly","free":true,"fallback":"prior timestamped released sample"},
-    {"id":"solio","url":"https://fpl.solioanalytics.com/api/data/latest.json","fields":"partial public leaderboards; topProjected is not a full-market multiweek forecast","refresh":"on demand","free":true,"fallback":"independent component forecasts; missing comparator values stay missing"},
-    {"id":"vaastav","url":"https://github.com/vaastav/Fantasy-Premier-League","fields":"historical fixture outcomes and registrations","refresh":"explicit archived season import","free":true,"fallback":"current-season completed-match replay","provenance":"Retrospective statistical archive; not proof of pre-deadline news/price availability"},
-    {"id":"club_news","url":"explicit official-domain allowlist in research.py","fields":"supporting source text and exact evidence spans","refresh":"targeted on demand","free":true,"fallback":"manual supported evidence and dated official availability flags"},
-    {"id":"hosted_text","url":"Gemini or Groq configured provider endpoints","fields":"schema-validated claims only","refresh":"within attested unbilled/free quota","free":"account-specific verification required; disabled by default","fallback":"structured human evidence; numerical engine remains operational"}
+    {
+      "id": "bootstrap",
+      "url": "https://fantasy.premierleague.com/api/bootstrap-static/",
+      "fields": "all registered players, clubs, events, prices, scoring, chip periods",
+      "units": "integer GBP 0.1m; minutes; probabilities 0..1 after normalization",
+      "refresh_hours": 6,
+      "access": "public covered FPL interface",
+      "free": true,
+      "parser": "official-v1",
+      "fallback": "last immutable snapshot with age"
+    },
+    {
+      "id": "fixtures",
+      "url": "https://fantasy.premierleague.com/api/fixtures/",
+      "fields": "all 380 fixtures and event assignments",
+      "refresh_hours": 6,
+      "free": true,
+      "fallback": "last immutable snapshot; null-event fixtures remain unassigned"
+    },
+    {
+      "id": "history",
+      "url": "https://fantasy.premierleague.com/api/element-summary/{id}/",
+      "fields": "fixture-level official scoring, xG/xA, starts/minutes, defensive actions",
+      "refresh": "after matches and revisions",
+      "free": true,
+      "fallback": "position priors, wider uncertainty and explicit missingness"
+    },
+    {
+      "id": "entry",
+      "url": "https://fantasy.premierleague.com/api/entry/{id}/",
+      "fields": "public entry/history/transfers/released picks",
+      "refresh": "weekly and on demand",
+      "free": true,
+      "fallback": "dated structured import; never infer private future squad"
+    },
+    {
+      "id": "league",
+      "url": "https://fantasy.premierleague.com/api/leagues-classic/{id}/standings/",
+      "fields": "paginated actual membership and points",
+      "refresh": "weekly",
+      "free": true,
+      "fallback": "prior timestamped released sample"
+    },
+    {
+      "id": "solio",
+      "url": "https://fpl.solioanalytics.com/api/data/latest.json",
+      "fields": "partial public leaderboards; topProjected is not a full-market multiweek forecast",
+      "refresh": "on demand",
+      "free": true,
+      "fallback": "independent component forecasts; missing comparator values stay missing"
+    },
+    {
+      "id": "vaastav",
+      "url": "https://github.com/vaastav/Fantasy-Premier-League",
+      "fields": "historical fixture outcomes and registrations",
+      "refresh": "explicit archived season import",
+      "free": true,
+      "fallback": "current-season completed-match replay",
+      "provenance": "Retrospective statistical archive; not proof of pre-deadline news/price availability"
+    },
+    {
+      "id": "club_news",
+      "url": "explicit official-domain allowlist in research.py",
+      "fields": "supporting source text and exact evidence spans",
+      "refresh": "targeted on demand",
+      "free": true,
+      "fallback": "manual supported evidence and dated official availability flags"
+    },
+    {
+      "id": "hosted_text",
+      "url": "Gemini or Groq configured provider endpoints",
+      "fields": "schema-validated claims only",
+      "refresh": "within attested unbilled/free quota",
+      "free": "account-specific verification required; disabled by default",
+      "fallback": "structured human evidence; numerical engine remains operational"
+    },
+    {
+      "id": "context_archive",
+      "url": "https://github.com/Randdalf/fplcache",
+      "fields": "Archived pre-deadline FPL bootstrap context",
+      "free": true,
+      "parser": "context_archive.py",
+      "provenance": "Capture and containing commit precede target deadline; compressed hash pinned",
+      "fallback": "Missing context excluded from historical fusion dataset"
+    },
+    {
+      "id": "elite_prior",
+      "url": "https://plan.livefpl.net/elite",
+      "fields": "Prior-season qualification; independently verified FPL history and released picks",
+      "free": true,
+      "parser": "elite.py",
+      "provenance": "No current-season rank selection; lag one decision deadline",
+      "fallback": "Explicit expert-source mask"
+    },
+    {
+      "id": "all_competitions",
+      "url": "https://github.com/olbauday/FPL-Core-Insights",
+      "fields": "Other-competition player minutes",
+      "free": true,
+      "parser": "workload.py",
+      "provenance": "Retrospective match facts; reject conflicting dates; explicit zero minutes only",
+      "fallback": "Missing workload mask"
+    },
+    {
+      "id": "public_scout",
+      "url": "https://www.fantasyfootballscout.co.uk/feed",
+      "fields": "Public specialist articles and source-supported claims",
+      "free": true,
+      "parser": "intelligence.py",
+      "fallback": "Queue extraction; no speculative numerical uplift"
+    },
+    {
+      "id": "community_leads",
+      "url": "https://www.reddit.com/r/fplAnalytics/.rss",
+      "fields": "Discovery of registered original evidence",
+      "free": true,
+      "parser": "intelligence.py",
+      "training_use": "No raw Reddit training",
+      "fallback": "Disclose HTTP failure; no access bypass"
+    },
+    {
+      "id": "top_1000_behavior",
+      "url": "https://fantasy.premierleague.com/api/leagues-classic/314/standings/",
+      "fields": "Current top 1,000 public entry histories, released squads and transfers",
+      "free": true,
+      "parser": "manager_behavior.py",
+      "analysis_use": "Calibrated transfer-count mixture and feasible rival branches; separate from prior-qualified expert features",
+      "provenance": "Current-rank cohort is retrospective; only earlier released decisions enter each test feature",
+      "fallback": "Frequency prior; explicit hold/greedy sensitivity scenarios"
+    }
   ]
 }

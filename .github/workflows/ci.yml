@@ -61,3 +61,12 @@ jobs:
           } finally {
             if (-not $launcher.HasExited) { taskkill /PID $launcher.Id /T /F | Out-Null }
           }
+
+  neural:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen --extra dev --extra neural
+      - run: uv run --extra neural pytest tests/test_fusion.py -q
