@@ -1,0 +1,59 @@
+{
+  "at": "2026-10-29T11:03:59.534097+00:00",
+  "protocol_id": "47bab3bd1291e7f01023bcc3a2d8113fb039373815f552669b2769b2656fd32c",
+  "feature_id": "aae7a96f6236a171670de039b9ad9f965cac0e759da1539ba15ae47319adb951",
+  "training_rows": 20714,
+  "calibration_rows": 7362,
+  "test_rows": 6901,
+  "baseline": {
+    "start": {
+      "brier": 0.13821053101211106,
+      "log_loss": 0.43936401669170816,
+      "n": 6901
+    },
+    "appearance": {
+      "brier": 0.1497423105254848,
+      "log_loss": 0.46641090487223125,
+      "n": 6901
+    }
+  },
+  "candidate": {
+    "start": {
+      "brier": 0.10815227302605017,
+      "log_loss": 0.344065796945378,
+      "n": 6901
+    },
+    "appearance": {
+      "brier": 0.1282986277775528,
+      "log_loss": 0.4001549177506715,
+      "n": 6901
+    }
+  },
+  "promoted": true,
+  "band_means": [
+    0.0,
+    22.297492401215806,
+    74.76624129930394,
+    90.0
+  ],
+  "start_model": "data/models/47bab3bd1291e7f0/start.txt",
+  "minutes_model": "data/models/47bab3bd1291e7f0/minutes.txt",
+  "model_files_hashes": {
+    "start.txt": "8cf0249ca0896cb1d961122db09d3ebaaa417fc572730dcea9a44084a1a85332",
+    "minutes.txt": "c272784a43eb688007b06f7316de38e97161e2dff6d1daf7a56dd926e2b4ac51"
+  },
+  "track": "chronological historical statistical replay",
+  "test_deadlines": [
+    "2025/26-GW37",
+    "2025/26-GW38",
+    "2026/27-GW01",
+    "2026/27-GW02",
+    "2026/27-GW03",
+    "2026/27-GW04",
+    "2026/27-GW05",
+    "2026/27-GW06",
+    "2026/27-GW07",
+    "2026/27-GW08"
+  ],
+  "id": "ce636ee8c30315068abe2185b3b57d3b34b684324dd1ccee13d583a3916a77c0"
+}

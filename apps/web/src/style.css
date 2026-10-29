@@ -2033,3 +2033,40 @@ tr:hover td {
     transition: none;
   }
 }
+.analysis-controls,
+.scenario-controls {
+  padding: 23px;
+}
+.analysis-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.analysis-controls p,
+.scenario-controls p {
+  font-size: 11px;
+  margin-top: 5px;
+}
+.analysis-controls small,
+.scenario-controls > small {
+  font-size: 10px;
+  color: #84967c;
+  line-height: 1.8;
+}
+.scenario-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 0;
+  border-top: 1px solid #e8eddf;
+  margin-top: 20px;
+  color: #78916c;
+}
+.scenario-result b {
+  font-size: 12px;
+}
+.scenario-result small {
+  font-size: 10px;
+}

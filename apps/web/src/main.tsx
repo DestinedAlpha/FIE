@@ -32,6 +32,13 @@ import {
   position,
 } from "./types";
 import "./style.css";
+import {
+  ResearchControls,
+  ModelEvidence,
+  ScenarioPanel,
+  ChipPanel,
+  CohortPanel,
+} from "./AnalysisPanels";
 
 const tabs = [
   ["Overview", LayoutDashboard],
@@ -178,9 +185,11 @@ function App() {
         setBusy(false);
         setNotice("Saved.");
       }
+      return true;
     } catch (e) {
       setError((e as Error).message);
       setBusy(false);
+      return false;
     }
   }
   function solve() {
@@ -203,8 +212,9 @@ function App() {
   async function saveState() {
     try {
       const state = JSON.parse(stateText);
-      await action("/state", { state, expected_state_id: data?.state?.id });
-      setEditor(false);
+      state.known_at = new Date().toISOString();
+      if (await action("/state", { state, expected_state_id: data?.state?.id }))
+        setEditor(false);
     } catch (e) {
       setError((e as Error).message);
     }
@@ -273,7 +283,7 @@ function App() {
       </div>
     );
   }
-  function table(ids?: number[]) {
+  function table(ids?: number[], sellQuotes = false) {
     return (
       <div className="table-scroll">
         <table>
@@ -281,7 +291,7 @@ function App() {
             <tr>
               <th>Player</th>
               <th>Pos</th>
-              <th>Price</th>
+              <th>{sellQuotes ? "Sell value" : "Price"}</th>
               <th>Fixture</th>
               <th>xMins</th>
               <th>P(start)</th>
@@ -319,7 +329,14 @@ function App() {
                   <td>
                     <span className="position">{position(p.position)}</span>
                   </td>
-                  <td>{money(p.price)}</td>
+                  <td>
+                    {money(
+                      sellQuotes
+                        ? (data?.state?.lots.find((l) => l.player_id === p.id)
+                            ?.sell_price ?? p.price)
+                        : p.price,
+                    )}
+                  </td>
                   <td>
                     {fixtures
                       ?.map(
@@ -479,7 +496,7 @@ function App() {
               </button>
             </div>
           </div>
-          {error && (
+          {error && !editor && (
             <div role="alert" className="message error">
               <span>{error}</span>
               <button onClick={() => setError("")} aria-label="Dismiss error">
@@ -589,7 +606,7 @@ function App() {
                         <span className="section-kicker">
                           <Sparkles size={15} /> THE RECOMMENDATION
                         </span>
-                        {pill("Component baseline", "amber")}
+                        {pill("Independent model", "green")}
                       </div>
                       <h2>
                         {first
@@ -712,7 +729,7 @@ function App() {
                         <div>
                           <b>Forecast confidence</b>
                           <small>
-                            Component baseline · competitive evidence accruing
+                            Calibrated minutes · prospective evidence accruing
                           </small>
                         </div>
                       </div>
@@ -836,7 +853,10 @@ function App() {
                         Edit account state
                       </button>
                     </div>
-                    {table(data.state?.lots.map((l) => l.player_id) || [])}
+                    {table(
+                      data.state?.lots.map((l) => l.player_id) || [],
+                      true,
+                    )}
                   </section>
                   <section className="panel transfer-builder">
                     <h3>Transfer package check</h3>
@@ -952,6 +972,13 @@ function App() {
               )}
               {tab === "Season planner" && (
                 <>
+                  <ChipPanel data={data} plan={plan} busy={busy} act={action} />
+                  <ScenarioPanel
+                    data={data}
+                    plan={plan}
+                    busy={busy}
+                    act={action}
+                  />
                   <section className="panel planner-controls">
                     <div>
                       <h3>A plan that can change with the evidence.</h3>
@@ -1161,6 +1188,7 @@ function App() {
               )}
               {tab === "Rivals" && (
                 <>
+                  <CohortPanel data={data} busy={busy} act={action} />
                   <div className="rival-controls">
                     <button
                       className="button secondary"
@@ -1277,6 +1305,7 @@ function App() {
               )}
               {tab === "Research" && (
                 <>
+                  <ResearchControls data={data} busy={busy} act={action} />
                   <section className="panel">
                     <div className="section-title">
                       <div>
@@ -1427,6 +1456,7 @@ function App() {
               )}
               {tab === "Model & data" && (
                 <>
+                  <ModelEvidence data={data} busy={busy} act={action} />
                   <div className="stats-grid">
                     {stat(
                       "Market coverage",
@@ -1616,6 +1646,14 @@ function App() {
               from your current account. Set status to confirmed only after
               checking these values. Purchase prices may remain null.
             </p>
+            {error && (
+              <div role="alert" className="message error">
+                <span>{error}</span>
+                <button onClick={() => setError("")} aria-label="Dismiss error">
+                  <X size={16} />
+                </button>
+              </div>
+            )}
             <textarea
               className="json-editor"
               aria-label="Account state JSON"

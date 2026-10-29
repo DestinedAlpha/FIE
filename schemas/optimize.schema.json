@@ -1,0 +1,69 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "state_id": {
+      "title": "State Id",
+      "type": "string"
+    },
+    "forecast_id": {
+      "title": "Forecast Id",
+      "type": "string"
+    },
+    "end_event": {
+      "maximum": 38,
+      "minimum": 1,
+      "title": "End Event",
+      "type": "integer"
+    },
+    "time_limit": {
+      "default": 30,
+      "maximum": 300,
+      "minimum": 1,
+      "title": "Time Limit",
+      "type": "number"
+    },
+    "objective": {
+      "default": "expected_points",
+      "enum": [
+        "expected_points",
+        "beat_both"
+      ],
+      "title": "Objective",
+      "type": "string"
+    },
+    "sacrifice_budget": {
+      "default": 5,
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Sacrifice Budget",
+      "type": "number"
+    },
+    "chips": {
+      "additionalProperties": {
+        "enum": [
+          "wildcard",
+          "freehit",
+          "bboost",
+          "3xc"
+        ],
+        "type": "string"
+      },
+      "title": "Chips",
+      "type": "object"
+    },
+    "max_transfers": {
+      "default": 3,
+      "maximum": 15,
+      "minimum": 0,
+      "title": "Max Transfers",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "state_id",
+    "forecast_id",
+    "end_event"
+  ],
+  "title": "OptimizeRequest",
+  "type": "object"
+}

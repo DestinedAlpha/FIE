@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-29T11:48:29.943401+00:00",
+  "source_repository": "qazybekb/smartplayfpl-dastan",
+  "source_commit": "758db9247e8b3a9a870c991064f74d8339d61cd0",
+  "model_contract": "40 hash-verified JSON files",
+  "dastan": {
+    "rows": 6582,
+    "features": 286,
+    "metrics": {
+      "n": 6582,
+      "mae": 0.8760990991434985,
+      "rmse": 1.7944461212660565,
+      "bias": 0.011765699750946343
+    },
+    "scope": "Released packaging holdout reproduction, not independent generalization",
+    "coherent_minutes": true
+  },
+  "openfpl": {
+    "rows": 18173,
+    "metrics": {
+      "n": 18173,
+      "mae": 1.1644314345854156,
+      "rmse": 2.017454896496373,
+      "bias": 0.15436687961625772
+    },
+    "scope": "Recalculated from released historical prediction vectors with validated identity join"
+  },
+  "limitations": [
+    "OpenFPL vectors are a historical benchmark; absent live Understat inputs are never filled with invented statistics",
+    "Released Dastan holdout was used by upstream calibration; metrics verify reproduction only"
+  ],
+  "id": "be274e5dfabba4fedaf4ced695a76c4671dc729749efb2a7663cc95fef431d18"
+}

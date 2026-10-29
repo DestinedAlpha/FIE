@@ -203,6 +203,7 @@ def optimize(
     forced_first: Action | None = None,
     pin_chips: Mapping[int, str] | None = None,
     forced_sell: dict[int, list[int]] | None = None,
+    disabled_chips: tuple[str, ...] = (),
 ) -> dict:
     started = time.monotonic()
     if time_limit <= 0 or not 0 <= max_transfers <= 15:
@@ -250,6 +251,8 @@ def optimize(
                 allowed = not any(c.chip == chip and a <= c.event <= b for c in state.used_chips)
             except ValueError:
                 pass
+            if chip in disabled_chips:
+                allowed = False
             if chip == "freehit" and state.transfers_made:
                 # Keep prior-event transfer restoration out of the generator;
                 # deterministic state engine supports it and validates imports.

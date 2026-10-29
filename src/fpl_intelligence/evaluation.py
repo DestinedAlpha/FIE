@@ -160,15 +160,22 @@ def evaluate_frozen(store: Store) -> dict:
     records = []
     from datetime import datetime
 
+    seen = set()
     for entry in store.list("forecast", 1000):
         forecast = store.get("forecast", entry["id"])
+        if forecast["season"] != market["season"] or forecast.get("belief_scenario"):
+            continue
         issued = datetime.fromisoformat(forecast["issued_at"])
         for row in forecast["players"]:
             event = row["event"]
+            key = (forecast["model_version"], event, row["player_id"])
+            if key in seen:
+                continue
             if event not in finished or issued >= datetime.fromisoformat(
                 deadlines[event].replace("Z", "+00:00")
             ):
                 continue
+            seen.add(key)
             actual = sum(r["total_points"] for r in actuals[row["player_id"]] if r["round"] == event)
             records.append(
                 {

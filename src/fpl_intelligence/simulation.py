@@ -12,12 +12,12 @@ from typing import Any
 import numpy as np
 
 from .domain import Player
-from .features import histories, intensity, profile, team_rates
+from .features import histories, intensity, profile, team_rates, vector
 from .ingestion import load_market
 from .rules import Rules, scoring_ids
 from .storage import Store, digest, now
 
-MODEL_VERSION = "shared-components-v1"
+MODEL_VERSION = "shared-components-v2"
 
 
 def weighted_choice(rng, weights):
@@ -37,6 +37,9 @@ def sample_lineup(
         [p.chance if p.chance is not None else (1 if p.status == "a" else 0.5) for p in members], dtype=float
     )
     chances += (1 - chances) * (1 - np.exp(-horizon / 5))
+    chances = np.array(
+        [profiles[p.id].get("availability_override", chance) for p, chance in zip(members, chances)]
+    )
     available = health < chances[None, :]
     raw = np.array([profiles[p.id]["p_start"] for p in members])
     # Shrink very long-horizon role certainty towards the club's finite XI places.
@@ -64,6 +67,8 @@ def sample_lineup(
         rng.integers(20, 60, (worlds, n)),
     ).astype(np.int16)
     sampled[:, positions == 1] = 90
+    caps = np.array([profiles[p.id].get("minutes_cap", 90) for p in members])
+    sampled = np.minimum(sampled, caps[None, :]).astype(np.int16)
     end[selected] = sampled[selected]
     # At most five substitutions, paired to an actual exiting player. GK and
     # outfield replacements are distinct; no starter can occupy two roles.
@@ -87,7 +92,7 @@ def sample_lineup(
     short_starters = (start == 0) & (end > 0) & (end < 90) & selected
     # If the player is not replaced within five changes, assume they finish the
     # match; the simulator does not silently leave ten footballers on the pitch.
-    end[short_starters] = 90
+    end = np.where(short_starters, np.minimum(90, caps)[None, :], end)
     return start, end, {"short_lineup_worlds": int((starting_counts < 11).sum())}
 
 
@@ -122,7 +127,10 @@ def fixture_worlds(
         rng.random((worlds, n))
         < np.array([profiles[p]["yellow90"] for p in ids])[None, :] * (ends - starts) / 90
     ) & played
-    red = (rng.random((worlds, n)) < 0.004 * (ends - starts) / 90) & played
+    red = (
+        rng.random((worlds, n))
+        < np.array([profiles[p].get("red90", 0.004) for p in ids])[None, :] * (ends - starts) / 90
+    ) & played
     red_time = rng.integers(1, 91, (worlds, n))
     ends = np.where(red, np.maximum(starts + 1, np.minimum(ends, red_time)), ends)
     minutes = ends - starts
@@ -131,6 +139,8 @@ def fixture_worlds(
     own = np.zeros_like(goals)
     conceded = np.zeros_like(goals)
     saves = np.zeros_like(goals)
+    penalty_missed = np.zeros_like(goals)
+    penalty_saved = np.zeros_like(goals)
     home_lambda, away_lambda = intensity(fixture["team_h"], fixture["team_a"], rates, horizon)
     goal_rates = np.array([profiles[p]["goals90"] for p in ids])
     assist_rates = np.array([profiles[p]["assists90"] for p in ids])
@@ -167,6 +177,24 @@ def fixture_worlds(
             # Dismissed defenders remain liable for later conceded goals.
             liable = (team == other)[None, :] & (starts < moment[:, None]) & ((ends >= moment[:, None]) | red)
             conceded += (occurred[:, None] & liable).astype(np.int16)
+        miss_rate = np.array([profiles[p].get("penalty_miss90", 0.003) for p in ids])
+        misses = rng.poisson(
+            ((minutes / 90) * (team == club)[None, :] * miss_rate[None, :]).sum(axis=1) * match_tempo
+        )
+        for event_index in range(int(misses.max(initial=0))):
+            moment = rng.integers(1, 91, worlds)
+            on_pitch = (starts < moment[:, None]) & (ends >= moment[:, None])
+            eligible = on_pitch & (team == club)[None, :]
+            orders = np.array([p.raw.get("penalties_order") or 99 for p in members])
+            responsibility = np.where(orders == 1, 10.0, np.where(orders == 2, 3.0, 0.15))
+            taker = weighted_choice(rng, eligible * responsibility[None, :])
+            occurred = (misses > event_index) & eligible.any(axis=1)
+            indexes = np.where(occurred)[0]
+            penalty_missed[indexes, taker[indexes]] += 1
+            keeper = on_pitch & (team == other)[None, :] & (pos == 1)[None, :]
+            stopped = occurred & (rng.random(worlds) < 0.65)
+            penalty_saved += (keeper & stopped[:, None]).astype(np.int16)
+            saves += (keeper & stopped[:, None]).astype(np.int16)
         # Saved shots and goals jointly define shots on target. They are not
         # sampled independently for multiple keepers in the same team.
         saved_shots = rng.poisson((2.6 + 0.35 * goal_lambda) * match_tempo)
@@ -191,9 +219,9 @@ def fixture_worlds(
     concede_reward = np.array(
         [rules.reward("goals_conceded", int(p), {"GKP": -1, "DEF": -1, "MID": 0, "FWD": 0}) for p in pos]
     )
-    actions = rng.poisson(
-        np.maximum(0, np.array([profiles[p]["actions90"] for p in ids])[None, :] * minutes / 90)
-    )
+    action_shape = np.array([profiles[p].get("action_shape", 20.0) for p in ids])
+    action_mean = np.maximum(0, np.array([profiles[p]["actions90"] for p in ids])[None, :] * minutes / 90)
+    actions = rng.poisson(rng.gamma(action_shape[None, :], action_mean / action_shape[None, :]))
     threshold = np.array([rules.dc_threshold[int(p)] for p in pos])
     dc_reward = np.array(
         [
@@ -211,6 +239,8 @@ def fixture_worlds(
         "defcon": (actions >= threshold[None, :]) * dc_reward[None, :],
         "discipline": yellows * rules.reward("yellow_cards", 1, -1) + red * rules.reward("red_cards", 1, -3),
         "own_goals": own * rules.reward("own_goals", 1, -2),
+        "penalties": penalty_saved * rules.reward("penalties_saved", 1, 5)
+        + penalty_missed * rules.reward("penalties_missed", 1, -2),
     }
     bps = (
         appeared * 3
@@ -251,10 +281,24 @@ def forecast(
     worlds: int = 2000,
     seed: int = 11,
     use_beliefs: bool = False,
+    scenario: dict | None = None,
 ) -> dict:
     started = time.monotonic()
     cutoff = now()
     players, market = load_market(store)
+    fixtures_source = [dict(f) for f in market["fixtures"]]
+    if scenario:
+        for change in scenario.get("fixture_events", []):
+            if (
+                not start_event
+                and change.get("event") is not None
+                and change["event"] < next((e["id"] for e in market["events"] if e.get("is_next")), 38)
+            ):
+                raise ValueError("Fixture scenario cannot alter a completed deadline")
+            for fixture in fixtures_source:
+                if fixture["id"] == change["fixture_id"]:
+                    fixture["event"] = change.get("event")
+                    fixture["kickoff_time"] = None
     rules = Rules.from_bootstrap(store.latest("bootstrap", content_hash=market["source_hash"])[0])
     if start_event is None:
         start_event = next((e["id"] for e in market["events"] if e.get("is_next")), 38)
@@ -285,7 +329,49 @@ def forecast(
         for belief in beliefs:
             if belief["player_id"] in profiles:
                 profiles[belief["player_id"]][belief["parameter"]] = belief["value"]
-    rates = team_rates(market["fixtures"], market["teams"])
+    rates = team_rates(fixtures_source, market["teams"])
+    strength_id = None
+    try:
+        fitted = store.get("team_strength")
+        if fitted["promoted"] and fitted["source_fixture_hash"] == market["fixture_hash"]:
+            rates = {int(k): v for k, v in fitted["rates"].items()}
+            strength_id = fitted["id"]
+    except ValueError:
+        pass
+    learned_by_fixture = {}
+    minutes_model_id = None
+    try:
+        suite = store.get("model_suite")
+    except ValueError:
+        suite = None
+    if suite is not None and suite["promoted"]:
+        from .models import MinutesModel
+
+        model = MinutesModel(store)
+        rows = []
+        keys = []
+        for fixture in fixtures_source:
+            if (
+                fixture.get("finished")
+                or fixture.get("event") is None
+                or not start_event <= fixture["event"] <= end_event
+            ):
+                continue
+            for player in players.values():
+                if player.team not in (fixture["team_h"], fixture["team_a"]):
+                    continue
+                keys.append((fixture["id"], player.id))
+                rows.append(
+                    vector(
+                        player.position,
+                        player.team == fixture["team_h"],
+                        profiles[player.id],
+                        fixture.get("kickoff_time"),
+                    )
+                )
+        estimates = model.predict(np.asarray(rows))
+        learned_by_fixture = dict(zip(keys, estimates))
+        minutes_model_id = model.spec["id"]
     ids = sorted(players)
     index = {identity: i for i, identity in enumerate(ids)}
     rng = np.random.default_rng(seed)
@@ -300,10 +386,40 @@ def forecast(
         minutes = np.zeros_like(points)
         start_count = np.zeros_like(points)
         components: dict[str, Any] = {}
-        fixtures = [f for f in market["fixtures"] if f.get("event") == event and not f.get("finished")]
+        fixtures = [f for f in fixtures_source if f.get("event") == event and not f.get("finished")]
         for fixture in fixtures:
+            local_profiles = {
+                identity: {**p, **learned_by_fixture.get((fixture["id"], identity), {})}
+                for identity, p in profiles.items()
+            }
+            for belief in beliefs:
+                if belief["player_id"] in local_profiles:
+                    local_profiles[belief["player_id"]][belief["parameter"]] = belief["value"]
+            local_players = players
+            if scenario:
+                local_players = dict(players)
+                for change in scenario.get("players", []):
+                    if change["from_event"] <= event <= change.get("through_event", end_event):
+                        identity = change["player_id"]
+                        if identity not in players:
+                            raise ValueError("Unknown scenario player")
+                        local_profiles[identity].update(change.get("parameters", {}))
+                        if "availability" in change:
+                            local_players[identity] = players[identity].model_copy(
+                                update={"chance": change["availability"]}
+                            )
+                            local_profiles[identity]["availability_override"] = change["availability"]
+            fixture_rng = np.random.default_rng(np.random.SeedSequence([seed, fixture["id"]]))
             f_ids, p, m, starts, comp, audit = fixture_worlds(
-                rng, fixture, players, profiles, rates, rules, worlds, event - start_event, health
+                fixture_rng,
+                fixture,
+                local_players,
+                local_profiles,
+                rates,
+                rules,
+                worlds,
+                event - start_event,
+                health,
             )
             columns = [index[i] for i in f_ids]
             points[:, columns] += p
@@ -320,6 +436,10 @@ def forecast(
                         "event": event,
                         "mean": float(p[:, col].mean()),
                         "minutes": float(m[:, col].mean()),
+                        "p_zero": float((m[:, col] == 0).mean()),
+                        "p_60": float((m[:, col] >= 60).mean()),
+                        "point_quantiles": np.quantile(p[:, col], [0.1, 0.5, 0.9]).tolist(),
+                        "components": {k: float(v[:, col].mean()) for k, v in comp.items()},
                     }
                 )
         for column, identity in enumerate(ids):
@@ -380,16 +500,19 @@ def forecast(
         "input_manifest": manifest,
         "players": records,
         "belief_scenario": [b["id"] for b in beliefs],
+        "scenario": scenario,
+        "minutes_model_id": minutes_model_id,
+        "team_strength_model_id": strength_id,
         "fixtures": fixture_records,
         "match_audit": audits,
         "player_ids": ids,
         "unassigned_fixtures": [f["id"] for f in market["fixtures"] if f.get("event") is None],
         "assumptions": [
-            "Exposure-shrunk current-season component baseline, not a validated elite forecast",
+            "Independent component worlds; chronological promotion gates select learned minutes and team rates",
             "Shared match tempo, finite XI, timed goals and on-pitch attribution",
             "BPS proxy and Poisson defensive actions require calibration",
             "Injury recovery is a horizon sensitivity prior; future prices held constant",
-            "Rare penalty saves/misses are not separately parameterized",
+            "Parameter and model uncertainty remain distinct from scenario sampling error",
         ],
         "runtime_seconds": round(time.monotonic() - started, 3),
     }
@@ -398,7 +521,7 @@ def forecast(
     path.parent.mkdir(exist_ok=True)
     np.savez_compressed(path, **arrays)
     body["scenario_path"] = str(path)
-    body["id"] = store.put("forecast", body)
+    body["id"] = store.put("scenario_forecast" if scenario else "forecast", body)
     return body
 
 

@@ -1,0 +1,13 @@
+{
+  "scope": "Released numerical-artifact holdout reload; not an independent out-of-sample claim",
+  "source_commit": "758db9247e8b3a9a870c991064f74d8339d61cd0",
+  "rows": 6582,
+  "metrics": {
+    "n": 6582,
+    "mae": 0.8760990991434985,
+    "rmse": 1.7944461212660565,
+    "bias": 0.011765699750946343
+  },
+  "p60_coherent": true,
+  "feature_count": 286
+}

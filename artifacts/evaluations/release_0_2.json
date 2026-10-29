@@ -1,0 +1,76 @@
+{
+  "at": "2026-10-29T11:48:30.856362+00:00",
+  "state_status": "confirmed",
+  "confirmed_players": 15,
+  "free_provider_authentication": {
+    "gemini": true,
+    "groq": true
+  },
+  "secrets_published": false,
+  "model_version": "shared-components-v2",
+  "worlds": 2000,
+  "players": 669,
+  "future_fixture_records": 16890,
+  "minutes_promoted": true,
+  "minutes_start_brier": {
+    "before": 0.13821053101211106,
+    "after": 0.10815227302605017
+  },
+  "minutes_appearance_brier": {
+    "before": 0.1497423105254848,
+    "after": 0.1282986277775528
+  },
+  "production_evidence_claims": 2,
+  "actual_manager_sample": 50,
+  "chip_counterfactuals": [
+    {
+      "chip": "freehit",
+      "chosen_event": 13,
+      "without_plan_id": "8ccf1d9c784cb62ce152319de0480e3ccb1ddb61e838e3721a7a5cf971d8475f",
+      "baseline_mean": 597.538,
+      "without_mean": 594.0455,
+      "whole_policy_mean_delta": 3.4925,
+      "paired_mc_interval_95": [
+        2.699945390045658,
+        4.285054609954343
+      ],
+      "baseline_solver_gap": 0.03221040727818086,
+      "counterfactual_solver_gap": 0.02615379047531085,
+      "counterfactual_validation": {
+        "legal": true,
+        "affordable": true,
+        "independent_transition": true
+      }
+    },
+    {
+      "chip": "bboost",
+      "chosen_event": 19,
+      "without_plan_id": "dfbb60af65e865b666ff7d72474d09a9279c1b82f052cc46961b1a821b60c279",
+      "baseline_mean": 597.538,
+      "without_mean": 590.483,
+      "whole_policy_mean_delta": 7.055,
+      "paired_mc_interval_95": [
+        6.814730050142757,
+        7.295269949857243
+      ],
+      "baseline_solver_gap": 0.03221040727818086,
+      "counterfactual_solver_gap": 0.020704387090990616,
+      "counterfactual_validation": {
+        "legal": true,
+        "affordable": true,
+        "independent_transition": true
+      }
+    }
+  ],
+  "legal_case_plans": 6,
+  "scenario_branches_executed": 2,
+  "competitive_rank_claim": false,
+  "verification": {
+    "python_tests": 49,
+    "frontend_unit_tests": 2,
+    "browser_journeys": 4,
+    "ruff": true,
+    "mypy": true,
+    "frontend_build": true
+  }
+}

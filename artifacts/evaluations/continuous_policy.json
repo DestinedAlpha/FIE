@@ -1,0 +1,45 @@
+{
+  "at": "2026-10-29T11:15:01.450878+00:00",
+  "protocol_id": "f19d516f08259b3bc65a470bcc60d2b76cb0d1caf3881250e494074d8dfce79e",
+  "season": "2025/26",
+  "events": 30,
+  "track": "historical_statistical_policy_replay",
+  "shared_initial_state": true,
+  "invalid_exported_actions": 0,
+  "policies": {
+    "hold-shrinkage": {
+      "realized_net_points": 1529.0,
+      "hits": 0,
+      "transfers": 0,
+      "candidate_rejections": 0,
+      "final_bank": 35
+    },
+    "hold-direct": {
+      "realized_net_points": 1523.0,
+      "hits": 0,
+      "transfers": 0,
+      "candidate_rejections": 0,
+      "final_bank": 35
+    },
+    "transfer-shrinkage": {
+      "realized_net_points": 1506.0,
+      "hits": 4,
+      "transfers": 31,
+      "candidate_rejections": 0,
+      "final_bank": 24
+    },
+    "transfer-direct": {
+      "realized_net_points": 1613.0,
+      "hits": 4,
+      "transfers": 31,
+      "candidate_rejections": 0,
+      "final_bank": 15
+    }
+  },
+  "limitations": [
+    "Historical statistical replay; archival prices are not strict pre-deadline snapshots",
+    "These four policies exclude chips to isolate forecast and transfer effects",
+    "No overall-rank or competitor superiority claim follows from this replay"
+  ],
+  "id": "25f3e917c4fea8820cff56fae5b7e957de7f176f71044ad7636dc0fd9a9876c7"
+}

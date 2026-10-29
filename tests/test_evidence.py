@@ -49,3 +49,31 @@ def test_expiring_beliefs_are_cutoff_safe(tmp_path):
     assert active_beliefs(store, (known + timedelta(days=2)).isoformat()) == []
     with pytest.raises(ValueError):
         Belief(**(body.model_dump() | {"value": 1.2}))
+
+
+def test_syndicated_quote_is_one_evidence_origin(tmp_path, market, monkeypatch):
+    monkeypatch.setattr("fpl_intelligence.ingestion.load_market", lambda store: (market, {}))
+    store = Store(tmp_path)
+    known = datetime.now(timezone.utc)
+    text = "Player 1 is unavailable."
+    claim = Claim(
+        player_id=1,
+        claim_type="unavailable",
+        statement=text,
+        evidence_span=text,
+        source_url="https://www.arsenal.com/news",
+        source_hash=digest(text),
+        known_at=known.isoformat(),
+        expires_at=(known + timedelta(days=1)).isoformat(),
+        status="confirmed",
+        origin="manager transcript",
+    )
+    first = save_claim(store, claim, text)
+    second = save_claim(
+        store,
+        claim.model_copy(
+            update={"source_url": "https://www.premierleague.com/news", "origin": "syndicated quote"}
+        ),
+        text,
+    )
+    assert store.get("claim", first)["origin_hash"] == store.get("claim", second)["origin_hash"]

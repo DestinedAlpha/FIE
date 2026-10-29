@@ -102,6 +102,22 @@ def profile(position: int, rows: list[dict]) -> dict:
         "actions90": (action_sum + 5 * prior["actions"]) / (action_exp + 5),
         "saves90": rate("saves", prior["saves"]),
         "yellow90": rate("yellow_cards", prior["yellow"]),
+        "penalty_miss90": rate("penalties_missed", 0.006 if position in (3, 4) else 0.001, strength=80),
+        "red90": rate("red_cards", 0.004, strength=80),
+        "action_shape": float(
+            np.clip(
+                (prior["actions"] + action_sum / max(1, len(actions_rows))) ** 2
+                / max(
+                    1.0,
+                    float(np.var([number(r, "defensive_contribution") for r in actions_rows]))
+                    - prior["actions"],
+                ),
+                3,
+                80,
+            )
+        )
+        if len(actions_rows) > 1
+        else 20.0,
         "points_mean": (sum(number(r, "total_points") * w for r, w in zip(rows, weights)) + 3 * 2)
         / (float(weights.sum()) + 3),
         "exposure": exposure,
@@ -237,6 +253,16 @@ def intensity(home: int, away: int, rates: dict[int, dict], horizon: int) -> tup
     # Team-parameter mean reversion, not duplicated copies of today's xPts.
     shrink = math.exp(-horizon / 45)
     h, a = rates[home], rates[away]
-    first = h["mean"] * (1 + (h["attack"] - 1) * shrink) * (1 + (a["defence"] - 1) * shrink) * 1.12
-    second = a["mean"] * (1 + (a["attack"] - 1) * shrink) * (1 + (h["defence"] - 1) * shrink) * 0.88
+    first = (
+        h["mean"]
+        * (1 + (h["attack"] - 1) * shrink)
+        * (1 + (a["defence"] - 1) * shrink)
+        * h.get("home_factor", 1.12)
+    )
+    second = (
+        a["mean"]
+        * (1 + (a["attack"] - 1) * shrink)
+        * (1 + (h["defence"] - 1) * shrink)
+        * a.get("away_factor", 0.88)
+    )
     return float(np.clip(first, 0.25, 4.5)), float(np.clip(second, 0.25, 4.5))

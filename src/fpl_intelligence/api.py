@@ -21,6 +21,7 @@ from .ingestion import Official, freshness, load_market, reconcile_seed
 from .optimization import hold_plan, optimize
 from .research import Belief, Claim, save_claim
 from .rules import Rules, transition, validate_squad
+from .settings import load_environment, provider_configuration, redact
 from .storage import Store, now
 
 executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="fpl-job")
@@ -55,8 +56,19 @@ class RivalRequest(Strict):
     compare_case: bool = False
 
 
+class ResearchRequest(Strict):
+    urls: list[str] = Field(default_factory=list, max_length=5)
+    limit: int = Field(default=3, ge=1, le=5)
+
+
+class ScenarioRequest(Strict):
+    plan_id: str
+    scenarios: list[dict] = Field(min_length=1, max_length=8)
+
+
 def create_app(root=None):
-    app = FastAPI(title="FPL Intelligence", version="0.1.0")
+    load_environment()
+    app = FastAPI(title="FPL Intelligence", version="0.2.0")
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
 
     @app.middleware("http")
@@ -109,7 +121,7 @@ def create_app(root=None):
                 with store.db() as db:
                     db.execute(
                         "UPDATE jobs SET status='failed',error=?,updated_at=? WHERE id=?",
-                        (f"{type(exc).__name__}: {str(exc)[:400]}", now(), identity),
+                        (f"{type(exc).__name__}: {redact(exc)[:400]}", now(), identity),
                     )
 
         executor.submit(execute)
@@ -133,7 +145,10 @@ def create_app(root=None):
             "quota": quota,
             "at": now(),
             "paid_provider_calls_allowed": False,
-            "hosted_ai_configured": False,
+            "hosted_ai_configured": any(
+                v for k, v in provider_configuration().items() if k.endswith("key_present")
+            ),
+            "providers": provider_configuration(),
             "mode": "local private",
         }
 
@@ -150,6 +165,13 @@ def create_app(root=None):
             "league": None,
             "evidence": [],
             "beliefs": [],
+            "model_suite": None,
+            "policy_evaluation": None,
+            "scenario_evaluation": None,
+            "extraction_benchmark": None,
+            "open_model_reproduction": None,
+            "cohort": None,
+            "chip_counterfactual": None,
         }
         try:
             players, market = load_market(store)
@@ -169,7 +191,19 @@ def create_app(root=None):
             }
         except ValueError:
             return result
-        for kind in ("state", "forecast", "evaluation", "league"):
+        for kind in (
+            "state",
+            "forecast",
+            "evaluation",
+            "league",
+            "model_suite",
+            "policy_evaluation",
+            "scenario_evaluation",
+            "extraction_benchmark",
+            "open_model_reproduction",
+            "cohort",
+            "chip_counterfactual",
+        ):
             try:
                 artifact = store.get(kind)
                 if kind == "forecast":
@@ -177,6 +211,14 @@ def create_app(root=None):
                     artifact["players"] = [r for r in artifact["players"] if r["event"] == event]
                 if kind == "evaluation":
                     artifact = {k: v for k, v in artifact.items() if k != "predictions"}
+                if kind == "policy_evaluation":
+                    artifact = {
+                        **artifact,
+                        "policies": {
+                            name: {k: v for k, v in row.items() if k != "ledger"}
+                            for name, row in artifact["policies"].items()
+                        },
+                    }
                 result[kind] = artifact
             except ValueError:
                 pass
@@ -231,9 +273,72 @@ def create_app(root=None):
 
             players, market = load_market(store)
             build_features(store, players, market)
+            from .models import fit_model_suite
+            from .strength import train_strength
+
+            fit_model_suite(store)
+            train_strength(store)
             return {"evaluation_id": train_evaluate(store)["id"]}
 
         return launch("train", {}, work)
+
+    @app.post("/api/research/refresh")
+    def refresh_research(request: ResearchRequest):
+        from .context import research_refresh
+
+        return launch(
+            "research",
+            request.model_dump(),
+            lambda: asyncio.run(research_refresh(store, request.urls, request.limit)),
+        )
+
+    @app.post("/api/scenarios")
+    def scenarios(request: ScenarioRequest):
+        from .scenarios import ScenarioSpec, evaluate_scenarios
+
+        specs = [ScenarioSpec.model_validate(row) for row in request.scenarios]
+        return launch(
+            "scenarios", request.model_dump(), lambda: evaluate_scenarios(store, request.plan_id, specs)
+        )
+
+    @app.post("/api/open-benchmark")
+    def open_benchmark():
+        from .open_models import reproduce
+
+        return launch("open-models", {}, lambda: reproduce(store))
+
+    @app.post("/api/cohort/refresh")
+    def refresh_cohort():
+        from .cohorts import sample_current_rank
+
+        return launch("cohort", {}, lambda: asyncio.run(sample_current_rank(store)))
+
+    @app.post("/api/freeze")
+    def freeze_current():
+        from .prospective import freeze
+
+        return freeze(store, store.get("selected_plan")["plan_id"])
+
+    @app.post("/api/chips/compare")
+    def chip_comparison():
+        from .chips import compare_chips
+
+        return launch(
+            "chip-counterfactual", {}, lambda: compare_chips(store, store.get("selected_plan")["plan_id"])
+        )
+
+    @app.post("/api/policy-replay")
+    def policy_replay():
+        from .policy_replay import continuous_replay
+
+        def work():
+            result = continuous_replay(store)
+            return {
+                "evaluation_id": result["id"],
+                "policies": {k: v["realized_net_points"] for k, v in result["policies"].items()},
+            }
+
+        return launch("policy-replay", {}, work)
 
     @app.post("/api/rivals")
     def refresh_rivals(request: RivalRequest):

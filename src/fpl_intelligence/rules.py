@@ -9,6 +9,7 @@ from __future__ import annotations
 from collections import Counter
 from dataclasses import dataclass, field
 from itertools import permutations
+from typing import Mapping
 
 from .domain import Action, Lineup, Lot, Player, TeamState
 from .storage import digest
@@ -200,7 +201,7 @@ def scoring_ids(
 
 
 def score_gameweek(
-    points: dict[int, int | float],
+    points: Mapping[int, int | float],
     minutes: dict[int, int],
     lineup: Lineup,
     players: dict[int, Player],
@@ -251,8 +252,6 @@ def transition(
     sales = [{"player_id": p, "units": quote(owned[p], prices[p])} for p in action.sell]
     purchases = [{"player_id": p, "units": prices[p]} for p in action.buy]
     bank = state.bank + sum(x["units"] for x in sales) - sum(x["units"] for x in purchases)
-    if bank < 0:
-        raise ValueError("Transfer bundle is unaffordable")
     lots = [lot for lot in state.lots if lot.player_id not in action.sell]
     lots.extend(
         Lot(
@@ -264,6 +263,39 @@ def transition(
         )
         for p in action.buy
     )
+    settlement_sales = sales
+    settlement_purchases = purchases
+    settlement_bank = state.bank
+    if chip == "freehit" and state.transfers_made:
+        assert state.deadline_lots is not None and state.deadline_bank is not None
+        underlying = {lot.player_id: lot for lot in state.deadline_lots}
+        target = {lot.player_id for lot in lots}
+        settlement_sales = [
+            {"player_id": p, "units": quote(underlying[p], prices[p])} for p in underlying.keys() - target
+        ]
+        settlement_purchases = [{"player_id": p, "units": prices[p]} for p in target - underlying.keys()]
+        settlement_bank = state.deadline_bank
+        bank = (
+            settlement_bank
+            + sum(r["units"] for r in settlement_sales)
+            - sum(r["units"] for r in settlement_purchases)
+        )
+        # Earlier same-event trades are cancelled. Returning to an underlying
+        # player restores their lot rather than charging a fresh buy/sell spread.
+        lots = [
+            underlying[p]
+            if p in underlying
+            else Lot(
+                player_id=p,
+                purchase_price=prices[p],
+                sell_price=prices[p],
+                quote_market_price=prices[p],
+                provenance=f"freehit_gw{state.event}",
+            )
+            for p in sorted(target)
+        ]
+    if bank < 0:
+        raise ValueError("Transfer bundle is unaffordable")
     playing_state = state.model_copy(update={"lots": lots, "bank": bank})
     validate_squad(playing_state, players, rules, allow_grandfathered=not action.buy)
     if action.lineup:
@@ -314,6 +346,9 @@ def transition(
         "buy": purchases,
         "bank_before": state.bank,
         "bank_after": bank,
+        "settlement_bank_before": settlement_bank,
+        "settlement_sales": settlement_sales,
+        "settlement_purchases": settlement_purchases,
         "restored_bank": next_bank if chip == "freehit" else None,
         "free_transfers_before": state.free_transfers,
         "free_transfers_after": ft,

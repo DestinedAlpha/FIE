@@ -1,0 +1,732 @@
+{
+  "at": "2026-10-29T11:23:37.057750+00:00",
+  "kind": "current_rank_sample",
+  "selection": "first requested entries in official league rank order",
+  "league_id": 314,
+  "requested": 50,
+  "retrieved": 50,
+  "misses": 0,
+  "event": 8,
+  "population": "current rank cohort; no prior-season elite label or future-rank selection",
+  "effective_ownership": [
+    {
+      "player_id": 1,
+      "effective_ownership": 84.0,
+      "resampling_interval_95": [
+        74.0,
+        94.0
+      ]
+    },
+    {
+      "player_id": 4,
+      "effective_ownership": 14.000000000000002,
+      "resampling_interval_95": [
+        6.0,
+        24.0
+      ]
+    },
+    {
+      "player_id": 8,
+      "effective_ownership": 92.0,
+      "resampling_interval_95": [
+        84.0,
+        98.0
+      ]
+    },
+    {
+      "player_id": 15,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 31,
+      "effective_ownership": 86.0,
+      "resampling_interval_95": [
+        76.0,
+        94.0
+      ]
+    },
+    {
+      "player_id": 40,
+      "effective_ownership": 84.0,
+      "resampling_interval_95": [
+        74.0,
+        92.0
+      ]
+    },
+    {
+      "player_id": 53,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        8.0
+      ]
+    },
+    {
+      "player_id": 58,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 68,
+      "effective_ownership": 56.00000000000001,
+      "resampling_interval_95": [
+        40.0,
+        74.0
+      ]
+    },
+    {
+      "player_id": 79,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        8.0
+      ]
+    },
+    {
+      "player_id": 87,
+      "effective_ownership": 8.0,
+      "resampling_interval_95": [
+        2.0,
+        16.0
+      ]
+    },
+    {
+      "player_id": 88,
+      "effective_ownership": 4.0,
+      "resampling_interval_95": [
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "player_id": 94,
+      "effective_ownership": 22.0,
+      "resampling_interval_95": [
+        10.950000000000001,
+        35.049999999999955
+      ]
+    },
+    {
+      "player_id": 106,
+      "effective_ownership": 4.0,
+      "resampling_interval_95": [
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "player_id": 109,
+      "effective_ownership": 8.0,
+      "resampling_interval_95": [
+        0.0,
+        16.0
+      ]
+    },
+    {
+      "player_id": 111,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 112,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        8.0
+      ]
+    },
+    {
+      "player_id": 114,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 115,
+      "effective_ownership": 56.00000000000001,
+      "resampling_interval_95": [
+        42.0,
+        70.0
+      ]
+    },
+    {
+      "player_id": 124,
+      "effective_ownership": 80.0,
+      "resampling_interval_95": [
+        70.0,
+        90.0
+      ]
+    },
+    {
+      "player_id": 127,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 138,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 148,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 154,
+      "effective_ownership": 70.0,
+      "resampling_interval_95": [
+        54.0,
+        88.0
+      ]
+    },
+    {
+      "player_id": 165,
+      "effective_ownership": 4.0,
+      "resampling_interval_95": [
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "player_id": 166,
+      "effective_ownership": 8.0,
+      "resampling_interval_95": [
+        2.0,
+        16.0
+      ]
+    },
+    {
+      "player_id": 167,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 173,
+      "effective_ownership": 8.0,
+      "resampling_interval_95": [
+        2.0,
+        16.0
+      ]
+    },
+    {
+      "player_id": 176,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 183,
+      "effective_ownership": 4.0,
+      "resampling_interval_95": [
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "player_id": 201,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 229,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 233,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 236,
+      "effective_ownership": 4.0,
+      "resampling_interval_95": [
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "player_id": 237,
+      "effective_ownership": 8.0,
+      "resampling_interval_95": [
+        2.0,
+        15.049999999999955
+      ]
+    },
+    {
+      "player_id": 239,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 249,
+      "effective_ownership": 6.0,
+      "resampling_interval_95": [
+        0.0,
+        14.000000000000002
+      ]
+    },
+    {
+      "player_id": 250,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 251,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 258,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 268,
+      "effective_ownership": 8.0,
+      "resampling_interval_95": [
+        2.0,
+        16.0
+      ]
+    },
+    {
+      "player_id": 277,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 279,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 282,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 290,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 301,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 302,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 304,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 305,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 321,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 330,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        7.0499999999999545
+      ]
+    },
+    {
+      "player_id": 332,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 334,
+      "effective_ownership": 46.0,
+      "resampling_interval_95": [
+        32.0,
+        60.0
+      ]
+    },
+    {
+      "player_id": 335,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 346,
+      "effective_ownership": 30.0,
+      "resampling_interval_95": [
+        18.0,
+        44.0
+      ]
+    },
+    {
+      "player_id": 367,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 368,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 379,
+      "effective_ownership": 10.0,
+      "resampling_interval_95": [
+        2.0,
+        18.0
+      ]
+    },
+    {
+      "player_id": 385,
+      "effective_ownership": 8.0,
+      "resampling_interval_95": [
+        2.0,
+        14.000000000000002
+      ]
+    },
+    {
+      "player_id": 388,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 391,
+      "effective_ownership": 6.0,
+      "resampling_interval_95": [
+        0.0,
+        14.000000000000002
+      ]
+    },
+    {
+      "player_id": 398,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 399,
+      "effective_ownership": 16.0,
+      "resampling_interval_95": [
+        6.950000000000001,
+        28.000000000000004
+      ]
+    },
+    {
+      "player_id": 400,
+      "effective_ownership": 4.0,
+      "resampling_interval_95": [
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "player_id": 403,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 411,
+      "effective_ownership": 190.0,
+      "resampling_interval_95": [
+        180.0,
+        198.0
+      ]
+    },
+    {
+      "player_id": 418,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 426,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 427,
+      "effective_ownership": 36.0,
+      "resampling_interval_95": [
+        24.0,
+        46.0
+      ]
+    },
+    {
+      "player_id": 449,
+      "effective_ownership": 34.0,
+      "resampling_interval_95": [
+        22.0,
+        48.0
+      ]
+    },
+    {
+      "player_id": 453,
+      "effective_ownership": 16.0,
+      "resampling_interval_95": [
+        6.0,
+        28.000000000000004
+      ]
+    },
+    {
+      "player_id": 464,
+      "effective_ownership": 4.0,
+      "resampling_interval_95": [
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "player_id": 469,
+      "effective_ownership": 8.0,
+      "resampling_interval_95": [
+        2.0,
+        14.000000000000002
+      ]
+    },
+    {
+      "player_id": 480,
+      "effective_ownership": 28.000000000000004,
+      "resampling_interval_95": [
+        14.000000000000002,
+        42.0
+      ]
+    },
+    {
+      "player_id": 496,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 497,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 504,
+      "effective_ownership": 6.0,
+      "resampling_interval_95": [
+        0.0,
+        13.049999999999955
+      ]
+    },
+    {
+      "player_id": 529,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 542,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 565,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        7.0499999999999545
+      ]
+    },
+    {
+      "player_id": 566,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    },
+    {
+      "player_id": 569,
+      "effective_ownership": 10.0,
+      "resampling_interval_95": [
+        2.0,
+        19.049999999999955
+      ]
+    },
+    {
+      "player_id": 572,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 586,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 597,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 605,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 623,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 629,
+      "effective_ownership": 0.0,
+      "resampling_interval_95": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "player_id": 650,
+      "effective_ownership": 2.0,
+      "resampling_interval_95": [
+        0.0,
+        6.0
+      ]
+    }
+  ],
+  "finalized": true,
+  "errors": [],
+  "limitations": [
+    "Intervals describe entry resampling, not a representative overall-rank population",
+    "Current-rank samples cannot establish prior-season skill or future top-1% probabilities"
+  ],
+  "id": "7e04222b24332fdd4611c5c3bb293b09655af8109821f19daa2c726a1be44cf9"
+}

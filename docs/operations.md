@@ -20,7 +20,7 @@ To restore, stop the server, copy the backup directory into a new local director
 
 ## Hosted research
 
-Configure an eligible Gemini or Groq key through the environment. Copy `configs/hosted_free.example.json` to an ignored local path and verify the current model, free text capability, purpose/region eligibility, unbilled account and expiry. The default example is intentionally disabled and expired. No tool/search/batch/caching feature is enabled implicitly.
+The root `.env` is automatically loaded without overriding inherited variables. Configure an eligible Gemini or Groq key and run `uv run fpl configure-providers --unbilled` only after verifying that account status. This authenticates model catalogs without generation and creates seven-day local capabilities. `uv run fpl research-refresh` uses the selected model and official source discovery. Daily local soft limits are 20 requests and 160,000 reserved tokens per provider. Expired capabilities or exhausted quotas queue work and preserve numerical operation. To configure a custom capability, copy `configs/hosted_free.example.json` to an ignored local path and verify the current model, free text capability, purpose/region eligibility, unbilled account and expiry. The default example is intentionally disabled and expired. No tool/search/batch/caching feature is enabled implicitly.
 
 ```sh
 uv run fpl research --url https://www.arsenal.com/news --capability data/free-capability.json
@@ -28,10 +28,16 @@ uv run fpl research --url https://www.arsenal.com/news --capability data/free-ca
 
 Without `--capability`, the command only retrieves bounded official-domain text. Structured evidence can be imported with `--claims path.json`; explicit beliefs with `--belief path.json`. Extracted quotes must be verbatim and source-hashed; unknown entities/URLs/schema fields are rejected. Provider output has no executable tools and cannot set bank values or numeric beliefs. Source instructions are untrusted text.
 
-The request boundary rejects unknown/paid/expired capabilities, reserves a conservative token/call quota before dispatch and performs no paid escalation. A provider outage or quota exhaustion leaves numerical forecasts and manual evidence entry operational. An absent key is not reported as a successful hosted extraction. No real key/account was available in the execution environment, so authentication and live extraction quality remain account configuration/evidence requirements.
+The request boundary rejects unknown/paid/expired capabilities, reserves a conservative token/call quota before dispatch and performs no paid escalation. A provider outage or quota exhaustion leaves numerical forecasts and manual evidence entry operational. An absent key is not reported as a successful hosted extraction. Both user-provided free, unbilled providers have been authenticated and benchmarked. The chosen primary is Gemini 3.5 Flash Lite; Groq GPT OSS 120B is the fallback. Six synthetic cases measure extraction and source-status handling; real production claims retain their original source quotes. No paid grounding, tools or batch endpoint is enabled.
 
 ## Exports and reproducibility
 
-`fpl export` writes validated plan JSON, the complete CSV ledger, a readable Markdown report and an ICS calendar based on official UTC deadlines. `fpl snapshot` exports source hashes. `fpl replay` loads the frozen plan market and rules rather than silently substituting today's prices. `fpl evaluate --prospective` scores only forecasts captured before a subsequently completed deadline; an empty eligible set is reported as empty.
+`fpl export` writes validated plan JSON, the complete CSV ledger, a readable Markdown report an ICS calendar based on official UTC deadlines, the full-market forecast CSV and matching scenario/chip/rival alternatives. `fpl freeze` stores an immutable pre-deadline shadow decision; `fpl evaluate --prospective` also reports finalized decision results. `fpl snapshot` exports source hashes. `fpl replay` loads the frozen plan market and rules rather than silently substituting today's prices. `fpl evaluate --prospective` scores only forecasts captured before a subsequently completed deadline; an empty eligible set is reported as empty.
 
 Public repository artifacts contain aggregate validation results and the research package the user asked to publish. Runtime exports, source archives, account state, backups and keys are excluded from Git by default.
+
+## Windows handoff
+
+Extract the private prepared ZIP and run `Start.cmd`. The ZIP includes the built UI, a consistent SQLite backup, immutable numerical inputs and the confirmed account state. Provider credentials, executable environments, node_modules and optional 80 MB vendor caches are excluded. Enter keys into the secure launcher prompts; their local file is restricted to the current Windows user. The public source checkout requires Node 24 for its first interface build; the prepared ZIP does not. uv installs the pinned Python environment. The server chooses an available loopback port and opens the browser after its health check succeeds.
+
+The bundle contains private team/account state. Keep it private. Build a fresh portable handoff with `uv run python scripts/prepare_bundle.py`; it verifies ZIP CRC integrity. The Linux/Windows CI matrix verifies backend dependencies and offline tests; Windows CI also parses the launcher. A remote development environment cannot install the application on an inaccessible laptop.

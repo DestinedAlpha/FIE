@@ -106,6 +106,23 @@ def test_wc_preserves_ft_and_cancels_hits(market, rules, state):
     assert following.free_transfers == 5 and ledger["hit"] == -4
 
 
+def test_fh_cancels_prior_sale_spread_and_restores_underlying_lot(market, rules, state):
+    after, _ = transition(state, Action(sell=[1], buy=[16]), market, rules)
+    pending = after.model_copy(
+        update={
+            "event": state.event,
+            "transfers_made": 1,
+            "free_transfers": state.free_transfers,
+            "deadline_lots": state.lots,
+            "deadline_bank": state.bank,
+        }
+    )
+    restored, row = transition(pending, Action(sell=[16], buy=[1], chip="freehit"), market, rules)
+    assert row["bank_after"] == state.bank
+    assert restored.lots == state.lots
+    assert row["settlement_sales"] == [] and row["settlement_purchases"] == []
+
+
 def test_affordability_and_duplicate_transfers(market, rules, state):
     with pytest.raises(ValueError, match="unaffordable"):
         transition(state.model_copy(update={"bank": 0}), Action(sell=[1], buy=[16]), market, rules)

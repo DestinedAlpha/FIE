@@ -135,6 +135,9 @@ def export(store: Store, plan: dict, destination: Path) -> dict:
         "free_transfers_after",
         "hit",
         "bank_before",
+        "settlement_bank_before",
+        "settlement_sales",
+        "settlement_purchases",
         "bank_after",
         "chip",
         "sell",
@@ -152,10 +155,52 @@ def export(store: Store, plan: dict, destination: Path) -> dict:
             {k: json.dumps(row[k]) if isinstance(row.get(k), (dict, list)) else row.get(k) for k in fields}
         )
     (destination / "ledger.csv").write_text(output.getvalue())
+    forecast = store.get("forecast", plan["forecast_id"])
+    projections = io.StringIO()
+    columns = [
+        "player_id",
+        "event",
+        "mean",
+        "sd",
+        "minutes_mean",
+        "p_start",
+        "p_zero",
+        "p_60",
+        "point_quantiles",
+        "components",
+        "fixture_count",
+        "action_coverage",
+    ]
+    writer = csv.DictWriter(projections, fieldnames=columns)
+    writer.writeheader()
+    for row in forecast["players"]:
+        writer.writerow(
+            {
+                k: json.dumps(row.get(k)) if isinstance(row.get(k), (dict, list)) else row.get(k)
+                for k in columns
+            }
+        )
+    (destination / "market-forecasts.csv").write_text(projections.getvalue(), encoding="utf-8")
+    alternatives = {}
+    for kind in ("case_comparison", "chip_counterfactual", "scenario_evaluation"):
+        try:
+            value = store.get(kind)
+            if value.get("forecast_id") == plan["forecast_id"] or value.get("base_plan_id") == plan.get("id"):
+                alternatives[kind] = value
+        except ValueError:
+            pass
+    atomic_json(destination / "alternatives.json", alternatives)
     manifest = {
         "exported_at": now(),
         "plan_id": plan.get("id"),
-        "files": ["plan.json", "report.md", "deadlines.ics", "ledger.csv"],
+        "files": [
+            "plan.json",
+            "report.md",
+            "deadlines.ics",
+            "ledger.csv",
+            "market-forecasts.csv",
+            "alternatives.json",
+        ],
     }
     atomic_json(destination / "manifest.json", manifest)
     return manifest

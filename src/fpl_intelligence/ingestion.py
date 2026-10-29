@@ -190,6 +190,9 @@ def resolve_name(name: str, position: int, players: dict[int, Player]) -> int:
 
 
 def reconcile_seed(store: Store, context: dict) -> dict:
+    existing = store.list("state", 1)
+    if existing and store.get("state")["status"] == "confirmed":
+        raise ValueError("A confirmed account is already saved; a dated research seed cannot replace it")
     players, market = load_market(store)
     event = next((e["id"] for e in market["events"] if e.get("is_next")), 38)
     team = context["team"]

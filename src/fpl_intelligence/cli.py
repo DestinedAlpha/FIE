@@ -10,7 +10,10 @@ from pathlib import Path
 
 import typer
 
+from .settings import load_environment
 from .storage import Store, atomic_json, now
+
+load_environment()
 
 app = typer.Typer(no_args_is_help=True, help="FPL Intelligence · free local numerical decision tools")
 
@@ -118,6 +121,145 @@ def train():
 
     result = train_evaluate(Store())
     show({k: v for k, v in result.items() if k != "predictions"})
+
+
+@app.command("train-components")
+def train_components():
+    """Chronologically train/calibrate minutes and test dynamic team strengths."""
+    from .models import fit_ensemble, fit_model_suite
+    from .strength import train_strength
+
+    store = Store()
+    minutes = fit_model_suite(store)
+    strength = train_strength(store)
+    ensemble = fit_ensemble(store)
+    show(
+        {
+            "minutes_model_id": minutes["id"],
+            "minutes_promoted": minutes["promoted"],
+            "strength_model_id": strength["id"],
+            "strength_promoted": strength["promoted"],
+            "ensemble_promoted": ensemble["promoted"],
+        }
+    )
+
+
+@app.command("open-benchmark")
+def open_benchmark():
+    """Reproduce hash-pinned Dastan outputs and the released historical OpenFPL benchmark."""
+    from .open_models import reproduce
+
+    show(reproduce(Store()))
+
+
+@app.command("policy-replay")
+def policy_replay(season: str = "2025/26", start: int = 9, end: int = 38):
+    """Replay evolving squads against observed historical outcomes under four policies."""
+    from .policy_replay import continuous_replay
+
+    result = continuous_replay(Store(), season, start, end)
+    show(
+        {
+            **result,
+            "policies": {
+                name: {k: v for k, v in row.items() if k != "ledger"}
+                for name, row in result["policies"].items()
+            },
+        }
+    )
+
+
+@app.command("research-refresh")
+def refresh_research(benchmark: bool = False):
+    """Refresh original-source evidence or benchmark eligible free hosted extractors."""
+    from .context import benchmark_extraction, research_refresh
+
+    store = Store()
+    show(asyncio.run(benchmark_extraction(store) if benchmark else research_refresh(store)))
+
+
+@app.command("configure-providers")
+def configure_providers(unbilled: bool = False):
+    """Verify authenticated model catalogs and configure only attested free text providers."""
+    import os
+    from datetime import datetime, timedelta, timezone
+
+    import httpx
+
+    from .research import FreeCapability
+
+    if not unbilled:
+        raise typer.BadParameter("Confirm free, unbilled accounts with --unbilled before enabling inference")
+    store = Store()
+    configured = []
+    for provider in ("gemini", "groq"):
+        key = os.getenv("GEMINI_API_KEY" if provider == "gemini" else "GROQ_API_KEY")
+        if not key:
+            continue
+        url = (
+            "https://generativelanguage.googleapis.com/v1beta/models"
+            if provider == "gemini"
+            else "https://api.groq.com/openai/v1/models"
+        )
+        headers = {"x-goog-api-key": key} if provider == "gemini" else {"Authorization": "Bearer " + key}
+        response = httpx.get(url, headers=headers, timeout=20)
+        if response.status_code != 200:
+            raise typer.BadParameter(
+                f"{provider} authentication failed (HTTP {response.status_code}); key value omitted"
+            )
+        payload = response.json()
+        catalog = {
+            m.get("id", m.get("name", "")).removeprefix("models/")
+            for m in payload.get("models", payload.get("data", []))
+        }
+        candidates = (
+            ("gemini-3.5-flash-lite", "gemini-3.8-flash")
+            if provider == "gemini"
+            else ("openai/gpt-oss-120b",)
+        )
+        for model in candidates:
+            if model not in catalog:
+                continue
+            capability = FreeCapability(
+                provider=provider,
+                model=model,
+                free_text_verified=True,
+                unbilled_account_attested=True,
+                terms_eligible=True,
+                verified_until=(datetime.now(timezone.utc) + timedelta(days=7)).isoformat(),
+                daily_calls=20,
+                daily_tokens=160000,
+                output_tokens=4000,
+            )
+            store.put("provider_capability", capability.model_dump())
+            configured.append({"provider": provider, "model": model})
+    if any(c["model"] == "gemini-3.5-flash-lite" for c in configured):
+        store.put(
+            "provider_selection",
+            {
+                "at": now(),
+                "provider": "gemini",
+                "model": "gemini-3.5-flash-lite",
+                "basis": "compatible free text model; request-boundary quota enforced",
+            },
+        )
+    show({"configured": configured, "paid_provider_calls_allowed": False})
+
+
+@app.command("scenario")
+def scenario(path: Path, plan_id: str = ""):
+    """Evaluate observable injury/role/fixture/price branches with an identical action prefix."""
+    from .scenarios import ScenarioSpec, evaluate_scenarios
+
+    store = Store()
+    body = json.loads(path.read_text())
+    show(
+        evaluate_scenarios(
+            store,
+            plan_id or store.get("selected_plan")["plan_id"],
+            [ScenarioSpec.model_validate(row) for row in body["scenarios"]],
+        )
+    )
 
 
 @app.command("import-history")
@@ -369,7 +511,29 @@ def evaluate(prospective: bool = False):
 
     store = Store()
     result = evaluate_frozen(store) if prospective else store.get("evaluation")
+    if prospective:
+        from .prospective import score_frozen_decisions
+
+        result["policy"] = score_frozen_decisions(store)
     show({k: v for k, v in result.items() if k != "predictions"})
+
+
+@app.command("freeze")
+def freeze_decision(plan_id: str = ""):
+    """Archive the actual current recommendation before its deadline for shadow-policy evaluation."""
+    from .prospective import freeze
+
+    store = Store()
+    show(freeze(store, plan_id or store.get("selected_plan")["plan_id"]))
+
+
+@app.command("chip-comparison")
+def chip_comparison(plan_id: str = "", seconds: float = 30):
+    """Re-optimize the whole horizon without each chosen chip under the same football worlds."""
+    from .chips import compare_chips
+
+    store = Store()
+    show(compare_chips(store, plan_id or store.get("selected_plan")["plan_id"], seconds))
 
 
 @app.command()

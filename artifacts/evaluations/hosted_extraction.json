@@ -1,0 +1,61 @@
+{
+  "at": "2026-10-29T11:04:08.088299+00:00",
+  "kind": "synthetic_labeled_extraction_benchmark",
+  "examples": 6,
+  "corpus_hash": "35e041965581680ae6b44505c08e014793e84164618487e88ec13316192752c0",
+  "results": [
+    {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "success": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "status_accuracy": 0.3333333333333333,
+      "supported_spans": true,
+      "injection_rejected": true,
+      "claims": 6
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-2.5-pro",
+      "success": false,
+      "error": "gemini extraction failed: HTTPStatusError HTTP 404 This model models/gemini-2.5-pro is no longer available to new users. Please update your code to use models/gemini-3.1-pro-preview for the latest features and improvements. We recommend you to use the Interactions API (https://ai.google.dev/gemini-api/docs/get-started).; no claims committed"
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "success": true,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "status_accuracy": 0.8333333333333334,
+      "supported_spans": true,
+      "injection_rejected": true,
+      "claims": 6
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "success": false,
+      "error": "gemini extraction failed: HTTPStatusError HTTP 503 This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.; no claims committed"
+    }
+  ],
+  "selected": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "success": true,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "status_accuracy": 0.8333333333333334,
+    "supported_spans": true,
+    "injection_rejected": true,
+    "claims": 6
+  },
+  "limitations": [
+    "Small synthetic contract test, not measured football-outcome calibration",
+    "Synthetic claims never enter production evidence or probabilities"
+  ],
+  "id": "d72dabeec82ada7612d159f06cd29fba148ba065e1d39f682acd33e603ae05bd"
+}

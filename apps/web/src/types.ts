@@ -126,6 +126,59 @@ export type Dashboard = {
     belief_scenario: string[];
   } | null;
   plan: Plan | null;
+  model_suite?: {
+    promoted: boolean;
+    test_rows: number;
+    calibration_rows: number;
+    baseline: { start: { brier: number }; appearance: { brier: number } };
+    candidate: { start: { brier: number }; appearance: { brier: number } };
+  } | null;
+  policy_evaluation?: {
+    events: number;
+    invalid_exported_actions: number;
+    policies: Record<
+      string,
+      { realized_net_points: number; hits: number; transfers: number }
+    >;
+  } | null;
+  open_model_reproduction?: {
+    dastan: { rows: number; features: number; metrics: { rmse: number } };
+    openfpl: { rows: number; metrics: { rmse: number } };
+  } | null;
+  extraction_benchmark?: {
+    selected: { model: string; f1: number; status_accuracy: number } | null;
+  } | null;
+  chip_counterfactual?: {
+    base_plan_id: string;
+    comparisons: {
+      chip: string;
+      chosen_event: number;
+      whole_policy_mean_delta: number;
+      paired_mc_interval_95: number[];
+      counterfactual_solver_gap: number;
+    }[];
+  } | null;
+  scenario_evaluation?: {
+    branches: {
+      name: string;
+      plan_id: string;
+      reveal_event: number;
+      paired_scenario_delta?: number;
+      paired_mc_interval_95?: number[];
+      simulation: { mean: number };
+    }[];
+  } | null;
+  cohort?: {
+    retrieved: number;
+    misses: number;
+    event: number;
+    population: string;
+    effective_ownership: {
+      player_id: number;
+      effective_ownership: number;
+      resampling_interval_95: number[];
+    }[];
+  } | null;
   evaluation: {
     baseline: { rmse: number; mae: number; n: number };
     challenger: { rmse: number; mae: number };
