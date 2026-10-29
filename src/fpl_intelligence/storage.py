@@ -8,7 +8,7 @@ import json
 import os
 import sqlite3
 import tempfile
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -168,7 +168,7 @@ class Store:
     def backup(self, destination: Path) -> None:
         destination.parent.mkdir(parents=True, exist_ok=True)
         with self.db() as source:
-            with sqlite3.connect(destination) as target:
+            with closing(sqlite3.connect(destination)) as target:
                 source.backup(target)
 
     def artifact_path(self, reference: str) -> Path:

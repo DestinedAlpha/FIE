@@ -6,6 +6,7 @@ import asyncio
 import json
 import shutil
 import sqlite3
+from contextlib import closing
 from pathlib import Path
 
 import typer
@@ -581,14 +582,9 @@ def backup(destination: Path = Path("artifacts/runtime/backup")):
     for name in ("raw", "scenarios", "models", "normalized", "features"):
         if (store.root / name).exists():
             shutil.copytree(store.root / name, destination / name, dirs_exist_ok=True)
-    show(
-        {
-            "backup": str(destination),
-            "database_integrity": sqlite3.connect(destination / "state.sqlite")
-            .execute("PRAGMA integrity_check")
-            .fetchone()[0],
-        }
-    )
+    with closing(sqlite3.connect(destination / "state.sqlite")) as connection:
+        integrity = connection.execute("PRAGMA integrity_check").fetchone()[0]
+    show({"backup": str(destination), "database_integrity": integrity})
 
 
 @app.command()

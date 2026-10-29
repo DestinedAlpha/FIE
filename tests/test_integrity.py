@@ -1,3 +1,4 @@
+from contextlib import closing
 from datetime import datetime, timedelta, timezone
 
 import numpy as np
@@ -22,8 +23,9 @@ def test_raw_snapshots_are_hashed_and_temporal(tmp_path):
     store.backup(tmp_path / "backup.sqlite")
     import sqlite3
 
-    with sqlite3.connect(tmp_path / "backup.sqlite") as db:
+    with closing(sqlite3.connect(tmp_path / "backup.sqlite")) as db:
         assert db.execute("SELECT count(*) FROM snapshots").fetchone()[0] == 2
+    (tmp_path / "backup.sqlite").unlink()  # Backups must release Windows file handles.
 
 
 def test_numeric_mapping_keys_roundtrip_hash(tmp_path):
