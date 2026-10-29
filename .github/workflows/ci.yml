@@ -33,3 +33,29 @@ jobs:
         working-directory: apps/web
       - run: npm run build && npm test
         working-directory: apps/web
+      - name: Smoke test Windows launcher
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType File -Path .env -Force | Out-Null
+          uv run python -c "from fpl_intelligence.storage import Store; s=Store(); [s.put(kind,{}) for kind in ('market','state','forecast','selected_plan')]"
+          $launcher = Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File','scripts/start.ps1','-NoBrowser' -PassThru -RedirectStandardOutput launcher.out -RedirectStandardError launcher.err
+          try {
+            $healthy = $false
+            for ($attempt = 0; $attempt -lt 60; $attempt++) {
+              try {
+                $health = Invoke-RestMethod 'http://127.0.0.1:8000/api/health' -TimeoutSec 1
+                if ($health.status -eq 'ok') { $healthy = $true; break }
+              } catch { }
+              if ($launcher.HasExited) { break }
+              Start-Sleep -Milliseconds 500
+            }
+            if (-not $healthy) {
+              Get-Content launcher.out,launcher.err
+              throw 'Windows launcher did not reach a healthy loopback server'
+            }
+            $page = Invoke-WebRequest 'http://127.0.0.1:8000/'
+            if ($page.Content -notmatch '<div id="root">') { throw 'Built interface was not served' }
+          } finally {
+            if (-not $launcher.HasExited) { taskkill /PID $launcher.Id /T /F | Out-Null }
+          }
