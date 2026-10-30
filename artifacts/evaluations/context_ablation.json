@@ -1,0 +1,146 @@
+{
+  "at": "2026-10-29T21:02:12.757074+00:00",
+  "feature_id": "901a403b6c0fc8e14bad1214d331387a9b349df08061de3bb2a73eff540e7cf2",
+  "protocol": "Independently refit history-only, official-news, and full-context trees on identical expanding blocks with earlier calibration; no inference-mask substitution",
+  "rows": 34828,
+  "folds": [
+    {
+      "test": [
+        "2025/26-GW01",
+        "2025/26-GW02",
+        "2025/26-GW03",
+        "2025/26-GW04",
+        "2025/26-GW05",
+        "2025/26-GW06",
+        "2025/26-GW07",
+        "2025/26-GW08"
+      ],
+      "train_before": "2024/25-GW35",
+      "calibration_before": "2025/26-GW01"
+    },
+    {
+      "test": [
+        "2025/26-GW09",
+        "2025/26-GW10",
+        "2025/26-GW11",
+        "2025/26-GW12",
+        "2025/26-GW13",
+        "2025/26-GW14",
+        "2025/26-GW15",
+        "2025/26-GW16"
+      ],
+      "train_before": "2025/26-GW05",
+      "calibration_before": "2025/26-GW09"
+    },
+    {
+      "test": [
+        "2025/26-GW17",
+        "2025/26-GW18",
+        "2025/26-GW19",
+        "2025/26-GW20",
+        "2025/26-GW21",
+        "2025/26-GW22",
+        "2025/26-GW23",
+        "2025/26-GW24"
+      ],
+      "train_before": "2025/26-GW13",
+      "calibration_before": "2025/26-GW17"
+    },
+    {
+      "test": [
+        "2025/26-GW25",
+        "2025/26-GW26",
+        "2025/26-GW27",
+        "2025/26-GW28",
+        "2025/26-GW29",
+        "2025/26-GW30",
+        "2025/26-GW31",
+        "2025/26-GW32"
+      ],
+      "train_before": "2025/26-GW21",
+      "calibration_before": "2025/26-GW25"
+    },
+    {
+      "test": [
+        "2025/26-GW33",
+        "2025/26-GW34",
+        "2025/26-GW35",
+        "2025/26-GW36",
+        "2025/26-GW37",
+        "2025/26-GW38",
+        "2026/27-GW01",
+        "2026/27-GW02"
+      ],
+      "train_before": "2025/26-GW29",
+      "calibration_before": "2025/26-GW33"
+    },
+    {
+      "test": [
+        "2026/27-GW03",
+        "2026/27-GW04",
+        "2026/27-GW05",
+        "2026/27-GW06",
+        "2026/27-GW07",
+        "2026/27-GW08"
+      ],
+      "train_before": "2025/26-GW37",
+      "calibration_before": "2026/27-GW03"
+    }
+  ],
+  "metrics": {
+    "history_only": {
+      "points": {
+        "n": 34828,
+        "rmse": 1.9533638198564962,
+        "mae": 1.0137055689242553,
+        "bias": 0.009498862091110047
+      },
+      "appearance_brier": 0.08959800208698566,
+      "sixty_brier": 0.08279155454967049,
+      "paired_rmse_vs_history_95ci": [
+        0.0,
+        0.0
+      ]
+    },
+    "official_news": {
+      "points": {
+        "n": 34828,
+        "rmse": 1.9168737502405582,
+        "mae": 0.9650158242669462,
+        "bias": 0.00580539778154663
+      },
+      "appearance_brier": 0.07237930550713129,
+      "sixty_brier": 0.07624584338380044,
+      "paired_rmse_vs_history_95ci": [
+        -0.046120867126458916,
+        -0.029214906097960753
+      ]
+    },
+    "all_context": {
+      "points": {
+        "n": 34828,
+        "rmse": 1.9095077788050185,
+        "mae": 0.9595305246191194,
+        "bias": 0.006461301497946039
+      },
+      "appearance_brier": 0.07147893669500058,
+      "sixty_brier": 0.07510558192657688,
+      "paired_rmse_vs_history_95ci": [
+        -0.054978155685628735,
+        -0.0343134513207186
+      ]
+    }
+  },
+  "captain_bonus": {
+    "history_only": 309.0,
+    "official_news": 316.0,
+    "all_context": 368.0
+  },
+  "source_use": "Official archived news/set pieces/availability, lagged qualified managers/market and other-competition workload enter measured feature branches",
+  "limits": [
+    "Source availability differs by season; source-on/off results do not establish causation",
+    "Current-rank top-1,000 behavior is separately tested; historical expert signals use only prior-qualified managers",
+    "Specialist article claims remain independently supported evidence/scenarios; missing past articles are not fabricated"
+  ],
+  "id": "211d516fdd1e08a53febcadb7f8ec226791f250e56cc18149f749f45cc1a1c37"
+}

@@ -144,6 +144,11 @@ class Store:
                 + ("AND id=?" if identity else "ORDER BY created_at DESC,rowid DESC LIMIT 1"),
                 (kind, identity) if identity else (kind,),
             ).fetchone()
+        if row is None and kind == "state" and identity is not None:
+            with self.db() as db:
+                row = db.execute(
+                    "SELECT body,id FROM objects WHERE kind='planning_state' AND id=?", (identity,)
+                ).fetchone()
         if row is None:
             raise ValueError(f"No {kind} artifact available")
         return json.loads(row["body"]) | {"id": row["id"]}

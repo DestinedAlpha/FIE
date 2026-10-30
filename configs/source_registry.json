@@ -132,6 +132,24 @@
       "analysis_use": "Calibrated transfer-count mixture and feasible rival branches; separate from prior-qualified expert features",
       "provenance": "Current-rank cohort is retrospective; only earlier released decisions enter each test feature",
       "fallback": "Frequency prior; explicit hold/greedy sensitivity scenarios"
+    },
+    {
+      "id": "price_windows",
+      "url": "https://github.com/Randdalf/fplcache",
+      "fields": "Paired 40\u201372-hour pre-deadline prices, flows, ownership and status; price/news labels strictly after input capture",
+      "free": true,
+      "parser": "market_model.py",
+      "provenance": "Both captures and containing Git commits precede target deadline; hashes pinned",
+      "fallback": "Training-only class frequencies; timing outside support explicitly sensitivity"
+    },
+    {
+      "id": "rank_population",
+      "url": "https://fantasy.premierleague.com/api/leagues-classic/314/standings/",
+      "fields": "Rank-stratified actual entries, released picks, histories and transfers",
+      "free": true,
+      "parser": "population.py",
+      "provenance": "Current standings frame, seven bands, participation/activity calibration; not prior-qualified elites",
+      "fallback": "No extrapolation if any complete rank stratum missing; explicit model uncertainty"
     }
   ]
 }

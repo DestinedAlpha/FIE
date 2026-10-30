@@ -452,7 +452,7 @@ def optimize(
     state_id: str = "",
     forecast_id: str = "",
     chips: str = "auto",
-    max_transfers: int = 3,
+    max_transfers: int = 15,
 ):
     """Joint full-market transfer/chip MIP with independent legality and scenario validation."""
     from .optimization import hold_plan
@@ -635,3 +635,54 @@ def analyze_transfers():
     from .policy_learning import personalized_analysis
 
     show(personalized_analysis(Store()))
+
+
+@app.command("train-complete")
+def train_complete(samples: int = 24, epochs: int = 20, refresh: bool = False):
+    """Run the complete source, learning, planning and validation workflow."""
+    from .workflow import full_training
+
+    if not 4 <= samples <= 128 or not 1 <= epochs <= 100:
+        raise typer.BadParameter("Samples 4–128; epochs 1–100")
+    show(full_training(Store(), samples, epochs, refresh))
+
+
+@app.command("train-strategy")
+def train_strategy(samples: int = 24):
+    from .decision_training import evolve, train_decision_models
+
+    if not 4 <= samples <= 128:
+        raise typer.BadParameter("Samples must be 4–128")
+    store = Store()
+    evolve(store, samples, max_transfers=15)
+    show(train_decision_models(store))
+
+
+@app.command("strategy-analysis")
+def strategy_analysis():
+    from .decision_runtime import analyze_decisions
+
+    show(analyze_decisions(Store()))
+
+
+@app.command("timing-analysis")
+def timing_analysis_command():
+    from .decision_runtime import timing_analysis
+
+    show(timing_analysis(Store()))
+
+
+@app.command("refine-frontier")
+def refine_frontier_command():
+    from .decision_runtime import refine_frontier
+
+    show(refine_frontier(Store()))
+
+
+@app.command("population-analysis")
+def population_analysis(per_stratum: int = 16):
+    from .population import collect_population, evaluate_population
+
+    store = Store()
+    asyncio.run(collect_population(store, per_stratum))
+    show(evaluate_population(store))

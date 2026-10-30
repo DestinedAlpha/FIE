@@ -269,10 +269,10 @@ def evaluate_scenarios(store: Store, plan_id: str, specs: list[ScenarioSpec]) ->
                 seed=original["seed"],
                 scenario=spec.model_dump(exclude_none=True),
             )
-        result = rollout(store, base, branch, spec)
+        result = full_recourse(store, base, branch, spec)
         control_key = (spec.reveal_event, spec.sale_assumption)
         if control_key not in controls:
-            controls[control_key] = rollout(
+            controls[control_key] = full_recourse(
                 store,
                 base,
                 original,
@@ -318,3 +318,149 @@ def evaluate_scenarios(store: Store, plan_id: str, specs: list[ScenarioSpec]) ->
     report["id"] = store.put("scenario_evaluation", report)
     atomic_json(store.root / "reports" / "scenario-evaluation.json", report)
     return report
+
+
+def full_recourse(store: Store, base: dict, branch_forecast: dict, spec: ScenarioSpec, seconds=30):
+    """Shared prefix, then full-horizon re-optimization at each new price observation."""
+    import copy
+    import shutil
+    import tempfile
+    from pathlib import Path
+
+    from .ingestion import normalize
+    from .optimization import optimize
+    from .rules import quote
+    from .storage import digest
+
+    players, market = load_market(store, base["market_id"])
+    original_bootstrap = store.latest("bootstrap", content_hash=market["source_hash"])[0]
+    rules = Rules.from_bootstrap(original_bootstrap)
+    state = TeamState.model_validate(
+        {k: v for k, v in store.get("state", base["state_id"]).items() if k != "id"}
+    )
+    state, assumptions = conditional_lots(state, players, spec)
+    current_players = dict(players)
+    ledger = []
+    recourse = []
+    tail = {}
+    source_forecast = branch_forecast
+    for original in base["ledger"]:
+        event = original["event"]
+        changes = [c for c in spec.prices if c.event == event]
+        for c in changes:
+            if c.player_id not in current_players:
+                raise ValueError("Unknown price-scenario player")
+            current_players[c.player_id] = current_players[c.player_id].model_copy(update={"price": c.price})
+        state = state.model_copy(
+            update={
+                "lots": [
+                    lot.model_copy(
+                        update={
+                            "sell_price": quote(lot, current_players[lot.player_id].price),
+                            "quote_market_price": current_players[lot.player_id].price,
+                        }
+                    )
+                    for lot in state.lots
+                ]
+            }
+        )
+        if event < spec.reveal_event:
+            action = action_from_row(original)
+        else:
+            if event == spec.reveal_event or changes:
+                with tempfile.TemporaryDirectory(prefix="fie-recourse-") as temporary:
+                    local = Store(temporary)
+                    # Copy only the frozen world file; Windows does not require symlink privileges.
+                    scenario_file = store.artifact_path(source_forecast["scenario_path"])
+                    (Path(temporary) / "scenarios").mkdir()
+                    shutil.copy2(scenario_file, Path(temporary) / "scenarios" / scenario_file.name)
+                    bootstrap = copy.deepcopy(original_bootstrap)
+                    for p in bootstrap["elements"]:
+                        p["now_cost"] = current_players[p["id"]].price
+                    fixtures = copy.deepcopy(market["fixtures"])
+                    for change in spec.fixture_events:
+                        for fixture in fixtures:
+                            if fixture["id"] == change.fixture_id:
+                                fixture["event"] = change.event
+                    local.snapshot(
+                        "bootstrap",
+                        "scenario://conditional-bootstrap/" + digest(spec.model_dump()),
+                        bootstrap,
+                    )
+                    local.snapshot(
+                        "fixtures", "scenario://conditional-fixtures/" + digest(spec.model_dump()), fixtures
+                    )
+                    normalize(local, bootstrap, fixtures)
+                    local_market = local.get("market")
+                    active = store.get("decision_model")
+                    active_id = local.put("decision_model", {k: v for k, v in active.items() if k != "id"})
+                    if store.list("state_value_model", 1):
+                        local.put(
+                            "state_value_model",
+                            {k: v for k, v in store.get("state_value_model").items() if k != "id"},
+                        )
+                    hypothetical = state.model_copy(update={"status": "dated_seed"})
+                    identity = local.put("state", hypothetical.model_dump())
+                    f = {k: v for k, v in source_forecast.items() if k != "id"}
+                    f.update(market_id=local_market["id"], decision_model_id=active_id, rules_hash=rules.hash)
+                    fid = local.put("forecast", f)
+                    seed = {
+                        **base,
+                        "state_id": identity,
+                        "forecast_id": fid,
+                        "market_id": local_market["id"],
+                        "start_event": event,
+                        "ledger": [r for r in base["ledger"] if r["event"] >= event],
+                    }
+                    local.put("plan", {k: v for k, v in seed.items() if k != "id"})
+                    solved = optimize(
+                        local, identity, fid, base["end_event"], seconds, use_decision_critic=False
+                    )
+                    tail = {r["event"]: r for r in solved["ledger"]}
+                    context_id = store.put(
+                        "conditional_market",
+                        {
+                            "market": local_market,
+                            "scenario": spec.model_dump(),
+                            "event": event,
+                            "source_market_id": market["id"],
+                            "status": "Conditional hypothesis, never account truth",
+                        },
+                    )
+                    recourse.append(
+                        {"event": event, "conditional_market_id": context_id, "solver": solved["solver"]}
+                    )
+            action = action_from_row(tail[event])
+        state, row = transition(state, action, current_players, rules)
+        row["information"] = "Frozen common prefix" if event < spec.reveal_event else spec.name + " observed"
+        ledger.append(row)
+    result = {
+        "at": now(),
+        "state_id": base["state_id"],
+        "forecast_id": branch_forecast["id"],
+        "market_id": market["id"],
+        "start_event": base["start_event"],
+        "end_event": base["end_event"],
+        "ledger": ledger,
+        "scenario": spec.model_dump(),
+        "purchase_lot_assumptions": assumptions,
+        "recourse": recourse,
+        "final_state": state.model_dump(),
+        "validation": {
+            "legal": True,
+            "affordable": True,
+            "shared_prefix": True,
+            "full_market_recourse": True,
+        },
+        "policy": "Full remaining-horizon MIP after observation; price changes trigger exact repricing and renewed recourse",
+        "limits": [
+            "Finite MIP bounds remain visible; later unobserved prices remain conditional",
+            "Purchase-lot hypotheses are declared rather than inferred as actual account history",
+        ],
+    }
+    for before, after in zip(base["ledger"], ledger):
+        if before["event"] < spec.reveal_event and action_from_row(before) != action_from_row(after):
+            raise ValueError("Anticipatory scenario action rejected")
+    score_plan(store, result, branch_forecast)
+    result["id"] = store.put("scenario_plan", result)
+    return result

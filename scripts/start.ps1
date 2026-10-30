@@ -83,7 +83,9 @@ if ($NeedsInitialisation) {
     if ($LASTEXITCODE -ne 0) { throw "Chronological decision training failed." }
     & $UvPath run --extra neural fpl forecast --end 38 --worlds 4000
     if ($LASTEXITCODE -ne 0) { throw "Forecast generation failed." }
-    & $UvPath run --extra neural fpl optimize --end 19 --seconds 60
+    $PlanningEnd = & $UvPath run --extra neural python -c "from fpl_intelligence.storage import Store; print(19 if Store().get('state')['event'] <= 19 else 38)"
+    if ($LASTEXITCODE -ne 0) { throw "The account planning horizon could not be determined." }
+    & $UvPath run --extra neural fpl optimize --end $PlanningEnd --seconds 60
     if ($LASTEXITCODE -ne 0) { throw "The initial planning pipeline failed; inspect the message above." }
 }
 

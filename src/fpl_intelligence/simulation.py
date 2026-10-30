@@ -41,6 +41,30 @@ def sample_lineup(
         [profiles[p.id].get("availability_override", chance) for p, chance in zip(members, chances)]
     )
     available = health < chances[None, :]
+    conditioned = np.zeros(worlds, dtype=bool)
+    for role_mask, required in ((positions == 1, 1), (positions != 1, 10)):
+        support = role_mask & (chances > 0)
+        if support.sum() < required:
+            raise ValueError("A football XI is impossible under confirmed availability constraints")
+        short = available[:, role_mask].sum(axis=1) < required
+        conditioned |= short
+        # Condition the latent availability draw on a fieldable XI. Confirmed
+        # zero availability remains impossible, rather than inventing a starter.
+        for _ in range(32):
+            if not short.any():
+                break
+            available[np.ix_(short, role_mask)] = (
+                rng.random((int(short.sum()), int(role_mask.sum()))) < chances[role_mask]
+            )
+            short = available[:, role_mask].sum(axis=1) < required
+        if short.any():
+            columns = np.where(support)[0]
+            weights = np.log(np.clip(chances[columns], 1e-9, 1))[None, :] + rng.gumbel(
+                size=(int(short.sum()), len(columns))
+            )
+            chosen = np.argpartition(weights, -required, axis=1)[:, -required:]
+            row_ids = np.where(short)[0]
+            available[row_ids[:, None], columns[chosen]] = True
     raw = np.array([profiles[p.id]["p_start"] for p in members])
     # Shrink very long-horizon role certainty towards the club's finite XI places.
     p_start = raw * np.exp(-horizon / 50) + (11 / n) * (1 - np.exp(-horizon / 50))
@@ -70,10 +94,22 @@ def sample_lineup(
     caps = np.array([profiles[p.id].get("minutes_cap", 90) for p in members])
     sampled = np.minimum(sampled, caps[None, :]).astype(np.int16)
     end[selected] = sampled[selected]
+    # At most five starters can leave through substitutions. Preserve explicit
+    # caps; any extra soft early exits become full-match draws.
+    short = selected & (end < 90)
+    hard = short & (caps[None, :] < 90)
+    if np.any(hard.sum(axis=1) > 5):
+        raise ValueError("More than five mandatory substitutions require another lineup scenario")
+    rank = np.argsort(np.where(short, rng.random((worlds, n)) + hard * 2, -1), axis=1)[:, ::-1]
+    keep = np.zeros_like(short)
+    keep[np.arange(worlds)[:, None], rank[:, :5]] = True
+    end = np.where(short & ~keep, 90, end)
     # At most five substitutions, paired to an actual exiting player. GK and
     # outfield replacements are distinct; no starter can occupy two roles.
     for slot in range(5):
-        departing_weights = ((end > 0) & (end < 90) & selected).astype(float)
+        departing_weights = ((end > 0) & (end < 90) & selected).astype(float) * np.where(
+            caps[None, :] < 90, 1000, 1
+        )
         departing = weighted_choice(rng, departing_weights)
         has_departing = departing_weights.sum(axis=1) > 0
         departure_time = end[np.arange(worlds), departing]
@@ -81,6 +117,7 @@ def sample_lineup(
         cameo = np.array([profiles[p.id]["p_cameo"] for p in members])
         eligible = available & ~selected & (end == 0)
         eligible &= (positions == 1)[None, :] == wanted_gk[:, None]
+        eligible &= caps[None, :] >= 90 - departure_time[:, None]
         weights = eligible * cameo[None, :]
         substitute = weighted_choice(rng, weights)
         use = has_departing & (weights.sum(axis=1) > 0)
@@ -93,7 +130,14 @@ def sample_lineup(
     # If the player is not replaced within five changes, assume they finish the
     # match; the simulator does not silently leave ten footballers on the pitch.
     end = np.where(short_starters, np.minimum(90, caps)[None, :], end)
-    return start, end, {"short_lineup_worlds": int((starting_counts < 11).sum())}
+    return (
+        start,
+        end,
+        {
+            "short_lineup_worlds": int((starting_counts < 11).sum()),
+            "conditioned_availability_worlds": int(conditioned.sum()),
+        },
+    )
 
 
 def fixture_worlds(
@@ -106,6 +150,7 @@ def fixture_worlds(
     worlds: int,
     horizon: int,
     health: dict,
+    bps_models=None,
 ):
     members = [
         p for p in players.values() if p.team in (fixture["team_h"], fixture["team_a"]) and p.selectable
@@ -254,6 +299,22 @@ def fixture_worlds(
         - red * 9
         + np.where(appeared, rng.normal(0, 4, (worlds, n)), 0)
     )
+    if bps_models is not None and bps_models[0].get("bps_promoted", False):
+        from .coherent import bps_worlds
+
+        bps = bps_worlds(
+            rng,
+            ids,
+            profiles,
+            minutes,
+            goals,
+            assists,
+            saves,
+            p60 & (conceded == 0),
+            yellows,
+            red,
+            bps_models,
+        )
     bps[~appeared] = -1e6
     bonus = np.zeros((worlds, n), dtype=np.int16)
     for column in range(n):
@@ -383,6 +444,19 @@ def forecast(
         estimates = model.predict(np.asarray(rows))
         learned_by_fixture = dict(zip(keys, estimates))
         minutes_model_id = model.spec["id"]
+    component_updates = {}
+    bps_models = None
+    coherent_id = None
+    if store.list("coherent_model", 1):
+        from .coherent import component_overrides
+        from .decision import future_inputs
+
+        component_rows, _ = future_inputs(store, market, players, start_event, end_event, scenario, beliefs)
+        component_updates, coherent_spec, component_bundle = component_overrides(
+            store, component_rows, market, players
+        )
+        bps_models = (coherent_spec, component_bundle)
+        coherent_id = coherent_spec["id"]
     ids = sorted(players)
     index = {identity: i for i, identity in enumerate(ids)}
     rng = np.random.default_rng(seed)
@@ -400,7 +474,11 @@ def forecast(
         fixtures = [f for f in fixtures_source if f.get("event") == event and not f.get("finished")]
         for fixture in fixtures:
             local_profiles = {
-                identity: {**p, **learned_by_fixture.get((fixture["id"], identity), {})}
+                identity: {
+                    **p,
+                    **learned_by_fixture.get((fixture["id"], identity), {}),
+                    **component_updates.get((fixture["id"], identity), {}),
+                }
                 for identity, p in profiles.items()
             }
             for belief in beliefs:
@@ -431,6 +509,7 @@ def forecast(
                 worlds,
                 event - start_event,
                 health,
+                bps_models=bps_models,
             )
             columns = [index[i] for i in f_ids]
             points[:, columns] += p
@@ -513,15 +592,16 @@ def forecast(
         "belief_scenario": [b["id"] for b in beliefs],
         "scenario": scenario,
         "minutes_model_id": minutes_model_id,
+        "coherent_model_id": coherent_id,
         "team_strength_model_id": strength_id,
         "fixtures": fixture_records,
         "match_audit": audits,
         "player_ids": ids,
         "unassigned_fixtures": [f["id"] for f in market["fixtures"] if f.get("event") is None],
         "assumptions": [
-            "Independent component worlds; chronological promotion gates select learned minutes and team rates",
+            "Structural football worlds; chronological promotion gates select learned minutes and team rates",
             "Shared match tempo, finite XI, timed goals and on-pitch attribution",
-            "BPS proxy and Poisson defensive actions require calibration",
+            "Gated conditional BPS proxy; defensive-action count uncertainty remains approximate",
             "Injury recovery is a horizon sensitivity prior; future prices held constant",
             "Parameter and model uncertainty remain distinct from scenario sampling error",
         ],

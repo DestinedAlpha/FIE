@@ -1,5 +1,12 @@
 import { test, expect } from "@playwright/test";
 
+async function openWorkspace(page: import("@playwright/test").Page) {
+  await Promise.all([
+    page.waitForResponse(response => response.url().includes("/api/dashboard") && response.status() === 200),
+    page.goto("/"),
+  ]);
+}
+
 async function navigate(page: import("@playwright/test").Page, label: string) {
   const mobileMenu = page.getByRole("button", { name: "Toggle navigation" });
   if (await mobileMenu.isVisible()) await mobileMenu.click();
@@ -11,7 +18,7 @@ test("recommendation, legal XI, full market and planner exports", async ({
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/");
+  await openWorkspace(page);
   await expect(
     page.getByRole("heading", { name: "The gameweek, in focus." }),
   ).toBeVisible();
@@ -47,7 +54,7 @@ test("recommendation, legal XI, full market and planner exports", async ({
 test("squad editor validates and transfer checker rejects unaffordable moves", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openWorkspace(page);
   await navigate(page, "My squad");
   await expect(page.locator("tbody tr")).toHaveCount(15);
   await page
@@ -82,7 +89,7 @@ test("manager behavior, source fusion and transfer learning are visible", async 
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/");
+  await openWorkspace(page);
   await navigate(page, "Rivals");
   await expect(
     page.getByRole("heading", { name: "Top-1,000 manager behavior" }),
@@ -108,5 +115,23 @@ test("manager behavior, source fusion and transfer learning are visible", async 
     () => document.documentElement.scrollWidth > window.innerWidth + 1,
   );
   expect(overflow).toBe(false);
+  expect(errors).toEqual([]);
+});
+
+test("connected strategy, timing and population controls render without errors", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await openWorkspace(page);
+  await navigate(page, "Season planner");
+  await expect(page.getByRole("heading", {name:"Transfer timing and affordability"})).toBeVisible();
+  await expect(page.getByRole("button", {name:"Analyze timing",exact:true})).toBeVisible();
+  await navigate(page, "Rivals");
+  await expect(page.getByRole("heading", {name:"Population and rank scenarios"})).toBeVisible();
+  await navigate(page, "Model & data");
+  await expect(page.getByRole("heading", {name:"Learning decisions, not just points"})).toBeVisible();
+  await expect(page.getByRole("button", {name:"Refine multiweek frontier",exact:true})).toBeVisible();
+  await expect(page.getByRole("button", {name:"Refresh and recompute",exact:true})).toBeVisible();
+  await expect(page.getByRole("button", {name:"Compare football worlds",exact:true})).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(false);
   expect(errors).toEqual([]);
 });

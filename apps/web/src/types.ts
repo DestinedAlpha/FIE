@@ -53,9 +53,9 @@ export type Plan = {
   ledger: Ledger[];
   solver?: {
     status: string;
-    gap: number;
+    gap: number | null;
     runtime_seconds: number;
-    best_bound: number;
+    best_bound: number | null;
     objective: number;
   };
   simulation: { mean: number; sd: number; quantiles: number[]; worlds: number };
@@ -63,6 +63,7 @@ export type Plan = {
   limitations?: string[];
 };
 export type State = {
+  active_chip?: string | null;
   id: string;
   season: string;
   event: number;
@@ -89,6 +90,119 @@ export type State = {
   deadline_bank: number | null;
 };
 export type Dashboard = {
+  refresh_schedule?: { enabled: boolean; interval_minutes: number } | null;
+  decision_critic?: {
+    selected: string | null;
+    training_rows: number;
+    test_rows: number;
+    candidates: Record<
+      string,
+      {
+        mean_gain: number;
+        block_gain_95ci: number[];
+        promoted: boolean;
+        accounts: number;
+      }
+    >;
+  } | null;
+  horizon_consistency?: { short_end: number; long_end: number; continued_short_minus_long: number; scope: string } | null;
+  state_value_model?: {
+    promoted: boolean;
+    rmse: number;
+    baseline_rmse: number;
+    coefficients: number[];
+    features: string[];
+    paired_rmse_95ci: number[];
+  } | null;
+  manager_policy?: {
+    metrics: Record<
+      string,
+      {
+        conditional_log_loss?: number;
+        log_loss?: number;
+        baseline_log_loss: number;
+        top5_recall?: number;
+        promoted: boolean;
+      }
+    >;
+    test_events: number[];
+  } | null;
+  market_model?: {
+    price_log_loss: number;
+    frequency_log_loss: number;
+    promoted: boolean;
+    news_promoted: boolean;
+    test_deadlines: number;
+    train_rows: number;
+    test_rows: number;
+  } | null;
+  coherent_comparison?: {plan_id:string;production_mean:number;football_world_mean:number;fixtures:number;invalid_goal_allocations:number;short_lineup_worlds:number;scope:string}|null;
+  coherent_model?: {
+    metrics: Record<
+      string,
+      { promoted: boolean; poisson_deviance: number; baseline_deviance: number }
+    >;
+    coherence: string[];
+    limits: string[];
+  } | null;
+  context_ablation?: {
+    rows: number;
+    metrics: Record<
+      string,
+      {
+        points: { rmse: number };
+        appearance_brier: number;
+        sixty_brier: number;
+      }
+    >;
+    captain_bonus: Record<string, number>;
+  } | null;
+  decision_analysis?: {
+    status: string;
+    promotion_gate_passed: boolean;
+    selected_architecture: string | null;
+    selected_candidate: number;
+    connections: Record<string, string>;
+    candidates: {
+      reference: number;
+      tree: number;
+      network: number;
+      continuation: number;
+      critic_scores: Record<string, number>;
+      action: { buy: number[]; sell: number[]; chip: string | null };
+      ledger: { hit: number; bank_after: number };
+      baseline_policy_first_action: boolean;
+    }[];
+  } | null;
+  timing_analysis?: {
+    plan_id: string;
+    early_mean: number;
+    wait_mean: number;
+    wait_minus_early: number;
+    paired_mc_interval_95: number[];
+    hours_to_deadline: number;
+    within_trained_time_support: boolean;
+    affordability_probability_bounds: number[];
+    research_priority: {
+      player_id: number;
+      expected_value_of_report: number;
+      report_unavailable_probability: number;
+    }[];
+    limits: string[];
+  } | null;
+  population_forecast?: {
+    members: number;
+    target_event: number;
+    scenarios: Record<
+      string,
+      {
+        top_one_percent_probability: number;
+        entry_resampling_95ci: number[];
+        rank_quantiles: number[];
+      }
+    >;
+    limits: string[];
+  } | null;
   at: string;
   market: {
     id: string;
@@ -329,7 +443,7 @@ export type Dashboard = {
       chosen_event: number;
       whole_policy_mean_delta: number;
       paired_mc_interval_95: number[];
-      counterfactual_solver_gap: number;
+      counterfactual_solver_gap: number | null;
     }[];
   } | null;
   scenario_evaluation?: {
@@ -376,6 +490,7 @@ export type Dashboard = {
       expected_net_points: number;
       robust_joint_win: number;
       behavior_conditioned_joint_win?: number | null;
+      learned_policy_joint_win?: number | null;
       policies: {
         rival_policies: string[];
         joint_strict_win: number;

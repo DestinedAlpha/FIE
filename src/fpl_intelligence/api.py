@@ -7,6 +7,7 @@ import json
 import threading
 import uuid
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
@@ -50,6 +51,11 @@ class TransferCheck(Strict):
     action: Action
 
 
+class RefreshSchedule(Strict):
+    enabled: bool
+    interval_minutes: int = Field(default=240, ge=30, le=1440)
+
+
 class RivalRequest(Strict):
     league_id: int = Field(default=1873551, ge=1)
     entry_id: int = Field(default=9375678, ge=1)
@@ -68,7 +74,19 @@ class ScenarioRequest(Strict):
 
 def create_app(root=None):
     load_environment()
-    app = FastAPI(title="FPL Intelligence", version="0.4.0")
+
+    @asynccontextmanager
+    async def lifespan(application):
+        from .scheduling import start_scheduler
+
+        stop, thread = start_scheduler(store, launch)
+        try:
+            yield
+        finally:
+            stop.set()
+            thread.join(timeout=1)
+
+    app = FastAPI(title="FPL Intelligence", version="0.5.0", lifespan=lifespan)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
 
     @app.middleware("http")
@@ -188,6 +206,20 @@ def create_app(root=None):
             "horizon_model": None,
             "transfer_policy_model": None,
             "personalized_policy_analysis": None,
+            "decision_critic": None,
+            "state_value_model": None,
+            "horizon_consistency": None,
+            "market_model": None,
+            "coherent_model": None,
+            "coherent_comparison": None,
+            "manager_policy": None,
+            "context_ablation": None,
+            "decision_analysis": None,
+            "timing_analysis": None,
+            "price_bridge": None,
+            "population_forecast": None,
+            "training_workflow": None,
+            "refresh_schedule": None,
             "source_coverage": {},
             "fusion_model": None,
             "fusion_comparison": None,
@@ -233,6 +265,20 @@ def create_app(root=None):
             "horizon_model",
             "transfer_policy_model",
             "personalized_policy_analysis",
+            "decision_critic",
+            "state_value_model",
+            "horizon_consistency",
+            "market_model",
+            "coherent_model",
+            "coherent_comparison",
+            "manager_policy",
+            "context_ablation",
+            "decision_analysis",
+            "timing_analysis",
+            "price_bridge",
+            "population_forecast",
+            "training_workflow",
+            "refresh_schedule",
         ):
             try:
                 artifact = store.get(kind)
@@ -242,6 +288,25 @@ def create_app(root=None):
                     "decision_uncertainty",
                     "manager_audit",
                 ) and artifact.get("decision_model_id") != (result["decision_model"] or {}).get("id"):
+                    continue
+                if kind in ("market_model", "coherent_model", "manager_policy", "decision_critic"):
+                    artifact = {
+                        k: v
+                        for k, v in artifact.items()
+                        if k not in ("models", "magnitudes", "bps_residual_quantiles")
+                    }
+                if kind in ("decision_analysis", "timing_analysis", "price_bridge") and (
+                    artifact.get("state_id") != (result["state"] or {}).get("id")
+                    or artifact.get("market_id") != market["id"]
+                ):
+                    continue
+                if kind in ("decision_analysis", "horizon_consistency") and artifact.get("forecast_id") != (
+                    result["forecast"] or {}
+                ).get("id"):
+                    continue
+                if kind == "horizon_consistency" and artifact.get("state_id") != (result["state"] or {}).get(
+                    "id"
+                ):
                     continue
                 if kind == "manager_behavior":
                     artifact = {k: v for k, v in artifact.items() if k not in ("predictions", "models")}
@@ -294,8 +359,18 @@ def create_app(root=None):
             result["plan"] = selected_plan
         except ValueError:
             pass
+        for kind in ("coherent_comparison", "population_forecast", "timing_analysis", "price_bridge"):
+            scoped_artifact = result.get(kind)
+            if scoped_artifact and scoped_artifact.get("plan_id") != (result["plan"] or {}).get("id"):
+                result[kind] = None
+        for kind in ("scenario_evaluation", "chip_counterfactual", "hit_comparison"):
+            scoped_artifact = result.get(kind)
+            if scoped_artifact and scoped_artifact.get("base_plan_id") != (result["plan"] or {}).get("id"):
+                result[kind] = None
         try:
             result["rivals"] = store.get("rival_comparison")
+            if result["rivals"].get("forecast_id") != (result["forecast"] or {}).get("id"):
+                result["rivals"] = None
         except ValueError:
             pass
         from .intelligence import source_coverage
@@ -423,6 +498,57 @@ def create_app(root=None):
             return {"manager_behavior_id": result["id"]}
 
         return launch("top-managers", {}, work)
+
+    @app.post("/api/coherent/compare")
+    def compare_football_worlds():
+        from .coherent import compare_football_worlds as run
+
+        return launch("football-world-comparison", {}, lambda: run(store))
+
+    @app.post("/api/strategy/analyze")
+    def strategy_analysis():
+        from .decision_runtime import analyze_decisions
+
+        return launch("strategy-analysis", {}, lambda: analyze_decisions(store))
+
+    @app.post("/api/strategy/timing")
+    def strategy_timing():
+        from .decision_runtime import timing_analysis
+
+        return launch("timing-analysis", {}, lambda: timing_analysis(store))
+
+    @app.post("/api/strategy/refine")
+    def strategy_refine():
+        from .decision_runtime import refine_frontier
+
+        return launch("strategy-refine", {}, lambda: refine_frontier(store))
+
+    @app.post("/api/strategy/train")
+    def strategy_train():
+        from .workflow import full_training
+
+        return launch("complete-training", {}, lambda: full_training(store))
+
+    @app.post("/api/refresh-schedule")
+    def refresh_schedule(request: RefreshSchedule):
+        identity = store.put("refresh_schedule", request.model_dump())
+        return {"id": identity, **request.model_dump()}
+
+    @app.post("/api/refresh-cycle")
+    def refresh_all():
+        from .workflow import refresh_cycle
+
+        return launch("refresh-cycle", {}, lambda: refresh_cycle(store))
+
+    @app.post("/api/population/analyze")
+    def population_analysis():
+        from .population import collect_population, evaluate_population
+
+        def work():
+            asyncio.run(collect_population(store))
+            return evaluate_population(store)
+
+        return launch("population-analysis", {}, work)
 
     @app.post("/api/policy/analyze")
     def policy_analysis():
@@ -621,7 +747,7 @@ def create_app(root=None):
 
         if format == "ics":
             return PlainTextResponse(calendar(store), media_type="text/calendar")
-        plan = store.get("plan", identity)
+        plan = read_plan(identity)
         if format == "json":
             return PlainTextResponse(json.dumps(plan, indent=2), media_type="application/json")
         if format == "md":
@@ -636,7 +762,13 @@ def create_app(root=None):
 
     @app.get("/api/plans/{identity}")
     def get_plan(identity: str):
-        return store.get("plan", identity)
+        return read_plan(identity)
+
+    def read_plan(identity: str):
+        try:
+            return store.get("plan", identity)
+        except ValueError:
+            return store.get("scenario_plan", identity)
 
     @app.get("/api/schema")
     def schema():

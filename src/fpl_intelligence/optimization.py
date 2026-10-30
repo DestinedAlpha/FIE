@@ -106,8 +106,9 @@ class MIP:
         return np.array(solution.col_value), {
             "status": status,
             "objective": info.objective_function_value,
-            "best_bound": info.mip_dual_bound,
-            "gap": info.mip_gap,
+            "best_bound": float(info.mip_dual_bound) if np.isfinite(info.mip_dual_bound) else None,
+            "gap": float(info.mip_gap) if np.isfinite(info.mip_gap) else None,
+            "bound_available": bool(np.isfinite(info.mip_dual_bound)),
             "nodes": info.mip_node_count,
             "variables": count,
             "constraints": len(self.row_lower),
@@ -213,12 +214,13 @@ def optimize(
     end_event: int,
     time_limit: float = 30,
     chips: Mapping[int, str] | None = None,
-    max_transfers: int = 3,
+    max_transfers: int = 15,
     automatic_chips: bool = True,
     pin_chips: Mapping[int, str] | None = None,
     forced_sell: dict[int, list[int]] | None = None,
     disabled_chips: tuple[str, ...] = (),
     first_week_hit_budget: int | None = None,
+    use_decision_critic: bool = True,
 ) -> dict:
     started = time.monotonic()
     if first_week_hit_budget is not None and first_week_hit_budget < 0:
@@ -241,10 +243,56 @@ def optimize(
         raise ValueError("Forecast inputs are stale: refresh/recompute before solving")
     if not forecast["start_event"] <= state.event <= end_event <= forecast["end_event"]:
         raise ValueError("State/horizon is outside the forecast")
+    if state.active_chip is not None:
+        if state.active_chip == "freehit":
+            from .decision_runtime import conditional_plan
+            from .strategy import solve_action
+
+            current_means = {
+                r["player_id"]: r["mean"] for r in forecast["players"] if r["event"] == state.event
+            }
+            first = solve_action(
+                state, players, rules, current_means, chip="freehit", seconds=min(time_limit, 5)
+            )
+            return conditional_plan(
+                store,
+                state_id,
+                forecast_id,
+                end_event,
+                first.action,
+                time_limit,
+                origin="Activated Free Hit with exact underlying restoration",
+            )
+        if (chips or pin_chips or {}).get(state.event, state.active_chip) != state.active_chip:
+            raise ValueError("Requested chip conflicts with an already activated chip")
+        pin_chips = {**(pin_chips or {}), state.event: state.active_chip}
     if state.transfers_made and any(c == "freehit" for c in (chips or {}).values()):
         # Full prior-deadline restoration requires an explicitly frozen prior state.
         if state.deadline_lots is None or state.deadline_bank is None:
             raise ValueError("Free Hit needs prior deadline state after earlier transfers")
+    if (
+        use_decision_critic
+        and chips is None
+        and pin_chips is None
+        and not forced_sell
+        and first_week_hit_budget is None
+        and automatic_chips
+        and store.list("decision_analysis", 1)
+    ):
+        analysis = store.get("decision_analysis")
+        if (
+            analysis.get("promotion_gate_passed")
+            and analysis.get("state_id") == state_id
+            and analysis.get("forecast_id") == forecast_id
+            and analysis.get("market_id") == market["id"]
+            and analysis.get("decision_critic_id") == store.get("decision_critic")["id"]
+        ):
+            from .decision_runtime import conditional_plan
+
+            action = Action.model_validate(analysis["candidates"][analysis["selected_candidate"]]["action"])
+            return conditional_plan(
+                store, state_id, forecast_id, end_event, action, time_limit, origin=analysis["id"]
+            )
     ids = sorted(p for p in players if players[p].selectable or p in {lot.player_id for lot in state.lots})
     events = list(range(state.event, end_event + 1))
     for schedule in (chips, pin_chips):
@@ -263,10 +311,10 @@ def optimize(
     y, z, xi, captain, incoming, outgoing, original, sold_original = {}, {}, {}, {}, {}, {}, {}, {}
     bank, chip_vars, arcs, ft_next = {}, {}, {}, {}
     bb_x, bb_z, tc = {}, {}, {}
-    terminal = {
-        p: sum(means.get((e, p), 0) for e in range(end_event + 1, min(38, end_event + 4) + 1)) * 0.1
-        for p in ids
-    }
+    from .decision_runtime import continuation_terms
+
+    continuation = continuation_terms(store, end_event, means, players, rules, state)
+    terminal = continuation["players"]
     for t in events:
         for chip in ("wildcard", "freehit", "bboost", "3xc"):
             allowed = False
@@ -286,9 +334,16 @@ def optimize(
             fixed = (chips or pin_chips or {}).get(t) == chip
             if fixed and not allowed:
                 raise ValueError(f"Requested {chip} at GW{t} is unavailable")
-            chip_vars[t, chip] = mip.var(("chip", t, chip), lower=int(fixed), upper=int(allowed))
-        bank[t] = mip.var(("bank", t), upper=10000, integer=True)
-        ft_next[t] = mip.var(("ft", t), upper=rules.ft_cap, integer=True)
+            chip_vars[t, chip] = mip.var(
+                ("chip", t, chip),
+                cost=continuation["chip_use"].get((t, chip), 0),
+                lower=int(fixed),
+                upper=int(allowed),
+            )
+        bank[t] = mip.var(("bank", t), cost=0, upper=10000, integer=True)
+        ft_next[t] = mip.var(
+            ("ft", t), cost=continuation["ft"] if t == end_event else 0, upper=rules.ft_cap, integer=True
+        )
         for p in ids:
             value = means.get((t, p), 0)
             y[t, p] = mip.var(("squad", t, p), cost=terminal[p] if t == end_event else 0)
@@ -417,6 +472,11 @@ def optimize(
     for chip in ("wildcard", "freehit", "bboost", "3xc"):
         for window in {(c["start_event"], c["stop_event"]) for c in rules.chips if c["name"] == chip}:
             mip.row([(chip_vars[t, chip], 1) for t in events if window[0] <= t <= window[1]], upper=1)
+    if continuation["bank"] > 0 and continuation["bank_max"] > 0:
+        reward = mip.var(
+            ("terminal_bank",), cost=continuation["bank"], upper=continuation["bank_max"], integer=False
+        )
+        mip.row({reward: 1, bank[end_event]: -1}, upper=0)
     for event, sell_ids in (forced_sell or {}).items():
         for p in sell_ids:
             mip.equal({outgoing[event, p]: 1}, 1)
@@ -487,6 +547,8 @@ def optimize(
                 if retained_key in mip.keys:
                     warm[mip.keys[retained_key]] = int(p in (surviving_original | sold_old) and p in playing)
         warm[bank[t]] = next_warm.bank
+        if t == end_event and ("terminal_bank",) in mip.keys:
+            warm[mip.keys[("terminal_bank",)]] = min(next_warm.bank, continuation["bank_max"])
         warm[ft_next[t]] = next_warm.free_transfers
         if seed_chip:
             warm[chip_vars[t, seed_chip]] = 1
@@ -566,8 +628,10 @@ def optimize(
     objective_before = float(np.dot(mip.costs, warm))
     warm_value = objective_before
     candidate_count = 0
-    for item in store.list("plan", 100):
-        cached = store.get("plan", item["id"])
+    for cached_kind, item in [("plan", item) for item in store.list("plan", 100)] + [
+        ("warm_start", item) for item in store.list("warm_start", 30)
+    ]:
+        cached = store.get(cached_kind, item["id"])
         prior = cached.get("ledger", [])
         if (
             cached.get("state_id") != state_id
@@ -663,9 +727,8 @@ def optimize(
     )
     diagnostics["market_players"] = len(ids)
     diagnostics["screened_players"] = 0
-    diagnostics["terminal_value"] = (
-        "0.1 × following four weeks squad xPts; sensitivity assumption, not learned value"
-    )
+    diagnostics["terminal_value"] = continuation["method"]
+    diagnostics["state_value_model_id"] = continuation["model_id"]
     plan = {
         "created_at": now(),
         "state_id": state_id,
@@ -734,6 +797,21 @@ def hold_plan(store: Store, state_id: str, forecast_id: str, end_event: int) -> 
         "market_id": market["id"],
         "ledger": ledger,
         "label": "hold / roll",
+        "start_event": ledger[0]["event"],
+        "end_event": end_event,
+        "rules_hash": rules.hash,
+        "input_hashes": forecast["input_hashes"],
+        "state_status": state.status,
+        "execution_ready": state.status == "confirmed",
+        "final_state": state.model_dump(),
+        "objective": "hold_squad_with_weekly_lineup_optimization",
+        "solver": {
+            "status": "Fixed hold policy; weekly legal lineup search",
+            "gap": None,
+            "best_bound": None,
+            "runtime_seconds": 0,
+            "scope": "A comparator policy, with no claim of a global transfer/chip bound",
+        },
         "created_at": now(),
         "validation": {"legal": True, "affordable": True},
     }

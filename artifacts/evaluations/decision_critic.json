@@ -1,0 +1,128 @@
+{
+  "at": "2026-10-30T00:08:51.202786+00:00",
+  "dataset_id": "4e0c1f8029aed5df4b0435c77527e0455da61d854611fb7a892f9ce14c56bb4f",
+  "version": "evolving-decisions-v3",
+  "features": [
+    "reference_points",
+    "tree_points",
+    "network_points",
+    "fourweek_points",
+    "hit",
+    "purchases",
+    "bank_after",
+    "ft_after",
+    "wildcard",
+    "freehit",
+    "bboost",
+    "3xc",
+    "squad_future_points",
+    "expiring_chip",
+    "zero_chance_owned",
+    "disagreement"
+  ],
+  "protocol": "Labels end before GW20; calibration GW20\u201324; later tests GW28+, purging overlapping four-week windows. Candidate regret and forecast residual losses share the same legal decisions.",
+  "training_rows": 1787,
+  "calibration_rows": 718,
+  "test_rows": 1486,
+  "candidates": {
+    "tree": {
+      "calibration_gain_by_weight": {
+        "0": 0.0,
+        "0.25": 1.9833333333333334,
+        "0.5": -0.9833333333333333,
+        "1": -2.283333333333333
+      },
+      "weight": 0.25,
+      "accounts": 144,
+      "mean_gain": 0.19444444444444445,
+      "block_gain_95ci": [
+        -1.431423611111111,
+        1.9027777777777777
+      ],
+      "mean_points": 219.94444444444446,
+      "reference_points": 219.75,
+      "best_searched_points": 239.61805555555554,
+      "promoted": false
+    },
+    "network": {
+      "calibration_gain_by_weight": {
+        "0": 0.0,
+        "0.25": 1.5,
+        "0.5": 4.716666666666667,
+        "1": 2.65
+      },
+      "weight": 0.5,
+      "accounts": 144,
+      "mean_gain": -0.3888888888888889,
+      "block_gain_95ci": [
+        -4.381944444444445,
+        3.576388888888889
+      ],
+      "mean_points": 219.36111111111111,
+      "reference_points": 219.75,
+      "best_searched_points": 239.61805555555554,
+      "promoted": false
+    }
+  },
+  "selected": null,
+  "architecture_selected_on_calibration": "network",
+  "neural": {
+    "epochs": 235,
+    "mean": [
+      56.13502883911133,
+      56.93379211425781,
+      53.28438186645508,
+      195.5263671875,
+      0.08953553438186646,
+      4.770005702972412,
+      2.2961957454681396,
+      2.2753217220306396,
+      0.15444879233837128,
+      0.15892557799816132,
+      0.15221041440963745,
+      0.16899831593036652,
+      142.1313018798828,
+      0.06892910599708557,
+      0.4320089519023895,
+      5.271935939788818
+    ],
+    "scale": [
+      6.058916091918945,
+      6.503484725952148,
+      5.6419878005981445,
+      14.505205154418945,
+      0.6354856491088867,
+      5.18774938583374,
+      1.8033292293548584,
+      1.5096288919448853,
+      0.3613763749599457,
+      0.3656061291694641,
+      0.35922273993492126,
+      0.37475264072418213,
+      12.836438179016113,
+      0.06893701106309891,
+      0.6278825402259827,
+      2.913705825805664
+    ],
+    "parameters": 3329
+  },
+  "models": {
+    "tree": {
+      "path": "data/models/decision-critic-4e0c1f8029aed5df4b04/tree.txt",
+      "hash": "54337eb5271cf752647ec028d16970981314f5a35247106c02bd3bd8ce72d9f1"
+    },
+    "network": {
+      "path": "data/models/decision-critic-4e0c1f8029aed5df4b04/network.pt",
+      "hash": "78bdf1de5f300b38d0cd8339a7af6d49902c7a80d96fb85c47005a91ac057429"
+    }
+  },
+  "invalid_actions": 0,
+  "all_market": true,
+  "outcome_features": false,
+  "limits": [
+    "Finite candidate and solver budgets are exposed; oracle is an outcome-only audit, not future knowledge",
+    "Historical news and price archive limitations remain; model selection is frozen before later test outcomes",
+    "The final critic retains the earlier calibrated fit rather than silently retraining on its own test data"
+  ],
+  "id": "03a165585b5553aa45b5b46866e49d6f9a2adcb49cb34253cf0dc59baae16fef"
+}

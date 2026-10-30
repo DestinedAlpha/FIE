@@ -106,3 +106,8 @@ def test_api_empty_onboarding_and_invalid_jobs(tmp_path):
         assert client.post("/api/state", json={"state": {"lots": []}}).status_code == 422
         assert client.post("/api/refresh", headers={"Origin": "https://evil.test"}).status_code == 403
         assert client.get("/api/health", headers={"Host": "evil.test"}).status_code == 400
+        local = Store(tmp_path)
+        scenario_id = local.put("scenario_plan", {"scenario": {"name": "Hypothesis"}, "ledger": []})
+        assert client.get(f"/api/plans/{scenario_id}").json()["scenario"]["name"] == "Hypothesis"
+        assert client.get(f"/api/export/{scenario_id}/json").status_code == 200
+        assert local.list("plan", 1) == []  # Reading a hypothesis never selects a production plan.

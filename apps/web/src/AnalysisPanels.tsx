@@ -385,6 +385,7 @@ export function ScenarioPanel({
               Legal, affordable ledger · conditional future sale-price
               assumptions
             </small>
+            <p><a href={`/api/export/${b.plan_id}/json`} download>Download branch ledger</a></p>
           </div>
         </div>
       ))}
@@ -421,7 +422,7 @@ export function ChipPanel({
             : {c.whole_policy_mean_delta.toFixed(1)} points versus reoptimizing
             without it · Monte Carlo interval [
             {c.paired_mc_interval_95.map((x) => x.toFixed(1)).join(", ")}] ·
-            alternative solver gap {percent(c.counterfactual_solver_gap)}
+            alternative solver gap {c.counterfactual_solver_gap == null ? "bound unavailable" : percent(c.counterfactual_solver_gap)}
           </p>
         ))}
         <small>
@@ -1192,6 +1193,364 @@ export function TransferLearning({ data, busy, act }: Props) {
             evaluates full chip policies separately.
           </p>
         </>
+      )}
+    </section>
+  );
+}
+
+export function StrategyLab({ data, busy, act }: Props) {
+  const critic = data.decision_critic,
+    analysis = data.decision_analysis,
+    value = data.state_value_model;
+  const name = (p: number) =>
+    data.market?.players.find((r) => r.id === p)?.web_name || String(p);
+  return (
+    <section className="panel">
+      <div className="section-title">
+        <div>
+          <h3>Learning decisions, not just points</h3>
+          <p>
+            Legal transfer and chip trajectories carry the account forward.
+            Hindsight outcomes supervise learning; they never enter a live
+            decision.
+          </p>
+        </div>
+        <button
+          className="button secondary"
+          disabled={busy}
+          onClick={() => act("/strategy/analyze", {})}
+        >
+          Compare legal actions
+        </button>
+      </div>
+      {critic && (
+        <>
+          <p>
+            {critic.training_rows.toLocaleString()} earlier training actions ·{" "}
+            {critic.test_rows.toLocaleString()} held-out actions. Decision
+            model: {critic.selected || "reference retained by confidence gate"}.
+          </p>
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Decision challenger</th>
+                  <th>Four-week gain</th>
+                  <th>95% deadline-block interval</th>
+                  <th>Deployment</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(critic.candidates).map(([name, m]) => (
+                  <tr key={name}>
+                    <td>
+                      {name === "network"
+                        ? "Neural decision critic"
+                        : "Tree decision critic"}
+                    </td>
+                    <td>{m.mean_gain.toFixed(2)}</td>
+                    <td>
+                      {m.block_gain_95ci.map((v) => v.toFixed(2)).join(" to ")}
+                    </td>
+                    <td>{m.promoted ? "Gate passed" : "Challenger"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+      {value && (
+        <p>
+          Continuation-value RMSE {value.baseline_rmse.toFixed(2)} →{" "}
+          {value.rmse.toFixed(2)}.{" "}
+          {value.promoted
+            ? "Learned squad, bank, transfer and unused-chip values enter planning."
+            : "The learned continuation model remains under its confidence gate."}
+        </p>
+      )}
+      {data.horizon_consistency && <p>
+        Horizon sensitivity: the GW{data.horizon_consistency.short_end} first action, continued through GW{data.horizon_consistency.long_end},
+        scores {data.horizon_consistency.continued_short_minus_long.toFixed(2)} projected points relative to the longer search.
+        This comparison includes solver-search effects and does not establish future performance.
+      </p>}
+      {analysis && (
+        <>
+          <p>{analysis.status}.</p>
+          <details>
+            <summary>How the components connect</summary>
+            {Object.entries(analysis.connections).map(([name, text]) => (
+              <p key={name}>
+                <b>{name.replaceAll("_", " ")}:</b> {text}
+              </p>
+            ))}
+          </details>
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Legal action</th>
+                  <th>Chip</th>
+                  <th>Hit</th>
+                  <th>Bank</th>
+                  <th>Reference xPts</th>
+                  <th>Neural xPts</th>
+                </tr>
+              </thead>
+              <tbody>
+                {analysis.candidates.slice(0, 24).map((r, i) => (
+                  <tr key={i}>
+                    <td>
+                      {r.action.buy.length
+                        ? r.action.sell.map(name).join(", ") +
+                          " → " +
+                          r.action.buy.map(name).join(", ")
+                        : "Roll"}
+                      {r.baseline_policy_first_action
+                        ? " · current multiweek policy"
+                        : ""}
+                    </td>
+                    <td>{r.action.chip || "—"}</td>
+                    <td>{r.ledger.hit}</td>
+                    <td>{money(r.ledger.bank_after)}</td>
+                    <td>{r.reference.toFixed(2)}</td>
+                    <td>{r.network.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+      {data.manager_policy && (
+        <details>
+          <summary>Manager choices and chip validation</summary>
+          <p>
+            Separate tests on GW{data.manager_policy.test_events.join("–")}.
+          </p>
+          {Object.entries(data.manager_policy.metrics).map(([name, m]) => (
+            <p key={name}>
+              {name}: log loss {m.baseline_log_loss.toFixed(3)} →{" "}
+              {(m.conditional_log_loss ?? m.log_loss ?? 0).toFixed(3)}
+              {m.top5_recall != null
+                ? `; top-five recall ${percent(m.top5_recall)}`
+                : ""}
+              . {m.promoted ? "Learned model retained." : "Baseline retained."}
+            </p>
+          ))}
+        </details>
+      )}
+      {data.market_model && (
+        <p>
+          Pre-deadline price model: log loss{" "}
+          {data.market_model.frequency_log_loss.toFixed(3)} →{" "}
+          {data.market_model.price_log_loss.toFixed(3)}, tested on{" "}
+          {data.market_model.test_deadlines} deadlines.
+        </p>
+      )}
+      {data.context_ablation && (
+        <details>
+          <summary>Independently retrained context comparisons</summary>
+          {Object.entries(data.context_ablation.metrics).map(([name, m]) => (
+            <p key={name}>
+              {name.replaceAll("_", " ")}: point RMSE {m.points.rmse.toFixed(3)}
+              , appearance Brier {m.appearance_brier.toFixed(3)}, 60-minute
+              Brier {m.sixty_brier.toFixed(3)}.
+            </p>
+          ))}
+        </details>
+      )}
+      {data.coherent_model && (
+        <details>
+          <summary>Football-world structure and component checks</summary>
+          {data.coherent_model.coherence.map((s) => (
+            <p key={s}>{s}</p>
+          ))}
+          {Object.entries(data.coherent_model.metrics).map(([name, m]) => (
+            <p key={name}>
+              {name}: deviance {m.baseline_deviance.toFixed(4)} →{" "}
+              {m.poisson_deviance.toFixed(4)}.{" "}
+              {m.promoted
+                ? "Learned head retained."
+                : "Established prior retained."}
+            </p>
+          ))}
+          {data.coherent_model.limits.map((s) => (
+            <p key={s}>{s}</p>
+          ))}
+        </details>
+      )}
+      <div className="form-row">
+        <button
+          className="button secondary"
+          disabled={busy}
+          onClick={() => act("/strategy/refine", {})}
+        >
+          Refine multiweek frontier
+        </button>
+        <button
+          className="button secondary"
+          disabled={busy}
+          onClick={() => act("/strategy/train", {})}
+        >
+          Retrain complete system
+        </button>
+      </div>
+      <p>
+        Complete retraining is a longer CPU job. Validated results remain
+        available while it runs; only completed results can pass promotion
+        gates.
+      </p>
+      <div className="form-row">
+        <button
+          className="button secondary"
+          disabled={busy}
+          onClick={() => act("/refresh-cycle", {})}
+        >
+          Refresh and recompute
+        </button>
+        <button
+          className="button secondary"
+          disabled={busy}
+          onClick={() =>
+            act("/refresh-schedule", {
+              enabled: !data.refresh_schedule?.enabled,
+              interval_minutes: 240,
+            })
+          }
+        >
+          {data.refresh_schedule?.enabled
+            ? "Disable automatic refresh"
+            : "Enable automatic refresh"}
+        </button>
+      </div>
+      <p>
+        Automatic refresh runs while this local application is open, with more
+        frequent checks near the deadline. Account changes still require
+        reconciliation.
+      </p>
+      <button className="button secondary" disabled={busy} onClick={()=>act('/coherent/compare',{})}>Compare football worlds</button>
+      {data.coherent_comparison && <p>Selected policy: {data.coherent_comparison.production_mean.toFixed(1)} reference points / {data.coherent_comparison.football_world_mean.toFixed(1)} structural-football-world points. {data.coherent_comparison.fixtures} fixtures; {data.coherent_comparison.invalid_goal_allocations} invalid goal allocations; {data.coherent_comparison.short_lineup_worlds} incomplete starting XIs. This is a model sensitivity, not a validated future result.</p>}
+    </section>
+  );
+}
+
+export function TransferTiming({ data, busy, act }: Props) {
+  const t = data.timing_analysis;
+  const current = t?.plan_id === data.plan?.id ? t : null;
+  return (
+    <section className="panel">
+      <div className="section-title">
+        <div>
+          <h3>Transfer timing and affordability</h3>
+          <p>
+            Compare committing now with waiting for price and availability
+            information. Both branches can make later legal adjustments.
+          </p>
+        </div>
+        <button
+          className="button secondary"
+          disabled={busy}
+          onClick={() => act("/strategy/timing", {})}
+        >
+          Analyze timing
+        </button>
+      </div>
+      {current ? (
+        <>
+          <p>
+            Waiting minus early commitment:{" "}
+            {current.wait_minus_early.toFixed(2)} projected points; paired
+            simulation interval{" "}
+            {current.paired_mc_interval_95
+              .map((v) => v.toFixed(2))
+              .join(" to ")}
+            .
+          </p>
+          <p>
+            Bundle affordability under the 48-hour price scenarios:{" "}
+            {current.affordability_probability_bounds.map(percent).join(" to ")}
+            .{" "}
+            {current.within_trained_time_support
+              ? "The deadline falls within the price model’s timing support."
+              : "The wait differs from the trained 40–72-hour windows; treat this as a timing sensitivity."}
+          </p>
+          <details>
+            <summary>Research that could change the decision</summary>
+            {current.research_priority.slice(0, 6).map((r) => (
+              <p key={r.player_id}>
+                {
+                  data.market?.players.find((p) => p.id === r.player_id)
+                    ?.web_name
+                }
+                : expected report value {r.expected_value_of_report.toFixed(3)}{" "}
+                points.
+              </p>
+            ))}
+            {current.limits.map((s) => (
+              <p key={s}>{s}</p>
+            ))}
+          </details>
+        </>
+      ) : (
+        <p>
+          Run the analysis for the current selected plan. Price movement and new
+          news are uncertain; account purchase prices remain explicit where
+          unknown.
+        </p>
+      )}
+    </section>
+  );
+}
+
+export function PopulationEvidence({ data, busy, act }: Props) {
+  const population = data.population_forecast;
+  return (
+    <section className="panel">
+      <div className="section-title">
+        <div>
+          <h3>Population and rank scenarios</h3>
+          <p>
+            Sample actual entries across rank bands, including inactive teams,
+            and reuse the same player outcomes.
+          </p>
+        </div>
+        <button
+          className="button secondary"
+          disabled={busy}
+          onClick={() => act("/population/analyze", {})}
+        >
+          Refresh population analysis
+        </button>
+      </div>
+      {population ? (
+        <>
+          <p>
+            {population.members} rank-stratified entries · target GW
+            {population.target_event}. These are conditional modeled rank
+            scenarios.
+          </p>
+          {Object.entries(population.scenarios).map(([name, r]) => (
+            <p key={name}>
+              {name}: modeled top-one-percent probability{" "}
+              {percent(r.top_one_percent_probability)}; entry-resampling
+              interval {r.entry_resampling_95ci.map(percent).join(" to ")};
+              median estimated rank{" "}
+              {Math.round(r.rank_quantiles[1]).toLocaleString()}.
+            </p>
+          ))}
+          <details>
+            <summary>Sampling and model limits</summary>
+            {population.limits.map((s) => (
+              <p key={s}>{s}</p>
+            ))}
+          </details>
+        </>
+      ) : (
+        <p>
+          Refresh the rank-stratified sample to estimate a population scenario.
+          A current top-1,000 cohort alone does not represent the whole game.
+        </p>
       )}
     </section>
   );

@@ -32,6 +32,20 @@ Open http://127.0.0.1:8000. `reconcile-team` imports the **dated** research seed
 
 `fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. After new matches, refresh data and retrain/reforecast/replan. Account transfers are never assumed to have been submitted; reconcile actual squad changes separately.
 
+## What changed in 0.5
+
+Completed the connected decision-learning path: full-market random-account trajectories evolve transfers and chips across four weeks, an integrated tree/listwise neural critic compares legal actions, and a separately gated model values squad, bank, FT and remaining chips. The neural forecaster feeds the optimizer, manager-choice models and decision comparison. Failed empirical gates retain the established policy.
+
+Actual top-1,000 histories now train conditional purchases, sales and chip behavior as well as transfer counts. Future rival branches update their own squads, bank, FT and history. A separate rank-stratified population sample includes inactive entries. These remain explicitly conditional scenarios, with sampling and policy limitations.
+
+Added verified pre-deadline price/news learning, early-versus-wait recourse, purchase-lot-aware affordability, report-value research priorities, full-horizon observable scenario re-optimization, structural football-world policy comparison, independently retrained source ablations, activated-chip handling and optional local automatic refresh. Every search permits the full registered market and all 15 ordinary transfers, with actual gaps and timeouts disclosed.
+
+Source-off point RMSE is **1.9534 history-only → 1.9169 official news → 1.9095 full context**, across 34,828 matched held-out rows. Conditional manager purchase/sale log loss improves **4.553 → 3.608 / 3.160 → 1.808**; the chip challenger fails and its baseline remains active. The 48-hour price model improves log loss **0.1283 → 0.0827** across 46 held-out deadlines. Conditional BPS improves RMSE **5.672 → 5.020** and match-wide bonus **0.409 → 0.398**; those tests condition on known events and do not prove future end-to-end accuracy.
+
+[Implementation and evidence matrix](docs/completion-matrix.md) · [Decision-learning methods and limitations](docs/decision-learning.md) · [Executed release audit](artifacts/evaluations/release_0_5.json).
+
+For full CPU retraining use `uv run --extra neural fpl train-complete`. It is a long job; the prepared package already includes trained artifacts. `strategy-analysis`, `timing-analysis`, `refine-frontier` and `population-analysis` rerun individual connected analyses. The interface exposes the same durable jobs. Fresh data and finalized labels trigger recomputation; submitted account changes must be reconciled independently.
+
 ## What changed in 0.4
 
 Added a purpose-built temporal multi-source neural challenger, archived pre-deadline official news, verified prior-qualified manager inputs, current top-1,000 transfer-behavior analysis, all-competition workload, purged four-week values and legal random-account transfer learning. The Model & data and Rivals pages show completed comparisons and their actual source coverage.

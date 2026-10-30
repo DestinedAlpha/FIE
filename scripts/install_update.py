@@ -13,6 +13,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 RESEARCH_KINDS = {
+    "decision_critic",
+    "state_value_model",
+    "market_model",
+    "market_windows",
+    "coherent_model",
+    "manager_policy",
+    "context_ablation",
+    "evolving_dataset",
+    "population_sample",
+    "population_activity",
     "top_manager_history",
     "manager_behavior",
     "horizon_model",
@@ -77,6 +87,9 @@ def merge_research(source: Path, target: Path):
                 ):
                     if row[0].startswith(
                         (
+                            "market_window_",
+                            "season_rules_",
+                            "population_",
                             "context_",
                             "elite_",
                             "workload_",

@@ -1,38 +1,38 @@
 {
-  "at": "2026-10-29T17:59:17.926812+00:00",
+  "at": "2026-10-30T00:14:10.736769+00:00",
   "fusion_model_id": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d",
   "decision_model_id": "39840e58f1e3096877578ce293cf817b00a6f88af5052644292eacdd51c8f65c",
   "event": 9,
   "source_sensitivity": {
     "tree": {
       "news": {
-        "mean_absolute_prediction_change": 1.2483165695032754,
+        "mean_absolute_prediction_change": 1.2423242709064284,
         "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
       },
       "market": {
-        "mean_absolute_prediction_change": 0.3031264802666519,
+        "mean_absolute_prediction_change": 0.30592128573131944,
         "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
       },
       "workload": {
-        "mean_absolute_prediction_change": 0.009615871840453647,
+        "mean_absolute_prediction_change": 0.00913862615584924,
         "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
       }
     },
     "network": {
       "news": {
-        "mean_absolute_prediction_change": 0.17608880363220136,
+        "mean_absolute_prediction_change": 0.18225365161411358,
         "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
       },
       "market": {
-        "mean_absolute_prediction_change": 0.15424612512059452,
+        "mean_absolute_prediction_change": 0.15196211737500354,
         "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
       },
       "workload": {
-        "mean_absolute_prediction_change": 0.06353055069464217,
+        "mean_absolute_prediction_change": 0.06324097682093287,
         "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
       }
     }
   },
   "decision": "Candidate predictions do not overwrite the production forecast before promotion",
-  "id": "458dbca112cb1c3bd02799dd8b1f80d5074ee661a8397acd6ac6cfd3db929434"
+  "id": "83e05329726016520f404461716f02ad0104893dc5f21335b82c2f0cfccca2e4"
 }

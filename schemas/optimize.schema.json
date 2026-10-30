@@ -52,7 +52,7 @@
       "type": "object"
     },
     "max_transfers": {
-      "default": 3,
+      "default": 15,
       "maximum": 15,
       "minimum": 0,
       "title": "Max Transfers",

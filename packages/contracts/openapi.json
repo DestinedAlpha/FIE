@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "FPL Intelligence",
-    "version": "0.3.0"
+    "version": "0.5.0"
   },
   "paths": {
     "/api/health": {
@@ -211,6 +211,218 @@
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/managers/refresh": {
+      "post": {
+        "summary": "Manager Refresh",
+        "operationId": "manager_refresh_api_managers_refresh_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/coherent/compare": {
+      "post": {
+        "summary": "Compare Football Worlds",
+        "operationId": "compare_football_worlds_api_coherent_compare_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/strategy/analyze": {
+      "post": {
+        "summary": "Strategy Analysis",
+        "operationId": "strategy_analysis_api_strategy_analyze_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/strategy/timing": {
+      "post": {
+        "summary": "Strategy Timing",
+        "operationId": "strategy_timing_api_strategy_timing_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/strategy/refine": {
+      "post": {
+        "summary": "Strategy Refine",
+        "operationId": "strategy_refine_api_strategy_refine_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/strategy/train": {
+      "post": {
+        "summary": "Strategy Train",
+        "operationId": "strategy_train_api_strategy_train_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/refresh-schedule": {
+      "post": {
+        "summary": "Refresh Schedule",
+        "operationId": "refresh_schedule_api_refresh_schedule_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshSchedule"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/refresh-cycle": {
+      "post": {
+        "summary": "Refresh All",
+        "operationId": "refresh_all_api_refresh_cycle_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/population/analyze": {
+      "post": {
+        "summary": "Population Analysis",
+        "operationId": "population_analysis_api_population_analyze_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/policy/analyze": {
+      "post": {
+        "summary": "Policy Analysis",
+        "operationId": "policy_analysis_api_policy_analyze_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/intelligence/refresh": {
+      "post": {
+        "summary": "Refresh Intelligence Sources",
+        "operationId": "refresh_intelligence_sources_api_intelligence_refresh_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fusion/train": {
+      "post": {
+        "summary": "Fusion Train",
+        "operationId": "fusion_train_api_fusion_train_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
               }
             }
           }
@@ -899,6 +1111,7 @@
             "enum": [
               "unavailable",
               "available",
+              "injury_concern",
               "training",
               "minutes_restriction",
               "role_change",
@@ -1202,7 +1415,7 @@
             "maximum": 15.0,
             "minimum": 0.0,
             "title": "Max Transfers",
-            "default": 3
+            "default": 15
           },
           "first_week_hit_budget": {
             "anyOf": [
@@ -1226,6 +1439,27 @@
           "end_event"
         ],
         "title": "OptimizeRequest"
+      },
+      "RefreshSchedule": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          },
+          "interval_minutes": {
+            "type": "integer",
+            "maximum": 1440.0,
+            "minimum": 30.0,
+            "title": "Interval Minutes",
+            "default": 240
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "enabled"
+        ],
+        "title": "RefreshSchedule"
       },
       "ResearchRequest": {
         "properties": {
@@ -1374,6 +1608,23 @@
             },
             "type": "array",
             "title": "Used Chips"
+          },
+          "active_chip": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "wildcard",
+                  "freehit",
+                  "bboost",
+                  "3xc"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active Chip"
           },
           "points": {
             "type": "integer",

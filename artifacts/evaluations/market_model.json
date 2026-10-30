@@ -1,0 +1,67 @@
+{
+  "at": "2026-10-29T20:19:59.142104+00:00",
+  "features": [
+    "price",
+    "ownership",
+    "incoming",
+    "outgoing",
+    "net_flow",
+    "position",
+    "chance",
+    "chance_observed",
+    "injury",
+    "suspension",
+    "news",
+    "week",
+    "window_hours",
+    "hours_to_deadline"
+  ],
+  "models": {
+    "price": {
+      "path": "data/models/market-8f25f54fc67ddd00b831/price.txt",
+      "hash": "8d41feae9267c43796b2904438501d6073b611f0c0ab1bb12ac579eaf4951305"
+    },
+    "news": {
+      "path": "data/models/market-8f25f54fc67ddd00b831/news.txt",
+      "hash": "54a62144c8841460fd970f206df09f1b437308524af4fbcf5bf7795c5ae38254"
+    }
+  },
+  "temperature": 1.0,
+  "classes": [
+    "fall",
+    "stable",
+    "rise"
+  ],
+  "train_rows": 76599,
+  "calibration_rows": 6383,
+  "test_rows": 34771,
+  "test_deadlines": 46,
+  "price_log_loss": 0.08270723999157038,
+  "frequency_log_loss": 0.12830243420426649,
+  "block_log_loss_difference_95ci": [
+    -0.053245713974697094,
+    -0.03901176627055158
+  ],
+  "promoted": true,
+  "news_brier": 0.012604127103918636,
+  "news_frequency_brier": 0.014399809472049333,
+  "news_promoted": true,
+  "news_prior": 0.01644887142465503,
+  "frequency": [
+    0.018641810918774968,
+    0.9737082582700191,
+    0.007649930811205974
+  ],
+  "window_hours": [
+    40,
+    72
+  ],
+  "protocol": "Train before 2024/25 GW31; calibrate final eight prior-season deadlines; test all later deadlines. Inputs and targets both precede each football deadline.",
+  "source_id": "cc5aaa89d7a0e76aad4b6e9ca8aafe4640722c7b38ba313da27cc1b771342ab7",
+  "limits": [
+    "Conditional transition model, not access to the unpublished FPL price-change algorithm",
+    "Approximately 48-hour archives; intraday horizons outside this support are scenario sensitivities",
+    "Reported-unavailable transitions concern new official news, not certainty of actual zero minutes"
+  ],
+  "id": "8b58a0d27fc0d94f5ca3b1d76614a9da0ca24291f3bb8b6b84fd2faebb440f70"
+}

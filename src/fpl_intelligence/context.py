@@ -161,6 +161,11 @@ async def research_refresh(store: Store, urls: list[str] | None = None, limit: i
         own = {lot["player_id"] for lot in store.get("state")["lots"]}
     except ValueError:
         own = set()
+    priority = {}
+    if store.list("timing_analysis", 1):
+        timing = store.get("timing_analysis")
+        if timing.get("market_id") == market["id"]:
+            priority = {r["player_id"]: r["expected_value_of_report"] for r in timing["research_priority"]}
     candidates = list(urls or [])
     results = []
     current_news = [p for p in players.values() if p.id in own and p.news]
@@ -186,7 +191,9 @@ async def research_refresh(store: Store, urls: list[str] | None = None, limit: i
             )
         except ValueError as error:
             results.append({"url": source["url"], "status": "deferred", "reason": str(error)})
-    for player in sorted(players.values(), key=lambda p: (p.id not in own, -p.ownership)):
+    for player in sorted(
+        players.values(), key=lambda p: (-priority.get(p.id, 0), p.id not in own, -p.ownership)
+    ):
         link = player.raw.get("scout_news_link")
         if link and link not in candidates:
             from .research import validate_url
@@ -236,7 +243,9 @@ def evidence_branches(store: Store, event: int) -> list[dict]:
     at = datetime.now(timezone.utc)
     current = []
     superseded = set()
-    claims = [store.get("claim", r["id"]) for r in store.list("claim", 1000)]
+    from .research import active_claims
+
+    claims = active_claims(store, 1000)
     for claim in claims:
         if claim.get("supersedes"):
             superseded.add(claim["supersedes"])
@@ -248,7 +257,13 @@ def evidence_branches(store: Store, event: int) -> list[dict]:
             continue
         if claim["affected_events"] and event not in claim["affected_events"]:
             continue
-        if claim["claim_type"] not in ("unavailable", "minutes_restriction", "training", "lineup"):
+        if claim["claim_type"] not in (
+            "unavailable",
+            "minutes_restriction",
+            "training",
+            "lineup",
+            "injury_concern",
+        ):
             continue
         seen.add(claim.get("origin_hash"))
         current.append(

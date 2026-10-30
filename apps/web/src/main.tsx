@@ -37,6 +37,9 @@ import {
   SourceCoverage,
   ManagerSignals,
   TransferLearning,
+  StrategyLab,
+  TransferTiming,
+  PopulationEvidence,
   ModelEvidence,
   DecisionEvidence,
   CaptainEvidence,
@@ -1000,6 +1003,7 @@ function App() {
                       setTab("Season planner");
                     }}
                   />
+                  <TransferTiming data={data} busy={busy} act={action} />
                   <ChipPanel data={data} plan={plan} busy={busy} act={action} />
                   <ScenarioPanel
                     data={data}
@@ -1144,8 +1148,11 @@ function App() {
                       </div>
                       {plan.solver && (
                         <div className="solver-note">
-                          {plan.solver.status} · gap {percent(plan.solver.gap)}{" "}
-                          · {plan.solver.runtime_seconds.toFixed(1)}s.
+                          {plan.solver.status} · gap{" "}
+                          {plan.solver.gap == null
+                            ? "bound unavailable"
+                            : percent(plan.solver.gap)}{" "}
+                          · {(plan.solver.runtime_seconds ?? 0).toFixed(1)}s.
                           Optimality applies to the specified additive
                           formulation; shared worlds rescore autosubs and
                           captain fallback.
@@ -1217,6 +1224,7 @@ function App() {
               )}
               {tab === "Rivals" && (
                 <>
+                  <PopulationEvidence data={data} busy={busy} act={action} />
                   <ManagerSignals data={data} busy={busy} act={action} />
                   <CohortPanel data={data} busy={busy} act={action} />
                   <div className="rival-controls">
@@ -1277,6 +1285,7 @@ function App() {
                                 <th>Net xPts</th>
                                 <th>Robust joint win</th>
                                 <th>Learned-count scenario</th>
+                                <th>Learned moves and chips</th>
                                 <th>Explore</th>
                               </tr>
                             </thead>
@@ -1303,6 +1312,11 @@ function App() {
                                       : percent(
                                           r.behavior_conditioned_joint_win,
                                         )}
+                                  </td>
+                                  <td>
+                                    {r.learned_policy_joint_win == null
+                                      ? "—"
+                                      : percent(r.learned_policy_joint_win)}
                                   </td>
                                   <td>
                                     <button
@@ -1499,6 +1513,7 @@ function App() {
               {tab === "Model & data" && (
                 <>
                   <DecisionEvidence data={data} busy={busy} act={action} />
+                  <StrategyLab data={data} busy={busy} act={action} />
                   <TransferLearning data={data} busy={busy} act={action} />
                   <ManagerSignals data={data} busy={busy} act={action} />
                   <SourceCoverage data={data} busy={busy} act={action} />

@@ -59,6 +59,7 @@ class TeamState(Strict):
     free_transfers: int = Field(ge=0, le=5)
     lots: list[Lot]
     used_chips: list[ChipUse] = Field(default_factory=list)
+    active_chip: Chip | None = None
     points: int = 0
     transfers_made: int = Field(default=0, ge=0, le=20)
     hit_paid: int = Field(default=0, ge=0)
@@ -80,6 +81,8 @@ class TeamState(Strict):
     def unique_lots(self):
         if len({lot.player_id for lot in self.lots}) != len(self.lots):
             raise ValueError("Duplicate player in squad")
+        if len({c.event for c in self.used_chips}) != len(self.used_chips):
+            raise ValueError("Only one chip can be used in a gameweek")
         return self
 
 
@@ -113,5 +116,5 @@ class OptimizeRequest(Strict):
     objective: Literal["expected_points", "beat_both"] = "expected_points"
     sacrifice_budget: float = Field(default=5, ge=0, le=100)
     chips: dict[int, Chip] = Field(default_factory=dict)
-    max_transfers: int = Field(default=3, ge=0, le=15)
+    max_transfers: int = Field(default=15, ge=0, le=15)
     first_week_hit_budget: int | None = Field(default=None, ge=0, le=60)

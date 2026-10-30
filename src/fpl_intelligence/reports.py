@@ -12,6 +12,13 @@ from .ingestion import load_market
 from .storage import Store, atomic_json, now
 
 
+def report_forecast(store: Store, plan: dict):
+    try:
+        return store.get("forecast", plan["forecast_id"])
+    except ValueError:
+        return store.get("scenario_forecast", plan["forecast_id"])
+
+
 def calendar(store: Store) -> str:
     _, market = load_market(store)
     lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//FPL Intelligence//EN", "CALSCALE:GREGORIAN"]
@@ -95,7 +102,7 @@ def render(store: Store, plan: dict) -> str:
     ]
     from .domain import POSITIONS
 
-    forecast = store.get("forecast", plan["forecast_id"])
+    forecast = report_forecast(store, plan)
     state = store.get("state", plan["state_id"])
     projections = {r["player_id"]: r for r in forecast["players"] if r["event"] == first["event"]}
     for lot in state["lots"]:
@@ -174,7 +181,7 @@ def export(store: Store, plan: dict, destination: Path) -> dict:
             {k: json.dumps(row[k]) if isinstance(row.get(k), (dict, list)) else row.get(k) for k in fields}
         )
     (destination / "ledger.csv").write_text(output.getvalue())
-    forecast = store.get("forecast", plan["forecast_id"])
+    forecast = report_forecast(store, plan)
     projections = io.StringIO()
     columns = [
         "player_id",
@@ -201,10 +208,22 @@ def export(store: Store, plan: dict, destination: Path) -> dict:
         )
     (destination / "market-forecasts.csv").write_text(projections.getvalue(), encoding="utf-8")
     alternatives = {}
-    for kind in ("case_comparison", "chip_counterfactual", "scenario_evaluation"):
+    for kind in (
+        "case_comparison",
+        "chip_counterfactual",
+        "scenario_evaluation",
+        "decision_analysis",
+        "timing_analysis",
+        "price_bridge",
+        "population_forecast",
+    ):
         try:
             value = store.get(kind)
-            if value.get("forecast_id") == plan["forecast_id"] or value.get("base_plan_id") == plan.get("id"):
+            if (
+                value.get("forecast_id") == plan["forecast_id"]
+                or value.get("base_plan_id") == plan.get("id")
+                or value.get("plan_id") == plan.get("id")
+            ):
                 alternatives[kind] = value
         except ValueError:
             pass

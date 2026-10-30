@@ -9,6 +9,7 @@
       "enum": [
         "unavailable",
         "available",
+        "injury_concern",
         "training",
         "minutes_restriction",
         "role_change",

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections import Counter
 from itertools import product
 from typing import Any
 
@@ -112,6 +113,11 @@ def rival_policy(
         entry_id=member["entry"],
         bank=picks["entry_history"]["bank"],
         free_transfers=ft,
+        grandfathered_clubs=[
+            club
+            for club, count in Counter(players[p["element"]].team for p in picks["picks"]).items()
+            if count > rules.club_limit
+        ],
         lots=[
             Lot(
                 player_id=p["element"],
@@ -132,9 +138,32 @@ def rival_policy(
     )
     means = {(r["event"], r["player_id"]): r["mean"] for r in forecast["players"]}
     ledger = []
+    learned = None
+    if style.startswith("learned"):
+        from .manager_policy import policy_models
+
+        learned = policy_models(store)
     for event in range(forecast["start_event"], end_event + 1):
         owned = [lot.player_id for lot in state.lots]
         chosen = Action()
+        if learned is not None:
+            from .manager_policy import rollout_action
+
+            decision = rollout_action(
+                store,
+                member,
+                state,
+                players,
+                rules,
+                {p: means.get((event, p), 0) for p in players},
+                history,
+                int(style.removeprefix("learned")),
+                event - forecast["start_event"],
+                learned,
+            )
+            state = decision.state
+            ledger.append(decision.ledger)
+            continue
         if style.startswith("behavior"):
             maximum = int(style[-1]) if event == forecast["start_event"] else 1
             chosen = greedy_bundle(
@@ -179,7 +208,9 @@ def rival_policy(
         "assumptions": [
             "Revealed prior-deadline squad; hidden transfers unknown",
             "Current market sale quotes and published bank are sensitivity assumptions",
-            "No future rival chip use in these hold/greedy scenarios",
+            "Learned branches carry purchases, sales, chip use, bank and FT through exact transitions"
+            if learned
+            else "No future rival chip use in these hold/greedy scenarios",
         ],
     }
     score_plan(store, plan, forecast)
@@ -229,6 +260,15 @@ def compare(
                     )
     except ValueError:
         behavior = None
+    learned_policy = None
+    if store.list("manager_policy", 1):
+        learned_policy = store.get("manager_policy")
+        for member in rivals:
+            for branch in range(4):
+                policy = rival_policy(store, member, league, forecast, end_event, "learned" + str(branch))
+                rival_worlds[member["entry"], "learned" + str(branch)] = member["points"] + score_plan(
+                    store, policy, forecast
+                )
     rows = []
     for plan in plans:
         outcomes = own_points + score_plan(store, plan, forecast)
@@ -264,6 +304,19 @@ def compare(
                 "policies": probabilities,
                 "robust_joint_win": min(p["joint_strict_win"] for p in probabilities),
                 "behavior_conditioned_joint_win": behavior_probability,
+                "learned_policy_joint_win": float(
+                    np.mean(
+                        [
+                            (
+                                (outcomes > rival_worlds[rivals[0]["entry"], "learned" + str(a)])
+                                & (outcomes > rival_worlds[rivals[1]["entry"], "learned" + str(b)])
+                            ).mean()
+                            for a, b in product(range(4), repeat=2)
+                        ]
+                    )
+                )
+                if learned_policy
+                else None,
             }
         )
     best_ev = max(row["expected_net_points"] for row in rows)
@@ -281,6 +334,10 @@ def compare(
         "ties": "Reported separately; strict-win probability excludes ties. Exact final rank needs final transfer tie-breaks.",
         "shared_worlds": True,
         "manager_behavior_id": behavior["id"] if behavior else None,
+        "manager_policy_id": learned_policy["id"] if learned_policy else None,
+        "learned_policy_scope": "Four reproducible learned purchase/sale/count/chip trajectories per rival, sharing the football worlds; finite policy samples and conditional independence remain assumptions"
+        if learned_policy
+        else None,
         "behavior_assumptions": [
             "A top-1,000 conditional behavioral prior weights the first decision; calibration on these mini-league rivals is unproven and later actions follow an explicit greedy scenario",
             "Count 3+ is represented by at most three greedy transfers; future rival chips are not forecast",

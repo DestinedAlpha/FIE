@@ -1,0 +1,128 @@
+{
+  "at": "2026-10-30T00:24:13.579645+00:00",
+  "version": "0.5.0",
+  "account_state_id": "ae8902face96774be7e82d099bd7bbc59b6f53ec419f96aecb8d403449b1e522",
+  "market_id": "2b8b4f023f58c23011f8454a3723ca1daf75149d7af162748600c9795a6b33ef",
+  "forecast_id": "1be3bc970dc7daa5662b4b928728e825f90779065f09e065a1530a9b86e91df3",
+  "plan_id": "a9b6e99d9c42366805c913d305c480cdf64ff51cfcb0dd343775a0cb121766c8",
+  "replayed_events": 11,
+  "source_artifacts": {
+    "fusion_model": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d",
+    "horizon_model": "4013b58ab324478d8405673612a62c1913f3ea5feed814436c1b08629516e618",
+    "manager_behavior": "55262d47e657bc9e849f7f3c4938f2eb112a4fdf3bdcdd544c86f6a0f46cf60a",
+    "manager_policy": "e90561ece08fa1d72391445d81354cf183db1fec1fb62ed2b924802c1d6693d0",
+    "market_model": "8b58a0d27fc0d94f5ca3b1d76614a9da0ca24291f3bb8b6b84fd2faebb440f70",
+    "coherent_model": "67c33001109f2560a6093ab91bdf2993a9d32985df4928cb25ee5484c5755c6d",
+    "context_ablation": "211d516fdd1e08a53febcadb7f8ec226791f250e56cc18149f749f45cc1a1c37",
+    "evolving_dataset": "4e0c1f8029aed5df4b0435c77527e0455da61d854611fb7a892f9ce14c56bb4f",
+    "decision_critic": "03a165585b5553aa45b5b46866e49d6f9a2adcb49cb34253cf0dc59baae16fef",
+    "state_value_model": "88397178a9dc91b08bedafbe6f08a00e1a086192bb0ac38cb1960029500841b3",
+    "decision_analysis": "d31e04afe4d3fe4f48c25b1ce76429e43b75e1fc560fa3a4c8678422f77d5eef",
+    "timing_analysis": "a69006bd90ddae22abce99999623ec697fd3472f42f6dc0abe9cd1eb3d7d5b63",
+    "price_bridge": "3148d304724bfdf68ecddff37d93026bc7325d14040d01ccdb97ab40ebdd86cd",
+    "population_forecast": "efa0d8affaa78e11ff3f721f1229029f37f12dde5e0f2129747dd451530abc48",
+    "coherent_comparison": "cb1a9619f06812ea20b3278aaef67ca50e397525bcd90cd6e212691d5e214df4",
+    "horizon_consistency": "76e08393aea3a38d2330fef65ba5e18e3347b956596c07595cf80b4809e88cd5",
+    "scenario_evaluation": "b90b8f69531fabdab5e2cbe639dd93ffc982972e3d8882d715dd1c6b797294ce",
+    "case_comparison": "a9a484434401770e16b61902d6234749b9c4242e24642646b3fb0d8322f140ba"
+  },
+  "evolving_accounts": 456,
+  "evolving_actions": 4632,
+  "critic_selected": null,
+  "critic_test": {
+    "tree": {
+      "calibration_gain_by_weight": {
+        "0": 0.0,
+        "0.25": 1.9833333333333334,
+        "0.5": -0.9833333333333333,
+        "1": -2.283333333333333
+      },
+      "weight": 0.25,
+      "accounts": 144,
+      "mean_gain": 0.19444444444444445,
+      "block_gain_95ci": [
+        -1.431423611111111,
+        1.9027777777777777
+      ],
+      "mean_points": 219.94444444444446,
+      "reference_points": 219.75,
+      "best_searched_points": 239.61805555555554,
+      "promoted": false
+    },
+    "network": {
+      "calibration_gain_by_weight": {
+        "0": 0.0,
+        "0.25": 1.5,
+        "0.5": 4.716666666666667,
+        "1": 2.65
+      },
+      "weight": 0.5,
+      "accounts": 144,
+      "mean_gain": -0.3888888888888889,
+      "block_gain_95ci": [
+        -4.381944444444445,
+        3.576388888888889
+      ],
+      "mean_points": 219.36111111111111,
+      "reference_points": 219.75,
+      "best_searched_points": 239.61805555555554,
+      "promoted": false
+    }
+  },
+  "continuation_promoted": false,
+  "continuation_test": {
+    "accounts": 144,
+    "mean_gain": 0.8680555555555556,
+    "block_gain_95ci": [
+      -0.5833333333333335,
+      2.638888888888889
+    ],
+    "passed": false
+  },
+  "captain": "Haaland",
+  "vice": "Palmer",
+  "first_hit": 8,
+  "simulation": {
+    "worlds": 4000,
+    "seed": 11,
+    "mean": 651.32,
+    "sd": 41.4767115379221,
+    "quantiles": [
+      598.0,
+      651.0,
+      706.0
+    ],
+    "method": "common match worlds with autosubs and captain fallback"
+  },
+  "solver": {
+    "status": "Optimal",
+    "objective": 663.792225,
+    "best_bound": 668.2362159966204,
+    "gap": 0.006694852439135475,
+    "bound_available": true,
+    "nodes": 1,
+    "variables": 57405,
+    "constraints": 69989,
+    "initial_warm_objective": 641.4925499999999,
+    "selected_warm_objective": 663.792225,
+    "reused_incumbent_plan_id": "735952cdccd87579c5df617452b6aee57f39b0afdfb15998898122c99d8db22c",
+    "validated_cached_incumbents": 6,
+    "runtime_seconds": 28.906,
+    "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+    "market_players": 563,
+    "screened_players": 0,
+    "terminal_value": "Declared fixed terminal sensitivity",
+    "state_value_model_id": null
+  },
+  "checks": {
+    "backend_tests": 93,
+    "frontend_unit_tests": 2,
+    "browser_journeys": 8,
+    "ruff": "passed",
+    "mypy": "passed",
+    "frontend_build": "passed",
+    "ledger_replay": "passed",
+    "connected_model_checksums": "passed"
+  },
+  "scope": "Executed implementation checks and historical gates; future football outcomes and global optimality are not certified"
+}

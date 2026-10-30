@@ -233,7 +233,15 @@ def transition(
         raise ValueError("Cannot sell unowned players or buy owned players")
     if any(not players[p].selectable for p in action.buy):
         raise ValueError("Unselectable incoming player")
-    chip = action.chip
+    if state.active_chip is not None and action.chip not in (None, state.active_chip):
+        raise ValueError("The activated chip must be preserved for this deadline")
+    chip = action.chip or state.active_chip
+    if (
+        chip == "freehit"
+        and state.active_chip == "freehit"
+        and (state.deadline_lots is None or state.deadline_bank is None)
+    ):
+        raise ValueError("An activated Free Hit requires the underlying deadline squad and bank")
     if chip:
         start, stop = rules.chip_window(chip, state.event)
         if any(c.chip == chip and start <= c.event <= stop for c in state.used_chips):
@@ -266,7 +274,7 @@ def transition(
     settlement_sales = sales
     settlement_purchases = purchases
     settlement_bank = state.bank
-    if chip == "freehit" and state.transfers_made:
+    if chip == "freehit" and (state.transfers_made or state.active_chip == "freehit"):
         assert state.deadline_lots is not None and state.deadline_bank is not None
         underlying = {lot.player_id: lot for lot in state.deadline_lots}
         target = {lot.player_id for lot in lots}
@@ -332,6 +340,7 @@ def transition(
             "bank": next_bank,
             "free_transfers": ft,
             "used_chips": used,
+            "active_chip": None,
             "transfers_made": 0,
             "hit_paid": 0,
             "deadline_lots": None,

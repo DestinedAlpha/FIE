@@ -1,0 +1,76 @@
+{
+  "at": "2026-10-30T00:08:51.277829+00:00",
+  "dataset_id": "4e0c1f8029aed5df4b0435c77527e0455da61d854611fb7a892f9ce14c56bb4f",
+  "features": [
+    "squad_future_points",
+    "bank_millions",
+    "free_transfers",
+    "wildcard",
+    "freehit",
+    "bboost",
+    "3xc"
+  ],
+  "feature_bounds": [
+    [
+      100.25098769730837,
+      178.5467784821011
+    ],
+    [
+      0.0,
+      10.3
+    ],
+    [
+      1.0,
+      5.0
+    ],
+    [
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      1.0
+    ]
+  ],
+  "policy_review": {
+    "accounts": 144,
+    "mean_gain": 0.8680555555555556,
+    "block_gain_95ci": [
+      -0.5833333333333335,
+      2.638888888888889
+    ],
+    "passed": false
+  },
+  "intercept": 106.85005560234181,
+  "coefficients": [
+    0.3318637240825914,
+    2.259951178941938e-20,
+    0.12738908705518112,
+    1.3879658181419612,
+    1.5146129380243427e-28,
+    1.75626772482044,
+    3.9663706739511233
+  ],
+  "ridge": 20,
+  "rmse": 25.46272700377763,
+  "baseline_rmse": 26.241663591458753,
+  "paired_rmse_95ci": [
+    -1.0071387973745523,
+    -0.5684316399318241
+  ],
+  "promoted": false,
+  "training_rows": 1787,
+  "test_rows": 1486,
+  "protocol": "Nonnegative regularized continuation-value coefficients; fit earlier labels, select ridge on calibration, report untouched later-deadline block interval",
+  "baseline": "Fixed 0.1 squad future points with training-only fitted intercept; bank, FT and unused chips zero",
+  "scope": "Learned four-week continuation under the explicitly replayed future policy; intercept cancels within a fixed planning horizon",
+  "id": "88397178a9dc91b08bedafbe6f08a00e1a086192bb0ac38cb1960029500841b3"
+}

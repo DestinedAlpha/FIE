@@ -126,6 +126,24 @@
       "title": "Used Chips",
       "type": "array"
     },
+    "active_chip": {
+      "anyOf": [
+        {
+          "enum": [
+            "wildcard",
+            "freehit",
+            "bboost",
+            "3xc"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Active Chip"
+    },
     "points": {
       "default": 0,
       "title": "Points",
