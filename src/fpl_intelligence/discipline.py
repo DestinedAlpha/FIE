@@ -11,7 +11,7 @@ from typing import Literal
 from pydantic import Field, model_validator
 
 from .domain import Strict
-from .storage import atomic_json, now
+from .storage import now
 
 RULES_PATH = Path(__file__).resolve().parents[2] / "configs/discipline-2026-27.json"
 
@@ -148,6 +148,7 @@ def infer_caution_bans(rows, fixtures, thresholds=None):
 def build_discipline(store):
     from .decision import canonical_rows
     from .ingestion import load_market
+    from .observations import information_time
 
     players, market = load_market(store)
     rows, _, _ = canonical_rows(store)
@@ -161,7 +162,8 @@ def build_discipline(store):
         if row["season"] == market["season"] and row.get("code"):
             by_code[int(row["code"])].append(row)
     decisions = [store.get("ban_decision", r["id"]) for r in store.list("ban_decision", 1000)]
-    at = datetime.fromisoformat(now())
+    cutoff = information_time(store)
+    at = datetime.fromisoformat(cutoff)
     decisions = [r for r in decisions if datetime.fromisoformat(r["known_at"]) <= at]
     windows = [store.get("ban_window", r["id"]) for r in store.list("ban_window", 1000)]
     if store.list("discipline_refresh", 1):
@@ -196,7 +198,7 @@ def build_discipline(store):
             if (
                 window["player_code"] == player.code
                 and window["season"] == market["season"]
-                and window["known_at"] <= now()
+                and datetime.fromisoformat(window["known_at"]) <= at
             ):
                 unavailable.update(
                     f["id"]
@@ -210,7 +212,7 @@ def build_discipline(store):
             decision = BanDecision.model_validate({k: v for k, v in saved.items() if k != "id"})
             schedule = [f for f in fixtures if player.team in (f["team_h"], f["team_a"])]
             schedule += saved.get("additional_fixtures", [])
-            service = ban_service(decision, schedule, now())
+            service = ban_service(decision, schedule, cutoff)
             unavailable.update(service["fixture_ids"])
             explicit.append(service)
         relevant = [f for f in fixtures if player.team in (f["team_h"], f["team_a"])]
@@ -258,9 +260,9 @@ def build_discipline(store):
         ],
     }
     report["id"] = store.put("discipline_report", report)
-    atomic_json(
-        Path("artifacts/evaluations/discipline.json"), {k: v for k, v in report.items() if k != "records"}
-    )
+    from .observations import evaluation_report
+
+    evaluation_report(store, "discipline.json", {k: v for k, v in report.items() if k != "records"})
     return report
 
 

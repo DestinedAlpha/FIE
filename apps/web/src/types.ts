@@ -557,6 +557,12 @@ export type ValidationMetric = {
   block_difference_95ci?: number[];
 };
 export type FootballEvidenceData = {
+  shadow_capture_status?: {at:string;status:string;reason?:string}|null;
+  shadow_registry?: {seed_event:number;season:string;seed_scope:string;missed_capture_policy:string}|null;
+  shadow_cohort?: {event:number;frozen_at:string;track:string;real_account_unchanged?:boolean;actions:Record<string,{action:{chip:string|null;lineup:{captain:number;vice:number}}}>}|null;
+  shadow_evaluation?: {scope:string;finalized_deadlines:number;pending_deadlines:number[];total_net_points:Record<string,number>;outcomes:{event:number;policy:string;net_points:number;hit:number;chip:string|null;track:string}[]}|null;
+  pipeline_replay_progress?: {stage:string;season:string|null;event:number|null;completed_deadlines:number;total_deadlines:number;at:string}|null;
+  pipeline_replay?: {id:string;protocol:{worlds:number;seconds:number;horizon:string;track:string};production_budget:boolean;live_pointers_unchanged:boolean;independent_verification:{sealed_deadlines:number;validated_actions:number;ledger_and_actual_scoring:string};summaries:Record<string,{primary_multiweek:{net_points:number;hit_points:number;chips:{event:number;chip:string}[]};reference_one_week:{net_points:number;hit_points:number;chips:{event:number;chip:string}[]};ownership_no_hits:{net_points:number;hit_points:number;chips:{event:number;chip:string}[]};paired_primary_minus_ownership_95ci:number[]|null}>;weeks:{season:string;event:number;policy:string;net_points:number;action:{chip:string|null;lineup:{captain:number}};ledger:{hit:number;bank_after:number;free_transfers_after:number};solver:{status:string;gap:number|null}}[];limits:string[]}|null;
   consensus_policy_validation?: {scope:string;acceptance:{passed:boolean;ordinary_return_delta_95ci:number[]};current_totals:Record<string,number>;previous_season_totals:Record<string,number>}|null;
   weekly_baseline_comparison?: {reference_total:number;comparisons:Record<string,{baseline_total:number}>}|null;
   consensus_model?: {id:string;selected:string;weight:number;promoted:boolean;current_totals:Record<string,number>;acceptance:{passed:boolean;return_delta:number;weekly_return_delta_95ci:number[];deadline_mse_delta_95ci:number[]};protocol:{weight_selection:string;acceptance:string};weeks:{event:number;policy:string;actual_points:number;lineup:{captain:number};players:{id:number;name:string;price:number}[]}[];limits:string[]}|null;

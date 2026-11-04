@@ -92,12 +92,15 @@ def strength(rows):
 
 
 def canonical_rows(store: Store):
+    from .observations import observation_view
+
     players, market = load_market(store)
-    rows = [dict(r) for r in archived_rows(store)]
+    frozen = observation_view(store)
+    rows = [dict(r) for r in archived_rows(store)] if frozen is None else frozen
     team_names = {t["id"]: t["name"] for t in market["teams"]}
     fixtures = {f["id"]: f for f in market["fixtures"]}
     finalized = {e["id"] for e in market["events"] if e.get("data_checked")}
-    for identity, history in histories(store, players).items():
+    for identity, history in (histories(store, players) if frozen is None else {}).items():
         player = players[identity]
         for r in history:
             if r["round"] not in finalized:
@@ -571,6 +574,8 @@ def load_bundle(store, spec):
 
 
 def future_inputs(store, market, players, start, end, scenario=None, beliefs=()):
+    from .observations import information_time
+
     rows, fixtures, _ = canonical_rows(store)
     past = defaultdict(list)
     clubs = defaultdict(list)
@@ -666,7 +671,7 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
                 elapsed = (
                     moment(f["kickoff_time"]) - moment(first_kickoff[player.team])
                 ).total_seconds() / 86400
-                availability = recovery_path(player.raw, now(), elapsed, recovery)
+                availability = recovery_path(player.raw, information_time(store), elapsed, recovery)
             if not player.selectable:
                 availability = 0
             if f["id"] in suspended.get(player.id, set()):
@@ -746,6 +751,8 @@ def learned_forecast(
     store: Store, start_event=None, end_event=38, worlds=2000, seed=11, use_beliefs=False, scenario=None
 ):
     import time
+
+    from .observations import information_time
 
     started = time.monotonic()
     spec = store.get("decision_model")
@@ -942,7 +949,8 @@ def learned_forecast(
     rules = Rules.from_bootstrap(store.latest("bootstrap", content_hash=market["source_hash"])[0])
     body = {
         "issued_at": now(),
-        "cutoff": now(),
+        "cutoff": information_time(store),
+        "information_cutoff": information_time(store),
         "season": market["season"],
         "start_event": start,
         "end_event": end_event,

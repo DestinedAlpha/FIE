@@ -1,8 +1,10 @@
-# Current model card · 0.6 · 4 November 2026
+# Current model card · 0.8 · 4 November 2026
 
 The current prepared build uses the validated `learned-points-v1` reference, calibrated recovery and accepted joint-DGW minute transitions. Training and calibration include finalized current-season GW1–9 in their chronological roles. GW10 has no outcome label. The six-block 326,671-parameter temporal neural challenger finishes training and improves matched point RMSE, but fails the complete captain/policy acceptance gate; it remains a connected comparison rather than replacing the reference.
 
-Current results and individual adoption decisions are in [the release audit](../artifacts/evaluations/release_0_6.json), [football model methods](football-models.md) and [atomic implementation coverage](completion-matrix.md). Historical weekly teams are reconstructed independently with prior-only fits and calibration; they are not a prospective record. Older numerical results below describe earlier executed model versions.
+Current results and individual adoption decisions are in [the release audit](../artifacts/evaluations/release_0_8.json), [football model methods](football-models.md) and [atomic implementation coverage](completion-matrix.md). Historical weekly teams are reconstructed independently with prior-only fits and calibration; they are not a prospective record. Older numerical results below describe earlier executed model versions.
+
+The full production multiweek policy scores 536 net points in current GW1–9, versus 561 for ownership with free transfers. In earlier-season GW20–38 it scores 1,098, versus 1,154 for the same-forecast one-week policy and 1,022 for ownership. Its gain interval over ownership includes zero. The completed replay verifies 28 frozen deadlines and 84 continuous actions; it does not establish reliable superiority or consistent 550+ returns. Full results are in the [performance audit](performance-audit.md). New synchronized prospective accounts start at GW10 with equal hypothetical £100m resources and exact purchase lots; their finalized outcomes are pending.
 
 The earlier 0.5 shadow decision frozen on 30 October for GW9 scored **48 net points after an 8-point hit**. The user's actual revealed account scored **52 with no hit**, using a different transfer. The shadow policy did not beat the account that week. This negative prospective result is retained; the 0.6 GW10 shadow decision awaits finalized future results.
 

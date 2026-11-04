@@ -44,7 +44,7 @@ The earlier-season ensemble-minus-reference gain interval is [-2.74, 7.32]: the 
 
 ## Remaining acceptance limits
 
-- A synchronized historical full-pipeline transfer/chip/rival benchmark with every deployed component fitted before each deadline remains outstanding. The new continuous test covers ordinary one-deadline decisions only.
+- The integrated benchmark below now measures the deployed reference-family expected-points pipeline, including lookahead and chips. It does not validate every alternative rival/rank objective or rejected research model.
 - Neural fusion, decision critics and learned continuation have trained artifacts and comparisons; failed replacement gates keep them out of the primary policy. More parameters do not establish predictive advantage.
 - The selected live primary plan has a 12-point first hit and 2.31% additive MIP gap. Its approximately 4.3 modeled-point advantage over the same-budget no-hit incumbent excludes model/solver uncertainty and does not prove the paid hit optimal.
 - Optional source coverage is incomplete: no compatible free Premier League odds were returned, and shot-feed failures retain verified cached data. Unsupported social opinions receive no invented numerical uplift.
@@ -52,3 +52,30 @@ The earlier-season ensemble-minus-reference gain interval is [-2.74, 7.32]: the 
 - Frozen prospective full-system forecasts/policies must accrue finalized outcomes before claims of repeatable superiority. Already-inspected benchmark weeks cannot be tuned and then called untouched tests.
 
 Evidence: [reference replay](../artifacts/evaluations/gw1-gw9-replay.json), [matched controls](../artifacts/evaluations/weekly-baseline-comparison.json), [published fusion](../artifacts/evaluations/published-fusion.json), [continuous policy](../artifacts/evaluations/published-fusion-continuous.json). Prepared-data commands: `fpl train-consensus`, `fpl validate-consensus-policy`, `fpl compare-consensus`. These execute real transformations and solvers, not fixed-score fixtures.
+
+## Production forecaster and full-window planner
+
+The integrated experiment uses the actual production `learned_forecast`, full-market multiweek optimizer, hold/no-hit comparisons, exact transition engine and actual autosub/captain scoring. It replans after each deadline. The lookahead ends at the applicable chip window (GW19/GW38), with four terminal weeks; it does not spend chips just to maximize a scored GW9 endpoint.
+
+| GW | Production multiweek | Same-forecast one-week | Ownership, free transfers |
+|---|---:|---:|---:|
+| 1 | 47 | 45 | 54 |
+| 2 | 103 | 96 | 103 |
+| 3 | 35 | 30 | 46 |
+| 4 | 59 | 56 | 89 |
+| 5 | 38 | 68 | 46 |
+| 6 | 57 | 41 | 73 |
+| 7 | 86 | 39 | 67 |
+| 8 | 55 | 70 | 33 |
+| 9 | 56 | 71 | 50 |
+| **Total** | **536** | **516** | **561** |
+
+The integrated policy pays no hits in these nine weeks and uses BB in GW1, FH in GW3 and TC in GW7. Controls share the initial squad, budget and chip inventory; their declared ordinary/free-transfer policies do not activate chips. This comparison combines planning and chip-policy effects. It is not a pure isolated estimate of the value of lookahead. The weekly 586 ensemble experiment is a different model and account problem.
+
+The complete earlier-season GW20–38 replay scores **1,098** for the integrated policy, **1,154** for the same-forecast one-week policy and **1,022** for ownership. Integrated hits total four points; it uses TC20, FH21, BB30 and WC31. The two-week block-bootstrap interval for its per-deadline gain over ownership is **[-1.84, 10.16]**; reliable superiority is not established. Its lower return than the one-week control also prevents a claim that extra lookahead/chip complexity improved realized performance. Those controls use exactly the same starting state within this experiment; their figures need not equal controls from a different experiment with different fitted/sampled forecasts or seed solves.
+
+All decisions retain their input version, pre-target fit/calibration groups, models, first-week forecasts/worlds, legal actions and next state. Independent checks match reported actions to sealed decisions and verify account continuity and actual scores. The replay uses 4,000 worlds and 60-second MIPs with real gaps. It remains a later statistical reconstruction using corrected observations. Current weeks were already inspected, and they do not select new model parameters here.
+
+Prospective synchronized accounts start separately from equal hypothetical £100m states with known purchase lots. Real future decisions freeze before their deadlines. Missed captures execute a previously frozen standing hold, and finalized scores are revised without double counting. No prospective superiority is asserted before those outcomes exist. These accounts do not change the real account or submit FPL transfers.
+
+Evidence: [integrated production replay](../artifacts/evaluations/integrated-pipeline-replay.json). Commands: `fpl replay-pipeline`, `fpl freeze-accounts`, `fpl score-accounts`.

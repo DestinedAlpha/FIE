@@ -168,3 +168,32 @@ test("stale recommendations cannot display old transfers as current actions",asy
   await expect(page.locator('.transfer-pair')).toHaveCount(0);
   await expect(page.locator('.pitch-player')).toHaveCount(0);
 });
+
+test("integrated replay proofs and synchronized future accounts are accessible", async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await openWorkspace(page);
+  await navigate(page, 'Model & data');
+  await expect(page.getByRole('heading', {name:'Production pipeline · continuous account'})).toBeVisible();
+  await expect(page.getByRole('heading', {name:'Prospective continuous accounts'})).toBeVisible();
+  const replayResponse = await page.request.get('/api/replay/pipeline');
+  expect(replayResponse.status()).toBe(200);
+  const replay = await replayResponse.json();
+  expect(replay.production_budget).toBe(true);
+  expect(replay.independent_verification.validated_actions).toBe(84);
+  expect(replay.independent_verification.account_continuity).toBe('passed');
+  const first = replay.weeks.find((r:{season:string;event:number;policy:string}) =>
+    r.season === '2026/27' && r.event === 1 && r.policy === 'primary_multiweek');
+  const proofResponse = await page.request.get('/api/replay/pipeline/decision/2026-27/1');
+  expect(proofResponse.status()).toBe(200);
+  const proof = await proofResponse.json();
+  expect(proof.actions[0].action).toEqual(first.action);
+  expect(proof.registered_players.length).toBeGreaterThanOrEqual(15);
+  expect(proof.model.fit_evidence.calibration_max_group < '2026/27-GW01').toBe(true);
+  const shadow = await (await page.request.get('/api/prospective/accounts')).json();
+  expect(shadow.shadow_cohort.real_account_unchanged).toBe(true);
+  expect(Object.keys(shadow.shadow_cohort.actions).length).toBe(3);
+  await expect(page.getByRole('link', {name:'Download frozen decisions and results'})).toHaveAttribute('href','/api/prospective/accounts');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(false);
+  expect(errors).toEqual([]);
+});

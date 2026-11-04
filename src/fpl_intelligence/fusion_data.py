@@ -323,7 +323,9 @@ def build_fusion_data(store: Store):
 
 def live_inputs(store, rows, market, players, feature_id=None):
     """Construct inference tensors using the same transforms as historical fitting."""
-    issued_cutoff = now()
+    from .observations import information_time
+
+    issued_cutoff = information_time(store)
     originals, _, _ = canonical_rows(store)
     from .enrichment import EnrichmentIndex
 

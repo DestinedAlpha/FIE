@@ -506,7 +506,15 @@ def optimize(
                     if t == state.event and first_week_hit_budget is not None and hit > first_week_hit_budget:
                         continue
                     v = mip.var(("arc", t, f, n, preserve), cost=-hit)
-                    next_f = f if preserve else min(rules.ft_cap, max(0, f - n - prior_made) + 1)
+                    next_f = (
+                        f
+                        if preserve
+                        else (
+                            1
+                            if state.initial and t == state.event
+                            else min(rules.ft_cap, max(0, f - n - prior_made) + 1)
+                        )
+                    )
                     allocation = rules.event_overrides.get(t + 1, {}).get("rules", {}).get("free_transfers")
                     if allocation is not None:
                         next_f = int(allocation)

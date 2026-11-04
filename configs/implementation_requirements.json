@@ -497,6 +497,69 @@
       "implementation": "src/fpl_intelligence/consensus.py:reusable_decision",
       "test": "tests/test_consensus.py:test_cached_decisions_require_reproduced_full_market_utilities",
       "runtime_evidence_kind": "consensus_model"
+    },
+    {
+      "id": "evaluation.production_policy",
+      "requirement": "Production forecasting and full-window chip/transfer replay with continuous finances and sealed choices",
+      "implementation": "src/fpl_intelligence/pipeline_replay.py:run_pipeline_replay",
+      "test": "tests/test_pipeline_verification.py:test_independent_verification_checks_sealed_actions_and_continuous_accounts",
+      "runtime_evidence_kind": "pipeline_replay"
+    },
+    {
+      "id": "evaluation.continuity",
+      "requirement": "Independently detect altered actions and account resets across replay deadlines",
+      "implementation": "src/fpl_intelligence/pipeline_verification.py:audit_continuity",
+      "test": "tests/test_pipeline_verification.py:test_continuity_verifier_rejects_individually_legal_account_resets",
+      "runtime_evidence_kind": "pipeline_replay"
+    },
+    {
+      "id": "evaluation.portable_resume",
+      "requirement": "Recover completed work from retained portable models and sealed decisions",
+      "implementation": "src/fpl_intelligence/pipeline_checkpoints.py:recover_deadline",
+      "test": "tests/test_pipeline_verification.py:test_portable_proofs_recover_accounts_without_refitting_or_reading_future_outcomes",
+      "runtime_evidence_kind": "pipeline_replay"
+    },
+    {
+      "id": "evaluation.historical_clock",
+      "requirement": "Production engine historical observations exclude current, future and unfinished target facts",
+      "implementation": "src/fpl_intelligence/observations.py:observation_view",
+      "test": "tests/test_observations.py:test_normal_forecaster_reads_only_the_verified_historical_view",
+      "runtime_evidence_kind": "pipeline_replay"
+    },
+    {
+      "id": "prospective.accounts",
+      "requirement": "Synchronized equal-budget prospective accounts retain purchase lots, Free Hit restoration, FT and actual net scores",
+      "implementation": "src/fpl_intelligence/shadow_accounts.py:advance_shadow_accounts",
+      "test": "tests/test_shadow_accounts.py:test_frozen_accounts_score_freehit_restore_and_remain_idempotent",
+      "runtime_evidence_kind": "shadow_cohort"
+    },
+    {
+      "id": "prospective.missed_capture",
+      "requirement": "A missed deadline executes the previously frozen hold instruction; official revisions rescore without duplicate points",
+      "implementation": "src/fpl_intelligence/shadow_accounts.py:advance_shadow_accounts",
+      "test": "tests/test_shadow_accounts.py:test_missed_deadline_executes_precommitted_hold_and_revises_points",
+      "runtime_evidence_kind": "shadow_cohort"
+    },
+    {
+      "id": "prospective.clock",
+      "requirement": "A calculation crossing its deadline cannot create a prospective prediction",
+      "implementation": "src/fpl_intelligence/shadow_accounts.py:freeze_shadow_accounts",
+      "test": "tests/test_shadow_accounts.py:test_capture_rejects_deadline_race_without_saving_actions",
+      "runtime_evidence_kind": "shadow_cohort"
+    },
+    {
+      "id": "operations.portable_database",
+      "requirement": "Checksummed bounded database parts restore atomically and preserve existing accounts, including legacy archives",
+      "implementation": "src/fpl_intelligence/database_archive.py:unpack_database",
+      "test": "tests/test_database_archive.py:test_database_archive_roundtrip_preserves_account_and_never_overwrites",
+      "runtime_evidence_kind": "release_checks"
+    },
+    {
+      "id": "prospective.ongoing_finances",
+      "requirement": "Released-deadline finances advance during an ongoing gameweek without inventing finalized points",
+      "implementation": "src/fpl_intelligence/shadow_accounts.py:advance_shadow_accounts",
+      "test": "tests/test_shadow_accounts.py:test_ongoing_week_advances_finances_without_inventing_final_points",
+      "runtime_evidence_kind": "shadow_cohort"
     }
   ]
 }

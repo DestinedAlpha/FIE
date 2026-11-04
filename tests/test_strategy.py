@@ -55,14 +55,20 @@ def test_search_can_roll_grandfathered_club_excess_or_repair_on_transfer(market,
     assert sum(market[lot.player_id].team == 99 for lot in changed.state.lots) <= 3
 
 
-@pytest.mark.parametrize("mode", ["roll", "transfer", "freehit"])
+@pytest.mark.parametrize("mode", ["roll", "transfer", "freehit", "initial"])
 def test_multiweek_grandfathered_excess_survives_roll_only(tmp_path, market, rules, state, monkeypatch, mode):
     import fpl_intelligence.optimization as optimizer
 
-    for p in (1, 3, 8, 13):
-        market[p] = market[p].model_copy(update={"team": 99})
+    if mode != "initial":
+        for p in (1, 3, 8, 13):
+            market[p] = market[p].model_copy(update={"team": 99})
     state = state.model_copy(
-        update={"grandfathered_clubs": [99], "free_transfers": 0, "status": "dated_seed"}
+        update={
+            "grandfathered_clubs": [99] if mode != "initial" else [],
+            "free_transfers": 1 if mode == "initial" else 0,
+            "status": "dated_seed",
+            "initial": mode == "initial",
+        }
     )
     store = Store(tmp_path)
     frozen = {
@@ -119,6 +125,10 @@ def test_multiweek_grandfathered_excess_survives_roll_only(tmp_path, market, rul
         forced_sell={9: [1]} if mode == "transfer" else None,
         relative_gap=0,
     )
+    if mode == "initial":
+        assert result["ledger"][0]["free_transfers_after"] == 1
+        assert result["ledger"][0]["hit"] == 0
+        return
     if mode == "roll":
         assert all(not row["buy"] for row in result["ledger"])
     for row in result["ledger"]:
@@ -337,7 +347,7 @@ def test_equivalent_freehit_actions_reuse_a_validated_continuation(
 
 @pytest.mark.parametrize("new_finalized", [False, True])
 def test_refresh_budget_skips_all_player_histories_until_labels_are_due(tmp_path, monkeypatch, new_finalized):
-    from fpl_intelligence import decision, ingestion, optimization, prospective, simulation
+    from fpl_intelligence import decision, ingestion, optimization, prospective, shadow_accounts, simulation
     from fpl_intelligence.storage import now
     from fpl_intelligence.workflow import refresh_cycle
 
@@ -381,6 +391,8 @@ def test_refresh_budget_skips_all_player_histories_until_labels_are_due(tmp_path
     monkeypatch.setattr(ingestion.Official, "ingest", ingest)
     monkeypatch.setattr(decision, "train_decisions", lambda *args: fits.append(True))
     monkeypatch.setattr(prospective, "score_frozen_decisions", lambda *args: {})
+    monkeypatch.setattr(shadow_accounts, "advance_shadow_accounts", lambda *args: {})
+    monkeypatch.setattr(shadow_accounts, "freeze_shadow_accounts", lambda *args: {"id": "test-capture"})
     monkeypatch.setattr(simulation, "forecast", forecast)
     monkeypatch.setattr(optimization, "optimize", lambda *args: {"id": "test-plan"})
     monkeypatch.setattr(

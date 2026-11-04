@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import gzip
 import json
-import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -12,6 +11,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 from dotenv import dotenv_values
 
+from fpl_intelligence.database_archive import pack_database
 from fpl_intelligence.storage import Store
 
 
@@ -30,9 +30,18 @@ def main():
             ["git", "ls-files", "--cached", "--others", "--exclude-standard"], cwd=root, text=True
         ).splitlines()
     )
-    with tempfile.TemporaryDirectory() as temporary:
+    with tempfile.TemporaryDirectory(dir=output.parent) as temporary:
         backup = Path(temporary) / "state.sqlite"
         store.backup(backup)
+        if secrets:
+            overlap = max(map(len, secrets)) - 1
+            tail = b""
+            with backup.open("rb") as database:
+                while block := database.read(1024 * 1024):
+                    combined = tail + block
+                    if any(secret in combined for secret in secrets):
+                        raise ValueError("Credential found in account database; publication blocked")
+                    tail = combined[-overlap:] if overlap else b""
         application_files = sorted(
             name
             for name in files
@@ -58,10 +67,8 @@ def main():
             for path in (root / "apps" / "web" / "dist").rglob("*"):
                 if path.is_file():
                     bundle.write(path, "FPL-Intelligence/" + path.relative_to(root).as_posix())
-            compressed = Path(temporary) / "state.sqlite.gz"
-            with backup.open("rb") as original, gzip.open(compressed, "wb", compresslevel=6) as packed:
-                shutil.copyfileobj(original, packed)
-            bundle.write(compressed, "FPL-Intelligence/data/state.sqlite.gz")
+            for part in pack_database(backup, Path(temporary) / "database"):
+                bundle.write(part, "FPL-Intelligence/data/" + part.name)
             for folder in ("raw", "scenarios", "models", "features", "normalized"):
                 for path in (store.root / folder).rglob("*"):
                     if path.is_file():

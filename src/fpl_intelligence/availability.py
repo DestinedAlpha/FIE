@@ -5,14 +5,13 @@ from __future__ import annotations
 import hashlib
 from collections import defaultdict
 from datetime import datetime
-from pathlib import Path
 from typing import Any
 
 import lightgbm as lgb
 import numpy as np
 from sklearn.metrics import log_loss
 
-from .storage import atomic_json, digest, now
+from .storage import digest, now
 
 RECOVERY_FEATURES = (
     "chance",
@@ -240,7 +239,9 @@ def train_availability(store):
         "protocol": "Recovery: fit before 2024/25 GW25, calibrate that season remainder, test 2025 onward. Rotation: 2022/23 fit, 2023/24 calibrate, 2024/25 onward test; four-deadline block intervals and independent joint-DGW gate.",
     }
     report["id"] = store.put("availability_model", report)
-    atomic_json(Path("artifacts/evaluations/availability.json"), report)
+    from .observations import evaluation_report
+
+    evaluation_report(store, "availability.json", report)
     return report
 
 

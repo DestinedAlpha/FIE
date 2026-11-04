@@ -63,6 +63,9 @@ def main():
         "consensus_model",
         "consensus_comparison",
         "consensus_policy_validation",
+        "pipeline_replay",
+        "shadow_cohort",
+        "shadow_evaluation",
     )
     artifacts = {kind: store.get(kind) for kind in kinds}
     from fpl_intelligence.decision import load_bundle
@@ -119,13 +122,23 @@ def main():
     assert artifacts["consensus_comparison"]["consensus_model_id"] == consensus["id"]
     assert artifacts["consensus_comparison"]["state_id"] == state["id"]
     assert artifacts["consensus_policy_validation"]["consensus_model_id"] == consensus["id"]
+    from fpl_intelligence.pipeline_replay import verify_pipeline_replay
+
+    pipeline = artifacts["pipeline_replay"]
+    assert pipeline["production_budget"] and pipeline["live_pointers_unchanged"]
+    pipeline_proof = verify_pipeline_replay(store, pipeline)
+    assert pipeline_proof["sealed_deadlines"] == 28 and pipeline_proof["validated_actions"] == 84
+    assert artifacts["shadow_cohort"]["real_account_unchanged"]
+    from fpl_intelligence.availability import moment
+
+    assert moment(artifacts["shadow_cohort"]["frozen_at"]) < moment(artifacts["shadow_cohort"]["deadline"])
     checks = json.loads(Path("artifacts/runtime/checks/checks.json").read_text())
     assert checks["passed"] and checks["browser_failed"] == 0
     critic = artifacts["decision_critic"]
     value = artifacts["state_value_model"]
     result = {
         "at": now(),
-        "version": "0.7.0",
+        "version": "0.8.0",
         "account_state_id": state["id"],
         "market_id": market["id"],
         "forecast_id": forecast["id"],
@@ -152,6 +165,12 @@ def main():
         "consensus_continuous_totals": artifacts["consensus_policy_validation"]["current_totals"],
         "consensus_continuous_acceptance": artifacts["consensus_policy_validation"]["acceptance"],
         "consensus_promoted": False,
+        "integrated_policy_summaries": pipeline["summaries"],
+        "integrated_policy_verification": pipeline_proof,
+        "prospective_account_cohort_id": artifacts["shadow_cohort"]["id"],
+        "prospective_outcomes": {
+            k: artifacts["shadow_evaluation"][k] for k in ("finalized_deadlines", "pending_deadlines")
+        },
         "checks": {
             **{k: v for k, v in checks.items() if k != "results"},
             "ledger_replay": "passed",
@@ -159,7 +178,7 @@ def main():
         },
         "scope": "Executed implementation checks and historical gates; future football outcomes and global optimality are not certified",
     }
-    atomic_json(Path("artifacts/evaluations/release_0_7.json"), result)
+    atomic_json(Path("artifacts/evaluations/release_0_8.json"), result)
     print(
         json.dumps(
             {

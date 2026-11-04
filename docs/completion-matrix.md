@@ -1,11 +1,28 @@
-# Implementation coverage · 0.7
+# Functional coverage · 0.8
 
-This traces selected behaviours, not exhaustive acceptance of the complete blueprint or proof of competitive accuracy. GW1–GW9 weekly-team and continuous ordinary-transfer comparisons are now executed. A current-release, continuous-account replay connecting every deployed component, multiweek lookahead, transfers and chips remains outstanding. The [performance audit](performance-audit.md) records these limits, the 586 weekly ensemble result and its failed continuous-policy gate.
+The release connects the production forecaster, full-window transfer/chip planner, exact account engine, historical evaluation and prospective continuous accounts. The [performance audit](performance-audit.md) separates observed results from predictive claims. Consistent 550+ continuous-account performance is not established.
 
-The atomic requirement catalog is [implementation_requirements.json](../configs/implementation_requirements.json). The generated [implementation audit](../artifacts/evaluations/implementation_audit.json) links each required behaviour to implementation symbols, regression tests and a concrete runtime artifact. The [release audit](../artifacts/evaluations/release_0_6.json) records actual checks, financial replay, model integrity and weekly scores.
+| Functional area | Implementation and evidence |
+|---|---|
+| Acquisition and provenance | Full official registry/history/fixtures/account adapters, immutable snapshots, source contracts, stable identities and verified deadline archives |
+| Account and scoring | Exact integer finances, purchase lots/selling quotes, FT/hits, initial selection, club grandfathering, chip windows, FH restoration, formations, autosubs and C/VC fallback |
+| Independent forecasts | Multi-season shrinkage/direct models, calibrated participation and point distributions, retained numerical models and shared train/serve transformations |
+| Football alternatives | Availability/recovery, joint double-gameweek rotation, team strength/score process, role/shot channels, FPL assists, discrete defensive actions, saves, discipline and bonus competition |
+| Source fusion | Dated news, advanced statistics, ownership/expert signals and workload enter tested tree/temporal neural models; absent sources have masks and explicit coverage |
+| Hosted research | Free-only provider eligibility/quota controls, authenticated capabilities, verbatim supported claims, provenance, contradiction handling, expiry and independent provider failures |
+| Managers and rivals | Retrieved top-1,000 histories, earlier-qualified expertise, conditional transfers/chips, feasible rival branches and a disclosed population model |
+| Decision learning | Random legal evolving accounts, later realized action returns, purged train/test groups, regret diagnostics, action critics and state value with replacement gates |
+| Planning | Full registered-market multiweek MIP, all 15 ordinary transfers, joint chips, hold/no-hit alternatives, actual bounds/time limits and common-world rescoring |
+| Conditional strategy | Observable scenario branches, price/affordability assumptions, complete recourse, chip counterfactuals, transfer timing and horizon comparisons |
+| Historical production evaluation | Deadline-specific refits, full chip windows beyond the scored interval, equal starting accounts, frozen actions/models, actual scoring and independent continuity checks |
+| Prospective evaluation | Synchronized hypothetical accounts, exact purchase lots, pre-deadline capture, standing holds after missed captures and revision-aware scoring |
+| Product and operation | Squad editor, market/planner/rival/research/model views, durable jobs and progress, exports, local refresh controls, backups and protected existing-installation updates |
+| Delivery | Locked dependencies, built Windows UI, checksummed database parts, legacy restoration, actual GitHub-download verification and model/world reproduction |
 
-This replaces a grouped checklist that could conceal individual integration gaps. Implementation, data coverage and scientific acceptance are separate facts: an implemented, tested model may be rejected by its acceptance test; an optional feed may have no compatible observations. Neither permits fabricated data or a false deployment claim.
+The [atomic catalog](../configs/implementation_requirements.json) traces 80 selected behaviours to concrete symbols, executed regressions and runtime artifacts. The generated [implementation audit](../artifacts/evaluations/implementation_audit.json) and [release audit](../artifacts/evaluations/release_0_8.json) record the actual checks. These are auditable implementation evidence, not a formal proof that every possible input is error-free. The [data contract](data-contract.md) explains fields, clocks, missingness and learning.
 
-The release covers source acquisition and temporal contracts; exact account/rules transitions; learned points, availability, goal channels and structural alternatives; hosted research and measured source effects; top-1,000/rival/population analysis; evolving-account decision learning; joint transfer/chip optimization; contingencies, timing, exports, local operation and GW1–8 historical teams. Detailed methods and limitations are in [football-models.md](football-models.md).
+Alternative football, neural, fusion, decision and continuation models are implemented and tested. Failed replacement gates keep their outputs in labelled comparisons rather than silently changing the primary policy. The integrated historical benchmark measures the currently deployed reference-family expected-points pipeline; it does not certify every research objective or rival probability.
 
-Future competitive performance, future ranks and synchronized prospective superiority require future finalized matches. The freeze/score machinery is implemented; those outcomes cannot be manufactured as a completion checkbox.
+Unavailable compatible free odds, inaccessible source updates and uncertain private account facts retain explicit coverage or uncertainty. They do not become invented observations. Public picks cannot reveal transfers made after the latest released deadline; those can be confirmed in the squad editor.
+
+Future matches must finalize before synchronized prospective performance can be measured. Future ranks, repeatable superiority and a guaranteed points threshold cannot be completed by adding code. The capture, scoring and learning machinery is implemented; actual future evidence remains separate.

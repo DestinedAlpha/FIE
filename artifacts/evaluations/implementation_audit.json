@@ -1,9 +1,9 @@
 {
-  "at": "2026-11-04T19:41:51.329928+00:00",
-  "requirements_traced": 71,
+  "at": "2026-11-04T21:42:25.424173+00:00",
+  "requirements_traced": 80,
   "verification_scope": "Implementation symbols, executed mapped regressions and existing runtime evidence; not a proof that all possible behaviours are error-free",
   "scope": "Selected blueprint and user-request behaviours, not exhaustive project acceptance; research hypotheses require measured benefit rather than compulsory complexity.",
-  "checks_at": "2026-11-04T19:41:21.178704+00:00",
+  "checks_at": "2026-11-04T21:42:14.371623+00:00",
   "items": [
     {
       "id": "data.registry",
@@ -623,7 +623,7 @@
       "runtime_evidence_kind": "release_checks",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "5b78bb1481047c09b968945cba96ed69810d63289a323078a18a080dbc0bcfe3"
+      "runtime_artifact_id": "3b56aa5895313826816395561e0e2675153de74506a855164a1d50d624f301a3"
     },
     {
       "id": "ops.updater",
@@ -714,6 +714,96 @@
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
       "runtime_artifact_id": "29d535cc367d3c6c706851e052f8058d717c506a28d5645da3e6c95a430d4014"
+    },
+    {
+      "id": "evaluation.production_policy",
+      "requirement": "Production forecasting and full-window chip/transfer replay with continuous finances and sealed choices",
+      "implementation": "src/fpl_intelligence/pipeline_replay.py:run_pipeline_replay",
+      "test": "tests/test_pipeline_verification.py:test_independent_verification_checks_sealed_actions_and_continuous_accounts",
+      "runtime_evidence_kind": "pipeline_replay",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "6e0cb9303d4fec42c7fb76a53b810117666ed0a18b3639e05ee3881a6c69caf7"
+    },
+    {
+      "id": "evaluation.continuity",
+      "requirement": "Independently detect altered actions and account resets across replay deadlines",
+      "implementation": "src/fpl_intelligence/pipeline_verification.py:audit_continuity",
+      "test": "tests/test_pipeline_verification.py:test_continuity_verifier_rejects_individually_legal_account_resets",
+      "runtime_evidence_kind": "pipeline_replay",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "6e0cb9303d4fec42c7fb76a53b810117666ed0a18b3639e05ee3881a6c69caf7"
+    },
+    {
+      "id": "evaluation.portable_resume",
+      "requirement": "Recover completed work from retained portable models and sealed decisions",
+      "implementation": "src/fpl_intelligence/pipeline_checkpoints.py:recover_deadline",
+      "test": "tests/test_pipeline_verification.py:test_portable_proofs_recover_accounts_without_refitting_or_reading_future_outcomes",
+      "runtime_evidence_kind": "pipeline_replay",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "6e0cb9303d4fec42c7fb76a53b810117666ed0a18b3639e05ee3881a6c69caf7"
+    },
+    {
+      "id": "evaluation.historical_clock",
+      "requirement": "Production engine historical observations exclude current, future and unfinished target facts",
+      "implementation": "src/fpl_intelligence/observations.py:observation_view",
+      "test": "tests/test_observations.py:test_normal_forecaster_reads_only_the_verified_historical_view",
+      "runtime_evidence_kind": "pipeline_replay",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "6e0cb9303d4fec42c7fb76a53b810117666ed0a18b3639e05ee3881a6c69caf7"
+    },
+    {
+      "id": "prospective.accounts",
+      "requirement": "Synchronized equal-budget prospective accounts retain purchase lots, Free Hit restoration, FT and actual net scores",
+      "implementation": "src/fpl_intelligence/shadow_accounts.py:advance_shadow_accounts",
+      "test": "tests/test_shadow_accounts.py:test_frozen_accounts_score_freehit_restore_and_remain_idempotent",
+      "runtime_evidence_kind": "shadow_cohort",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "a525441cc788fd6f47cce5384e95ce2ad5e89d96fab7a475c8c6bcaa22897027"
+    },
+    {
+      "id": "prospective.missed_capture",
+      "requirement": "A missed deadline executes the previously frozen hold instruction; official revisions rescore without duplicate points",
+      "implementation": "src/fpl_intelligence/shadow_accounts.py:advance_shadow_accounts",
+      "test": "tests/test_shadow_accounts.py:test_missed_deadline_executes_precommitted_hold_and_revises_points",
+      "runtime_evidence_kind": "shadow_cohort",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "a525441cc788fd6f47cce5384e95ce2ad5e89d96fab7a475c8c6bcaa22897027"
+    },
+    {
+      "id": "prospective.clock",
+      "requirement": "A calculation crossing its deadline cannot create a prospective prediction",
+      "implementation": "src/fpl_intelligence/shadow_accounts.py:freeze_shadow_accounts",
+      "test": "tests/test_shadow_accounts.py:test_capture_rejects_deadline_race_without_saving_actions",
+      "runtime_evidence_kind": "shadow_cohort",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "a525441cc788fd6f47cce5384e95ce2ad5e89d96fab7a475c8c6bcaa22897027"
+    },
+    {
+      "id": "operations.portable_database",
+      "requirement": "Checksummed bounded database parts restore atomically and preserve existing accounts, including legacy archives",
+      "implementation": "src/fpl_intelligence/database_archive.py:unpack_database",
+      "test": "tests/test_database_archive.py:test_database_archive_roundtrip_preserves_account_and_never_overwrites",
+      "runtime_evidence_kind": "release_checks",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "3b56aa5895313826816395561e0e2675153de74506a855164a1d50d624f301a3"
+    },
+    {
+      "id": "prospective.ongoing_finances",
+      "requirement": "Released-deadline finances advance during an ongoing gameweek without inventing finalized points",
+      "implementation": "src/fpl_intelligence/shadow_accounts.py:advance_shadow_accounts",
+      "test": "tests/test_shadow_accounts.py:test_ongoing_week_advances_finances_without_inventing_final_points",
+      "runtime_evidence_kind": "shadow_cohort",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "a525441cc788fd6f47cce5384e95ce2ad5e89d96fab7a475c8c6bcaa22897027"
     }
   ],
   "scientific_limits": [
@@ -721,5 +811,5 @@
     "Unavailable optional inputs are recorded as unavailable; no observations are invented.",
     "Prospective competitive advantage and future ranks require future finalized matches."
   ],
-  "id": "4a3d42d4e0dd28729d6dcff9e40afc5643ce7b7c4c64161cb8ee5e116c1fce27"
+  "id": "bb2f3aa246c2a13a636049aebd005e08f6c959026e575a119e46ed4d55c5a059"
 }

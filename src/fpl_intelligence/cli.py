@@ -744,3 +744,48 @@ def validate_consensus_policy(seconds: float = 10):
 
     result = validate_continuous_policy(Store(), seconds)
     show({k: result[k] for k in ("id", "previous_season_totals", "current_totals", "acceptance", "scope")})
+
+
+@app.command("replay-pipeline")
+def replay_pipeline(worlds: int = 4000, seconds: float = 60, current_only: bool = False):
+    """Execute the production forecast, full chip-window MIP and continuous account."""
+    from .pipeline_jobs import run_pipeline_job
+
+    store = Store()
+    periods = [(store.get("market")["season"], list(range(1, 10)))] if current_only else None
+    result = run_pipeline_job(store, worlds=worlds, seconds=seconds, periods=periods)
+    show(
+        {
+            k: result[k]
+            for k in (
+                "id",
+                "summaries",
+                "production_budget",
+                "independent_verification",
+                "live_pointers_unchanged",
+                "limits",
+            )
+        }
+    )
+
+
+@app.command("freeze-accounts")
+def freeze_accounts(seconds: float = 60):
+    """Freeze equal-budget prospective accounts before the real deadline."""
+    from .shadow_accounts import freeze_shadow_accounts
+
+    result = freeze_shadow_accounts(Store(), seconds)
+    show(
+        {
+            k: result.get(k)
+            for k in ("id", "event", "frozen_at", "deadline", "track", "real_account_unchanged", "seed_scope")
+        }
+    )
+
+
+@app.command("score-accounts")
+def score_accounts():
+    """Advance released-deadline finances and score only finalized outcomes."""
+    from .shadow_accounts import advance_shadow_accounts
+
+    show(advance_shadow_accounts(Store()))

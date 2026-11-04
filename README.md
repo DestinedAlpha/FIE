@@ -4,7 +4,7 @@ A private local FPL decision workspace: learned player-point distributions, exac
 
 The six supplied documents remain byte-for-byte unchanged in [`research/`](research/). Design documents are not evidence of competitive performance.
 
-**Current acceptance status:** the refitted reference scores **551 over GW1–GW9** in independent weekly £100m teams. An earlier-season-selected published-signal ensemble scores **586**, versus 563 for ownership. These are fresh weekly squads. From identical initial squads in a separate continuous-account test, the ensemble scores **481**, its frozen reference 503 and a no-hit ownership policy 561. The ensemble therefore remains a separate analysis and **does not replace the primary multiweek planner**. Consistent 550+ continuous-account performance and overall competitive superiority are not demonstrated. See the [performance audit](docs/performance-audit.md).
+**Current acceptance status:** the production forecaster and full transfer/chip planner score **536 net points over GW1–GW9** in a continuous account, versus 561 for ownership with free transfers. Separately, independent weekly £100m teams score 551 for the refitted reference and 586 for a published-signal ensemble. Fresh weekly squads do not establish continuous-account strength. The ensemble fails its ordinary-policy replacement gate and remains a separate analysis. **Consistent 550+ continuous-account performance is not established.** See the [performance audit](docs/performance-audit.md).
 
 ## Windows
 
@@ -32,6 +32,14 @@ uv run fpl serve
 Open http://127.0.0.1:8000. `reconcile-team` imports the **dated** research seed; confirm current account facts before acting. The private prepared package uses the user's separately confirmed selling quotes, bank, FT and chips. Unknown purchase prices remain null. The original seed cannot overwrite a confirmed account.
 
 `fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. `fpl refresh-current` and the Refresh data button reconcile revealed deadline squads, advance to the next deadline, update finalized labels and recompute the recommendation. Confirm any additional unrevealed transfers in My squad; public endpoints cannot see them.
+
+## What changed in 0.8
+
+Connected the production forecaster, full chip-window transfer planner and exact account engine in a continuous historical replay. Models fit only earlier completed observations; availability gates freeze before each evaluation period. Each decision retains its models, forecasts, input/cutoff proofs and account transition. Independent checks match the sealed actions, verify all model files, and replay finances, chips, autosubs and actual scoring across deadlines. Fixed initial-selection FT allocation: one free transfer for the next week.
+
+Added synchronized prospective accounts with equal initial budgets and known purchase lots. Refreshes freeze decisions before deadlines, then score finalized matches, carry accounts forward, handle a missed capture using an earlier standing hold instruction and apply official score corrections without double counting. These hypothetical accounts are separate from the user's actual team. The Model & data page exposes both evaluations and downloadable frozen teams.
+
+The Windows package now uses checksummed compressed database parts below GitHub's individual-file limit. Restoration is atomic, legacy packages remain supported, and updates preserve existing accounts and keys. Completed replay work can be recovered from portable decisions. [Data and learning contract](docs/data-contract.md) · [Functional coverage](docs/completion-matrix.md).
 
 ## What changed in 0.7
 

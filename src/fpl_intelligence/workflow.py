@@ -143,6 +143,23 @@ def full_training(store: Store, samples=24, epochs=20, refresh=False):
     from .replay import run_replay
 
     record("weekly_replay", run_replay(store))
+    from .pipeline_jobs import run_pipeline_job
+    from .shadow_accounts import advance_shadow_accounts, freeze_shadow_accounts
+
+    record("integrated_pipeline_replay", run_pipeline_job(store))
+    try:
+        advance_shadow_accounts(store)
+        shadow = freeze_shadow_accounts(store)
+        if shadow.get("id"):
+            record("prospective_continuous_accounts", shadow)
+    except ValueError as error:
+        stages.append(
+            {
+                "stage": "prospective_continuous_accounts",
+                "status": "Capture unavailable",
+                "reason": str(error),
+            }
+        )
     result = {
         "at": now(),
         "stages": stages,
@@ -201,6 +218,15 @@ def refresh_cycle(store: Store):
         from .prospective import score_frozen_decisions
 
         score_frozen_decisions(store)
+        from .shadow_accounts import advance_shadow_accounts
+
+        try:
+            advance_shadow_accounts(store)
+        except ValueError as error:
+            store.put(
+                "shadow_capture_status",
+                {"at": now(), "status": "Scoring requires review", "reason": str(error)},
+            )
         if active.get("fusion_model_id"):
             from .fusion import refit_active_fusion
 
@@ -261,9 +287,22 @@ def refresh_cycle(store: Store):
             "account_changed": synchronization.get("account_changed", False),
             "consensus_comparison": consensus_status,
         }
+    shadow_status = None
+    from .shadow_accounts import freeze_shadow_accounts
+
+    try:
+        shadow = freeze_shadow_accounts(store)
+        shadow_status = {"status": "Synchronized prospective accounts frozen", "cohort_id": shadow.get("id")}
+    except ValueError as error:
+        shadow_status = {
+            "status": "Shadow capture requires review; real recommendation retained",
+            "reason": str(error),
+        }
+    store.put("shadow_capture_status", {"at": now(), **shadow_status})
     return {
         "at": now(),
         "status": "Refreshed and recomputed",
+        "prospective_accounts": shadow_status,
         "consensus_comparison": consensus_status,
         "forecast_id": result["id"],
         "plan_id": plan["id"],

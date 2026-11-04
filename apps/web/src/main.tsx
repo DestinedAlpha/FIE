@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Activity,
@@ -87,12 +87,14 @@ function App() {
   const [buy, setBuy] = useState(0);
   const [transferResult, setTransferResult] = useState("");
   const [viewPlan, setViewPlan] = useState<Plan | null>(null);
+  const reloadVersion = useRef(0);
 
   async function reload() {
+    const version = ++reloadVersion.current;
     const result = await api<Dashboard>(
       "/dashboard" + (event ? `?event=${event}` : ""),
     );
-    setData(result);
+    if (version === reloadVersion.current) setData(result);
   }
   useEffect(() => {
     reload().catch((e) => setError(e.message));
@@ -100,7 +102,11 @@ function App() {
   useEffect(() => {
     if (!job) return;
     let stopped = false;
+    let ticks = 0;
+    let polling = false;
     const poll = async () => {
+      if (polling || stopped) return;
+      polling = true;
       try {
         const value = await api<{
           status: string;
@@ -122,6 +128,8 @@ function App() {
               await reload();
             }
           }
+        } else if (++ticks % 6 === 0 && !stopped) {
+          await reload();
         }
       } catch (e) {
         if (!stopped) {
@@ -129,6 +137,8 @@ function App() {
           setBusy(false);
           setJob(null);
         }
+      } finally {
+        polling = false;
       }
     };
     const timer = setInterval(poll, 1500);
@@ -137,7 +147,7 @@ function App() {
       stopped = true;
       clearInterval(timer);
     };
-  }, [job]);
+  }, [job, event]);
 
   const players = useMemo(
     () => new Map(data?.market?.players.map((p) => [p.id, p]) || []),

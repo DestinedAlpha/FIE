@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import gzip
 import json
 import shutil
 import sqlite3
@@ -11,6 +10,8 @@ import tempfile
 from contextlib import closing
 from datetime import datetime, timezone
 from pathlib import Path
+
+from fpl_intelligence.database_archive import unpack_database
 
 RESEARCH_KINDS = {
     "decision_critic",
@@ -76,19 +77,20 @@ RESEARCH_KINDS = {
     "consensus_decision",
     "consensus_policy_validation",
     "continuous_consensus_decision",
+    "pipeline_replay",
 }
 
 
 def merge_research(source: Path, target: Path):
     """Merge immutable research artifacts without replacing any account/model selection."""
-    packed = source / "data/state.sqlite.gz"
+    packed = source / "data/state.sqlite.manifest.json"
+    legacy = source / "data/state.sqlite.gz"
     destination = target / "data/state.sqlite"
-    if not packed.is_file() or not destination.is_file():
+    if not (packed.is_file() or legacy.is_file()) or not destination.is_file():
         return 0
     with tempfile.TemporaryDirectory() as temporary:
         restored = Path(temporary) / "research.sqlite"
-        with gzip.open(packed, "rb") as original, restored.open("wb") as output:
-            shutil.copyfileobj(original, output)
+        unpack_database(source / "data", restored)
         with (
             closing(sqlite3.connect(restored)) as original,
             closing(sqlite3.connect(destination)) as existing,

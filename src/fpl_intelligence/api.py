@@ -96,7 +96,7 @@ def create_app(root=None):
             stop.set()
             thread.join(timeout=1)
 
-    app = FastAPI(title="FPL Intelligence", version="0.7.0", lifespan=lifespan)
+    app = FastAPI(title="FPL Intelligence", version="0.8.0", lifespan=lifespan)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
 
     @app.middleware("http")
@@ -426,6 +426,12 @@ def create_app(root=None):
             "odds_model",
             "weekly_replay",
             "weekly_baseline_comparison",
+            "pipeline_replay",
+            "pipeline_replay_progress",
+            "shadow_evaluation",
+            "shadow_registry",
+            "shadow_cohort",
+            "shadow_capture_status",
             "consensus_model",
             "consensus_policy_validation",
             "consensus_comparison",
@@ -436,6 +442,13 @@ def create_app(root=None):
         ):
             try:
                 artifact = store.get(kind)
+                if (
+                    kind in ("shadow_registry", "shadow_cohort")
+                    and artifact.get("season") != market["season"]
+                ):
+                    continue
+                if kind == "pipeline_replay":
+                    artifact = {k: v for k, v in artifact.items() if k != "epochs"}
                 if kind == "consensus_model":
                     artifact = {k: v for k, v in artifact.items() if k not in ("tree_spec", "reference_spec")}
                     artifact["weeks"] = [
@@ -673,6 +686,52 @@ def create_app(root=None):
     @app.get("/api/consensus/model")
     def consensus_model():
         return store.get("consensus_model")
+
+    @app.post("/api/replay/pipeline")
+    def replay_pipeline():
+        from .pipeline_jobs import run_pipeline_job
+
+        return launch("pipeline-replay", {}, lambda: run_pipeline_job(store))
+
+    @app.get("/api/replay/pipeline")
+    def replay_pipeline_results():
+        return store.get("pipeline_replay")
+
+    @app.get("/api/replay/pipeline/decision/{season}/{event}")
+    def replay_pipeline_decision(season: str, event: int):
+        import hashlib
+        import json
+
+        from .consensus import replay_packets
+
+        report = store.get("pipeline_replay")
+        row = next(
+            (r for r in report["weeks"] if r["season"].replace("/", "-") == season and r["event"] == event),
+            None,
+        )
+        if row is None:
+            raise ValueError("No completed integrated decision for this season and deadline")
+        path = store.artifact_path(row["decision_file"])
+        if hashlib.sha256(path.read_bytes()).hexdigest() != row["decision_sha256"]:
+            raise ValueError("Frozen integrated decision checksum mismatch")
+        body = json.loads(path.read_text())
+        packet = replay_packets(store)[row["season"], event]
+        owned = {p for action in body["actions"] for p in action["ledger"]["playing_squad"]}
+        body["registered_players"] = [p for p in packet["bootstrap"]["elements"] if p["id"] in owned]
+        return body
+
+    @app.post("/api/prospective/accounts")
+    def prospective_accounts():
+        from .shadow_accounts import freeze_shadow_accounts
+
+        return launch("prospective-accounts", {}, lambda: freeze_shadow_accounts(store))
+
+    @app.get("/api/prospective/accounts")
+    def prospective_account_results():
+        result = {}
+        for name in ("shadow_registry", "shadow_cohort", "shadow_evaluation"):
+            result[name] = store.get(name) if store.list(name, 1) else None
+        return result
 
     @app.post("/api/consensus/compare")
     def consensus_compare():

@@ -17,8 +17,8 @@ if (-not $UvCommand) {
 & $UvPath sync --frozen --extra neural
 if ($LASTEXITCODE -ne 0) { throw "Python dependencies could not be installed." }
 
-if ((Test-Path "data/state.sqlite.gz") -and -not (Test-Path "data/state.sqlite")) {
-    & $UvPath run --extra neural python -c "import gzip,shutil; from pathlib import Path; p=Path('data/state.sqlite'); t=p.with_suffix('.restoring'); a=gzip.open('data/state.sqlite.gz','rb'); b=t.open('wb'); shutil.copyfileobj(a,b); a.close(); b.close(); t.replace(p)"
+if (((Test-Path "data/state.sqlite.gz") -or (Test-Path "data/state.sqlite.manifest.json")) -and -not (Test-Path "data/state.sqlite")) {
+    & $UvPath run --extra neural python -m fpl_intelligence.database_archive data
     if ($LASTEXITCODE -ne 0) { throw "The packaged database could not be restored." }
 }
 
