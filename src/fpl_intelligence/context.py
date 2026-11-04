@@ -282,3 +282,89 @@ def evidence_branches(store: Store, event: int) -> list[dict]:
             }
         )
     return current
+
+
+def analyze_evidence(store: Store, plan_id: str, maximum=3):
+    """Use supported specialist reports in explicit, unweighted decision tests."""
+    import re
+
+    from .research import active_claims
+    from .scenarios import ScenarioSpec, evaluate_scenarios
+
+    plan = store.get("plan", plan_id)
+    event = plan["start_event"]
+    forecast = store.get("forecast", plan["forecast_id"])
+    players, _ = load_market(store, plan["market_id"])
+    owned = set(plan["ledger"][0]["playing_squad"])
+    candidates = owned | {
+        r["player_id"]
+        for r in sorted((r for r in forecast["players"] if r["event"] == event), key=lambda r: -r["mean"])[
+            :30
+        ]
+    }
+    claims = {r["id"]: r for r in active_claims(store, 1000)}
+    branches = evidence_branches(store, event)
+    branches.sort(key=lambda r: (r["player_id"] not in owned, r["status"] != "confirmed", r["claim_id"]))
+    links = []
+    specs: list = []
+    for branch in branches:
+        p = branch["player_id"]
+        claim = claims[branch["claim_id"]]
+        if p not in candidates:
+            links.append(
+                {
+                    "claim_id": claim["id"],
+                    "use": "Research queue; outside current owned/high-value candidate set",
+                }
+            )
+            continue
+        if len(specs) >= maximum:
+            break
+        cap = re.search(
+            r"(?:limited to|maximum of|no more than)\s*(\d{1,2})\s*minutes", claim["evidence_span"], re.I
+        )
+        change = {"player_id": p, "from_event": event, "through_event": event}
+        if branch["type"] == "unavailable":
+            change["availability"] = 0
+            assumption = "Absence as reported"
+        elif cap and 1 <= int(cap[1]) <= 90:
+            change["parameters"] = {"minutes_cap": int(cap[1])}
+            assumption = f"Published {cap[1]}-minute ceiling"
+        else:
+            change["availability"] = 0
+            assumption = "Absence sensitivity bound; vague report does not establish absence"
+        specs.append(
+            ScenarioSpec.model_validate(
+                {
+                    "name": players[p].web_name + ": " + assumption,
+                    "reveal_event": event,
+                    "players": [change],
+                    "evidence_ids": [claim["id"]],
+                }
+            )
+        )
+        links.append(
+            {
+                "claim_id": claim["id"],
+                "source_url": claim["source_url"],
+                "player_id": p,
+                "use": "Numerical whole-policy sensitivity",
+                "assumption": assumption,
+                "probability": None,
+            }
+        )
+    result = {
+        "at": now(),
+        "plan_id": plan_id,
+        "forecast_id": forecast["id"],
+        "links": links,
+        "scope": "Source-supported facts and explicit bounds change conditional forecasts and feasible actions; uncalibrated language never receives an invented probability or hidden points uplift",
+    }
+    if specs:
+        analysis = evaluate_scenarios(store, plan_id, specs)
+        result["scenario_evaluation_id"] = analysis["id"]
+        result["branches"] = analysis["branches"]
+    else:
+        result["branches"] = []
+    result["id"] = store.put("evidence_impact", result)
+    return result

@@ -28,7 +28,8 @@ test("recommendation, legal XI, full market and planner exports", async ({
   await expect(page.locator(".pitch-player")).toHaveCount(11);
   await expect(page.locator(".pitch .captain:not(.vice)")).toHaveCount(1);
   await navigate(page, "Player market");
-  await expect(page.locator("tbody tr")).toHaveCount(669);
+  const market = await (await page.request.get("/api/dashboard")).json();
+  await expect(page.locator("tbody tr")).toHaveCount(market.market.players.length);
   await page.getByRole("textbox", { name: "Search players" }).fill("Haaland");
   await expect(page.locator("tbody tr")).toHaveCount(1);
   await expect(page.locator("tbody")).toContainText("Haaland");
@@ -110,7 +111,7 @@ test("manager behavior, source fusion and transfer learning are visible", async 
   await expect(
     page.getByText("Temporal neural fusion", { exact: true }),
   ).toBeVisible();
-  await expect(page.getByText(/288 held-out account decisions/)).toBeVisible();
+  await expect(page.getByText(/\d+ held-out account decisions/)).toBeVisible();
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth > window.innerWidth + 1,
   );
@@ -134,4 +135,31 @@ test("connected strategy, timing and population controls render without errors",
   await expect(page.getByRole("button", {name:"Compare football worlds",exact:true})).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(false);
   expect(errors).toEqual([]);
+});
+
+
+test("completed weekly replay and football integration are visible",async({page})=>{
+  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+  await openWorkspace(page);await navigate(page,'Model & data');
+  await expect(page.getByRole('heading',{name:'Football models and current coverage'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'GW1–GW8 weekly teams'})).toBeVisible();
+  const response=await page.request.get('/api/replay/weekly');expect(response.status()).toBe(200);
+  const replay=await response.json();expect(replay.weeks.map((w:{event:number})=>w.event)).toEqual([1,2,3,4,5,6,7,8]);
+  expect(replay.total_points).toBeGreaterThan(0);
+  await navigate(page,'Season planner');
+  await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption('fixture');
+  await expect(page.getByRole('combobox',{name:'Fixture',exact:true})).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test("stale recommendations cannot display old transfers as current actions",async({page})=>{
+  await page.route('**/api/dashboard*',async route=>{
+    const response=await route.fetch();const body=await response.json();
+    if(body.plan)body.plan.stale=true;
+    await route.fulfill({response,json:body});
+  });
+  await openWorkspace(page);
+  await expect(page.getByText('This plan uses an older account, forecast or market version.',{exact:false})).toBeVisible();
+  await expect(page.locator('.transfer-pair')).toHaveCount(0);
+  await expect(page.locator('.pitch-player')).toHaveCount(0);
 });

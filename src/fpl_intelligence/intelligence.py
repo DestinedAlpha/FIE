@@ -40,10 +40,23 @@ def registered_url(url, community=False):
     return url
 
 
-async def fetch(client, url, community=False):
+async def fetch(client, url, community=False, transport=None):
     for _ in range(3):
         registered_url(url, community)
-        response = await client.get(url)
+        response = (
+            (
+                await transport.get(
+                    client,
+                    url,
+                    "intelligence_" + (urlparse(url).hostname or ""),
+                    return_response=True,
+                    allow_redirects=True,
+                    max_bytes=2_000_000,
+                )
+            )
+            if transport
+            else await client.get(url)
+        )
         if response.is_redirect:
             url = urljoin(url, response.headers["location"])
             continue
@@ -126,6 +139,9 @@ def feed_items(text):
 
 
 async def refresh_intelligence(store: Store, limit=3):
+    from .transport import PublicTransport
+
+    transport = PublicTransport(store)
     if not 1 <= limit <= 10:
         raise ValueError("Specialist article budget must be 1–10")
     players, market = load_market(store)
@@ -139,7 +155,7 @@ async def refresh_intelligence(store: Store, limit=3):
     ) as client:
         for identity, (url, kind) in FEEDS.items():
             try:
-                response, final = await fetch(client, url, kind == "community_lead")
+                response, final = await fetch(client, url, kind == "community_lead", transport)
                 items = feed_items(response.text)
                 store.snapshot("intelligence_feed_" + identity, final, {"items": items})
                 health.append(
@@ -167,7 +183,7 @@ async def refresh_intelligence(store: Store, limit=3):
                     original_urls = list(dict.fromkeys(u for item in items for u in item["original_urls"]))
                     for original in original_urls[:limit]:
                         try:
-                            article, article_url = await fetch(client, original)
+                            article, article_url = await fetch(client, original, transport=transport)
                             source = article_text(article.text, article_url)
                             source["discovered_via"] = identity
                             source["id"] = store.put("source_text", source)
@@ -192,7 +208,7 @@ async def refresh_intelligence(store: Store, limit=3):
                 ]
                 for item in selected[:limit]:
                     try:
-                        article, article_url = await fetch(client, item["url"])
+                        article, article_url = await fetch(client, item["url"], transport=transport)
                         source = article_text(article.text, article_url)
                         if not source["published_at"]:
                             source["published_at"] = item["published_at"]

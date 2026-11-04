@@ -1,0 +1,460 @@
+{
+  "scope": "Required behaviours from the supplied blueprint and user requests; optional research hypotheses are governed by measured benefit, not compulsory complexity.",
+  "items": [
+    {
+      "id": "data.registry",
+      "requirement": "Complete registered-player, club and 38-event market",
+      "implementation": "src/fpl_intelligence/ingestion.py:normalize",
+      "test": "tests/test_integrity.py:test_accent_alias_and_ambiguous_identity",
+      "runtime_evidence_kind": "market"
+    },
+    {
+      "id": "data.snapshots",
+      "requirement": "Immutable compressed snapshots with hashes and knowledge timestamps",
+      "implementation": "src/fpl_intelligence/storage.py:snapshot",
+      "test": "tests/test_integrity.py:test_raw_snapshots_are_hashed_and_temporal",
+      "runtime_evidence_kind": "ingestion"
+    },
+    {
+      "id": "data.identity",
+      "requirement": "Season-scoped identities, aliases and corroborated shot joins",
+      "implementation": "src/fpl_intelligence/shot_data.py:identify",
+      "test": "tests/test_integrity.py:test_accent_alias_and_ambiguous_identity",
+      "runtime_evidence_kind": "shot_archive"
+    },
+    {
+      "id": "data.deadlines",
+      "requirement": "Demonstrably pre-deadline context captures and pinned commits",
+      "implementation": "src/fpl_intelligence/context_archive.py:check_proof",
+      "test": "tests/test_learning.py:test_advanced_stats_use_shared_predeadline_history_for_a_double",
+      "runtime_evidence_kind": "context_archive"
+    },
+    {
+      "id": "data.labels",
+      "requirement": "Finalized multi-season outcomes and correction-aware refresh",
+      "implementation": "src/fpl_intelligence/workflow.py:refresh_cycle",
+      "test": "tests/test_strategy.py:test_refresh_budget_skips_all_player_histories_until_labels_are_due",
+      "runtime_evidence_kind": "decision_model"
+    },
+    {
+      "id": "state.sync",
+      "requirement": "Public deadline-squad reconciliation and next-event rollover",
+      "implementation": "src/fpl_intelligence/account_sync.py:reconcile_public",
+      "test": "tests/test_completion.py:test_refresh_reconciles_revealed_transfer_exact_cost_and_is_idempotent",
+      "runtime_evidence_kind": "account_sync"
+    },
+    {
+      "id": "state.hidden",
+      "requirement": "Preserve newer confirmed unrevealed account moves",
+      "implementation": "src/fpl_intelligence/account_sync.py:reconcile_public",
+      "test": "tests/test_completion.py:test_refresh_preserves_newer_confirmed_hidden_transfers",
+      "runtime_evidence_kind": "account_sync"
+    },
+    {
+      "id": "state.ft",
+      "requirement": "Exact saved-transfer rollovers and caps across both reset chips",
+      "implementation": "src/fpl_intelligence/account_sync.py:free_transfers_after",
+      "test": "tests/test_completion.py:test_ft_replay_preserves_saved_transfers_on_both_reset_chips",
+      "runtime_evidence_kind": "policy_selection"
+    },
+    {
+      "id": "state.prices",
+      "requirement": "Integer prices, gain sharing, dated exact quotes and unresolved-quote guard",
+      "implementation": "src/fpl_intelligence/rules.py:quote",
+      "test": "tests/test_rules.py:test_unknown_lot_needs_new_quote",
+      "runtime_evidence_kind": "market"
+    },
+    {
+      "id": "state.hits",
+      "requirement": "Pending transfers, new versus already-paid hits and chip refunds",
+      "implementation": "src/fpl_intelligence/rules.py:transition",
+      "test": "tests/test_completion.py:test_mixed_order_bundle_pairs_roles_and_charges_only_new_hit",
+      "runtime_evidence_kind": "policy_selection"
+    },
+    {
+      "id": "state.squad",
+      "requirement": "Fifteen distinct players, positional composition and club limits",
+      "implementation": "src/fpl_intelligence/rules.py:validate_squad",
+      "test": "tests/test_learning.py:test_random_counterfactual_squads_are_legal_and_reproducible",
+      "runtime_evidence_kind": "evolving_dataset"
+    },
+    {
+      "id": "state.lineup",
+      "requirement": "Legal XI, distinct captain/vice and four ordered substitutes",
+      "implementation": "src/fpl_intelligence/rules.py:validate_lineup",
+      "test": "tests/test_rules.py:test_boundaries",
+      "runtime_evidence_kind": "plan"
+    },
+    {
+      "id": "state.autosubs",
+      "requirement": "Formation-preserving autosubs and goalkeeper substitution",
+      "implementation": "src/fpl_intelligence/rules.py:scoring_ids",
+      "test": "tests/test_completion.py:test_batched_world_scoring_matches_independent_rule_replay",
+      "runtime_evidence_kind": "plan"
+    },
+    {
+      "id": "state.freehit",
+      "requirement": "Underlying squad/bank restoration and consecutive-FH restrictions",
+      "implementation": "src/fpl_intelligence/rules.py:transition",
+      "test": "tests/test_completion.py:test_public_freehit_restores_underlying_squad_and_bank",
+      "runtime_evidence_kind": "plan"
+    },
+    {
+      "id": "model.baselines",
+      "requirement": "Independent shrinkage, direct learned points and open-model reproductions",
+      "implementation": "src/fpl_intelligence/decision.py:train_decisions",
+      "test": "tests/test_decision.py:test_deadline_features_carry_stable_identity_without_doubleweek_leakage",
+      "runtime_evidence_kind": "decision_model"
+    },
+    {
+      "id": "model.features",
+      "requirement": "Advanced statistics, observed-history masks and shared train/serve transforms",
+      "implementation": "src/fpl_intelligence/fusion_data.py:tree_matrix",
+      "test": "tests/test_learning.py:test_advanced_stats_use_shared_predeadline_history_for_a_double",
+      "runtime_evidence_kind": "fusion_model"
+    },
+    {
+      "id": "model.minutes",
+      "requirement": "Calibrated zero/cameo/60+/full-match minute states",
+      "implementation": "src/fpl_intelligence/decision.py:predict_models",
+      "test": "tests/test_decision.py:test_deadline_features_carry_stable_identity_without_doubleweek_leakage",
+      "runtime_evidence_kind": "decision_model"
+    },
+    {
+      "id": "model.recovery",
+      "requirement": "Learned dated injury recovery transitions with later-deadline gates",
+      "implementation": "src/fpl_intelligence/availability.py:recovery_path",
+      "test": "tests/test_fusion.py:test_fusion_recovery_mixes_joint_mass_without_double_injury_adjustment",
+      "runtime_evidence_kind": "availability_model"
+    },
+    {
+      "id": "model.rotation",
+      "requirement": "Joint DGW rotation conditioned on simulated prior minutes",
+      "implementation": "src/fpl_intelligence/availability.py:validate_joint_rotation",
+      "test": "tests/test_learning.py:test_advanced_stats_use_shared_predeadline_history_for_a_double",
+      "runtime_evidence_kind": "availability_model"
+    },
+    {
+      "id": "model.scores",
+      "requirement": "Regularized team strength and tested Poisson/DC/overdispersion alternatives",
+      "implementation": "src/fpl_intelligence/score_process.py:train_score_process",
+      "test": "tests/test_completion.py:test_dc_four_cell_correction_preserves_joint_probability",
+      "runtime_evidence_kind": "score_process_model"
+    },
+    {
+      "id": "model.odds",
+      "requirement": "Optional dated exhaustive-market de-vigging, count conversion and horizon gates",
+      "implementation": "src/fpl_intelligence/odds.py:calibrate_odds",
+      "test": "tests/test_completion.py:test_markets_are_exhaustive_devig_and_intensities_fit",
+      "runtime_evidence_kind": "odds_model"
+    },
+    {
+      "id": "model.attack",
+      "requirement": "Separate open-play, set-piece and penalty goal allocations",
+      "implementation": "src/fpl_intelligence/attack.py:train_attack",
+      "test": "tests/test_completion.py:test_structural_worlds_conserve_goals_channels_and_on_pitch_scoring",
+      "runtime_evidence_kind": "attack_model"
+    },
+    {
+      "id": "model.assists",
+      "requirement": "FPL-specific goal-type assist attribution, own-goal distinction and no self-assists",
+      "implementation": "src/fpl_intelligence/simulation.py:fixture_worlds",
+      "test": "tests/test_completion.py:test_structural_worlds_conserve_goals_channels_and_on_pitch_scoring",
+      "runtime_evidence_kind": "coherent_comparison"
+    },
+    {
+      "id": "model.saves",
+      "requirement": "Finite on-pitch goalkeeper saves and conservative rare-penalty events",
+      "implementation": "src/fpl_intelligence/simulation.py:fixture_worlds",
+      "test": "tests/test_completion.py:test_structural_worlds_conserve_goals_channels_and_on_pitch_scoring",
+      "runtime_evidence_kind": "coherent_comparison"
+    },
+    {
+      "id": "model.defcon",
+      "requirement": "Exposure-conditioned defensive-action threshold probabilities",
+      "implementation": "src/fpl_intelligence/decision.py:dc_probability",
+      "test": "tests/test_rules.py:test_boundaries",
+      "runtime_evidence_kind": "coherent_model"
+    },
+    {
+      "id": "model.discipline",
+      "requirement": "Competition-specific card thresholds, appeals and cup-service schedules",
+      "implementation": "src/fpl_intelligence/discipline.py:ban_service",
+      "test": "tests/test_completion.py:test_ban_service_cups_postponement_and_appeal",
+      "runtime_evidence_kind": "discipline_report"
+    },
+    {
+      "id": "model.card_cutoffs",
+      "requirement": "Card bans use club fixture ordinals, not GW numbers",
+      "implementation": "src/fpl_intelligence/discipline.py:infer_caution_bans",
+      "test": "tests/test_completion.py:test_caution_threshold_uses_club_matches_not_gameweek_number",
+      "runtime_evidence_kind": "discipline_report"
+    },
+    {
+      "id": "model.bonus",
+      "requirement": "Conditional BPS and match-level official bonus ties",
+      "implementation": "src/fpl_intelligence/coherent.py:bps_worlds",
+      "test": "tests/test_rules.py:test_bonus_ties",
+      "runtime_evidence_kind": "coherent_model"
+    },
+    {
+      "id": "model.coherence",
+      "requirement": "Finite real XIs/substitutions, timed exposure and conserved goals",
+      "implementation": "src/fpl_intelligence/simulation.py:sample_lineup",
+      "test": "tests/test_completion.py:test_structural_worlds_conserve_goals_channels_and_on_pitch_scoring",
+      "runtime_evidence_kind": "coherent_comparison"
+    },
+    {
+      "id": "model.distributions",
+      "requirement": "Calibrated empirical-tail outcome worlds and exact zero-minute mass",
+      "implementation": "src/fpl_intelligence/decision.py:sample_point_outcomes",
+      "test": "tests/test_decision.py:test_deadline_features_carry_stable_identity_without_doubleweek_leakage",
+      "runtime_evidence_kind": "decision_uncertainty"
+    },
+    {
+      "id": "model.uncertainty",
+      "requirement": "Shared parameter uncertainty tested separately from match randomness",
+      "implementation": "src/fpl_intelligence/score_process.py:match_goal_draws",
+      "test": "tests/test_completion.py:test_dc_four_cell_correction_preserves_joint_probability",
+      "runtime_evidence_kind": "score_process_model"
+    },
+    {
+      "id": "model.temporal",
+      "requirement": "Separate decay/finishing tests and no unvalidated luck penalty",
+      "implementation": "src/fpl_intelligence/temporal_validation.py:validate_temporal",
+      "test": "tests/test_completion.py:test_weekly_replay_features_cannot_read_target_outcomes",
+      "runtime_evidence_kind": "temporal_model"
+    },
+    {
+      "id": "model.neural",
+      "requirement": "Purpose-built temporal/news/numerical/market/workload/enrichment neural fusion",
+      "implementation": "src/fpl_intelligence/fusion.py:train_fusion",
+      "test": "tests/test_fusion.py:test_fusion_promotion_cannot_skip_decision_or_uncertainty_gates",
+      "runtime_evidence_kind": "fusion_model"
+    },
+    {
+      "id": "model.horizon",
+      "requirement": "Purged multiweek value learning and advanced-statistic ablations",
+      "implementation": "src/fpl_intelligence/horizon.py:train_horizon",
+      "test": "tests/test_learning.py:test_advanced_stats_use_shared_predeadline_history_for_a_double",
+      "runtime_evidence_kind": "horizon_model"
+    },
+    {
+      "id": "evidence.fetch",
+      "requirement": "Registered public sources, bounded bodies and redirect validation",
+      "implementation": "src/fpl_intelligence/research.py:retrieve",
+      "test": "tests/test_integrity.py:test_source_fetch_rejects_untrusted_urls",
+      "runtime_evidence_kind": "intelligence_refresh"
+    },
+    {
+      "id": "evidence.claims",
+      "requirement": "Literal support, identity checks, contradiction, expiry and rejection",
+      "implementation": "src/fpl_intelligence/research.py:validate_claim",
+      "test": "tests/test_strategy.py:test_quarantined_evidence_never_reappears_in_context_branches",
+      "runtime_evidence_kind": "intelligence_refresh"
+    },
+    {
+      "id": "evidence.use",
+      "requirement": "Supported reports enter explicit numerical decision sensitivities",
+      "implementation": "src/fpl_intelligence/context.py:analyze_evidence",
+      "test": "tests/test_strategy.py:test_quarantined_evidence_never_reappears_in_context_branches",
+      "runtime_evidence_kind": "evidence_impact"
+    },
+    {
+      "id": "evidence.free",
+      "requirement": "Independent optional hosted providers, free attestation and reserved quotas",
+      "implementation": "src/fpl_intelligence/providers.py:configure",
+      "test": "tests/test_integrity.py:test_free_guard_fail_closed_and_quota",
+      "runtime_evidence_kind": "provider_setup"
+    },
+    {
+      "id": "evidence.ablation",
+      "requirement": "Independent context-off refits and source-sensitivity diagnostics",
+      "implementation": "src/fpl_intelligence/context_validation.py:evaluate_context",
+      "test": "tests/test_fusion.py:test_fusion_promotion_cannot_skip_decision_or_uncertainty_gates",
+      "runtime_evidence_kind": "context_ablation"
+    },
+    {
+      "id": "managers.qualified",
+      "requirement": "Prior-season qualified expert cohort separated from current ranks",
+      "implementation": "src/fpl_intelligence/elite.py:collect_elite",
+      "test": "tests/test_learning.py:test_manager_training_features_ignore_future_transfers_and_initial_ft",
+      "runtime_evidence_kind": "elite_cohort"
+    },
+    {
+      "id": "managers.top1000",
+      "requirement": "Actual released top-1000 squads/transfers with cohort/miss disclosure",
+      "implementation": "src/fpl_intelligence/manager_behavior.py:collect_top_managers",
+      "test": "tests/test_learning.py:test_manager_training_features_ignore_future_transfers_and_initial_ft",
+      "runtime_evidence_kind": "top_manager_history"
+    },
+    {
+      "id": "managers.choices",
+      "requirement": "Learned legal count/buy/sell/chip branches with genuine source forecasts",
+      "implementation": "src/fpl_intelligence/manager_policy.py:action_preferences",
+      "test": "tests/test_learning.py:test_manager_training_features_ignore_future_transfers_and_initial_ft",
+      "runtime_evidence_kind": "manager_policy"
+    },
+    {
+      "id": "managers.rivals",
+      "requirement": "Common-world joint rival comparisons and accepted learned-policy sensitivity",
+      "implementation": "src/fpl_intelligence/rivals.py:compare",
+      "test": "tests/test_learning.py:test_rival_free_hit_does_not_treat_temporary_picks_as_permanent",
+      "runtime_evidence_kind": "rival_comparison"
+    },
+    {
+      "id": "managers.population",
+      "requirement": "Rank-stratified population, activity priors and conservative ties",
+      "implementation": "src/fpl_intelligence/population.py:evaluate_population",
+      "test": "tests/test_completion.py:test_objectives_honor_ev_sacrifice_and_fractional_cvar",
+      "runtime_evidence_kind": "population_forecast"
+    },
+    {
+      "id": "strategy.mip",
+      "requirement": "Full-market multiweek transfer/chip/FT/lot MIP and independent replay",
+      "implementation": "src/fpl_intelligence/optimization.py:optimize",
+      "test": "tests/test_integrity.py:test_mip_tiny_knapsack_oracle",
+      "runtime_evidence_kind": "plan"
+    },
+    {
+      "id": "strategy.captain",
+      "requirement": "Exact shared-world captain/vice fallback among selected starters",
+      "implementation": "src/fpl_intelligence/rules.py:optimize_captain",
+      "test": "tests/test_completion.py:test_captain_and_vice_use_joint_appearance_not_marginal_rank",
+      "runtime_evidence_kind": "plan"
+    },
+    {
+      "id": "strategy.bench",
+      "requirement": "Six ordered outfield bench permutations rescored with exact autosubs",
+      "implementation": "src/fpl_intelligence/rules.py:optimize_bench",
+      "test": "tests/test_completion.py:test_aggregated_bench_search_matches_exhaustive_rule_expectation",
+      "runtime_evidence_kind": "plan"
+    },
+    {
+      "id": "strategy.objectives",
+      "requirement": "Expected points, joint rival win, rank scenarios and explicit CVaR",
+      "implementation": "src/fpl_intelligence/objectives.py:select_policy",
+      "test": "tests/test_completion.py:test_objectives_honor_ev_sacrifice_and_fractional_cvar",
+      "runtime_evidence_kind": "policy_selection"
+    },
+    {
+      "id": "strategy.nohit",
+      "requirement": "Independently solved no-hit comparison and sampling-error check",
+      "implementation": "src/fpl_intelligence/objectives.py:choose_recommendation",
+      "test": "tests/test_learning.py:test_hit_comparison_reuses_stronger_known_feasible_no_hit_policy",
+      "runtime_evidence_kind": "hit_comparison"
+    },
+    {
+      "id": "strategy.episodes",
+      "requirement": "Legal random/evolving accounts, actual returns, oracle diagnostics and purged critics",
+      "implementation": "src/fpl_intelligence/decision_training.py:evolve",
+      "test": "tests/test_strategy.py:test_training_replay_counts_future_bench_boost_and_triple_captain",
+      "runtime_evidence_kind": "evolving_dataset"
+    },
+    {
+      "id": "strategy.continuation",
+      "requirement": "Gated terminal squad/bank/FT/chip values and horizon consistency",
+      "implementation": "src/fpl_intelligence/decision_runtime.py:continuation_terms",
+      "test": "tests/test_strategy.py:test_learned_terminal_rewards_bank_ft_and_preserved_chips",
+      "runtime_evidence_kind": "state_value_model"
+    },
+    {
+      "id": "strategy.timing",
+      "requirement": "Validated price/news windows, early/wait recourse and report value",
+      "implementation": "src/fpl_intelligence/decision_runtime.py:timing_analysis",
+      "test": "tests/test_advanced.py:test_unknown_acquisition_price_range_contains_actual_purchase",
+      "runtime_evidence_kind": "timing_analysis"
+    },
+    {
+      "id": "strategy.scenarios",
+      "requirement": "Non-anticipative price/news/fixture branches with full remaining recourse",
+      "implementation": "src/fpl_intelligence/scenarios.py:full_recourse",
+      "test": "tests/test_advanced.py:test_scenario_rejects_information_from_future",
+      "runtime_evidence_kind": "scenario_evaluation"
+    },
+    {
+      "id": "strategy.chips",
+      "requirement": "Whole-policy chip and immediate-hit counterfactuals",
+      "implementation": "src/fpl_intelligence/chips.py:compare_chips",
+      "test": "tests/test_rules.py:test_freehit_restore_and_no_consecutive",
+      "runtime_evidence_kind": "chip_counterfactual"
+    },
+    {
+      "id": "evaluation.weekly",
+      "requirement": "GW1\u20138 dated-price/fixture teams, earlier-only weekly refits and actual scoring",
+      "implementation": "src/fpl_intelligence/replay.py:run_replay",
+      "test": "tests/test_completion.py:test_weekly_replay_features_cannot_read_target_outcomes",
+      "runtime_evidence_kind": "weekly_replay"
+    },
+    {
+      "id": "evaluation.prospective",
+      "requirement": "Freeze and score shadow decisions only after official finalization",
+      "implementation": "src/fpl_intelligence/prospective.py:score_frozen_decisions",
+      "test": "tests/test_integrity.py:test_raw_snapshots_are_hashed_and_temporal",
+      "runtime_evidence_kind": "prospective_policy"
+    },
+    {
+      "id": "product.workspaces",
+      "requirement": "Squad, market, calendar, planner, research, rivals, models and exports",
+      "implementation": "src/fpl_intelligence/api.py:create_app",
+      "test": "tests/test_integrity.py:test_api_empty_onboarding_and_invalid_jobs",
+      "runtime_evidence_kind": "plan"
+    },
+    {
+      "id": "operations.sources",
+      "requirement": "Measured calls/bytes/latency, bounded retry, jitter, circuit and last-good data",
+      "implementation": "src/fpl_intelligence/transport.py:PublicTransport",
+      "test": "tests/test_completion.py:test_long_retry_after_defers_without_hammering_source",
+      "runtime_evidence_kind": "source_request"
+    },
+    {
+      "id": "operations.worlds",
+      "requirement": "Portable high-precision chunked common worlds with integrity checks",
+      "implementation": "src/fpl_intelligence/worlds.py:WorldArchive",
+      "test": "tests/test_completion.py:test_chunked_worlds_restore_with_hash_checks",
+      "runtime_evidence_kind": "forecast"
+    },
+    {
+      "id": "operations.install",
+      "requirement": "Windows startup/update, private settings, SQLite backup and relocated artifacts",
+      "implementation": "src/fpl_intelligence/storage.py:backup",
+      "test": "tests/test_learning.py:test_relocated_nested_model_artifacts_reject_parent_traversal",
+      "runtime_evidence_kind": "market"
+    },
+    {
+      "id": "operations.release",
+      "requirement": "Actual test outputs, independent ledger/model verification and private package",
+      "implementation": "src/fpl_intelligence/api.py:create_app",
+      "test": "tests/test_integrity.py:test_api_empty_onboarding_and_invalid_jobs",
+      "runtime_evidence_kind": "policy_selection"
+    },
+    {
+      "id": "ops.jobs",
+      "requirement": "Duplicate pending work is reused with current input versions",
+      "implementation": "src/fpl_intelligence/api.py:launch",
+      "test": "tests/test_completion.py:test_duplicate_refresh_reuses_pending_job_without_spending_again",
+      "runtime_evidence_kind": "release_checks"
+    },
+    {
+      "id": "ops.updater",
+      "requirement": "Updates import football models and normalized data while preserving account and keys",
+      "implementation": "scripts/install_update.py:merge_research",
+      "test": "tests/test_fusion.py:test_update_merges_research_without_replacing_account_or_active_model",
+      "runtime_evidence_kind": "availability_model"
+    },
+    {
+      "id": "model.feature_lineage",
+      "requirement": "Model inference retains its frozen feature parameters after later experiments",
+      "implementation": "src/fpl_intelligence/enrichment.py:EnrichmentIndex",
+      "test": "tests/test_completion.py:test_frozen_enrichment_parameters_survive_new_temporal_experiment",
+      "runtime_evidence_kind": "fusion_model"
+    },
+    {
+      "id": "strategy.sampler",
+      "requirement": "Random legal account generation survives concentrated or inexpensive markets",
+      "implementation": "src/fpl_intelligence/policy_learning.py:random_state",
+      "test": "tests/test_completion.py:test_random_squad_sampler_handles_a_legal_low_cost_market",
+      "runtime_evidence_kind": "evolving_dataset"
+    }
+  ]
+}

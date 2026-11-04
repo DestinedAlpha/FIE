@@ -1,0 +1,53 @@
+{
+  "at": "2026-11-04T10:00:44.972971+00:00",
+  "market_id": "170668223cf726bc1816292633c333b1f1d41c86fa1d1cb57ed2a15151f22dcd",
+  "rules": {
+    "season": "2026/27",
+    "version": "fa-pl-discipline-v1",
+    "known_at": "2026-10-30T00:00:00+00:00",
+    "sources": [
+      "https://www.premierleague.com/en/news/4425344/which-players-are-suspended-or-close-to-a-ban-in-fantasy",
+      "https://www.thefa.com/football-rules-governance/discipline"
+    ],
+    "caution_thresholds": [
+      {
+        "count": 5,
+        "by_club_league_match": 19,
+        "matches": 1
+      },
+      {
+        "count": 10,
+        "by_club_league_match": 32,
+        "matches": 2
+      },
+      {
+        "count": 15,
+        "by_club_league_match": 38,
+        "matches": 3
+      }
+    ],
+    "red_offences": {
+      "second_caution": 1,
+      "denying_goal": 1,
+      "offensive_language": 2,
+      "serious_foul_play": 3,
+      "violent_conduct": 3,
+      "spitting": 6
+    },
+    "caution_service_competitions": [
+      "PL"
+    ],
+    "red_service_competitions": [
+      "PL",
+      "FA_CUP",
+      "LEAGUE_CUP"
+    ],
+    "unknown_red_policy": "Require a published offence/ban decision; expose length bounds rather than inventing an exact sanction or appeal result",
+    "twenty_cautions": "Requires an FA decision; not a fabricated fixed sanction"
+  },
+  "limits": [
+    "Unknown dismissal reasons and unresolved appeals require a published decision; current official unavailability remains authoritative",
+    "Transfer histories and competition schedules determine service; missing domestic cup dates are not silently treated as league matches"
+  ],
+  "id": "c62b2117d640bfd88301446b8e7e6fe015546ca2d1a93808b6f0ff20f0b4d914"
+}

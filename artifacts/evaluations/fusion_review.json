@@ -1,9 +1,9 @@
 {
-  "at": "2026-10-29T17:59:03.745429+00:00",
-  "fusion_model_id": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d",
+  "at": "2026-11-04T10:10:22.136450+00:00",
+  "fusion_model_id": "b40734f1d5145f36c1ea37144a316069648f2d74537f5cb201f6a8cfe56e4bef",
   "forecast_selected": "tree",
-  "decisions_id": "bf823e5851f3ff130e69047e848174d0af99f4c52611bed31be3e77b474e8754",
+  "decisions_id": "da8f7521f389e5941c1b4228f3a65cf3f97904a5270414697b6ce4f26d25321e",
   "promoted": false,
   "reason": "Forecast or matched captain/policy gate failed; previous production retained",
-  "id": "b619cdf2993271e26047a172bedf084cfccdd8515d0194f901fdc83c51b73c14"
+  "id": "f006468cc465452f1ca1ab849929ddce7b10dcbd35bee52533d06566109261f5"
 }

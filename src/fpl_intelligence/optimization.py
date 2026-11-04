@@ -125,6 +125,7 @@ def select_squad(
     diagnostics=None,
     bench_weight=0.015,
     relative_gap=0.01,
+    starting_eligible=None,
 ):
     """Full-market one-week squad oracle used only to seed the multiweek solve."""
     owned = {lot.player_id: lot for lot in state.lots} if state is not None else {}
@@ -134,6 +135,10 @@ def select_squad(
     model = MIP()
     y = {p: model.var(("y", p), cost=bench_weight * means.get(p, 0)) for p in ids}
     x = {p: model.var(("x", p), cost=means.get(p, 0)) for p in ids}
+    if starting_eligible is not None:
+        for p in ids:
+            if p not in starting_eligible:
+                model.upper[x[p]] = 0
     c = {p: model.var(("c", p), cost=means.get(p, 0)) for p in ids}
     model.equal([(y[p], 1) for p in ids], 15)
     model.equal([(x[p], 1) for p in ids], 11)
@@ -221,6 +226,7 @@ def optimize(
     disabled_chips: tuple[str, ...] = (),
     first_week_hit_budget: int | None = None,
     use_decision_critic: bool = True,
+    relative_gap: float = 0.001,
 ) -> dict:
     started = time.monotonic()
     if first_week_hit_budget is not None and first_week_hit_budget < 0:
@@ -229,6 +235,14 @@ def optimize(
         raise ValueError("Solve time must be positive and per-event transfers must be between 0 and 15")
     players, market = load_market(store)
     state = TeamState.model_validate({k: v for k, v in store.get("state", state_id).items() if k != "id"})
+    deadline = next((e.get("deadline_time") for e in market["events"] if e["id"] == state.event), None)
+    if deadline and state.status != "dated_seed":
+        from .availability import moment
+
+        if moment(deadline) <= moment(now()):
+            raise ValueError(
+                "Account deadline has passed; refresh the revealed squad and next-gameweek forecasts before planning"
+            )
     forecast = store.get("forecast", forecast_id)
     current_model = store.get("decision_model")
     if (
@@ -675,7 +689,7 @@ def optimize(
             warm = vector
             warm_value = value
             reused_plan = item["id"]
-    solution, diagnostics = mip.solve(time_limit, warm)
+    solution, diagnostics = mip.solve(time_limit, warm, relative_gap=relative_gap)
     diagnostics.update(
         initial_warm_objective=objective_before,
         selected_warm_objective=warm_value,
@@ -684,7 +698,9 @@ def optimize(
     )
     ledger = []
     current = state
-    with np.load(store.artifact_path(forecast["scenario_path"]), allow_pickle=False) as worlds:
+    from .worlds import load_worlds
+
+    with load_worlds(store, forecast) as worlds:
         for t in events:
             fh = solution[chip_vars[t, "freehit"]] > 0.5
             playing = [p for p in ids if solution[z[t, p]] > 0.5]
@@ -699,6 +715,7 @@ def optimize(
             lineup = optimize_bench(
                 lineup, worlds[f"points_{t}"], worlds[f"minutes_{t}"], forecast["player_ids"], players, rules
             )
+            cap = lineup.captain
             old = {lot.player_id for lot in current.lots}
             sell = sorted(old - set(playing)) if fh else [p for p in ids if solution[outgoing[t, p]] > 0.5]
             buy = sorted(set(playing) - old) if fh else [p for p in ids if solution[incoming[t, p]] > 0.5]
@@ -782,15 +799,34 @@ def hold_plan(store: Store, state_id: str, forecast_id: str, end_event: int) -> 
     rules = Rules.from_bootstrap(store.latest("bootstrap")[0])
     means = {(r["event"], r["player_id"]): r["mean"] for r in forecast["players"]}
     ledger = []
-    for event in range(state.event, end_event + 1):
-        lineup = best_lineup(
-            [lot.player_id for lot in state.lots],
-            {p: means.get((event, p), 0) for p in players},
-            players,
-            rules,
-        )
-        state, row = transition(state, Action(lineup=lineup), players, rules)
-        ledger.append(row)
+    from .worlds import load_worlds
+
+    with load_worlds(store, forecast) as worlds:
+        for event in range(state.event, end_event + 1):
+            lineup = best_lineup(
+                [lot.player_id for lot in state.lots],
+                {p: means.get((event, p), 0) for p in players},
+                players,
+                rules,
+            )
+            lineup = optimize_bench(
+                lineup,
+                worlds[f"points_{event}"],
+                worlds[f"minutes_{event}"],
+                forecast["player_ids"],
+                players,
+                rules,
+            )
+            state, row = transition(state, Action(lineup=lineup), players, rules)
+            row["expected_additive_net"] = (
+                sum(
+                    means.get((event, p), 0)
+                    for p in (row["playing_squad"] if row["chip"] == "bboost" else lineup.xi)
+                )
+                + means.get((event, lineup.captain), 0) * (2 if row["chip"] == "3xc" else 1)
+                - row["hit"]
+            )
+            ledger.append(row)
     plan = {
         "state_id": state_id,
         "forecast_id": forecast_id,

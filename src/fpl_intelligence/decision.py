@@ -228,7 +228,8 @@ def build_dataset(store: Store):
             f = fixture_meta[key]
             club_history[f["home"]].append((f["home_goals"], f["away_goals"]))
             club_history[f["away"]].append((f["away_goals"], f["home_goals"]))
-    path = store.root / "features" / "decision.parquet"
+    records_hash = digest(records)
+    path = store.root / "features" / ("decision-" + records_hash[:24] + ".parquet")
     path.parent.mkdir(exist_ok=True)
     frame = pl.DataFrame(records, infer_schema_length=None)
     frame.write_parquet(path)
@@ -236,7 +237,7 @@ def build_dataset(store: Store):
         "at": now(),
         "version": VERSION,
         "path": str(path),
-        "hash": digest(records),
+        "hash": records_hash,
         "rows": len(records),
         "seasons": sorted({r["season"] for r in rows}),
         "features": NAMES,
@@ -504,7 +505,10 @@ def train_decisions(store: Store, neural=True):
         production_fit_before=cut,
         training_serve_transform="context_vector, stable player code, last 24 earlier fixtures",
     )
-    summary["id"] = store.put("decision_model", summary)
+    # A failed weekly refit is a candidate, not a replacement for the last
+    # accepted production model. Keep the usable path available.
+    kind = "decision_model" if summary["promoted"] else "decision_candidate"
+    summary["id"] = store.put(kind, summary)
     atomic_json(
         Path("artifacts/evaluations/decision_model.json"),
         {k: v for k, v in summary.items() if k not in ("predictions", "residuals", "curves")},
@@ -587,6 +591,36 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
         match["event"] = change.get("event")
         match["kickoff_time"] = None
     records = []
+    recovery = None
+    if store.list("availability_model", 1):
+        from .availability import load_availability
+
+        recovery = load_availability(store)
+    suspended = {}
+    if store.list("discipline_report", 1):
+        discipline = store.get("discipline_report")
+        if discipline["market_id"] == market["id"]:
+            future_ids = {
+                f["id"]
+                for f in scheduled
+                if not f.get("finished") and f.get("event") is not None and f["event"] >= start
+            }
+            suspended = {r["player_id"]: set(r["fixture_ids"]) & future_ids for r in discipline["records"]}
+    first_kickoff = {
+        club: min(
+            (
+                f["kickoff_time"]
+                for f in scheduled
+                if not f.get("finished")
+                and f.get("event")
+                and start <= f["event"] <= end
+                and club in (f["team_h"], f["team_a"])
+                and f.get("kickoff_time")
+            ),
+            default=None,
+        )
+        for club in names
+    }
     for f in scheduled:
         event = f.get("event")
         if f.get("finished") or event is None or not start <= event <= end:
@@ -626,8 +660,22 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
                 player.chance if player.chance is not None else (1.0 if player.status == "a" else 0.5)
             )
             availability = 1 - (1 - availability) * np.exp(-(event - start) / 5)
+            if recovery and f.get("kickoff_time") and first_kickoff[player.team]:
+                from .availability import moment, recovery_path
+
+                elapsed = (
+                    moment(f["kickoff_time"]) - moment(first_kickoff[player.team])
+                ).total_seconds() / 86400
+                availability = recovery_path(player.raw, now(), elapsed, recovery)
             if not player.selectable:
                 availability = 0
+            if f["id"] in suspended.get(player.id, set()):
+                availability = 0
+            elif player.status == "s" and suspended.get(player.id):
+                # A known served sanction is not an injury with a gradual
+                # medical recovery curve. Separate concurrent injury news can
+                # still be supplied as an explicit scenario.
+                availability = 1
             for belief in beliefs:
                 if belief["player_id"] == player.id:
                     values[belief["parameter"]] = belief["value"]
@@ -653,10 +701,19 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
                     "profile": p,
                     "availability": availability,
                     "minutes_cap": cap,
+                    "kickoff_time": f.get("kickoff_time"),
+                    "recent_history": history[-8:],
                     "dc_probability": dc_probability(player.position, p, BAND_MINUTES),
                 }
             )
     return records, scheduled
+
+
+def sample_bands(probabilities, uniform):
+    p = np.asarray(probabilities)
+    if p.ndim == 1:
+        return np.minimum(np.searchsorted(np.cumsum(p), uniform), 3)
+    return np.minimum((uniform[:, None] > np.cumsum(p, axis=1)).sum(axis=1), 3)
 
 
 def sample_point_outcomes(
@@ -671,7 +728,7 @@ def sample_point_outcomes(
 ):
     """Shared production/evaluation sampler; integer points and exact zero-minute mass."""
     count = len(band_uniform)
-    band = np.minimum(np.searchsorted(np.cumsum(probabilities), band_uniform), 3)
+    band = sample_bands(probabilities, band_uniform)
     outcomes = np.zeros(count)
     for k in range(1, 4):
         mask = band == k
@@ -730,7 +787,15 @@ def learned_forecast(
     for i, row in enumerate(rows):
         by_event[row["event"]].append((i, row))
     team_factors = {}
+    availability_models = None
+    if store.list("availability_model", 1):
+        from .availability import load_availability
+
+        availability_models = load_availability(store)
     for event in range(start, end_event + 1):
+        # The joint acceptance test covers fixtures sharing one FPL deadline.
+        # Do not extrapolate that adjustment across ordinary gameweeks.
+        previous_simulated: dict[int, dict[str, Any]] = {}
         points = np.zeros((worlds, len(ids)), dtype=np.int16)
         minutes = np.zeros_like(points)
         component_totals = {
@@ -740,7 +805,10 @@ def learned_forecast(
         }
         start_prob = np.zeros(len(ids))
         fixture_count = np.zeros(len(ids), dtype=int)
-        for i, row in by_event[event]:
+        for i, row in sorted(
+            by_event[event],
+            key=lambda pair: (pair[1].get("kickoff_time") or "", pair[1]["fixture_id"], pair[1]["player_id"]),
+        ):
             pid = row["player_id"]
             column = index[pid]
             player = players[pid]
@@ -756,7 +824,20 @@ def learned_forecast(
                 probs[2] += probs[3]
                 probs[3] = 0
             u = ndtr(0.3 * shared_player[:, column] + np.sqrt(0.91) * rng.normal(size=worlds))
-            band = np.minimum(np.searchsorted(np.cumsum(probs), u), 3)
+            if availability_models and pid in previous_simulated and row.get("kickoff_time"):
+                from .availability import condition_rotation, moment
+
+                previous = previous_simulated[pid]
+                gap = (moment(row["kickoff_time"]) - moment(previous["kickoff_time"])).total_seconds() / 86400
+                probs = condition_rotation(
+                    probs,
+                    player.position,
+                    gap,
+                    row.get("recent_history", []),
+                    previous["minutes"],
+                    availability_models,
+                )
+            band = sample_bands(probs, u)
             sampled_minutes = np.zeros(worlds)
             for k in range(1, 4):
                 mask = band == k
@@ -765,6 +846,8 @@ def learned_forecast(
                     np.interp(rng.random(mask.sum()), np.linspace(0, 1, len(pool)), pool)
                 )
             sampled_minutes = np.minimum(sampled_minutes, cap).astype(np.int16)
+            if row.get("kickoff_time"):
+                previous_simulated[pid] = {"kickoff_time": row["kickoff_time"], "minutes": sampled_minutes}
             role = "defence" if player.position <= 2 else "attack"
             # The same factor is reused for teammates in this fixture. These are
             # calibrated statistical worlds, not claimed event-level football XIs.
@@ -801,7 +884,10 @@ def learned_forecast(
             }
             for key, value in parts.items():
                 component_totals[key][column] += value
-            start_prob[column] = max(start_prob[column], min(1 - probs[0], starts[i] * row["availability"]))
+            marginal_probabilities = probs.mean(axis=0) if probs.ndim == 2 else probs
+            start_prob[column] = max(
+                start_prob[column], min(1 - marginal_probabilities[0], starts[i] * row["availability"])
+            )
             fixture_count[column] += 1
             fixture_records.append(
                 {
@@ -815,7 +901,7 @@ def learned_forecast(
                     "point_quantiles": np.quantile(values, [0.1, 0.5, 0.9]).tolist(),
                     "components": parts,
                     "model_mean_before_mc": float(
-                        np.dot(probs, conditional[i] + 2 * np.asarray(row["dc_probability"]))
+                        np.dot(marginal_probabilities, conditional[i] + 2 * np.asarray(row["dc_probability"]))
                     ),
                     "availability_assumption": float(row["availability"]),
                 }
@@ -864,6 +950,18 @@ def learned_forecast(
         "seed": seed,
         "model_version": VERSION,
         "decision_model_id": spec["id"],
+        "source_challenger_model_id": store.get("fusion_model")["id"]
+        if store.list("fusion_model", 1)
+        else None,
+        "manager_policy_id": store.get("manager_policy")["id"] if store.list("manager_policy", 1) else None,
+        "manager_behavior_id": store.get("manager_behavior")["id"]
+        if store.list("manager_behavior", 1)
+        else None,
+        "availability_model_id": availability_models[0]["id"] if availability_models else None,
+        "availability_transition_scope": "Within-gameweek joint minutes only",
+        "discipline_report_id": store.get("discipline_report")["id"]
+        if store.list("discipline_report", 1)
+        else None,
         "rules_hash": rules.hash,
         "market_id": market["id"],
         "input_hashes": [market["source_hash"], market["fixture_hash"], spec["feature_id"]],
@@ -871,6 +969,11 @@ def learned_forecast(
             "decision_model_id": spec["id"],
             "training_feature_id": spec["feature_id"],
             "seasons": spec["seasons"],
+            "availability_model_id": availability_models[0]["id"] if availability_models else None,
+            "discipline_report_id": store.get("discipline_report")["id"]
+            if store.list("discipline_report", 1)
+            and store.get("discipline_report")["market_id"] == market["id"]
+            else None,
         },
         "players": records,
         "fixtures": fixture_records,
@@ -886,16 +989,19 @@ def learned_forecast(
             "Within-team role factors are estimated from earlier calibration residuals; dependence remains approximate",
             "Points distributions are statistical outcome forecasts, not an event-level reconstruction",
             "Exact autosubs, captain fallback, transfers and chips are scored on these SAME worlds",
-            "Current news changes availability; future recovery is an explicit horizon assumption",
+            "Availability uses a held-out-gated recovery transition, conditional congestion draws and dated disciplinary decisions when supported; fallback assumptions remain explicit",
             "Future prices are fixed outside named price scenarios; no manager ownership is treated as ground truth",
         ],
         "runtime_seconds": round(time.monotonic() - started, 3),
     }
-    path = store.root / "scenarios" / (digest(body) + ".npz")
-    path.parent.mkdir(exist_ok=True)
-    np.savez_compressed(path, **arrays)
-    body["scenario_path"] = str(path)
+    from .worlds import save_worlds
+
+    body["scenario_path"] = save_worlds(store, digest(body), arrays)
     body["id"] = store.put("scenario_forecast" if scenario else "forecast", body)
+    if not scenario and body["source_challenger_model_id"]:
+        from .fusion import forecast_sources
+
+        forecast_sources(store, body)
     return body
 
 

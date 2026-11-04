@@ -1,0 +1,113 @@
+{
+  "at": "2026-11-04T10:19:47.161453+00:00",
+  "shot_archive_id": "9f3717f5a189cef2a2828eacbcee64f3fd18b64f0bda4897dc22f9c71042c3e0",
+  "temporal_params": {
+    "decay": 1.0,
+    "finishing_strength": null
+  },
+  "temporal_model_id": "025078e5b28ce375c09b3d29c3d3367b2ec8558cc2ba6d0fdafc6ba1d4e083d3",
+  "models": {
+    "open_play": {
+      "path": "data/models/attack-v3-9a639157dbb04b7bc2af/open_play.txt",
+      "hash": "1475b02ba937ff4fc7ccc34233e2b3c9fe9876b0e20f35291d3d88755907fbdd"
+    },
+    "set_piece": {
+      "path": "data/models/attack-v3-9a639157dbb04b7bc2af/set_piece.txt",
+      "hash": "8036141c688f835e982cbe1e8fda370a285bf0d710e500936839556de60e8043"
+    },
+    "penalty": {
+      "path": "data/models/attack-v3-9a639157dbb04b7bc2af/penalty.txt",
+      "hash": "c76a4350e00b74150f5726be01d757e88d989e3ebbe7679eff15f66f424478c0"
+    }
+  },
+  "features": [
+    "open_play_xg90",
+    "open_play_goals90",
+    "open_play_shots90",
+    "open_play_finishing",
+    "set_piece_xg90",
+    "set_piece_goals90",
+    "set_piece_shots90",
+    "set_piece_finishing",
+    "penalty_xg90",
+    "penalty_goals90",
+    "penalty_shots90",
+    "penalty_finishing",
+    "xa90",
+    "key_passes90",
+    "chain90",
+    "buildup90",
+    "exposure",
+    "position"
+  ],
+  "metrics": {
+    "open_play": {
+      "rows": 11156,
+      "weight": 0.25,
+      "deviance": 0.2857768436130748,
+      "baseline_deviance": 0.28540366888046265,
+      "block_poisson_difference_95ci": [
+        -0.00023280820350662956,
+        0.0009786562731104412
+      ],
+      "promoted": false
+    },
+    "set_piece": {
+      "rows": 11156,
+      "weight": 0.75,
+      "deviance": 0.13436134239609057,
+      "baseline_deviance": 0.13555599749088287,
+      "block_poisson_difference_95ci": [
+        -0.002677974714114226,
+        0.00016562383109471388
+      ],
+      "promoted": false
+    },
+    "penalty": {
+      "rows": 11156,
+      "weight": 0,
+      "deviance": 0.04593154717797047,
+      "baseline_deviance": 0.04593154788017273,
+      "block_poisson_difference_95ci": [
+        0.0,
+        0.0
+      ],
+      "promoted": false
+    }
+  },
+  "assist": {
+    "channels": [
+      "open_play",
+      "set_piece",
+      "penalty",
+      "own_goal"
+    ],
+    "probabilities": [
+      0.8825289212606611,
+      0.8015118273182522,
+      0.8115730385332562,
+      0.8416213548755482
+    ],
+    "baseline": [
+      0.74,
+      0.74,
+      0.74,
+      0.0
+    ],
+    "training_matches": 1618,
+    "calibration_matches": 227,
+    "test_matches": 696,
+    "nll": 0.32444095221987407,
+    "baseline_nll": 1.5278042684379356,
+    "block_nll_difference_95ci": [
+      -1.567136013664793,
+      -0.8920401071625865
+    ],
+    "promoted": true,
+    "ridge": 10,
+    "method": "Poisson-binomial likelihood of official aggregate FPL assists conditional on observed goal types; no individual assist attribution is fabricated"
+  },
+  "hierarchy": "Channel/position opportunity priors and Gamma-Poisson finishing shrinkage; finite samples do not become unbounded finishing multipliers",
+  "protocol": "Fit before 2024/25 GW25; calibrate remainder of that season; test later 2025/26 and finalized current matches",
+  "id": "20c5f538eb21c29ba5a2852b0e1b6f3c30743368aee2744b3bcdc89966e4fa2c"
+}

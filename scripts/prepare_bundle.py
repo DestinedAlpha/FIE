@@ -69,6 +69,11 @@ def main():
             account = store.root / "account-confirmed.json"
             if account.exists():
                 bundle.write(account, "FPL-Intelligence/data/account-confirmed.json")
+            # The personalized report belongs only in the private handoff.
+            report = root / "artifacts/runtime/report"
+            for path in report.rglob("*"):
+                if path.is_file():
+                    bundle.write(path, "FPL-Intelligence/reports/" + path.relative_to(report).as_posix())
         with ZipFile(output) as verify:
             assert "FPL-Intelligence/.env" not in verify.namelist()
             assert verify.testzip() is None

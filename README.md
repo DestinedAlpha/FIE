@@ -30,7 +30,17 @@ uv run fpl serve
 
 Open http://127.0.0.1:8000. `reconcile-team` imports the **dated** research seed; confirm current account facts before acting. The private prepared package uses the user's separately confirmed selling quotes, bank, FT and chips. Unknown purchase prices remain null. The original seed cannot overwrite a confirmed account.
 
-`fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. After new matches, refresh data and retrain/reforecast/replan. Account transfers are never assumed to have been submitted; reconcile actual squad changes separately.
+`fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. `fpl refresh-current` and the Refresh data button reconcile revealed deadline squads, advance to the next deadline, update finalized labels and recompute the recommendation. Confirm any additional unrevealed transfers in My squad; public endpoints cannot see them.
+
+## What changed in 0.6
+
+Fixed deadline rollover and public account synchronization, role-matched transfer displays, incremental hit accounting, stale-plan controls and joint captain/vice fallback. Recommendations compare hold and independently solved no-new-hit policies under the same sampled outcomes. Explicit transfer/chip constraints also apply when selecting alternatives.
+
+Added learned injury recovery and double-gameweek rotation, competition-specific suspension service, separate attacking channels, structural score-process comparisons, optional dated odds calibration and separately tested decay/finishing corrections. Each change has a later-deadline acceptance gate. Existing neural/tree models retain the feature transformations frozen in their training lineage. Unsupported additions remain disabled.
+
+The full workflow connects qualified and current top-1,000 manager behavior, separate neural/tree forecasts, random-account transfer learning, rival branches, population scenarios, source-supported sensitivities and complete policy recourse. The Model & data page exposes data coverage and actual adoption decisions. Historical GW1–8 teams use archived pre-deadline registration, prices and fixtures, refit each week, and score target outcomes only after freezing their choices.
+
+[Implementation coverage](docs/completion-matrix.md) · [Football models and temporal limits](docs/football-models.md) · [Executed 0.6 release audit](artifacts/evaluations/release_0_6.json).
 
 ## What changed in 0.5
 

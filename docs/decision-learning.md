@@ -30,10 +30,15 @@ A separate structural simulator draws real lineups, at most five substitution pa
 
 ## What acceptance means
 
-A smaller prediction error does not automatically imply better transfers or captaincy. The accepted reference transfer policy remains active unless a challenger passes its relevant decision gate. Completed current-season GW1–8 are included according to chronological training/calibration roles; no GW9 result exists yet. Live forecasts and frozen shadow decisions are scored only after official finalization. There is no automatic online learning from unfinalized results, fabricated prospective success or guarantee of top-one-percent performance.
+A smaller prediction error does not automatically imply better transfers or captaincy. The accepted reference transfer policy remains active unless a challenger passes its relevant decision gate. Finalized current-season results are included according to chronological training/calibration roles. The 0.6 build includes GW1–9; GW10 has no outcome label yet. Live forecasts and frozen shadow decisions are scored only after official finalization. There is no automatic online learning from unfinalized results, fabricated prospective success or guarantee of top-one-percent performance.
 
 ## Executed 0.5 trajectory experiment
 
 The completed run contains **456 legal accounts, 4,632 candidate trajectories and 38 starting deadlines** (2025/26 GW2–35 and 2026/27 GW2–5). Every trajectory spans four evolving deadlines and is independently rescored with future chips included. The untouched later test contains 144 accounts. Tree decision gain is **+0.194 points**, four-deadline block 95% interval **[-1.431, 1.903]**. Neural gain is **-0.389**, interval **[-4.382, 3.576]**. Calibration selects the neural architecture at weight 0.5; its failed later test therefore leaves the reference policy active. We do not switch post hoc to the tree because its test mean happened to be higher.
 
 Continuation RMSE improves **26.242 → 25.463**, with a paired error interval excluding zero. Its actual policy gain is **+0.868**, interval **[-0.583, 2.639]**; the policy gate fails and the learned terminal weights remain a challenger. These are completed negative/uncertain experiments, not unfinished integrations. More model complexity or accepting a failed gate would not establish a better system.
+
+
+## Executed 0.6 trajectory experiment
+
+The completed expanded run contains **936 legal accounts, 9,706 candidate trajectories and 39 starting deadlines**, through 2026/27 GW6 with four-week labels through finalized GW9. The later test contains 312 accounts across 13 deadlines. Calibration chooses zero residual weight for both the tree and listwise neural critic; neither replaces the reference action policy. The independent continuation model also fails its full acceptance gate. These are completed, connected training experiments, not models awaiting implementation or a reason to force a more complex policy into production.

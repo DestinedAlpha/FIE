@@ -102,20 +102,14 @@ class TextExtractor(HTMLParser):
 
 async def retrieve(store: Store, url: str) -> dict:
     validate_url(url)
+    from .transport import PublicTransport
+
     async with httpx.AsyncClient(timeout=20, follow_redirects=False) as client:
-        async with client.stream("GET", url) as response:
-            response.raise_for_status()
-            if response.is_redirect:
-                raise ValueError("Redirects require explicit source validation")
-            chunks = []
-            length = 0
-            async for chunk in response.aiter_bytes():
-                length += len(chunk)
-                if length > 1_000_000:
-                    raise ValueError("Research source exceeds 1 MB bound")
-                chunks.append(chunk)
+        text = await PublicTransport(store).get(
+            client, url, "research_" + digest(url), json_body=False, max_bytes=1_000_000
+        )
     parser = TextExtractor()
-    parser.feed(b"".join(chunks).decode("utf-8", errors="replace"))
+    parser.feed(text)
     published = None
     for candidate in parser.publication_candidates:
         try:

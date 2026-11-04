@@ -1,27 +1,27 @@
 {
-  "at": "2026-10-29T13:44:09.448527+00:00",
-  "decision_model_id": "39840e58f1e3096877578ce293cf817b00a6f88af5052644292eacdd51c8f65c",
+  "at": "2026-11-04T10:33:26.937839+00:00",
+  "decision_model_id": "4d2dd0e9f0291d667c911343558a5e02dfb970775a4058134f5d0b83befd434e",
   "worlds_per_row": 512,
   "all": {
-    "n": 34967,
-    "coverage80": 0.9328795721680442,
-    "coverage90": 0.9642234106443218,
-    "width80": 2.8931506849315074,
-    "crps": 0.6820217241335288,
-    "mean_sampling_bias": -0.0007166207499817873
+    "n": 35637,
+    "coverage80": 0.9330471139545977,
+    "coverage90": 0.9642506383814575,
+    "width80": 2.900300249740439,
+    "crps": 0.6822263504260818,
+    "mean_sampling_bias": -0.0007347318150339549
   },
   "regular_starters": {
-    "n": 8527,
-    "coverage80": 0.8788554004925531,
-    "coverage90": 0.9413627301512841,
-    "width80": 6.668417966459483,
-    "crps": 1.514433132801076,
-    "mean_sampling_bias": -0.0020333960098703886
+    "n": 8705,
+    "coverage80": 0.8794945433658817,
+    "coverage90": 0.9414129810453762,
+    "width80": 6.670246984491673,
+    "crps": 1.5125114563619317,
+    "mean_sampling_bias": -0.001843954069504999
   },
   "track": "Exact production sampler, earlier-fold fitted models and residuals",
   "limits": [
     "Marginal interval coverage does not establish correctness of the joint opponent-policy probabilities",
     "Discrete points make nominal central coverage conservative"
   ],
-  "id": "e8b547f243532e79ee2f5b013ba3f034aab89e7a42078a1755ca6e7e6fbe5785"
+  "id": "978c02c9135b034ead61d358411599bed98bdce0f0e75ba31a01e45f86a79a16"
 }

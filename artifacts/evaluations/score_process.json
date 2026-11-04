@@ -1,0 +1,58 @@
+{
+  "at": "2026-11-04T09:13:22.275675+00:00",
+  "training_max_group": "2026/27-GW09",
+  "matches": 1610,
+  "test_matches": 470,
+  "strength": {
+    "promoted": false,
+    "map_test_nll": 2.913235418440012,
+    "shrinkage_test_nll": 2.942153830896897,
+    "block_nll_difference_95ci": [
+      -0.06244939930879353,
+      0.003068556847044981
+    ]
+  },
+  "decay": {
+    "selected": 1.0,
+    "adopted": 1.0,
+    "block_nll_difference_95ci": [
+      0.0,
+      0.0
+    ],
+    "promoted": false
+  },
+  "score_dependence": {
+    "selected": "dixon_coles",
+    "adopted": "independent",
+    "parameters": {
+      "independent": 0.0,
+      "dixon_coles": 0.038995612061719684,
+      "gamma_poisson": 162695.70185289855
+    },
+    "block_nll_difference_95ci": [
+      0.0003469959414141137,
+      0.0062883467335432255
+    ],
+    "promoted": false,
+    "test_nll": {
+      "independent": 2.913235418440012,
+      "dixon_coles": 2.9164474563000526,
+      "gamma_poisson": 2.9132358243710486
+    }
+  },
+  "parameter_uncertainty": {
+    "selected_scale": 0.0,
+    "adopted_scale": 0.0,
+    "block_nll_difference_95ci": [
+      0.0,
+      0.0
+    ],
+    "promoted": false
+  },
+  "protocol": "Expanding earlier-deadline team fits; 2024/25 GW25\u201338 select decay/dependence/posterior scale, later seasons test; shared Laplace coefficient draws separate from match noise",
+  "limits": [
+    "Regularized club strength, not a guarantee about future results",
+    "Posterior conditional on fitted model; independent structural alternatives remain visible"
+  ],
+  "id": "4ad4b11ec8aaf33b4dc3fbe4e9a33336b86cb6c4210701eef4d8c5b710517bfd"
+}

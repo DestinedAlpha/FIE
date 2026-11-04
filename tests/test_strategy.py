@@ -254,8 +254,8 @@ def test_refresh_budget_skips_all_player_histories_until_labels_are_due(tmp_path
         "market",
         {
             "events": [
-                {"id": 8, "data_checked": True, "is_current": True},
-                {"id": 9, "data_checked": False, "is_next": True},
+                {"id": 8, "deadline_time": "2020-01-01T00:00:00Z", "data_checked": True, "is_current": True},
+                {"id": 9, "deadline_time": "2099-01-01T00:00:00Z", "data_checked": False, "is_next": True},
             ]
         },
     )
@@ -263,15 +263,20 @@ def test_refresh_budget_skips_all_player_histories_until_labels_are_due(tmp_path
     store.put("ingestion", {"captured_at": now(), "histories_requested": True})
     calls, fits = [], []
 
-    async def ingest(self, *, histories=True):
+    async def ingest(self, *, histories=True, entry=None):
         calls.append(histories)
         if new_finalized:
             self.store.put(
                 "market",
                 {
                     "events": [
-                        {"id": 9, "data_checked": True, "is_current": True},
-                        {"id": 10, "is_next": True},
+                        {
+                            "id": 9,
+                            "deadline_time": "2020-01-01T00:00:00Z",
+                            "data_checked": True,
+                            "is_current": True,
+                        },
+                        {"id": 10, "deadline_time": "2099-01-01T00:00:00Z", "is_next": True},
                     ]
                 },
             )
@@ -286,6 +291,9 @@ def test_refresh_budget_skips_all_player_histories_until_labels_are_due(tmp_path
     monkeypatch.setattr(prospective, "score_frozen_decisions", lambda *args: {})
     monkeypatch.setattr(simulation, "forecast", forecast)
     monkeypatch.setattr(optimization, "optimize", lambda *args: {"id": "test-plan"})
+    monkeypatch.setattr(
+        "fpl_intelligence.objectives.choose_recommendation", lambda store, plans, forecast: (plans[0], {})
+    )
     result = refresh_cycle(store)
     assert calls == ([False, True] if new_finalized else [False])
     assert len(fits) == int(new_finalized)

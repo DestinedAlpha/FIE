@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "FPL Intelligence",
-    "version": "0.5.0"
+    "version": "0.6.0"
   },
   "paths": {
     "/api/health": {
@@ -291,6 +291,140 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/football/train": {
+      "post": {
+        "summary": "Football Models",
+        "operationId": "football_models_api_football_train_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/evidence/analyze": {
+      "post": {
+        "summary": "Evidence Analysis",
+        "operationId": "evidence_analysis_api_evidence_analyze_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/replay/weekly": {
+      "get": {
+        "summary": "Replay Weekly Results",
+        "operationId": "replay_weekly_results_api_replay_weekly_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Replay Weekly",
+        "operationId": "replay_weekly_api_replay_weekly_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/discipline/decisions": {
+      "post": {
+        "summary": "Disciplinary Decision",
+        "operationId": "disciplinary_decision_api_discipline_decisions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BanDecision"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/odds/import": {
+      "post": {
+        "summary": "Odds Import",
+        "operationId": "odds_import_api_odds_import_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OddsObservation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -1019,6 +1153,113 @@
         "type": "object",
         "title": "Action"
       },
+      "BanDecision": {
+        "properties": {
+          "player_code": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Player Code"
+          },
+          "offence": {
+            "type": "string",
+            "enum": [
+              "second_caution",
+              "denying_goal",
+              "offensive_language",
+              "serious_foul_play",
+              "violent_conduct",
+              "spitting",
+              "caution_accumulation",
+              "other"
+            ],
+            "title": "Offence"
+          },
+          "imposed_at": {
+            "type": "string",
+            "title": "Imposed At"
+          },
+          "known_at": {
+            "type": "string",
+            "title": "Known At"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          },
+          "matches": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matches"
+          },
+          "competition": {
+            "type": "string",
+            "title": "Competition",
+            "default": "PL"
+          },
+          "service_competitions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Service Competitions"
+          },
+          "appeal": {
+            "type": "string",
+            "enum": [
+              "none",
+              "pending",
+              "upheld",
+              "rescinded",
+              "stayed"
+            ],
+            "title": "Appeal",
+            "default": "none"
+          },
+          "previous_dismissals": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Previous Dismissals",
+            "default": 0
+          },
+          "supersedes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersedes"
+          },
+          "additional_fixtures": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Additional Fixtures"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "player_code",
+          "offence",
+          "imposed_at",
+          "known_at",
+          "source_url"
+        ],
+        "title": "BanDecision"
+      },
       "Belief": {
         "properties": {
           "player_id": {
@@ -1347,6 +1588,11 @@
             "type": "string",
             "title": "Provenance",
             "default": "manual"
+          },
+          "quote_confirmed": {
+            "type": "boolean",
+            "title": "Quote Confirmed",
+            "default": true
           }
         },
         "additionalProperties": false,
@@ -1357,6 +1603,65 @@
           "quote_market_price"
         ],
         "title": "Lot"
+      },
+      "OddsObservation": {
+        "properties": {
+          "fixture_id": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Fixture Id"
+          },
+          "known_at": {
+            "type": "string",
+            "title": "Known At"
+          },
+          "source_url": {
+            "type": "string",
+            "maxLength": 2000,
+            "pattern": "^https://",
+            "title": "Source Url"
+          },
+          "bookmaker": {
+            "type": "string",
+            "maxLength": 150,
+            "title": "Bookmaker",
+            "default": "Declared exhaustive market"
+          },
+          "result_odds": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "Result Odds"
+          },
+          "total_2_5_odds": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array",
+                "maxItems": 2,
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total 2 5 Odds"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "fixture_id",
+          "known_at",
+          "source_url",
+          "result_odds"
+        ],
+        "title": "OddsObservation"
       },
       "OptimizeRequest": {
         "properties": {
@@ -1381,11 +1686,20 @@
             "title": "Time Limit",
             "default": 30
           },
+          "relative_gap": {
+            "type": "number",
+            "maximum": 0.1,
+            "minimum": 0.0,
+            "title": "Relative Gap",
+            "default": 0.001
+          },
           "objective": {
             "type": "string",
             "enum": [
               "expected_points",
-              "beat_both"
+              "beat_both",
+              "top_one_percent",
+              "cvar"
             ],
             "title": "Objective",
             "default": "expected_points"
@@ -1396,6 +1710,13 @@
             "minimum": 0.0,
             "title": "Sacrifice Budget",
             "default": 5
+          },
+          "tail_fraction": {
+            "type": "number",
+            "maximum": 1.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Tail Fraction",
+            "default": 0.1
           },
           "chips": {
             "additionalProperties": {

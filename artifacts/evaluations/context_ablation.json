@@ -1,8 +1,8 @@
 {
-  "at": "2026-10-29T21:02:12.757074+00:00",
-  "feature_id": "901a403b6c0fc8e14bad1214d331387a9b349df08061de3bb2a73eff540e7cf2",
+  "at": "2026-11-04T10:28:38.520580+00:00",
+  "feature_id": "5ae94d834d3c29a1f94461f3ef22904190ab112a16e2efc97c7628edcf800b4a",
   "protocol": "Independently refit history-only, official-news, and full-context trees on identical expanding blocks with earlier calibration; no inference-mask substitution",
-  "rows": 34828,
+  "rows": 35497,
   "folds": [
     {
       "test": [
@@ -81,7 +81,8 @@
         "2026/27-GW05",
         "2026/27-GW06",
         "2026/27-GW07",
-        "2026/27-GW08"
+        "2026/27-GW08",
+        "2026/27-GW09"
       ],
       "train_before": "2025/26-GW37",
       "calibration_before": "2026/27-GW03"
@@ -90,13 +91,13 @@
   "metrics": {
     "history_only": {
       "points": {
-        "n": 34828,
-        "rmse": 1.9533638198564962,
-        "mae": 1.0137055689242553,
-        "bias": 0.009498862091110047
+        "n": 35497,
+        "rmse": 1.9514806795692516,
+        "mae": 1.0142362299452858,
+        "bias": 0.009290640259714879
       },
-      "appearance_brier": 0.08959800208698566,
-      "sixty_brier": 0.08279155454967049,
+      "appearance_brier": 0.08954556208047106,
+      "sixty_brier": 0.08270139751110862,
       "paired_rmse_vs_history_95ci": [
         0.0,
         0.0
@@ -104,37 +105,37 @@
     },
     "official_news": {
       "points": {
-        "n": 34828,
-        "rmse": 1.9168737502405582,
-        "mae": 0.9650158242669462,
-        "bias": 0.00580539778154663
+        "n": 35497,
+        "rmse": 1.914408605678867,
+        "mae": 0.9641980667953982,
+        "bias": 0.0034692138549172083
       },
-      "appearance_brier": 0.07237930550713129,
-      "sixty_brier": 0.07624584338380044,
+      "appearance_brier": 0.07242915652248111,
+      "sixty_brier": 0.07594080271719547,
       "paired_rmse_vs_history_95ci": [
-        -0.046120867126458916,
-        -0.029214906097960753
+        -0.04682956402845146,
+        -0.02892124585844268
       ]
     },
     "all_context": {
       "points": {
-        "n": 34828,
-        "rmse": 1.9095077788050185,
-        "mae": 0.9595305246191194,
-        "bias": 0.006461301497946039
+        "n": 35497,
+        "rmse": 1.9074797485863726,
+        "mae": 0.9592950733862619,
+        "bias": 0.003572947888174368
       },
-      "appearance_brier": 0.07147893669500058,
-      "sixty_brier": 0.07510558192657688,
+      "appearance_brier": 0.07140322446227772,
+      "sixty_brier": 0.0749504109970801,
       "paired_rmse_vs_history_95ci": [
-        -0.054978155685628735,
-        -0.0343134513207186
+        -0.05574182259166257,
+        -0.03408609448851815
       ]
     }
   },
   "captain_bonus": {
-    "history_only": 309.0,
-    "official_news": 316.0,
-    "all_context": 368.0
+    "history_only": 311.0,
+    "official_news": 315.0,
+    "all_context": 311.0
   },
   "source_use": "Official archived news/set pieces/availability, lagged qualified managers/market and other-competition workload enter measured feature branches",
   "limits": [
@@ -142,5 +143,5 @@
     "Current-rank top-1,000 behavior is separately tested; historical expert signals use only prior-qualified managers",
     "Specialist article claims remain independently supported evidence/scenarios; missing past articles are not fabricated"
   ],
-  "id": "211d516fdd1e08a53febcadb7f8ec226791f250e56cc18149f749f45cc1a1c37"
+  "id": "c5182da4c6bef53552d9a88b2f8f759e58a19dcd1eb4cc6b6fd8bc09e592bad7"
 }

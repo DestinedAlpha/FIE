@@ -1,0 +1,83 @@
+{
+  "at": "2026-11-04T09:27:49.683104+00:00",
+  "context_id": "1df4590e82229a8533d5637fd86f4dddb2859d3665e254821ce9fee4ca58bca1",
+  "models": {
+    "rotation": {
+      "path": "data/models/availability-v4-407f3fae1e17588a8f/rotation.txt",
+      "hash": "18c71bc8c694ace392070bff2fce97b63b76c9b1c4a4726791d7f21964b8aacd"
+    },
+    "rotation_baseline": {
+      "path": "data/models/availability-v4-407f3fae1e17588a8f/rotation_baseline.txt",
+      "hash": "5e1717d4be6d7613c956b742a30dadaac2b1ac41b03c348b8c86ca60a6f52e86"
+    },
+    "recovery": {
+      "path": "data/models/availability-v4-407f3fae1e17588a8f/recovery.txt",
+      "hash": "b8c3269d3167c9535ebc083461309f30b6fce6128631e4fca033b47d54dbfa6a"
+    }
+  },
+  "recovery": {
+    "training_rows": 9173,
+    "calibration_rows": 1284,
+    "test_rows": 3880,
+    "weight": 1,
+    "log_loss": 0.3585599630832744,
+    "baseline_log_loss": 0.5215162578974675,
+    "block_difference_95ci": [
+      -0.1825768730364009,
+      -0.138684790497829
+    ],
+    "promoted": true,
+    "target": "Transition from published injured/doubtful status to published available status; not an inferred medical diagnosis"
+  },
+  "rotation": {
+    "training_rows": 21869,
+    "calibration_rows": 23813,
+    "test_rows": 50354,
+    "weight": 1,
+    "log_loss": 0.6233727696450148,
+    "baseline_log_loss": 0.6959211562467447,
+    "block_difference_95ci": [
+      -0.08447493274012731,
+      -0.06243833085913729
+    ],
+    "promoted": true,
+    "scope": "Conditional next-match minute-band test with earlier calibrated fit; production conditions on simulated previous minutes, never future actual minutes",
+    "joint_validation": {
+      "calibration_pairs": 973,
+      "test_pairs": 704,
+      "test_deadlines": 6,
+      "promoted": true,
+      "scope": "Exact production density-ratio transition over all 16 joint states, against freshly refitted earlier-only production minute forecasts; no realized first-match input",
+      "weight": 0.5,
+      "log_loss": 1.1476079124835379,
+      "baseline_log_loss": 1.177226205953076,
+      "block_difference_95ci": [
+        -0.041192797903376065,
+        -0.016224549229608577
+      ]
+    }
+  },
+  "features": {
+    "recovery": [
+      "chance",
+      "chance_known",
+      "injured",
+      "doubtful",
+      "report_age_days",
+      "injury_snapshots",
+      "gap_days",
+      "position"
+    ],
+    "rotation": [
+      "position",
+      "rest_days",
+      "recent_start_rate",
+      "recent_minutes",
+      "last_minutes",
+      "last_started",
+      "short_rest_load"
+    ]
+  },
+  "protocol": "Recovery: fit before 2024/25 GW25, calibrate that season remainder, test 2025 onward. Rotation: 2022/23 fit, 2023/24 calibrate, 2024/25 onward test; four-deadline block intervals and independent joint-DGW gate.",
+  "id": "7fe8826da49664cea21da68aa55ebb28d47a1149f9281cce55832a229e7a448d"
+}

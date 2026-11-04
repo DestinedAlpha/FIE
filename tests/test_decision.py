@@ -266,6 +266,7 @@ def test_no_immediate_hit_budget_is_enforced_by_solver_and_ledger(
         "id": "market",
         "season": state.season,
         "source_hash": "bootstrap",
+        "events": [],
         "teams": [{"id": team} for team in sorted({p.team for p in market.values()})],
     }
     monkeypatch.setattr(optimizer, "load_market", lambda *a: (market, frozen))

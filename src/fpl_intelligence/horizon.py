@@ -79,6 +79,7 @@ def train_horizon(store: Store, horizon=4):
         arrays["workload"],
         arrays["text"],
         arrays["sequence"],
+        enrichment=arrays.get("enrichment"),
     )
     advanced = advanced_history(store, meta)
     whole = np.column_stack([matrix, advanced])
@@ -192,6 +193,7 @@ def train_horizon(store: Store, horizon=4):
         "at": now(),
         "horizon": horizon,
         "feature_id": features["id"],
+        "enrichment_width": arrays["enrichment"].shape[1] if "enrichment" in arrays else 0,
         "fusion_model_id": source["id"],
         "parameters": params,
         "protocol": "Expanding eight-deadline test blocks; training and calibration target windows end strictly before the next partition starts; no random split",
@@ -203,7 +205,7 @@ def train_horizon(store: Store, horizon=4):
         "advanced_fields": ADVANCED,
         "limits": [
             "Four-week labels are realized outcomes, never inference features",
-            "Only weeks with complete four-week outcomes are scored; current season evaluates starting GW1–GW5",
+            "Only starting weeks with complete four-week outcomes are scored; see the reported prediction coverage",
             "Historical archive/fixture registration limitations remain; this is statistical replay",
             "Defensive-contribution expectation uses a declared current-profile prior, not invented historic action labels",
             "Repeating a one-week reference is a horizon baseline, not a claim to reproduce the full multiweek optimizer",
@@ -286,7 +288,7 @@ def live_values(store: Store):
     for row in sorted(rows, key=lambda r: kickoff[r["fixture_id"]]):
         unique.setdefault(row["player_id"], row)
     rows = list(unique.values())
-    inputs = live_inputs(store, rows, market, players)
+    inputs = live_inputs(store, rows, market, players, model["feature_id"])
     matrix = tree_matrix(
         inputs["tab"],
         inputs["news"],
@@ -294,6 +296,7 @@ def live_values(store: Store):
         inputs["workload"],
         inputs["text"],
         inputs["sequence"],
+        enrichment=inputs.get("enrichment") if model.get("enrichment_width", 0) else None,
     )
     if model["selected"] == "advanced":
         original, _, _ = canonical_rows(store)

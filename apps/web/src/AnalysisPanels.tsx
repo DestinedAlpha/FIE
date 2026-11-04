@@ -268,13 +268,26 @@ export function ScenarioPanel({
   const [kind, setKind] = useState("absence"),
     [player, setPlayer] = useState(0),
     [reveal, setReveal] = useState(10),
-    [delta, setDelta] = useState(0.2);
+    [delta, setDelta] = useState(0.2),
+    [fixtureId,setFixtureId] = useState(0),
+    [destination,setDestination] = useState(0);
   if (!plan || !data.state) return null;
   const minimum = data.state.event + 1,
     maximum = plan.ledger.at(-1)?.event || 19;
   const selected = player || data.state.lots[0].player_id;
   const when = Math.max(minimum, Math.min(reveal, maximum));
+  const fixtures=(data.market?.fixtures||[]).filter(f=>!f.finished && (f.event===null||f.event>=when));
+  const selectedFixture=fixtures.find(f=>f.id===fixtureId)||fixtures[0];
+  const teamName=(id:number)=>data.market?.teams.find(t=>t.id===id)?.short_name||String(id);
   const evaluate = () => {
+    if(kind==='fixture') {
+      if(!selectedFixture)return;
+      act('/scenarios',{plan_id:plan.id,scenarios:[{
+        name:`${teamName(selectedFixture.team_h)} v ${teamName(selectedFixture.team_a)} ${destination?`moves to GW${destination}`:'postponed, unassigned'}`,
+        reveal_event:when,fixture_events:[{fixture_id:selectedFixture.id,event:destination||null}],sale_assumption:'conservative'
+      }]});
+      return;
+    }
     const target = data.market?.players.find((p) => p.id === selected);
     const scenario = {
       name:
@@ -319,9 +332,10 @@ export function ScenarioPanel({
           <select value={kind} onChange={(e) => setKind(e.target.value)}>
             <option value="absence">Player unavailable</option>
             <option value="price">Price movement</option>
+            <option value="fixture">Fixture rearrangement</option>
           </select>
         </label>
-        <label>
+        {kind !== 'fixture' && <label>
           Player
           <select value={selected} onChange={(e) => setPlayer(+e.target.value)}>
             {data.market?.players.map((p) => (
@@ -330,7 +344,7 @@ export function ScenarioPanel({
               </option>
             ))}
           </select>
-        </label>
+        </label>}
         <label>
           Observed in
           <select value={when} onChange={(e) => setReveal(+e.target.value)}>
@@ -344,6 +358,15 @@ export function ScenarioPanel({
             ))}
           </select>
         </label>
+        {kind === 'fixture' && <>
+          <label>Fixture<select value={selectedFixture?.id||0} onChange={e=>setFixtureId(+e.target.value)}>
+            {fixtures.map(f=><option key={f.id} value={f.id}>{teamName(f.team_h)} v {teamName(f.team_a)} · {f.event?`GW${f.event}`:'unassigned'}</option>)}
+          </select></label>
+          <label>Reassigned to<select value={destination} onChange={e=>setDestination(+e.target.value)}>
+            <option value={0}>Unassigned / postponed</option>
+            {(data.market?.events||[]).filter(e=>e.id>=when).map(e=><option key={e.id} value={e.id}>GW {e.id}</option>)}
+          </select></label>
+        </>}
         {kind === "price" && (
           <label>
             Price change (£m)
@@ -359,7 +382,7 @@ export function ScenarioPanel({
         )}
         <button
           className="button primary"
-          disabled={busy || minimum > maximum}
+          disabled={busy || minimum > maximum || (kind==='fixture' && !selectedFixture)}
           onClick={evaluate}
         >
           <Activity size={14} />
@@ -853,6 +876,8 @@ export function SourceCoverage({ data, busy, act }: Props) {
           </b>
         </div>
       </div>
+      <button className="button secondary" disabled={busy||!data.plan||data.plan.stale} onClick={()=>act('/evidence/analyze')}>Test report impact on this plan</button>
+      {data.evidence_impact && <p>{data.evidence_impact.links.length} report links reviewed; {data.evidence_impact.branches.length} numerical sensitivity branches. {data.evidence_impact.scope}</p>}
       <p>
         Manager choices lag one gameweek. Reddit posts supply leads to original
         evidence; raw Reddit text does not train the model. Unvalidated opinions
@@ -1094,9 +1119,12 @@ export function ManagerSignals({ data, busy, act }: Props) {
 }
 
 export function TransferLearning({ data, busy, act }: Props) {
-  const horizon = data.horizon_model,
-    policy = data.transfer_policy_model,
-    personal = data.personalized_policy_analysis;
+  const horizon = data.horizon_model;
+  const critic=data.decision_critic;
+  const candidate=critic?.candidates[critic.architecture_selected_on_calibration||critic.selected||'tree'];
+  const policy=candidate?{test_decisions:candidate.accounts,invalid_actions:critic?.invalid_actions||0,
+      mean_heldout_gain:candidate.mean_gain,four_deadline_block_gain_95ci:candidate.block_gain_95ci,promoted:!!critic?.selected}:data.transfer_policy_model;
+  const personal = data.personalized_policy_analysis;
   return (
     <section className="panel">
       <div className="section-title">
@@ -1110,7 +1138,7 @@ export function TransferLearning({ data, busy, act }: Props) {
         <button
           className="button secondary"
           disabled={busy || !policy}
-          onClick={() => act("/policy/analyze", {})}
+          onClick={() => act("/strategy/analyze", {})}
         >
           Analyze my alternatives
         </button>
@@ -1554,4 +1582,41 @@ export function PopulationEvidence({ data, busy, act }: Props) {
       )}
     </section>
   );
+}
+
+export function FootballEvidence({data,busy,act}:Props) {
+  const availability=data.availability_model, shots=data.shot_archive;
+  const name=(id:number)=>data.market?.players.find(p=>p.id===id)?.web_name||String(id);
+  const future=new Set(data.market?.fixtures.filter(f=>!f.finished).map(f=>f.id));
+  const bans=data.discipline_report?.records.filter(r=>r.fixture_ids.some(f=>future.has(f))||r.cautions_range[1]>=4);
+  return <>
+    {!!data.request_metrics_24h?.length && <section className="panel"><h3>Source requests · past 24 hours</h3><p>{data.request_metrics_24h.reduce((n,r)=>n+r.calls,0).toLocaleString()} measured attempts · {(data.request_metrics_24h.reduce((n,r)=>n+r.bytes,0)/1_000_000).toFixed(1)} MB received · {data.request_metrics_24h.reduce((n,r)=>n+r.errors,0)} failed attempts. Retries respect source limits; cached valid data is retained.</p></section>}
+    <section className="panel">
+      <div className="section-title"><div><h3>Football models and current coverage</h3><p>Only models that pass later-deadline tests affect their production component.</p></div>
+        <button className="button secondary" disabled={busy} onClick={()=>act('/football/train')}>Update football models</button></div>
+      {availability && <div className="data-details">
+        <div><span>Recovery transitions</span><b>{availability.recovery.promoted?'Accepted':'Statistical fallback'}</b></div>
+        <div><span>Joint double-gameweek rotation</span><b>{availability.rotation.joint_validation?.promoted?'Accepted':'Challenger'}</b></div>
+        <div><span>Joint rotation test pairs / deadlines</span><b>{availability.rotation.joint_validation?.test_pairs??0} / {availability.rotation.joint_validation?.test_deadlines??0}</b></div>
+      </div>}
+      {shots && <p>{shots.matched.toLocaleString()} matched shot/role observations; {shots.coverage.current_players} current-season players. {shots.errors.length>0?'Source refresh failed; last verified observations retained.':''} Unresolved identities are excluded.</p>}
+      {data.attack_model && <p>Goal channels: {Object.entries(data.attack_model.metrics).map(([k,v])=>`${k.replaceAll('_',' ')} (${v.promoted?'accepted':'prior retained'})`).join(' · ')}. FPL assist attribution: {data.attack_model.assist.promoted?'accepted':'prior retained'}.</p>}
+      {data.score_process_model && <p>Team strength challenger: {data.score_process_model.strength?.promoted?'accepted':'baseline retained'}. Score dependence: {data.score_process_model.score_dependence.adopted.replaceAll('_',' ')}. Extra posterior scale: {data.score_process_model.parameter_uncertainty.adopted_scale}.</p>}
+      {data.temporal_model && <p>Attacking-history decay: {data.temporal_model.adopted.decay}. Finishing adjustment: {data.temporal_model.adopted.finishing_strength===null?'disabled; benefit not established':`shrinkage ${data.temporal_model.adopted.finishing_strength}`}. Goals minus xG is a diagnostic, not an identified measure of luck.</p>}
+      {data.odds_refresh && <p>Optional odds: {data.odds_refresh.status}. {data.odds_model?.reason}</p>}
+      {!!bans?.length && <p>Squad discipline: {bans.map(r=>`${name(r.player_id)}: ${r.cautions_range[0]===r.cautions_range[1]?r.cautions:r.cautions_range.join('–')} cautions${r.fixture_ids.some(f=>future.has(f))?', published/inferred upcoming ban':''}`).join('; ')}.</p>}
+    </section>
+    <section className="panel">
+      <div className="section-title"><div><h3>GW1–GW8 weekly teams</h3><p>Independent £100m teams. Each week refits using earlier completed results.</p></div>
+        <button className="button secondary" disabled={busy} onClick={()=>act('/replay/weekly')}>Run weekly replay</button></div>
+      {data.weekly_replay ? <>
+        <p>{data.weekly_replay.learning}</p>
+        <div className="table-scroll"><table><thead><tr><th>GW</th><th>Forecast</th><th>Actual points</th><th>Hindsight diagnostic</th><th>Squad solve gap</th></tr></thead><tbody>
+          {data.weekly_replay.weeks.map(w=><tr key={w.event}><td>{w.event}</td><td>{w.forecast_mean.toFixed(1)}</td><td>{w.actual_points}</td><td>{w.hindsight_points}</td><td>{w.solver.gap===null?'Bound unavailable':percent(w.solver.gap)}</td></tr>)}
+        </tbody></table></div>
+        <p>Total actual points: <b>{data.weekly_replay.total_points}</b>. Reconstructed historical experiment; these are separate weekly squads, not a continuous account with free transfers.</p>
+        <a href="/api/replay/weekly" download="weekly-replay.json">Download teams, captaincy, bench and cutoff proofs</a>
+      </>:<p>No completed weekly replay is saved yet.</p>}
+    </section>
+  </>;
 }

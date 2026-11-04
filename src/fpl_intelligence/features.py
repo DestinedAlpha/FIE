@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-from datetime import datetime
+from datetime import datetime, timezone
 
 import duckdb
 import numpy as np
@@ -42,12 +42,20 @@ def number(row: dict, key: str, default=0.0) -> float:
 
 def histories(store: Store, players: dict[int, Player], cutoff: str | None = None) -> dict[int, list[dict]]:
     result = {}
-    for identity in players:
+    for identity, player in players.items():
         try:
             body, _ = store.latest(f"history_{identity}", cutoff=cutoff)
-            result[identity] = sorted(
-                body["history"], key=lambda r: (r.get("kickoff_time") or "", r["fixture"])
-            )
+            year = int(player.season[:4])
+            start = datetime(year, 7, 1, tzinfo=timezone.utc)
+            stop = datetime(year + 1, 7, 1, tzinfo=timezone.utc)
+            valid = []
+            for row in body["history"]:
+                if not row.get("kickoff_time") or row.get("element", identity) != identity:
+                    continue
+                kickoff = datetime.fromisoformat(row["kickoff_time"].replace("Z", "+00:00"))
+                if start <= kickoff < stop:
+                    valid.append(row)
+            result[identity] = sorted(valid, key=lambda r: (r["kickoff_time"], r["fixture"]))
         except ValueError:
             result[identity] = []
     return result

@@ -1,9 +1,12 @@
 {
-  "at": "2026-10-29T16:03:37.327348+00:00",
+  "at": "2026-11-04T09:55:14.999423+00:00",
   "version": "fusion-v1",
-  "feature_id": "901a403b6c0fc8e14bad1214d331387a9b349df08061de3bb2a73eff540e7cf2",
-  "compared_decision_model_id": "39840e58f1e3096877578ce293cf817b00a6f88af5052644292eacdd51c8f65c",
+  "feature_id": "5ae94d834d3c29a1f94461f3ef22904190ab112a16e2efc97c7628edcf800b4a",
+  "enrichment_width": 31,
+  "compared_decision_model_id": "5f9c3b848b2a903bdfe17ccc18c9eabaf5d80d8fb937ba1321714782b1a5991a",
+  "reference_decision_model_id": "5f9c3b848b2a903bdfe17ccc18c9eabaf5d80d8fb937ba1321714782b1a5991a",
   "protocol": {
+    "availability": "Reference uses its live published-chance adjustment; all candidates respect the same confirmed zero-availability constraint",
     "test": "Expanding eight-deadline blocks from 2025/26, never shuffled",
     "calibration": "Four immediately earlier deadlines excluded from fitting; neural early stopping and probability calibration share this earlier slice",
     "neural": "Two-layer temporal transformer, hashed official news CNN, numerical/market/workload branches, two-layer masked source attention; minutes, conditional points, starters and component auxiliary heads",
@@ -32,8 +35,8 @@
       "neural": {
         "epochs": 5,
         "selected_epoch": 1,
-        "calibration_rmse": 1.770456075668335,
-        "parameters": 324431
+        "calibration_rmse": 1.7711353302001953,
+        "parameters": 326671
       }
     },
     {
@@ -53,8 +56,8 @@
       "neural": {
         "epochs": 6,
         "selected_epoch": 2,
-        "calibration_rmse": 1.875018835067749,
-        "parameters": 324431
+        "calibration_rmse": 1.8671005964279175,
+        "parameters": 326671
       }
     },
     {
@@ -72,10 +75,10 @@
       "calibration_rows": 3027,
       "test_rows": 6281,
       "neural": {
-        "epochs": 8,
-        "selected_epoch": 4,
-        "calibration_rmse": 2.002936840057373,
-        "parameters": 324431
+        "epochs": 7,
+        "selected_epoch": 3,
+        "calibration_rmse": 1.9987382888793945,
+        "parameters": 326671
       }
     },
     {
@@ -93,10 +96,10 @@
       "calibration_rows": 3196,
       "test_rows": 6473,
       "neural": {
-        "epochs": 13,
-        "selected_epoch": 9,
-        "calibration_rmse": 1.7734659910202026,
-        "parameters": 324431
+        "epochs": 6,
+        "selected_epoch": 2,
+        "calibration_rmse": 1.7769615650177002,
+        "parameters": 326671
       }
     },
     {
@@ -116,8 +119,8 @@
       "neural": {
         "epochs": 9,
         "selected_epoch": 5,
-        "calibration_rmse": 1.8395215272903442,
-        "parameters": 324431
+        "calibration_rmse": 1.8374159336090088,
+        "parameters": 326671
       }
     },
     {
@@ -127,67 +130,68 @@
         "2026/27-GW05",
         "2026/27-GW06",
         "2026/27-GW07",
-        "2026/27-GW08"
+        "2026/27-GW08",
+        "2026/27-GW09"
       ],
       "train_rows": 111024,
       "calibration_rows": 2893,
-      "test_rows": 3969,
+      "test_rows": 4638,
       "neural": {
         "epochs": 12,
         "selected_epoch": 8,
-        "calibration_rmse": 2.0182859897613525,
-        "parameters": 324431
+        "calibration_rmse": 2.0115578174591064,
+        "parameters": 326671
       }
     }
   ],
   "baseline": {
-    "n": 34828,
-    "rmse": 1.9785422820887903,
-    "mae": 1.0382851963654562,
-    "bias": 0.015739509771645666
+    "n": 35497,
+    "rmse": 1.931870802636574,
+    "mae": 0.945570289514698,
+    "bias": -0.08434168344506705
   },
   "regular_starter_baseline": {
-    "n": 8429,
-    "rmse": 3.04984518505546,
-    "mae": 2.293318057577913,
-    "bias": 0.06833202892147452
+    "n": 8606,
+    "rmse": 2.9696538382011735,
+    "mae": 2.122563393883589,
+    "bias": -0.11697456482854449
   },
   "candidates": {
     "tree": {
       "metrics": {
-        "n": 34828,
-        "rmse": 1.9095077788050185,
-        "mae": 0.9595305246191194,
-        "bias": 0.006461301497946039
+        "n": 35497,
+        "rmse": 1.9074425550419805,
+        "mae": 0.9579334557649978,
+        "bias": 0.002190129368143331
       },
       "paired_vs_production_95ci": [
-        -0.08028542747282326,
-        -0.058479025566147085
+        -0.031572363077999425,
+        -0.017032349512846674
       ],
       "regular_starters": {
-        "n": 8429,
-        "rmse": 2.9523045929957363,
-        "mae": 2.1553318014193414,
-        "bias": 0.05474406359973239
+        "n": 8606,
+        "rmse": 2.946154279268113,
+        "mae": 2.1441910768971737,
+        "bias": 0.03607273137069567
       },
       "passed": true
     },
     "network": {
       "metrics": {
-        "n": 34828,
-        "rmse": 1.919499757566526,
-        "mae": 0.9661039460504258,
-        "bias": -0.0092942296809547
+        "n": 35497,
+        "rmse": 1.9177442247287344,
+        "mae": 0.9622199753329708,
+        "bias": -0.018049040307990497
       },
       "paired_vs_production_95ci": [
-        -0.06849882169856328,
-        -0.050066993763627145
+        -0.020493323331335057,
+        -0.00735589220301976
       ],
       "regular_starters": {
-        "n": 8429,
-        "rmse": 2.9615883393829368,
-        "mae": 2.1463232478660075,
-        "bias": -0.008086604275341405
+        "n": 8606,
+        "rmse": 2.950429787290712,
+        "mae": 2.1368942638161976,
+        "bias": -0.0063898629298824025
       },
       "passed": true
     }
@@ -196,8 +200,8 @@
   "promoted": false,
   "source_coverage": {
     "news": 1.0,
-    "expert_lag": 0.03889350728670071,
-    "workload": 0.15928100049495697
+    "expert_lag": 0.04431698367846147,
+    "workload": 0.16334190964698792
   },
   "limits": [
     "Expert inputs cover current season only; no backfilled current-ranked expert cohort",
@@ -205,10 +209,10 @@
     "Reddit leads and current specialist opinions have no validated numerical uplift",
     "This is an architecture comparison, not proof of winning a league or absence of bias"
   ],
-  "directory": "fusion-686c492f8d48fa476ed99143",
-  "production_fit_before": "2026/27-GW05",
-  "production_training_rows": 115225,
-  "production_calibration_rows": 2661,
-  "prediction_path": "data/models/fusion-686c492f8d48fa476ed99143/heldout.parquet",
-  "id": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d"
+  "directory": "fusion-038941068eda952f8330fea6",
+  "production_fit_before": "2026/27-GW06",
+  "production_training_rows": 115884,
+  "production_calibration_rows": 2671,
+  "prediction_path": "data/models/fusion-038941068eda952f8330fea6/heldout.parquet",
+  "id": "b40734f1d5145f36c1ea37144a316069648f2d74537f5cb201f6a8cfe56e4bef"
 }

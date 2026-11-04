@@ -37,17 +37,15 @@ def valid_fixture(row):
 
 
 async def import_workload(store: Store, seasons=("2025-2026", "2026-2027")):
+    from .transport import PublicTransport
+
+    transport = PublicTransport(store)
     base = f"https://api.github.com/repos/{REPO}/"
     async with httpx.AsyncClient(timeout=35, follow_redirects=False) as client:
-        # A single public tree request; user installation needs no GitHub login.
-        response = await client.get(base + "git/trees/main?recursive=1")
-        response.raise_for_status()
-        tree = response.json()
+        commit = (await transport.get(client, base + "commits/main", "workload_commit"))["sha"]
+        tree = await transport.get(client, base + f"git/trees/{commit}?recursive=1", "workload_tree")
         if tree.get("truncated"):
             raise ValueError("Workload tree is incomplete")
-        commit_response = await client.get(base + "commits/main")
-        commit_response.raise_for_status()
-        commit = commit_response.json()["sha"]
         paths = [
             r["path"]
             for r in tree["tree"]
@@ -65,11 +63,10 @@ async def import_workload(store: Store, seasons=("2025-2026", "2026-2027")):
             async with semaphore:
                 url = f"https://raw.githubusercontent.com/{REPO}/{commit}/" + path.replace(" ", "%20")
                 try:
-                    r = await client.get(url)
-                    r.raise_for_status()
-                    if len(r.content) > 8_000_000:
-                        raise ValueError("Workload file exceeds byte budget")
-                    rows = list(csv.DictReader(io.StringIO(r.text)))
+                    text = await transport.get(
+                        client, url, "workload_file", json_body=False, max_bytes=8_000_000
+                    )
+                    rows = list(csv.DictReader(io.StringIO(text)))
                     bodies[path] = rows
                     store.snapshot(
                         "workload_" + __import__("hashlib").sha256(path.encode()).hexdigest()[:20],

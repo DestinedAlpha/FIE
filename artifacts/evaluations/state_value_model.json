@@ -1,6 +1,6 @@
 {
-  "at": "2026-10-30T00:08:51.277829+00:00",
-  "dataset_id": "4e0c1f8029aed5df4b0435c77527e0455da61d854611fb7a892f9ce14c56bb4f",
+  "at": "2026-11-04T14:05:52.462220+00:00",
+  "dataset_id": "2b019ac7d7364b2224aa75c4ae0acd410b3862a932cd3f6f8901a60c62400967",
   "features": [
     "squad_future_points",
     "bank_millions",
@@ -12,12 +12,12 @@
   ],
   "feature_bounds": [
     [
-      100.25098769730837,
-      178.5467784821011
+      100.5080183298182,
+      174.99025663837344
     ],
     [
       0.0,
-      10.3
+      13.6
     ],
     [
       1.0,
@@ -41,36 +41,36 @@
     ]
   ],
   "policy_review": {
-    "accounts": 144,
-    "mean_gain": 0.8680555555555556,
+    "accounts": 312,
+    "mean_gain": 0.5705128205128205,
     "block_gain_95ci": [
-      -0.5833333333333335,
-      2.638888888888889
+      -1.484134615384616,
+      2.692788461538459
     ],
     "passed": false
   },
-  "intercept": 106.85005560234181,
+  "intercept": 113.76130074641463,
   "coefficients": [
-    0.3318637240825914,
-    2.259951178941938e-20,
-    0.12738908705518112,
-    1.3879658181419612,
-    1.5146129380243427e-28,
-    1.75626772482044,
-    3.9663706739511233
+    0.2861393447337329,
+    6.2990920504939e-22,
+    8.67816456993837e-29,
+    4.013215079117339,
+    5e-324,
+    1.9626961448583506,
+    5.413819362138221
   ],
   "ridge": 20,
-  "rmse": 25.46272700377763,
-  "baseline_rmse": 26.241663591458753,
+  "rmse": 26.64296926994297,
+  "baseline_rmse": 26.975674443509345,
   "paired_rmse_95ci": [
-    -1.0071387973745523,
-    -0.5684316399318241
+    -0.8920091537422346,
+    0.1075419861256252
   ],
   "promoted": false,
-  "training_rows": 1787,
-  "test_rows": 1486,
+  "training_rows": 3669,
+  "test_rows": 3175,
   "protocol": "Nonnegative regularized continuation-value coefficients; fit earlier labels, select ridge on calibration, report untouched later-deadline block interval",
   "baseline": "Fixed 0.1 squad future points with training-only fitted intercept; bank, FT and unused chips zero",
   "scope": "Learned four-week continuation under the explicitly replayed future policy; intercept cancels within a fixed planning horizon",
-  "id": "88397178a9dc91b08bedafbe6f08a00e1a086192bb0ac38cb1960029500841b3"
+  "id": "0280a77c3da055823169e4e2abc7dc0e91a79969a6c01b21116b9db2c29d6ea3"
 }

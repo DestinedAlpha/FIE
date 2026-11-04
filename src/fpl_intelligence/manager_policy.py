@@ -303,14 +303,20 @@ def train_manager_policy(store):
     return result
 
 
-def policy_models(store):
-    spec = store.get("manager_policy")
-    models = {}
+def policy_models(store, forecast=None):
+    spec = store.get("manager_policy", (forecast or {}).get("manager_policy_id"))
+    models: dict = {}
     for name, item in spec["models"].items():
         path = store.artifact_path(item["path"])
         if hashlib.sha256(path.read_bytes()).hexdigest() != item["hash"]:
             raise ValueError("Manager policy checksum mismatch")
         models[name] = lgb.Booster(model_file=str(path))
+    if forecast is not None:
+        from .fusion import forecast_sources
+
+        predictions = forecast_sources(store, forecast)
+        models["__point_forecasts"] = {(r["event"], r["player_id"]): r for r in predictions["predictions"]}
+        models["__fusion_forecast_id"] = predictions["id"]
     return spec, models
 
 
@@ -318,9 +324,21 @@ def action_preferences(store, state, players, means, models=None):
     spec, bundle = models or policy_models(store)
     owned = {r.player_id for r in state.lots}
     packets = {p: q.raw for p, q in players.items()}
-    previous: list[dict] = []
+    record = bundle.get("__record", {})
+    chips = {r["event"]: r["name"] for r in record.get("history", {}).get("chips", [])}
+    roster_event = state.event - 2 if chips.get(state.event - 1) == "freehit" else state.event - 1
+    previous = record.get("picks", {}).get(str(roster_event), {}).get("picks", [])
+    transfers = [r for r in record.get("transfers", []) if state.event - 3 <= r["event"] < state.event]
+    forecasts = bundle.get("__point_forecasts")
+    if forecasts is None:
+        raise ValueError("Manager choice inference requires separate tree/neural forecasts")
     points = {
-        p: {"baseline": means.get(p, 0), "tree": means.get(p, 0), "network": means.get(p, 0)} for p in players
+        p: {
+            "baseline": means.get(p, 0),
+            "tree": forecasts[state.event, p]["tree"],
+            "network": forecasts[state.event, p]["network"],
+        }
+        for p in players
     }
     ids = sorted(players)
     x = np.array(
@@ -330,7 +348,7 @@ def action_preferences(store, state, players, means, models=None):
                 p,
                 owned,
                 previous,
-                [],
+                transfers,
                 state.bank,
                 state.free_transfers,
                 state.event,
@@ -370,6 +388,7 @@ def rollout_action(store, member, state, players, rules, means, history, branch,
                 pass
         try:
             transfers = store.latest(f"transfers_{member['entry']}")[0]
+            transfers = [r for r in transfers if r["event"] < state.event]
         except ValueError:
             transfers = []
         record = {"entry": member["entry"], "history": history, "picks": selections, "transfers": transfers}
@@ -381,7 +400,7 @@ def rollout_action(store, member, state, players, rules, means, history, branch,
     x[1] = state.free_transfers
     x[2] = state.bank / 10
     baseprob = np.zeros(4)
-    behavior = store.get("manager_behavior")
+    behavior = bundle.get("__behavior") or store.get("manager_behavior")
     if not behavior["promoted_over_frequency"]:
         baseprob[:] = behavior["aggregate_probabilities"]
     else:
@@ -468,6 +487,7 @@ def rollout_action(store, member, state, players, rules, means, history, branch,
         "actual_transfers": len(d.action.buy),
         "sampled_chip": label,
         "player_preferences": True,
+        "fusion_forecast_id": bundle.get("__fusion_forecast_id"),
         "solver": d.solver,
         "information": "Released history plus this branch’s earlier actions; future private moves unknown",
     }

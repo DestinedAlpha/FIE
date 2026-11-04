@@ -29,10 +29,13 @@ import {
   money,
   percent,
   Plan,
+  State,
   position,
 } from "./types";
 import "./style.css";
+import { transferPairs } from "./transfers";
 import {
+  FootballEvidence,
   ResearchControls,
   SourceCoverage,
   ManagerSignals,
@@ -150,8 +153,9 @@ function App() {
   );
   const currentEvent =
     event || data?.market?.events.find((e) => e.is_next)?.id || 9;
-  const plan = viewPlan || data?.plan;
-  const first = plan?.ledger[0];
+  const requestedPlan = viewPlan || data?.plan;
+  const plan = requestedPlan?.stale ? null : requestedPlan;
+  const first = plan?.stale ? undefined : plan?.ledger[0];
   const deadline = data?.market?.events.find(
     (e) => e.id === currentEvent,
   )?.deadline_time;
@@ -222,6 +226,8 @@ function App() {
     try {
       const state = JSON.parse(stateText);
       state.known_at = new Date().toISOString();
+      state.status = "confirmed";
+      state.lots = state.lots.map((lot: State["lots"][number]) => ({...lot, quote_confirmed: true}));
       if (await action("/state", { state, expected_state_id: data?.state?.id }))
         setEditor(false);
     } catch (e) {
@@ -345,6 +351,7 @@ function App() {
                             ?.sell_price ?? p.price)
                         : p.price,
                     )}
+                    {sellQuotes && data?.state?.lots.find(l => l.player_id === p.id)?.quote_confirmed === false && <small>Confirm sell price</small>}
                   </td>
                   <td>
                     {fixtures
@@ -530,7 +537,7 @@ function App() {
               Calculating in the local engine. You can keep exploring.
             </div>
           )}
-          {plan?.stale && (
+          {requestedPlan?.stale && (
             <div className="message">
               This plan uses an older account, forecast or market version.
               Recalculate before acting.
@@ -636,7 +643,7 @@ function App() {
                       {first ? (
                         <div className="transfer-list">
                           {first.buy.length ? (
-                            first.buy.map((b, i) => (
+                            transferPairs(first, players).map(({ sale, buy: b }) => (
                               <div className="transfer-pair" key={b.player_id}>
                                 <div>
                                   <small>
@@ -645,9 +652,9 @@ function App() {
                                       : "TRANSFER OUT"}
                                   </small>
                                   <strong>
-                                    {name(first.sell[i].player_id)}
+                                    {name(sale.player_id)}
                                   </strong>
-                                  <span>{money(first.sell[i].units)}</span>
+                                  <span>{money(sale.units)}</span>
                                 </div>
                                 <ArrowRight size={20} />
                                 <div>
@@ -894,6 +901,7 @@ function App() {
                           {data.state?.lots.map((l) => (
                             <option key={l.player_id} value={l.player_id}>
                               {name(l.player_id)} · {money(l.sell_price)}
+                              {l.quote_confirmed === false ? " — confirm price" : ""}
                             </option>
                           ))}
                         </select>
@@ -1045,9 +1053,11 @@ function App() {
                             Expected net points
                           </option>
                           <option value="beat_both">Beat both rivals</option>
+                          <option value="top_one_percent">Top 1% rank scenarios</option>
+                          <option value="cvar">Protect worst 10% of outcomes</option>
                         </select>
                       </label>
-                      {objective === "beat_both" && (
+                      {objective !== "expected_points" && (
                         <label>
                           Points sacrifice budget
                           <input
@@ -1119,9 +1129,9 @@ function App() {
                                 </td>
                                 <td>
                                   {r.buy.length
-                                    ? r.buy.map((b, i) => (
+                                    ? transferPairs(r, players).map(({ sale, buy: b }) => (
                                         <div key={b.player_id}>
-                                          {name(r.sell[i].player_id)} →{" "}
+                                          {name(sale.player_id)} →{" "}
                                           <b>{name(b.player_id)}</b>
                                         </div>
                                       ))
@@ -1377,7 +1387,7 @@ function App() {
                       data.evidence.map((c) => (
                         <article className="claim" key={c.id}>
                           <div>
-                            {pill(c.status)}
+                            {pill(new Date(c.expires_at).getTime() <= Date.now() ? "Expired" : c.status)}
                             <small>
                               {name(c.player_id)} ·{" "}
                               {new Date(c.known_at).toLocaleDateString()}
@@ -1512,6 +1522,7 @@ function App() {
               )}
               {tab === "Model & data" && (
                 <>
+                  <FootballEvidence data={data} busy={busy} act={action} />
                   <DecisionEvidence data={data} busy={busy} act={action} />
                   <StrategyLab data={data} busy={busy} act={action} />
                   <TransferLearning data={data} busy={busy} act={action} />
@@ -1663,8 +1674,8 @@ function App() {
             </div>
             <p>
               Update all 15 players, bank, free transfers and exact sell quotes
-              from your current account. Set status to confirmed only after
-              checking these values. Purchase prices may remain null.
+              from your current account. Saving confirms these values as your current
+              account and preserves them during public-data refreshes. Purchase prices may remain null.
             </p>
             {error && (
               <div role="alert" className="message error">

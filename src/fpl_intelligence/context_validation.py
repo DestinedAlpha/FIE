@@ -23,6 +23,7 @@ def evaluate_context(store):
         arrays["workload"],
         arrays["text"],
         arrays["sequence"],
+        enrichment=arrays.get("enrichment"),
     )
     history = np.column_stack([arrays["tab"], arrays["sequence"][:, :, :16].reshape(len(meta), -1)])
     official = x.copy()

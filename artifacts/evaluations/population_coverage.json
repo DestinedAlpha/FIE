@@ -1,19 +1,14 @@
 {
-  "at": "2026-10-29T23:54:38.946468+00:00",
-  "market_id": "2b8b4f023f58c23011f8454a3723ca1daf75149d7af162748600c9795a6b33ef",
+  "at": "2026-11-04T13:37:20.323922+00:00",
+  "market_id": "170668223cf726bc1816292633c333b1f1d41c86fa1d1cb57ed2a15151f22dcd",
   "season": "2026/27",
-  "released_event": 8,
-  "total_players": 11199248,
+  "released_event": 9,
+  "total_players": 11234502,
   "per_stratum": 16,
-  "misses": [
-    {
-      "entry": 11110929,
-      "reason": "Incomplete history/transfers/picks"
-    }
-  ],
-  "retrieved": 111,
+  "misses": [],
+  "retrieved": 112,
   "requested": 112,
   "selection": "Seeded uniform rank targets within equal-width substrata of the actual overall standings",
   "frame": "Registered current overall population, including inactive entries; no top-cohort claim of representativeness",
-  "id": "ecb688a2960f0518b801f2004d294d8983c326467fdc23bab7ffcb00985d6644"
+  "id": "929654db6a482699625e1a8c45901a2d62fc1515ea0b517d5cc37399e4fb2859"
 }

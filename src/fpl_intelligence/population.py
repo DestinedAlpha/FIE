@@ -182,14 +182,22 @@ def evaluate_population(store, plan_id=None):
             break
     for style in ("hold", "learned0"):
         outcomes = []
+        policies = []
         if style in cached:
             outcomes = cached[style]
             print("Reused frozen population policy worlds", style, flush=True)
         for i, member in enumerate(sample["members"] if style not in cached else []):
-            policy = rival_policy(store, member, league, forecast, plan["end_event"], style)
-            outcomes.append(member["points"] + score_plan(store, policy, forecast))
+            policy = rival_policy(store, member, league, forecast, plan["end_event"], style, score=False)
+            policies.append(policy)
             if (i + 1) % 16 == 0:
                 print("Population policy", style, i + 1, "/", sample["retrieved"], flush=True)
+        if policies:
+            from .simulation import score_plans
+
+            outcomes = [
+                member["points"] + scores
+                for member, scores in zip(sample["members"], score_plans(store, policies, forecast))
+            ]
         points = np.asarray(outcomes)
         cached[style] = points
         strict = (points > own[None, :]).astype(float)
@@ -310,3 +318,52 @@ def fit_population_activity(store):
     }
     result["id"] = store.put("population_activity", result)
     return result
+
+
+def population_frontier(store, plans, forecast):
+    """Compare policies against the same rank-stratified population worlds."""
+    from .simulation import score_plans
+
+    # This builds or verifies the common population cache once, with actual
+    # coverage checks. It does not select a plan as a side effect.
+    analysis = evaluate_population(store, plans[0]["id"])
+    saved = store.get("population_worlds", analysis["population_worlds_id"])
+    import hashlib
+
+    path = store.artifact_path(saved["path"])
+    if hashlib.sha256(path.read_bytes()).hexdigest() != saved["hash"]:
+        raise ValueError("Population frontier checksum mismatch")
+    sample = store.get("population_sample", analysis["sample_id"])
+    weights = []
+    for member in sample["members"]:
+        key = tuple(member["stratum"])
+        n = sum(tuple(m["stratum"]) == key for m in sample["members"])
+        weights.append((key[1] - key[0] + 1) / n)
+    rows = []
+    with np.load(path, allow_pickle=False) as worlds:
+        for plan, scores in zip(plans, score_plans(store, plans, forecast)):
+            own = store.get("state", plan["state_id"])["points"] + scores
+            probabilities = {}
+            for style in worlds.files:
+                rivals = worlds[style]
+                with threadpool_limits(limits=1):
+                    conservative_rank = 1 + np.asarray(weights) @ (rivals >= own[None, :])
+                probabilities[style] = float(np.mean(conservative_rank <= 0.01 * sample["total_players"]))
+            rows.append(
+                {
+                    "plan_id": plan["id"],
+                    "expected_net_points": float(scores.mean()),
+                    "top_one_percent_probability": min(probabilities.values()),
+                    "scenarios": probabilities,
+                }
+            )
+    report = {
+        "at": now(),
+        "forecast_id": forecast["id"],
+        "population_worlds_id": saved["id"],
+        "sample_id": sample["id"],
+        "candidates": rows,
+        "scope": "Worst declared sampled-policy top-1% probability among feasible candidates; conditional rank scenarios, not a guaranteed or globally optimized final rank",
+    }
+    report["id"] = store.put("population_frontier", report)
+    return report

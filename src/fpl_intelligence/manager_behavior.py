@@ -377,14 +377,19 @@ def train_behavior(store: Store):
     return result
 
 
-def rival_count_probabilities(store, entry):
+def rival_count_probabilities(store, entry, spec=None):
     import hashlib
 
-    spec = store.get("manager_behavior")
+    spec = spec or store.get("manager_behavior")
     for row in spec["predictions"]:
         if row["entry"] == entry:
             return row["probabilities"]
     history, _ = store.latest(f"entry_history_{entry}")
+    history = {
+        **history,
+        "current": [r for r in history["current"] if r["event"] < spec["event"]],
+        "chips": [r for r in history["chips"] if r["event"] < spec["event"]],
+    }
     selections = {}
     for event in sorted(r["event"] for r in history["current"])[-2:]:
         for source in (f"picks_{entry}_{event}", f"topk_picks_{entry}_{event}"):
@@ -397,6 +402,7 @@ def rival_count_probabilities(store, entry):
         transfers = store.latest(f"transfers_{entry}")[0]
     except ValueError:
         transfers = []
+    transfers = [r for r in transfers if r["event"] < spec["event"]]
     rows = behavior_rows(
         {"members": [{"entry": entry, "history": history, "picks": selections, "transfers": transfers}]},
         context_packets(store),

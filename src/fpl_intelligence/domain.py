@@ -37,6 +37,7 @@ class Lot(Strict):
     sell_price: int = Field(ge=0)
     quote_market_price: int = Field(ge=0)
     provenance: str = "manual"
+    quote_confirmed: bool = True
 
     @model_validator(mode="after")
     def feasible_quote(self):
@@ -113,8 +114,10 @@ class OptimizeRequest(Strict):
     forecast_id: str
     end_event: int = Field(ge=1, le=38)
     time_limit: float = Field(default=30, ge=1, le=300)
-    objective: Literal["expected_points", "beat_both"] = "expected_points"
+    relative_gap: float = Field(default=0.001, ge=0, le=0.1)
+    objective: Literal["expected_points", "beat_both", "top_one_percent", "cvar"] = "expected_points"
     sacrifice_budget: float = Field(default=5, ge=0, le=100)
+    tail_fraction: float = Field(default=0.1, gt=0, le=1)
     chips: dict[int, Chip] = Field(default_factory=dict)
     max_transfers: int = Field(default=15, ge=0, le=15)
     first_week_hit_budget: int | None = Field(default=None, ge=0, le=60)

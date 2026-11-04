@@ -6,6 +6,7 @@ import asyncio
 from datetime import datetime, timezone
 from pathlib import Path
 
+from .account_sync import state_lock
 from .storage import Store, now
 
 
@@ -39,6 +40,7 @@ def full_training(store: Store, samples=24, epochs=20, refresh=False):
         asyncio.run(Official(store).ingest())
         asyncio.run(refresh_sources(store))
     record("context", asyncio.run(import_context(store)))
+    record("football_models", football_training(store, refresh))
     record("reference", train_decisions(store, False))
     record("source_fusion", train_fusion(store, epochs))
     record("fusion_review", review_fusion(store))
@@ -56,18 +58,22 @@ def full_training(store: Store, samples=24, epochs=20, refresh=False):
     record("evolving_episodes", evolve(store, samples, max_transfers=15))
     record("decision_learning", train_decision_models(store))
     state = store.get("state")
-    current_forecast = forecast(store, state["event"], 38, 4000)
+    current_forecast = forecast(store, state["event"], 38, 20000)
     record("forecast", current_forecast)
     from .optimization import optimize
 
     end = 19 if state["event"] <= 19 else 38
 
     def select(plan_id):
-        if store.get("state")["id"] != state["id"] or store.get("forecast")["id"] != current_forecast["id"]:
-            raise ValueError(
-                "Account or forecast changed during training; completed plans retained as analyses"
-            )
-        store.put("selected_plan", {"plan_id": plan_id, "at": now()})
+        with state_lock:
+            if (
+                store.get("state")["id"] != state["id"]
+                or store.get("forecast")["id"] != current_forecast["id"]
+            ):
+                raise ValueError(
+                    "Account or forecast changed during training; completed plans retained as analyses"
+                )
+            store.put("selected_plan", {"plan_id": plan_id, "at": now()})
 
     baseline = optimize(store, state["id"], current_forecast["id"], end, 60, use_decision_critic=False)
     select(baseline["id"])
@@ -81,6 +87,16 @@ def full_training(store: Store, samples=24, epochs=20, refresh=False):
     record("frontier", refine_frontier(store))
     if end - state["event"] > 3:
         record("horizon_consistency", validate_horizons(store))
+    from .objectives import choose_recommendation
+
+    selected, selection = choose_recommendation(
+        store, [store.get("plan", store.get("selected_plan")["plan_id"])], current_forecast
+    )
+    select(selected["id"])
+    record("final_selection", selection)
+    from .context import analyze_evidence
+
+    record("evidence_impact", analyze_evidence(store, selected["id"]))
     record("timing", timing_analysis(store))
     record("football_world_comparison", compare_football_worlds(store))
     record("population_sample", asyncio.run(collect_population(store)))
@@ -118,6 +134,9 @@ def full_training(store: Store, samples=24, epochs=20, refresh=False):
             ),
         )
     export(store, plan, Path("artifacts/runtime/report"))
+    from .replay import run_replay
+
+    record("weekly_replay", run_replay(store))
     result = {
         "at": now(),
         "stages": stages,
@@ -136,8 +155,9 @@ def refresh_cycle(store: Store):
     from .simulation import forecast
 
     previous = store.get("market")
+    original_state = store.get("state")
     checked = {e["id"] for e in previous["events"] if e.get("data_checked")}
-    asyncio.run(Official(store).ingest(histories=False))
+    asyncio.run(Official(store).ingest(entry=original_state.get("entry_id"), histories=False))
     market = store.get("market")
     new_finalized = checked != {e["id"] for e in market["events"] if e.get("data_checked")}
     full_refreshes = [store.get("ingestion", r["id"]) for r in store.list("ingestion", 100)]
@@ -165,36 +185,115 @@ def refresh_cycle(store: Store):
         asyncio.run(Official(store).ingest(histories=True))
         market = store.get("market")
         changed_labels = before_histories != history_hashes()
-    if new_finalized or changed_labels:
+    active = store.get("decision_model") if store.list("decision_model", 1) else {}
+    represented = max(
+        (r["event"] for r in active.get("predictions", []) if r["season"] == market.get("season")), default=0
+    )
+    finalized = max((e["id"] for e in market["events"] if e.get("data_checked")), default=0)
+    needs_refit = bool(active) and represented < finalized
+    if new_finalized or changed_labels or needs_refit:
         from .prospective import score_frozen_decisions
 
         score_frozen_decisions(store)
-        train_decisions(store, False)
+        if active.get("fusion_model_id"):
+            from .fusion import refit_active_fusion
+
+            refit_active_fusion(store)
+        else:
+            train_decisions(store, False)
+    from .account_sync import next_event, reconcile_public
+
+    synchronization = reconcile_public(store, original_state["id"])
     state = store.get("state")
-    event = next((e["id"] for e in market["events"] if e.get("is_next")), 38)
+    event = next_event(market)
+    if event is None:
+        return {"at": now(), "status": "Season finished", "account_sync": synchronization}
     if state["event"] != event:
         return {
             "at": now(),
             "status": "Account reconciliation required",
             "market_id": market["id"],
-            "account_changed": False,
+            "account_sync": synchronization,
+            "account_changed": synchronization.get("account_changed", False),
         }
     result = forecast(store, event, 38, 4000)
     try:
         plan = optimize(store, state["id"], result["id"], 19 if event <= 19 else 38, 60)
-        if store.get("state")["id"] == state["id"] and store.get("forecast")["id"] == result["id"]:
-            store.put("selected_plan", {"plan_id": plan["id"], "at": now()})
+        from .objectives import choose_recommendation
+
+        plan, _ = choose_recommendation(store, [plan], result)
+        with state_lock:
+            if store.get("state")["id"] == state["id"] and store.get("forecast")["id"] == result["id"]:
+                store.put("selected_plan", {"plan_id": plan["id"], "at": now()})
     except ValueError as error:
+        from .optimization import hold_plan
+
+        fallback = hold_plan(store, state["id"], result["id"], 19 if event <= 19 else 38)
+        with state_lock:
+            if store.get("state")["id"] == state["id"] and store.get("forecast")["id"] == result["id"]:
+                store.put("selected_plan", {"plan_id": fallback["id"], "at": now()})
         return {
             "at": now(),
-            "status": "Updated forecast; confirmed selling quotes required",
+            "status": "Updated forecast; planning requires review",
             "error": str(error),
-            "account_changed": False,
+            "plan_id": fallback["id"],
+            "forecast_id": result["id"],
+            "fallback": "Validated hold policy retained; inspect the reported planning error before acting",
+            "account_sync": synchronization,
+            "account_changed": synchronization.get("account_changed", False),
         }
     return {
         "at": now(),
         "status": "Refreshed and recomputed",
         "forecast_id": result["id"],
         "plan_id": plan["id"],
-        "account_changed": False,
+        "account_sync": synchronization,
+        "account_changed": synchronization.get("account_changed", False),
     }
+
+
+def football_training(store, refresh=False):
+    """Connect collected event facts to the models that consume them."""
+    import httpx
+
+    from .attack import train_attack
+    from .availability import train_availability
+    from .discipline import build_discipline, collect_discipline_news
+    from .odds import calibrate_odds, collect_odds
+    from .score_process import train_score_process
+    from .shot_data import collect_shots
+    from .temporal_validation import luck_report, validate_temporal
+
+    stages = []
+
+    def record(name, result):
+        stages.append({"stage": name, "artifact_id": result["id"]})
+
+    if refresh or not store.list("shot_archive", 1):
+        record("shots", asyncio.run(collect_shots(store)))
+    if refresh:
+        for name, source in [("discipline_source", collect_discipline_news), ("odds_source", collect_odds)]:
+            try:
+                record(name, asyncio.run(source(store)))
+            except (ValueError, httpx.HTTPError) as error:
+                stages.append(
+                    {
+                        "stage": name,
+                        "status": "Optional source unavailable; retained statistical fallback",
+                        "error": str(error)[:180],
+                    }
+                )
+    record("discipline", build_discipline(store))
+    record("availability", train_availability(store))
+    record("temporal", validate_temporal(store))
+    record("attack", train_attack(store))
+    record("score_process", train_score_process(store))
+    record("market_constraints", calibrate_odds(store))
+    record("luck_diagnostic", luck_report(store))
+    report = {
+        "at": now(),
+        "stages": stages,
+        "scope": "Complete model fits and later-deadline gates; unavailable optional data never becomes a fabricated signal",
+    }
+    report["id"] = store.put("football_training", report)
+    return report

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import threading
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
@@ -17,8 +16,11 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import Field
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
+from .account_sync import state_lock
+from .discipline import BanDecision
 from .domain import Action, OptimizeRequest, Strict, TeamState
 from .ingestion import Official, freshness, load_market, reconcile_seed
+from .odds import OddsObservation
 from .optimization import hold_plan, optimize
 from .research import Belief, Claim, save_claim
 from .rules import Rules, transition, validate_squad
@@ -26,7 +28,6 @@ from .settings import load_environment, provider_configuration, redact
 from .storage import Store, now
 
 executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="fpl-job")
-state_lock = threading.Lock()
 
 
 class ForecastRequest(Strict):
@@ -80,13 +81,22 @@ def create_app(root=None):
         from .scheduling import start_scheduler
 
         stop, thread = start_scheduler(store, launch)
+        if store.list("state", 1) and store.list("market", 1) and store.list("decision_model", 1):
+            from .account_sync import next_event
+
+            saved = store.get("state")
+            upcoming = next_event(store.get("market"))
+            if saved.get("entry_id") and upcoming is not None and saved["event"] != upcoming:
+                from .workflow import refresh_cycle
+
+                launch("startup-account-sync", {}, lambda: refresh_cycle(store))
         try:
             yield
         finally:
             stop.set()
             thread.join(timeout=1)
 
-    app = FastAPI(title="FPL Intelligence", version="0.5.0", lifespan=lifespan)
+    app = FastAPI(title="FPL Intelligence", version="0.6.0", lifespan=lifespan)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
 
     @app.middleware("http")
@@ -123,11 +133,23 @@ def create_app(root=None):
 
     def launch(kind, request, work):
         identity = uuid.uuid4().hex
-        body = {"kind": kind, **request}
+        inputs = {
+            name: store.get(name)["id"]
+            for name in ("state", "market", "forecast", "decision_model")
+            if store.list(name, 1)
+        }
+        body = json.dumps({"kind": kind, **request, "input_versions": inputs}, sort_keys=True)
         with store.db() as db:
+            db.execute("BEGIN IMMEDIATE")
+            pending = db.execute(
+                "SELECT id,status FROM jobs WHERE request=? AND status IN ('queued','running') LIMIT 1",
+                (body,),
+            ).fetchone()
+            if pending:
+                return {"job_id": pending["id"], "status": pending["status"], "reused": True}
             db.execute(
                 "INSERT INTO jobs VALUES(?,?,?,?,?,?,?)",
-                (identity, "queued", now(), now(), json.dumps(body), None, None),
+                (identity, "queued", now(), now(), body, None, None),
             )
 
         def execute():
@@ -152,6 +174,8 @@ def create_app(root=None):
 
     @app.get("/api/health")
     def health():
+        from .transport import request_metrics
+
         with store.db() as db:
             integrity = db.execute("PRAGMA quick_check").fetchone()[0]
             sources = [
@@ -165,6 +189,7 @@ def create_app(root=None):
             "status": "ok" if integrity == "ok" else "degraded",
             "integrity": integrity,
             "sources": sources,
+            "request_metrics_24h": request_metrics(store),
             "quota": quota,
             "at": now(),
             "paid_provider_calls_allowed": False,
@@ -310,6 +335,10 @@ def create_app(root=None):
                     continue
                 if kind == "manager_behavior":
                     artifact = {k: v for k, v in artifact.items() if k not in ("predictions", "models")}
+                if kind == "transfer_policy_model" and artifact.get("horizon_model_id") != (
+                    result["horizon_model"] or {}
+                ).get("id"):
+                    continue
                 if kind == "personalized_policy_analysis" and (
                     artifact.get("state_id") != (result["state"] or {}).get("id")
                     or artifact.get("market_id") != market["id"]
@@ -354,6 +383,18 @@ def create_app(root=None):
                 or (result["forecast"] or {}).get("decision_model_id")
                 != (result["decision_model"] or {}).get("id")
             )
+            from .availability import moment
+
+            plan_deadline = next(
+                (
+                    e.get("deadline_time")
+                    for e in market["events"]
+                    if e["id"] == selected_plan.get("start_event")
+                ),
+                None,
+            )
+            if plan_deadline and moment(plan_deadline) <= moment(now()):
+                selected_plan["stale"] = True
             if selected_plan["stale"]:
                 selected_plan["execution_ready"] = False
             result["plan"] = selected_plan
@@ -369,13 +410,56 @@ def create_app(root=None):
                 result[kind] = None
         try:
             result["rivals"] = store.get("rival_comparison")
-            if result["rivals"].get("forecast_id") != (result["forecast"] or {}).get("id"):
+            if result["rivals"].get("forecast_id") != (result["forecast"] or {}).get("id") or result[
+                "rivals"
+            ].get("starting_points") != (result["state"] or {}).get("points"):
                 result["rivals"] = None
         except ValueError:
             pass
+        for kind in (
+            "availability_model",
+            "attack_model",
+            "score_process_model",
+            "temporal_model",
+            "discipline_report",
+            "odds_refresh",
+            "odds_model",
+            "weekly_replay",
+            "evidence_impact",
+            "policy_selection",
+            "account_sync",
+            "shot_archive",
+        ):
+            try:
+                artifact = store.get(kind)
+                if kind == "discipline_report":
+                    if artifact["market_id"] != market["id"]:
+                        continue
+                    owned = {r["player_id"] for r in (result["state"] or {}).get("lots", [])}
+                    artifact["records"] = [r for r in artifact["records"] if r["player_id"] in owned]
+                if kind == "shot_archive":
+                    artifact = {k: v for k, v in artifact.items() if k != "records"}
+                if kind in ("availability_model", "attack_model"):
+                    artifact = {k: v for k, v in artifact.items() if k != "models"}
+                if kind == "policy_selection" and artifact.get("state_id") != (result["state"] or {}).get(
+                    "id"
+                ):
+                    continue
+                if kind == "evidence_impact" and artifact.get("plan_id") != (result["plan"] or {}).get("id"):
+                    continue
+                if kind == "policy_selection" and artifact.get("forecast_id") != (
+                    result["forecast"] or {}
+                ).get("id"):
+                    continue
+                result[kind] = artifact
+            except ValueError:
+                result[kind] = None
         from .intelligence import source_coverage
 
         result["source_coverage"] = source_coverage(store)
+        from .transport import request_metrics
+
+        result["request_metrics_24h"] = request_metrics(store)
         try:
             fusion = store.get("fusion_model")
             result["fusion_model"] = {
@@ -417,11 +501,20 @@ def create_app(root=None):
             state = store.get("state")
         except ValueError:
             state = {}
-        return launch(
-            "ingest",
-            {},
-            lambda: asyncio.run(Official(store).ingest(entry=state.get("entry_id"), histories=True)),
-        )
+
+        def work():
+            if state and store.list("decision_model", 1) and store.list("market", 1):
+                from .workflow import refresh_cycle
+
+                return refresh_cycle(store)
+            from .account_sync import reconcile_public
+
+            report = asyncio.run(Official(store).ingest(entry=state.get("entry_id"), histories=True))
+            with state_lock:
+                synchronization = reconcile_public(store, state.get("id")) if state else None
+            return {**report, "account_sync": synchronization}
+
+        return launch("ingest", {}, work)
 
     @app.post("/api/forecast")
     def forecasts(request: ForecastRequest):
@@ -522,6 +615,47 @@ def create_app(root=None):
         from .decision_runtime import refine_frontier
 
         return launch("strategy-refine", {}, lambda: refine_frontier(store))
+
+    @app.post("/api/football/train")
+    def football_models():
+        from .workflow import football_training
+
+        return launch("football-models", {}, lambda: football_training(store, True))
+
+    @app.post("/api/evidence/analyze")
+    def evidence_analysis():
+        from .context import analyze_evidence
+
+        return launch(
+            "evidence-impact", {}, lambda: analyze_evidence(store, store.get("selected_plan")["plan_id"])
+        )
+
+    @app.post("/api/replay/weekly")
+    def replay_weekly():
+        from .replay import run_replay
+
+        return launch("weekly-replay", {}, lambda: run_replay(store))
+
+    @app.get("/api/replay/weekly")
+    def replay_weekly_results():
+        return store.get("weekly_replay")
+
+    @app.post("/api/discipline/decisions")
+    def disciplinary_decision(request: BanDecision):
+        from .discipline import build_discipline
+
+        decision = request
+        players, _ = load_market(store)
+        if decision.player_code not in {p.code for p in players.values()}:
+            raise ValueError("Unknown registered player code")
+        identity = store.put("ban_decision", decision.model_dump())
+        return {"decision_id": identity, "report_id": build_discipline(store)["id"]}
+
+    @app.post("/api/odds/import")
+    def odds_import(request: OddsObservation):
+        from .odds import import_market
+
+        return import_market(store, request.model_dump())
 
     @app.post("/api/strategy/train")
     def strategy_train():
@@ -652,38 +786,44 @@ def create_app(root=None):
     @app.post("/api/optimize")
     def optimization(request: OptimizeRequest):
         def work():
+            fixed_chips = request.chips if "chips" in request.model_fields_set else None
             plan = optimize(
                 store,
                 request.state_id,
                 request.forecast_id,
                 request.end_event,
                 request.time_limit,
-                chips=request.chips or None,
+                chips=fixed_chips,
+                max_transfers=request.max_transfers,
+                first_week_hit_budget=request.first_week_hit_budget,
+                relative_gap=request.relative_gap,
+            )
+            hold = hold_plan(store, request.state_id, request.forecast_id, request.end_event)
+            from .objectives import choose_recommendation
+
+            plan, selection = choose_recommendation(
+                store,
+                [plan, hold],
+                store.get("forecast", request.forecast_id),
+                request.objective,
+                request.sacrifice_budget,
+                request.tail_fraction,
+                fixed_chips=fixed_chips,
                 max_transfers=request.max_transfers,
                 first_week_hit_budget=request.first_week_hit_budget,
             )
-            hold = hold_plan(store, request.state_id, request.forecast_id, request.end_event)
-            if request.objective == "beat_both":
-                from .rivals import compare
-
-                state = store.get("state", request.state_id)
-                comparison = compare(
-                    store,
-                    [plan, hold],
-                    request.forecast_id,
-                    store.get("league")["id"],
-                    state["points"],
-                    state["entry_id"],
-                    request.sacrifice_budget,
-                )
-                plan = store.get("plan", comparison["selected_plan_id"])
             with state_lock:
                 current = store.get("state")["id"]
                 current_forecast = store.get("forecast")["id"]
                 stale = current != request.state_id or current_forecast != request.forecast_id
                 if not stale:
                     store.put("selected_plan", {"plan_id": plan["id"], "at": now()})
-            return {"plan_id": plan["id"], "hold_id": hold["id"], "stale": stale}
+            return {
+                "plan_id": plan["id"],
+                "hold_id": hold["id"],
+                "selection_id": selection["id"],
+                "stale": stale,
+            }
 
         return launch("optimize", request.model_dump(), work)
 
@@ -699,10 +839,10 @@ def create_app(root=None):
 
     @app.post("/api/state")
     def save_state(request: StateImport):
-        players, _ = load_market(store)
-        rules = Rules.from_bootstrap(store.latest("bootstrap")[0])
-        validate_squad(request.state, players, rules)
         with state_lock:
+            players, market = load_market(store)
+            rules = Rules.from_bootstrap(store.latest("bootstrap", content_hash=market["source_hash"])[0])
+            validate_squad(request.state, players, rules)
             if request.expected_state_id and store.get("state")["id"] != request.expected_state_id:
                 raise HTTPException(409, "Account changed; reload before saving")
             identity = store.put("state", request.state.model_dump())
@@ -766,9 +906,35 @@ def create_app(root=None):
 
     def read_plan(identity: str):
         try:
-            return store.get("plan", identity)
+            plan = store.get("plan", identity)
         except ValueError:
-            return store.get("scenario_plan", identity)
+            return store.get("scenario_plan", identity) | {"execution_ready": False, "hypothetical": True}
+        from .availability import moment
+
+        try:
+            current_state = store.get("state")
+            current_forecast = store.get("forecast")
+            current_market = store.get("market")
+            deadline = next(
+                (
+                    e.get("deadline_time")
+                    for e in current_market["events"]
+                    if e["id"] == plan.get("start_event")
+                ),
+                None,
+            )
+            plan["stale"] = (
+                plan["state_id"] != current_state["id"]
+                or plan["forecast_id"] != current_forecast["id"]
+                or plan["market_id"] != current_market["id"]
+                or current_forecast.get("decision_model_id") != store.get("decision_model")["id"]
+                or (deadline is not None and moment(deadline) <= moment(now()))
+            )
+        except (ValueError, KeyError):
+            plan["stale"] = True
+        if plan["stale"]:
+            plan["execution_ready"] = False
+        return plan
 
     @app.get("/api/schema")
     def schema():

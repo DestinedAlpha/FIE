@@ -104,16 +104,17 @@ def source_features(context, expert, workload, code, deadline):
     )
 
 
-def tree_matrix(tab, news, market, workload, text, seq):
+def tree_matrix(tab, news, market, workload, text, seq, enrichment=None):
     # Same source information for the boosted-tree challenger, including text
     # hash counts and the complete lagged numerical sequence.
     bag = np.zeros((len(text), 64), dtype=np.float32)
     for i, row in enumerate(text):
         for word in row[row > 0]:
             bag[i, int(word) % 64] += 1 / TEXT_LENGTH
-    return np.concatenate(
-        [tab, news, market, workload, bag, seq[:, :, : len(SEQUENCE_FIELDS)].reshape(len(tab), -1)], axis=1
-    )
+    columns = [tab, news, market, workload, bag, seq[:, :, : len(SEQUENCE_FIELDS)].reshape(len(tab), -1)]
+    if enrichment is not None:
+        columns.append(enrichment)
+    return np.concatenate(columns, axis=1)
 
 
 def build_fusion_data(store: Store):
@@ -121,6 +122,10 @@ def build_fusion_data(store: Store):
     frame = pl.read_parquet(store.artifact_path(base["path"]))
     originals, _meta, _quality = canonical_rows(store)
     mapping = {(r["season"], int(r["element"]), int(r["fixture"])): r for r in originals}
+    from .enrichment import FEATURES as ENRICHMENT_FEATURES
+    from .enrichment import EnrichmentIndex
+
+    enrichment = EnrichmentIndex(store, originals)
     context = load_context(store)
     experts, elite = elite_features(store)
     expert_samples = {}
@@ -148,6 +153,7 @@ def build_fusion_data(store: Store):
             "market",
             "workload",
             "quality",
+            "enrichment",
             "target",
             "base_target",
             "minutes",
@@ -181,6 +187,11 @@ def build_fusion_data(store: Store):
             txt, news, market, load, quality = source_features(
                 packet, expert, work_by_code.get(code, []), code, deadlines[row["season"], row["event"]]
             )
+            enriched = enrichment.vector(
+                code, row["position"], deadlines[row["season"], row["event"]], row["season"], packet
+            )
+            quality = np.append(quality, float(enriched[-2] > 0 or enriched[-1] > 0))
+            arrays["enrichment"].append(enriched)
             quality[0] = bool(mask.any())
             arrays["tab"].append([row[k] for k in NAMES])
             arrays["sequence"].append(seq)
@@ -273,7 +284,8 @@ def build_fusion_data(store: Store):
     metadata.replace(frozen_metadata)
     result = {
         "at": now(),
-        "version": "fusion-inputs-v1",
+        "version": "fusion-inputs-v2",
+        "enrichment_features": ENRICHMENT_FEATURES,
         "rows": len(records),
         "excluded_not_registered_before_deadline": missing,
         "numerical_features": NAMES,
@@ -291,6 +303,7 @@ def build_fusion_data(store: Store):
         "hash": input_hash,
         "metadata_hash": metadata_hash,
         "lineage": {
+            **enrichment.lineage,
             "context_archive": archive["id"],
             "elite_cohort": elite["id"],
             "workload": store.get("workload")["id"],
@@ -308,9 +321,16 @@ def build_fusion_data(store: Store):
     return converted, records, result
 
 
-def live_inputs(store, rows, market, players):
+def live_inputs(store, rows, market, players, feature_id=None):
     """Construct inference tensors using the same transforms as historical fitting."""
+    issued_cutoff = now()
     originals, _, _ = canonical_rows(store)
+    from .enrichment import EnrichmentIndex
+
+    temporal_id = None
+    if feature_id is not None:
+        temporal_id = store.get("fusion_features", feature_id).get("lineage", {}).get("temporal_model")
+    enrichment = EnrichmentIndex(store, originals, temporal_id)
     history = defaultdict(list)
     for original in originals:
         history[player_key(original)].append(original)
@@ -324,7 +344,7 @@ def live_inputs(store, rows, market, players):
     for record in workload:
         # An upstream future fixture erroneously marked finished cannot become a
         # known observation merely because we forecast a distant gameweek.
-        if time_value(record["known_after"]) < time_value(now()):
+        if time_value(record["known_after"]) < time_value(issued_cutoff):
             work_by_code[record["player_code"]].append(record)
     deadlines = {e["id"]: e["deadline_time"] for e in market["events"]}
     next_event = next((e["id"] for e in market["events"] if e.get("is_next")), 38)
@@ -334,7 +354,17 @@ def live_inputs(store, rows, market, players):
     )
     arrays: dict[str, list] = {
         key: []
-        for key in ("tab", "sequence", "sequence_mask", "text", "news", "market", "workload", "quality")
+        for key in (
+            "tab",
+            "sequence",
+            "sequence_mask",
+            "text",
+            "news",
+            "market",
+            "workload",
+            "quality",
+            "enrichment",
+        )
     }
     for row in rows:
         player = players[row["player_id"]]
@@ -349,6 +379,9 @@ def live_inputs(store, rows, market, players):
         txt, news, market_values, load, quality = source_features(
             context, expert, work_by_code.get(player.code, []), player.code, deadlines[row["event"]]
         )
+        enriched = enrichment.vector(player.code, player.position, issued_cutoff, market["season"], context)
+        quality = np.append(quality, float(enriched[-2] > 0 or enriched[-1] > 0))
+        arrays["enrichment"].append(enriched)
         quality[0] = mask.any()
         arrays["tab"].append(row["x"])
         arrays["sequence"].append(seq)

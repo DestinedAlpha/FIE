@@ -13,6 +13,7 @@ from typing import Any
 
 import lightgbm as lgb
 import numpy as np
+from scipy.special import xlogy
 from sklearn.metrics import mean_poisson_deviance
 
 from .decision import NAMES, canonical_rows
@@ -34,6 +35,7 @@ def train_components(store):
         arrays["workload"],
         arrays["text"],
         arrays["sequence"],
+        enrichment=arrays.get("enrichment"),
     )
     group = np.array([r["deadline_group"] for r in metadata])
     groups = sorted(set(group))
@@ -119,7 +121,7 @@ def train_components(store):
     cut = groups[-4]
     train = np.flatnonzero((group < cut) & (minutes > 0))
     cal = np.flatnonzero((group >= cut) & (minutes > 0))
-    directory = store.root / "models" / ("coherent-" + features["id"][:20])
+    directory = store.root / "models" / ("coherent-proper-" + features["id"][:20])
     directory.mkdir(parents=True, exist_ok=True)
     metrics = {}
     for name, k in zip(FIELDS, AUX):
@@ -143,7 +145,7 @@ def train_components(store):
         y = np.array([r["actual"] for r in rows])
         p = np.maximum(1e-5, [r["prediction"] for r in rows])
         b = np.maximum(1e-5, [r["baseline"] for r in rows])
-        loss = (y - p) ** 2 - (y - b) ** 2
+        loss = 2 * (xlogy(y, b / p) + p - b)
         byg = defaultdict(list)
         for r, v in zip(rows, loss):
             byg[r["group"]].append(float(v))
@@ -157,7 +159,7 @@ def train_components(store):
             "rows": len(rows),
             "poisson_deviance": float(mean_poisson_deviance(y, p)),
             "baseline_deviance": float(mean_poisson_deviance(y, b)),
-            "mse_difference_block_95ci": ci,
+            "poisson_difference_block_95ci": ci,
             "calibrated_weight": weight,
             "promoted": bool(ci[1] < 0 and weight > 0),
         }
@@ -181,6 +183,7 @@ def train_components(store):
     report = {
         "at": now(),
         "feature_id": features["id"],
+        "enrichment_width": arrays["enrichment"].shape[1] if "enrichment" in arrays else 0,
         "models": final_models,
         "weights": final_weights,
         "metrics": metrics,
@@ -219,7 +222,7 @@ def component_models(store):
 def live_component_inputs(store, rows, market, players):
     from .fusion_data import live_inputs
 
-    inputs = live_inputs(store, rows, market, players)
+    inputs = live_inputs(store, rows, market, players, store.get("coherent_model")["feature_id"])
     matrix = tree_matrix(
         inputs["tab"],
         inputs["news"],
@@ -227,6 +230,9 @@ def live_component_inputs(store, rows, market, players):
         inputs["workload"],
         inputs["text"],
         inputs["sequence"],
+        enrichment=inputs.get("enrichment")
+        if store.get("coherent_model").get("enrichment_width", 0)
+        else None,
     )
     return matrix
 
@@ -293,6 +299,7 @@ def validate_bonus_model(store):
         arrays["workload"],
         arrays["text"],
         arrays["sequence"],
+        enrichment=arrays.get("enrichment"),
     )
     rows, _, _ = canonical_rows(store)
     lookup = {(r["season"], int(r["element"]), int(r["fixture"])): r.get("bps") for r in rows}

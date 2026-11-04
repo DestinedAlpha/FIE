@@ -20,29 +20,21 @@ PARSER = "official-v1"
 
 class Official:
     def __init__(self, store: Store, concurrency: int = 4):
+        from .transport import PublicTransport
+
         self.store = store
-        self.semaphore = asyncio.Semaphore(concurrency)
+        self.transport = PublicTransport(store, concurrency)
         self.errors: list[dict] = []
 
     async def fetch(self, client: httpx.AsyncClient, path: str, source: str | None = None):
         source = source or path.strip("/").replace("/", "_")
-        async with self.semaphore:
-            for attempt in range(3):
-                try:
-                    response = await client.get(BASE + path)
-                    if response.status_code in (429, 500, 502, 503, 504) and attempt < 2:
-                        retry = response.headers.get("Retry-After", "1")
-                        await asyncio.sleep(min(5, float(retry) if retry.isdigit() else 2**attempt))
-                        continue
-                    response.raise_for_status()
-                    body = response.json()
-                    self.store.snapshot(source, BASE + path, body)
-                    return body
-                except (httpx.HTTPError, ValueError) as exc:
-                    if attempt == 2:
-                        self.errors.append({"source": source, "error": str(exc)[:180], "at": now()})
-                        return None
-                    await asyncio.sleep(2**attempt)
+        try:
+            body = await self.transport.get(client, BASE + path, source)
+            self.store.snapshot(source, BASE + path, body)
+            return body
+        except (httpx.HTTPError, ValueError) as exc:
+            self.errors.append({"source": source, "error": str(exc)[:180], "at": now()})
+            return None
 
     async def ingest(
         self, entry: int | None = None, league: int | None = None, histories: bool = True
@@ -78,10 +70,11 @@ class Official:
                     ]
                 )
                 if current:
-                    tasks.append(
+                    tasks.extend(
                         self.fetch(
-                            client, f"entry/{entry}/event/{current}/picks/", f"picks_{entry}_{current}"
+                            client, f"entry/{entry}/event/{revealed}/picks/", f"picks_{entry}_{revealed}"
                         )
+                        for revealed in range(max(1, current - 1), current + 1)
                     )
             if current:
                 tasks.append(self.fetch(client, f"event/{current}/live/", f"live_{current}"))
@@ -176,7 +169,9 @@ def load_market(store: Store, identity: str | None = None) -> tuple[dict[int, Pl
 
 def alias(value: str) -> str:
     return re.sub(
-        r"[^a-z0-9]", "", unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode().lower()
+        r"[^a-z0-9]",
+        "",
+        unicodedata.normalize("NFKD", value.replace("ß", "ss")).encode("ascii", "ignore").decode().lower(),
     )
 
 

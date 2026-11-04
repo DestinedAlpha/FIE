@@ -1,0 +1,38 @@
+{
+  "at": "2026-11-04T09:03:55.075617+00:00",
+  "matched": 39804,
+  "unresolved": 8443,
+  "errors": [
+    {
+      "season": "2022/23",
+      "error": "JSONDecodeError",
+      "fallback": "Last verified league snapshot"
+    },
+    {
+      "season": "2023/24",
+      "error": "JSONDecodeError",
+      "fallback": "Last verified league snapshot"
+    },
+    {
+      "season": "2024/25",
+      "error": "JSONDecodeError",
+      "fallback": "Last verified league snapshot"
+    },
+    {
+      "season": "2025/26",
+      "error": "JSONDecodeError",
+      "fallback": "Last verified league snapshot"
+    },
+    {
+      "season": "2026/27",
+      "error": "JSONDecodeError",
+      "fallback": "Last verified league snapshot"
+    }
+  ],
+  "source": "https://understat.com",
+  "temporal_track": "Dated match observations imported retrospectively; feature queries require completion strictly before deadline",
+  "coverage": {
+    "current_players": 326
+  },
+  "id": "9f3717f5a189cef2a2828eacbcee64f3fd18b64f0bda4897dc22f9c71042c3e0"
+}

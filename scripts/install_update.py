@@ -47,6 +47,28 @@ RESEARCH_KINDS = {
     "community_lead",
     "fusion_policy_tree",
     "fusion_policy_network",
+    "decision_features",
+    "shot_archive",
+    "shot_refresh",
+    "availability_model",
+    "model_rejection",
+    "temporal_model",
+    "luck_report",
+    "attack_model",
+    "score_process_model",
+    "discipline_refresh",
+    "discipline_report",
+    "ban_window",
+    "ban_decision",
+    "extra_fixture",
+    "official_cautions",
+    "odds_observation",
+    "odds_refresh",
+    "odds_model",
+    "football_training",
+    "replay_inputs",
+    "weekly_replay_decision",
+    "weekly_replay",
 }
 
 
@@ -69,7 +91,7 @@ def merge_research(source: Path, target: Path):
                     return 0
                 if original.execute("PRAGMA quick_check").fetchone()[0] != "ok":
                     raise ValueError("Packaged research database failed integrity verification")
-                for folder in ("raw", "features", "models"):
+                for folder in ("raw", "features", "models", "normalized"):
                     for path in (source / "data" / folder).rglob("*"):
                         if path.is_file():
                             relative = path.relative_to(source / "data")
@@ -98,6 +120,10 @@ def merge_research(source: Path, target: Path):
                             "topk_",
                             "archive_",
                             "history_",
+                            "shot_",
+                            "discipline_",
+                            "odds_",
+                            "replay_",
                         )
                     ):
                         existing.execute(

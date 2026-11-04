@@ -73,7 +73,7 @@ def test_missing_defensive_actions_are_not_observed_zero():
 
 
 def test_accent_alias_and_ambiguous_identity(market):
-    assert alias("Joško Groß") == "joskogro"
+    assert alias("Joško Groß") == "joskogross"
     market[1] = market[1].model_copy(update={"name": "Alex Palmer", "web_name": "Palmer"})
     market[8] = market[8].model_copy(update={"name": "Cole Palmer", "web_name": "Palmer"})
     assert resolve_name("Alex Palmer", 1, market) == 1

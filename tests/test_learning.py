@@ -183,7 +183,7 @@ def test_rival_free_hit_does_not_treat_temporary_picks_as_permanent(tmp_path, ma
     underlying = {"picks": [{"element": p} for p in range(1, 16)], "entry_history": {"bank": 30}}
     temporary = {"picks": [{"element": p} for p in range(16, 31)], "entry_history": {"bank": 99}}
 
-    def latest(source):
+    def latest(source, **kwargs):
         if source == "entry_history_9":
             return history, {}
         if source == "picks_9_7":
@@ -193,10 +193,11 @@ def test_rival_free_hit_does_not_treat_temporary_picks_as_permanent(tmp_path, ma
         return {}, {}
 
     monkeypatch.setattr(store, "latest", latest)
-    monkeypatch.setattr(module, "load_market", lambda *args: (market, {}))
+    monkeypatch.setattr(module, "load_market", lambda *args: (market, {"source_hash": "frozen-bootstrap"}))
     monkeypatch.setattr("fpl_intelligence.rules.Rules.from_bootstrap", lambda *args: rules)
     monkeypatch.setattr(module, "score_plan", lambda *args: np.zeros(100))
     forecast = {
+        "market_id": "frozen-market",
         "season": "2026/27",
         "start_event": 9,
         "players": [{"event": 9, "player_id": p, "mean": 1} for p in market],

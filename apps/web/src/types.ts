@@ -78,6 +78,7 @@ export type State = {
     sell_price: number;
     purchase_price: number | null;
     quote_market_price: number;
+    quote_confirmed?: boolean;
     provenance: string;
   }[];
   used_chips: { chip: string; event: number }[];
@@ -89,9 +90,11 @@ export type State = {
   deadline_lots: unknown;
   deadline_bank: number | null;
 };
-export type Dashboard = {
+export type Dashboard = FootballEvidenceData & {
   refresh_schedule?: { enabled: boolean; interval_minutes: number } | null;
   decision_critic?: {
+    invalid_actions:number;
+    architecture_selected_on_calibration?:string;
     selected: string | null;
     training_rows: number;
     test_rows: number;
@@ -546,3 +549,24 @@ export const money = (units: number) => `£${(units / 10).toFixed(1)}m`;
 export const percent = (value: number) => `${(value * 100).toFixed(0)}%`;
 export const position = (value: number) =>
   ["", "GK", "DEF", "MID", "FWD"][value];
+
+export type ValidationMetric = {
+  promoted: boolean;
+  log_loss?: number;
+  baseline_log_loss?: number;
+  block_difference_95ci?: number[];
+};
+export type FootballEvidenceData = {
+  request_metrics_24h?: {host:string;calls:number;bytes:number;mean_latency_seconds:number;errors:number}[];
+  evidence_impact?: {scope:string;links:{claim_id:string;use:string;assumption?:string}[];branches:{name:string;paired_scenario_delta?:number}[]}|null;
+  availability_model?: { recovery: ValidationMetric; rotation: ValidationMetric & {joint_validation?: ValidationMetric & {test_pairs:number;test_deadlines:number}} } | null;
+  attack_model?: { metrics: Record<string, {promoted:boolean;weight:number}>; assist: {promoted:boolean} } | null;
+  score_process_model?: { strength?:{promoted:boolean};decay:{adopted:number};score_dependence:{adopted:string};parameter_uncertainty:{adopted_scale:number} } | null;
+  temporal_model?: { adopted:{decay:number;finishing_strength:number|null};promoted:boolean;scope:string } | null;
+  odds_refresh?: {status:string;premier_league_rows:number} | null;
+  odds_model?: {promoted:boolean;observations:number;reason:string} | null;
+  shot_archive?: {matched:number;unresolved:number;errors:unknown[];coverage:{current_players:number};temporal_track:string} | null;
+  discipline_report?: {records:{player_id:number;cautions:number;cautions_range:number[];fixture_ids:number[];red_reason_required:boolean}[]} | null;
+  account_sync?: {status:string;revealed_event:number;planning_event:number;limitation:string;at:string} | null;
+  weekly_replay?: {id:string;total_points:number;learning:string;limits:string[];weeks:{event:number;actual_points:number;forecast_mean:number;hindsight_points:number;solver:{gap:number|null};training:{calibration_max_group:string}}[]} | null;
+};

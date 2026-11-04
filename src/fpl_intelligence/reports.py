@@ -19,6 +19,16 @@ def report_forecast(store: Store, plan: dict):
         return store.get("scenario_forecast", plan["forecast_id"])
 
 
+def transfer_pairs(row, players):
+    sales = sorted(row["sell"], key=lambda r: (players[r["player_id"]].position, r["player_id"]))
+    purchases = sorted(row["buy"], key=lambda r: (players[r["player_id"]].position, r["player_id"]))
+    if len(sales) != len(purchases) or any(
+        players[a["player_id"]].position != players[b["player_id"]].position for a, b in zip(sales, purchases)
+    ):
+        raise ValueError("Transfer bundle does not preserve squad positions")
+    return list(zip(sales, purchases))
+
+
 def calendar(store: Store) -> str:
     _, market = load_market(store)
     lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//FPL Intelligence//EN", "CALSCALE:GREGORIAN"]
@@ -38,7 +48,7 @@ def calendar(store: Store) -> str:
 
 
 def render(store: Store, plan: dict) -> str:
-    players, _ = load_market(store, plan.get("market_id"))
+    players, market = load_market(store, plan.get("market_id"))
 
     def name(p):
         return players[p].web_name
@@ -46,7 +56,7 @@ def render(store: Store, plan: dict) -> str:
     rows = plan["ledger"]
     first = rows[0]
     checklist = []
-    for sale, buy in zip(first["sell"], first["buy"]):
+    for sale, buy in transfer_pairs(first, players):
         checklist.append(
             f"- Sell {name(sale['player_id'])} (£{sale['units'] / 10:.1f}m); "
             f"buy {name(buy['player_id'])} (£{buy['units'] / 10:.1f}m)."
@@ -84,7 +94,7 @@ def render(store: Store, plan: dict) -> str:
     for row in rows:
         changes = (
             ", ".join(
-                f"{name(s['player_id'])} → {name(b['player_id'])}" for s, b in zip(row["sell"], row["buy"])
+                f"{name(s['player_id'])} → {name(b['player_id'])}" for s, b in transfer_pairs(row, players)
             )
             or "Roll"
         )
@@ -108,10 +118,63 @@ def render(store: Store, plan: dict) -> str:
     for lot in state["lots"]:
         p = players[lot["player_id"]]
         r = projections[p.id]
+        quote = f"£{lot['sell_price'] / 10:.1f}m" + (
+            " (unconfirmed)" if not lot.get("quote_confirmed", True) else ""
+        )
         lines.append(
-            f"|{p.name}|{POSITIONS[p.position]}|£{lot['sell_price'] / 10:.1f}m|{r['minutes_mean']:.1f}|"
+            f"|{p.name}|{POSITIONS[p.position]}|{quote}|{r['minutes_mean']:.1f}|"
             f"{r['p_start']:.0%}|{r['p_60']:.0%}|{r['mean']:.2f}|{r['components'].get('defcon', 0):.2f}|"
         )
+    lines += [
+        "",
+        "## Underlying output, published duties and fixtures",
+        "",
+        "Official season totals and news from the plan's frozen market snapshot; missing statistics remain unobserved.",
+        "",
+        "|Player|xG|xA|xGC|Published set-piece orders|Official news|Next fixtures|",
+        "|---|---:|---:|---:|---|---|---|",
+    ]
+    clubs = {r["id"]: r["name"] for r in market.get("teams", [])}
+
+    def cell(value):
+        return str(value if value is not None and value != "" else "—").replace("|", "/").replace("\n", " ")
+
+    for lot in state["lots"]:
+        player = players[lot["player_id"]]
+        duties = [
+            label + " " + str(player.raw[key])
+            for label, key in (
+                ("Penalties", "penalties_order"),
+                ("Corners", "corners_and_indirect_freekicks_order"),
+                ("Direct FK", "direct_freekicks_order"),
+            )
+            if player.raw.get(key)
+        ]
+        fixtures = sorted(
+            [
+                f
+                for f in market.get("fixtures", [])
+                if f.get("event") is not None
+                and first["event"] <= f["event"] <= first["event"] + 2
+                and player.team in (f["team_h"], f["team_a"])
+            ],
+            key=lambda f: (f["event"], f.get("kickoff_time") or "", f["id"]),
+        )
+        schedule = [
+            f"GW{f['event']} {clubs.get(f['team_a'] if player.team == f['team_h'] else f['team_h'], '?')} "
+            + ("(H)" if player.team == f["team_h"] else "(A)")
+            for f in fixtures
+        ]
+        values = [
+            player.web_name,
+            player.raw.get("expected_goals"),
+            player.raw.get("expected_assists"),
+            player.raw.get("expected_goals_conceded"),
+            "; ".join(duties),
+            player.news or "No published flag",
+            "; ".join(schedule),
+        ]
+        lines.append("|" + "|".join(cell(v) for v in values) + "|")
     lines += [
         "",
         "## Captain comparison",

@@ -1,8 +1,8 @@
 {
-  "at": "2026-10-29T19:34:52.565811+00:00",
-  "population_id": "35e5d065c3dd9925887ccf5a38bd9237c3f1d4bf690a9e62c280b70a1247d65d",
-  "selection_event": 8,
-  "event": 9,
+  "at": "2026-11-04T09:45:23.450165+00:00",
+  "population_id": "97b87a4d7fa0ae78be4d3d77c33e4018f96ed30dcfe378f9994e940e091d505c",
+  "selection_event": 9,
+  "event": 10,
   "classes": [
     "roll",
     "one",
@@ -12,36 +12,36 @@
   "metrics": {
     "rows": 2000,
     "events": [
-      7,
-      8
+      8,
+      9
     ],
-    "model_log_loss": 1.1435032233364433,
-    "frequency_log_loss": 1.3549758356059176,
-    "model_accuracy": 0.431,
-    "frequency_accuracy": 0.354,
-    "basic_log_loss": 1.1535420747841545,
-    "rich_log_loss": 1.14214805423599
+    "model_log_loss": 1.1824454001268405,
+    "frequency_log_loss": 1.512712374145974,
+    "model_accuracy": 0.405,
+    "frequency_accuracy": 0.308,
+    "basic_log_loss": 1.2374778886374629,
+    "rich_log_loss": 1.1572664528184469
   },
-  "protocol": "Expanding earlier-event fits; choose basic/richer mixture on GW5\u20136, report GW7\u20138 separately; final refit uses all eight released weeks",
+  "protocol": "Expanding earlier-event fits; choose basic/richer mixture on GW6\u20137, report GW8\u20139 separately; final refit uses all 9 released weeks",
   "calibration_loss_by_rich_weight": {
-    "0": 0.953881731942149,
-    "0.25": 0.953255323871205,
-    "0.5": 0.9596482520164241,
-    "0.75": 0.972403508217371,
-    "1": 0.9918112730056412
+    "0": 1.142324347720484,
+    "0.25": 1.1343954569052728,
+    "0.5": 1.1320011722303776,
+    "0.75": 1.1345112875344407,
+    "1": 1.1421726292343886
   },
-  "rich_weight": 0.25,
+  "rich_weight": 0.5,
   "promoted_over_frequency": true,
   "aggregate_probabilities": [
-    0.3683455914062419,
-    0.4202393557643218,
-    0.1689894252842759,
-    0.04242562754516051
+    0.3527612680323578,
+    0.40245672761999335,
+    0.1924949780664101,
+    0.052287026281238755
   ],
   "models": {
     "basic": {
-      "path": "data/models/manager-behavior/basic-58f1e8854232ad36ed64b023.txt",
-      "hash": "58f1e8854232ad36ed64b0230da1aaa802bd6b33f628a6a64d54b45deb4c68c9",
+      "path": "data/models/manager-behavior/basic-ab8b275ca38fe52726f0e17b.txt",
+      "hash": "ab8b275ca38fe52726f0e17b93cc9f22996ce2af3a37371b6de38267c9e3109d",
       "width": 10,
       "classes": [
         0,
@@ -51,8 +51,8 @@
       ]
     },
     "rich": {
-      "path": "data/models/manager-behavior/rich-785bb601dc9fb599925eb824.txt",
-      "hash": "785bb601dc9fb599925eb8244732974bdf66aaee87ed3a95b5ff7e0781d61ac1",
+      "path": "data/models/manager-behavior/rich-50b9779ac3f88210139dfe14.txt",
+      "hash": "50b9779ac3f88210139dfe1440f4530f0bd544287924b5544061733c2bd1af35",
       "width": 23,
       "classes": [
         0,
@@ -73,5 +73,5 @@
     "Transfer-count probabilities and feasible forecast-guided branches cannot reveal private future purchases",
     "Richer source features only affect probabilities to the extent selected on earlier calibration weeks"
   ],
-  "id": "55262d47e657bc9e849f7f3c4938f2eb112a4fdf3bdcdd544c86f6a0f46cf60a"
+  "id": "9b25500da79d4c22654191a2969b0d520d7f2b4d4477d1047ce34b620bb83ac3"
 }

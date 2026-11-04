@@ -60,26 +60,51 @@ def random_state(players, means, rules, event, season, rng):
             or max(Counter(players[p].team for p in owned).values()) > rules.club_limit
         ):
             continue
-        state = TeamState(
-            season=season,
-            event=event,
-            bank=1000 - cost,
-            free_transfers=int(rng.integers(1, 6)),
-            lots=[
-                Lot(
-                    player_id=p,
-                    purchase_price=players[p].price,
-                    sell_price=players[p].price,
-                    quote_market_price=players[p].price,
-                    provenance="Counterfactual account at observed pre-deadline quote; no accrued profit",
-                )
-                for p in owned
-            ],
-            known_at=now(),
-        )
-        validate_squad(state, players, rules)
-        return state
-    raise ValueError("Random legal-team sampler exhausted its budget")
+        break
+    else:
+        # Rejection sampling can become impractical in expensive premium-heavy
+        # markets. A seeded random objective finds a legal full-market sample;
+        # it never observes this deadline's realized points.
+        from .optimization import MIP
+
+        ids = sorted(p for p in players if players[p].selectable)
+        model = MIP()
+        noise = rng.gumbel(size=len(ids))
+        y = {p: model.var(("sample", p), cost=float(v)) for p, v in zip(ids, noise)}
+        model.equal([(y[p], 1) for p in ids], 15)
+        budget_row = len(model.row_lower)
+        model.row([(y[p], players[p].price) for p in ids], lower=950, upper=1000)
+        for pos, count in rules.composition.items():
+            model.equal([(y[p], 1) for p in ids if players[p].position == pos], count)
+        for club in {players[p].team for p in ids}:
+            model.row([(y[p], 1) for p in ids if players[p].team == club], upper=rules.club_limit)
+        try:
+            solution, _ = model.solve(5)
+        except ValueError:
+            # A legal inexpensive market need not contain a £95m squad.
+            model.row_lower[budget_row] = 0
+            solution, _ = model.solve(10)
+        owned = [p for p in ids if solution[y[p]] > 0.5]
+        cost = sum(players[p].price for p in owned)
+    state = TeamState(
+        season=season,
+        event=event,
+        bank=1000 - cost,
+        free_transfers=int(rng.integers(1, rules.ft_cap + 1)),
+        lots=[
+            Lot(
+                player_id=p,
+                purchase_price=players[p].price,
+                sell_price=players[p].price,
+                quote_market_price=players[p].price,
+                provenance="Counterfactual account at observed pre-deadline quote; no accrued profit",
+            )
+            for p in owned
+        ],
+        known_at=now(),
+    )
+    validate_squad(state, players, rules)
+    return state
 
 
 def expected(lineup, means):

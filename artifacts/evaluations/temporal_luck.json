@@ -1,0 +1,100 @@
+{
+  "at": "2026-11-04T09:59:35.962978+00:00",
+  "shot_archive_id": "9f3717f5a189cef2a2828eacbcee64f3fd18b64f0bda4897dc22f9c71042c3e0",
+  "selected_on_calibration": {
+    "decay": 1.0,
+    "finishing_strength": 30.0
+  },
+  "adopted": {
+    "decay": 1.0,
+    "finishing_strength": null
+  },
+  "promoted": false,
+  "decay_validation": {
+    "selected": 0.94,
+    "promoted": false,
+    "block_nll_difference_95ci": [
+      -0.0006190112006832632,
+      0.0007536207451721626
+    ]
+  },
+  "finishing_validation": {
+    "selected": 30.0,
+    "promoted": false,
+    "block_nll_difference_95ci": [
+      -0.0003553110812526244,
+      0.0001471404574999022
+    ]
+  },
+  "test_rows": 11156,
+  "test_nll": 0.3150035676138504,
+  "baseline_nll": 0.3150035676138504,
+  "block_nll_difference_95ci": [
+    0.0,
+    0.0
+  ],
+  "choices": [
+    {
+      "decay": 0.85,
+      "finishing_strength": null,
+      "calibration_nll": 0.31482140710177114
+    },
+    {
+      "decay": 0.85,
+      "finishing_strength": 30.0,
+      "calibration_nll": 0.31483453926385774
+    },
+    {
+      "decay": 0.85,
+      "finishing_strength": 100.0,
+      "calibration_nll": 0.31482136115248094
+    },
+    {
+      "decay": 0.94,
+      "finishing_strength": null,
+      "calibration_nll": 0.3138929548734534
+    },
+    {
+      "decay": 0.94,
+      "finishing_strength": 30.0,
+      "calibration_nll": 0.3138952420878361
+    },
+    {
+      "decay": 0.94,
+      "finishing_strength": 100.0,
+      "calibration_nll": 0.31388454214590583
+    },
+    {
+      "decay": 0.98,
+      "finishing_strength": null,
+      "calibration_nll": 0.31464209321416453
+    },
+    {
+      "decay": 0.98,
+      "finishing_strength": 30.0,
+      "calibration_nll": 0.3145926317436242
+    },
+    {
+      "decay": 0.98,
+      "finishing_strength": 100.0,
+      "calibration_nll": 0.31460941010354276
+    },
+    {
+      "decay": 1.0,
+      "finishing_strength": null,
+      "calibration_nll": 0.3154100185746397
+    },
+    {
+      "decay": 1.0,
+      "finishing_strength": 30.0,
+      "calibration_nll": 0.3153113741293604
+    },
+    {
+      "decay": 1.0,
+      "finishing_strength": 100.0,
+      "calibration_nll": 0.31535311948466044
+    }
+  ],
+  "scope": "Earlier calibration chooses recency/finishing; later goal observations gate application. Goal-minus-xG is not identified as pure luck or used as a points penalty.",
+  "id": "025078e5b28ce375c09b3d29c3d3367b2ec8558cc2ba6d0fdafc6ba1d4e083d3"
+}

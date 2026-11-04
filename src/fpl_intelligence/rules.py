@@ -80,6 +80,8 @@ def selling_price(purchase: int, market: int) -> int:
 
 
 def quote(lot: Lot, market_price: int) -> int:
+    if not lot.quote_confirmed:
+        raise ValueError(f"Player {lot.player_id}: exact selling quote requires confirmation")
     if market_price == lot.quote_market_price:
         return lot.sell_price
     if lot.purchase_price is not None:
@@ -257,8 +259,13 @@ def transition(
     transfers = state.transfers_made + len(action.buy)
     if transfers > rules.transfer_cap and chip not in ("freehit", "wildcard") and not state.initial:
         raise ValueError("Event transfer cap exceeded")
-    sales = [{"player_id": p, "units": quote(owned[p], prices[p])} for p in action.sell]
-    purchases = [{"player_id": p, "units": prices[p]} for p in action.buy]
+    # Sales and purchases form a bundle; position-sort for accurate presentation.
+    sale_ids = sorted(action.sell, key=lambda p: (players[p].position, p))
+    buy_ids = sorted(action.buy, key=lambda p: (players[p].position, p))
+    if [players[p].position for p in sale_ids] != [players[p].position for p in buy_ids]:
+        raise ValueError("Transfer bundle must preserve each squad position")
+    sales = [{"player_id": p, "units": quote(owned[p], prices[p])} for p in sale_ids]
+    purchases = [{"player_id": p, "units": prices[p]} for p in buy_ids]
     bank = state.bank + sum(x["units"] for x in sales) - sum(x["units"] for x in purchases)
     lots = [lot for lot in state.lots if lot.player_id not in action.sell]
     lots.extend(
@@ -405,16 +412,52 @@ def optimize_bench(lineup: Lineup, points, minutes, ids: list[int], players: dic
 
     index = {p: i for i, p in enumerate(ids)}
     relevant = lineup.xi + lineup.bench
+    local_points = points[:, [index[p] for p in relevant]]
+    local_index = {p: i for i, p in enumerate(relevant)}
     patterns, inverse = np.unique(minutes[:, [index[p] for p in relevant]] > 0, axis=0, return_inverse=True)
+    totals = np.column_stack(
+        [
+            np.bincount(inverse, weights=local_points[:, column], minlength=len(patterns))
+            for column in range(len(relevant))
+        ]
+    )
     best = None
     for order in permutations(lineup.bench[1:]):
         candidate = lineup.model_copy(update={"bench": [lineup.bench[0], *order]})
-        score = np.zeros(len(points))
+        total = 0.0
         for group, pattern in enumerate(patterns):
             selected = scoring_ids(candidate, dict(zip(relevant, pattern)), players, rules)
-            mask = inverse == group
-            score[mask] = points[mask][:, [index[p] for p in selected]].sum(axis=1)
-        if best is None or score.mean() > best[0]:
-            best = (score.mean(), candidate)
+            total += totals[group, [local_index[p] for p in selected]].sum()
+        mean = total / len(points)
+        if best is None or mean > best[0]:
+            best = (mean, candidate)
     assert best is not None
-    return best[1]
+    return optimize_captain(best[1], points, minutes, ids)
+
+
+def optimize_captain(lineup, points, minutes, ids):
+    """Exact expected captain/vice fallback among this XI in the same worlds."""
+    import numpy as np
+
+    index = {p: i for i, p in enumerate(ids)}
+    values = points[:, [index[p] for p in lineup.xi]]
+    appeared = minutes[:, [index[p] for p in lineup.xi]] > 0
+    pairs = []
+    for i, captain in enumerate(lineup.xi):
+        for j, vice in enumerate(lineup.xi):
+            if i == j:
+                continue
+            bonus = np.where(appeared[:, i], values[:, i], np.where(appeared[:, j], values[:, j], 0))
+            pairs.append(
+                (
+                    float(bonus.mean()),
+                    captain == lineup.captain,
+                    vice == lineup.vice,
+                    -captain,
+                    -vice,
+                    captain,
+                    vice,
+                )
+            )
+    *_, captain, vice = max(pairs)
+    return lineup.model_copy(update={"captain": captain, "vice": vice})

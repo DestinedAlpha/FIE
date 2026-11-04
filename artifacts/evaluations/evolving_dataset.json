@@ -1,23 +1,24 @@
 {
-  "at": "2026-10-30T00:08:26.139583+00:00",
+  "at": "2026-11-04T14:05:35.917712+00:00",
+  "scoring_version": "all-deadline-chips-v2",
   "lineage": {
     "version": "evolving-decisions-v3",
-    "fusion": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d",
-    "horizon_model": "4013b58ab324478d8405673612a62c1913f3ea5feed814436c1b08629516e618",
-    "context": "97862e1553a8a57571fa42243aa064ec957cfddb200234bfdf5034e4bc3b1ca6",
-    "samples": 12,
+    "fusion": "b40734f1d5145f36c1ea37144a316069648f2d74537f5cb201f6a8cfe56e4bef",
+    "horizon_model": "176714bfdc2a9dc7a7c9324d5da38e7a96904ff40916e9199e6afa2ad3f09e75",
+    "context": "1df4590e82229a8533d5637fd86f4dddb2859d3665e254821ce9fee4ca58bca1",
+    "samples": 24,
     "horizon": 4,
-    "seconds": 0.1,
+    "seconds": 0.15,
     "ordinary_transfer_limit": 15,
     "rules": {
       "2025/26": "84746eaf046dafcbf7da6968d098e2c3bfad17e1c94b840fa0a7cf232a4007a3",
       "2026/27": "91ab0721d9ea33d5b8a2549b56f10315b25447da5358705a37126bbf39040746"
     }
   },
-  "path": "data/features/evolving-d5349b65a7cda55715186a2e-scored-v2.json.gz",
-  "hash": "84a72c3b7bec06e47d1bf8aebb2a361cbc8c62df7d852c9e0f2bdf2bec3edf50",
-  "accounts": 456,
-  "actions": 4632,
+  "path": "data/features/evolving-c2299615d9982a9b46e4dff2-scored-v2.json.gz",
+  "hash": "71fd3044b1df47d6c3e1b615aeb07e874e5b4037776610f81edb93fa64551f42",
+  "accounts": 936,
+  "actions": 9706,
   "horizon": 4,
   "groups": [
     "2025/26-GW02",
@@ -57,12 +58,12 @@
     "2026/27-GW02",
     "2026/27-GW03",
     "2026/27-GW04",
-    "2026/27-GW05"
+    "2026/27-GW05",
+    "2026/27-GW06"
   ],
   "rules": "Each action replays observed prices, lots, bank, FT, autosubs, captain fallback and chips; later policies only use their own deadline forecasts",
   "exclusions": [],
   "oracle": "Independent full-market hindsight additive transfer solve, exact realized rescoring and solver gap retained; not a multiweek clairvoyant optimum",
   "timing": "Only completed checkpoints are reused; hindsight outcomes and oracle choices are labels, never features",
-  "scoring_version": "all-deadline-chips-v2",
-  "id": "4e0c1f8029aed5df4b0435c77527e0455da61d854611fb7a892f9ce14c56bb4f"
+  "id": "2b019ac7d7364b2224aa75c4ae0acd410b3862a932cd3f6f8901a60c62400967"
 }

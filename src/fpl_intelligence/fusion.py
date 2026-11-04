@@ -19,10 +19,10 @@ from .decision import PARAMETERS, minute_band, paired_bootstrap, score_metrics
 from .fusion_data import tree_matrix
 from .storage import Store, atomic_json, digest, now
 
-INPUTS = ("tab", "sequence", "sequence_mask", "text", "news", "market", "workload", "quality")
+INPUTS = ("tab", "sequence", "sequence_mask", "text", "news", "market", "workload", "quality", "enrichment")
 
 
-def architecture():
+def architecture(enrichment_width=0):
     import torch
     from torch import nn
 
@@ -43,7 +43,12 @@ def architecture():
             self.news = nn.Sequential(nn.Linear(77, 128), nn.GELU(), nn.Linear(128, 64))
             self.market = nn.Sequential(nn.Linear(9, 64), nn.GELU(), nn.Linear(64, 64))
             self.workload = nn.Sequential(nn.Linear(7, 64), nn.GELU(), nn.Linear(64, 64))
-            self.source_type = nn.Parameter(torch.randn(1, 5, 64) * 0.02)
+            self.enrichment = (
+                nn.Sequential(nn.Linear(enrichment_width, 64), nn.GELU(), nn.LayerNorm(64))
+                if enrichment_width
+                else None
+            )
+            self.source_type = nn.Parameter(torch.randn(1, 5 + int(bool(enrichment_width)), 64) * 0.02)
             self.fusion = nn.TransformerEncoder(
                 nn.TransformerEncoderLayer(64, 4, 128, 0.15, batch_first=True, norm_first=True),
                 2,
@@ -65,19 +70,16 @@ def architecture():
             text = torch.nn.functional.gelu(self.text_conv(self.words(batch["text"]).transpose(1, 2)))
             token_mask = (batch["text"] != 0).unsqueeze(1)
             text = (text * token_mask).sum(2) / token_mask.sum(2).clamp_min(1)
-            source = (
-                torch.stack(
-                    [
-                        self.numeric(batch["tab"]),
-                        history,
-                        self.news(torch.cat([text, batch["news"]], 1)),
-                        self.market(batch["market"]),
-                        self.workload(batch["workload"]),
-                    ],
-                    1,
-                )
-                + self.source_type
-            )
+            sources = [
+                self.numeric(batch["tab"]),
+                history,
+                self.news(torch.cat([text, batch["news"]], 1)),
+                self.market(batch["market"]),
+                self.workload(batch["workload"]),
+            ]
+            if self.enrichment is not None:
+                sources.append(self.enrichment(batch["enrichment"]))
+            source = torch.stack(sources, 1) + self.source_type
             missing = torch.cat(
                 [torch.zeros(n, 1, dtype=torch.bool, device=source.device), batch["quality"] <= 0], 1
             )
@@ -94,11 +96,12 @@ def architecture():
 
 
 def standardized(arrays, indices, normalization=None):
-    x = {k: arrays[k][indices].copy() for k in INPUTS}
+    x = {k: arrays[k][indices].copy() for k in INPUTS if k in arrays}
     if normalization is None:
         normalization = {
             k: {"mean": x[k].mean(0).tolist(), "scale": np.maximum(x[k].std(0), 0.1).tolist()}
-            for k in ("tab", "news", "market", "workload")
+            for k in ("tab", "news", "market", "workload", "enrichment")
+            if k in x
         }
     for k, stats in normalization.items():
         x[k] = np.clip((x[k] - np.array(stats["mean"])) / np.array(stats["scale"]), -10, 10).astype(
@@ -140,7 +143,7 @@ def fit_neural(arrays, train, calibration, seed=47, epochs=20):
     torch.set_num_threads(3)
     torch.manual_seed(seed)
     torch.use_deterministic_algorithms(True)
-    model = architecture()
+    model = architecture(arrays["enrichment"].shape[1] if "enrichment" in arrays else 0)
     x, normalization = standardized(arrays, train)
     xc, _ = standardized(arrays, calibration, normalization)
     bands = torch.tensor(minute_band(arrays["minutes"][train]))
@@ -310,6 +313,7 @@ def train_fusion(store: Store, epochs=20):
         arrays["workload"],
         arrays["text"],
         arrays["sequence"],
+        enrichment=arrays.get("enrichment"),
     )
     groups = np.array([r["deadline_group"] for r in meta])
     unique = sorted(set(groups))
@@ -317,6 +321,7 @@ def train_fusion(store: Store, epochs=20):
     predictions = []
     folds = []
     protocol = {
+        "availability": "Reference uses its live published-chance adjustment; all candidates respect the same confirmed zero-availability constraint",
         "test": "Expanding eight-deadline blocks from 2025/26, never shuffled",
         "calibration": "Four immediately earlier deadlines excluded from fitting; neural early stopping and probability calibration share this earlier slice",
         "neural": "Two-layer temporal transformer, hashed official news CNN, numerical/market/workload branches, two-layer masked source attention; minutes, conditional points, starters and component auxiliary heads",
@@ -329,8 +334,34 @@ def train_fusion(store: Store, epochs=20):
     }
     # The comparison uses exact old out-of-fold predictions for the same rows.
     old, reference, oldrows = reference_forecasts(store, meta)
+    import inspect
+    import json
+
+    checkpoint_key = digest(
+        {
+            "inputs": features["hash"],
+            "metadata": features.get("metadata_hash"),
+            "protocol": protocol,
+            "reference": reference["id"],
+            "implementation": [
+                inspect.getsource(f)
+                for f in (fit_tree, fit_neural, calibrate, corrected, published_availability)
+            ],
+        }
+    )
+    checkpoint_dir = store.root / "fusion-checkpoints" / checkpoint_key[:24]
+    checkpoint_dir.mkdir(parents=True, exist_ok=True)
     for first in range(0, len(testing), 8):
         block = testing[first : first + 8]
+        checkpoint = checkpoint_dir / (block[0].replace("/", "-") + ".json")
+        if checkpoint.exists():
+            cached = json.loads(checkpoint.read_text())
+            if cached.get("key") == checkpoint_key:
+                predictions.extend(cached["predictions"])
+                folds.append(cached["fold"])
+                print("Restored completed fusion fold", block, flush=True)
+                continue
+        block_start = len(predictions)
         before = [g for g in unique if g < block[0]]
         cut = before[-4]
         train = np.flatnonzero(groups < cut)
@@ -343,6 +374,9 @@ def train_fusion(store: Store, epochs=20):
         nc, no = calibrate(*predict_neural(model, normalization, arrays, cal), arrays, cal)
         np_, ncond, ns = corrected(*predict_neural(model, normalization, arrays, test), nc, no)
         dc = arrays["dc_prior"][test]
+        hard_absent = (arrays["news"][test, 5] > 0) & (arrays["news"][test, 6] == 0)
+        tp[hard_absent] = [1, 0, 0, 0]
+        np_[hard_absent] = [1, 0, 0, 0]
         tmean = (tp * (tc + 2 * dc)).sum(1)
         nmean = (np_ * (ncond + 2 * dc)).sum(1)
         for j, index in enumerate(test):
@@ -355,7 +389,7 @@ def train_fusion(store: Store, epochs=20):
                 | {
                     "actual": float(arrays["target"][index]),
                     "minutes": float(arrays["minutes"][index]),
-                    "baseline": prior["predicted"],
+                    "baseline": prior["predicted"] * published_availability(arrays["news"][index]),
                     "tree": float(tmean[j]),
                     "network": float(nmean[j]),
                     "tree_p_any": float(1 - tp[j, 0]),
@@ -372,6 +406,9 @@ def train_fusion(store: Store, epochs=20):
                 "test_rows": len(test),
                 "neural": training,
             }
+        )
+        atomic_json(
+            checkpoint, {"key": checkpoint_key, "predictions": predictions[block_start:], "fold": folds[-1]}
         )
         print(f"Fusion validated {block[0]}–{block[-1]}: {training}", flush=True)
     y = np.array([r["actual"] for r in predictions])
@@ -400,6 +437,7 @@ def train_fusion(store: Store, epochs=20):
         "at": now(),
         "version": "fusion-v1",
         "feature_id": features["id"],
+        "enrichment_width": arrays["enrichment"].shape[1] if "enrichment" in arrays else 0,
         "compared_decision_model_id": old["id"],
         "reference_decision_model_id": reference["id"],
         "protocol": protocol,
@@ -464,6 +502,10 @@ def train_fusion(store: Store, epochs=20):
 
 
 def candidate_predict(store, spec, arrays, kind):
+    if not spec.get("enrichment_width", 0):
+        arrays = {k: v for k, v in arrays.items() if k != "enrichment"}
+        arrays["quality"] = arrays["quality"][:, :4]
+
     """Hash-verified, non-pickle loading for either independently fitted candidate."""
     directory = store.root / "models" / spec["directory"]
     if kind == "tree":
@@ -480,6 +522,7 @@ def candidate_predict(store, spec, arrays, kind):
             arrays["workload"],
             arrays["text"],
             arrays["sequence"],
+            enrichment=arrays.get("enrichment"),
         )
         return corrected(
             *tree_predict(models, matrix), spec["tree_spec"]["curves"], spec["tree_spec"]["offsets"]
@@ -493,7 +536,7 @@ def candidate_predict(store, spec, arrays, kind):
     config = spec["network_spec"]
     if hashlib.sha256(path.read_bytes()).hexdigest() != config["hash"]:
         raise ValueError("Fusion neural integrity verification failed")
-    model = architecture()
+    model = architecture(spec.get("enrichment_width", 0))
     model.load_state_dict(torch.load(path, map_location="cpu", weights_only=True))
     raw = predict_neural(model, config["normalization"], arrays, np.arange(len(arrays["tab"])))
     return corrected(*raw, config["curves"], config["offsets"])
@@ -507,8 +550,8 @@ def compare_live(store: Store):
     players, market = load_market(store)
     start = next(e["id"] for e in market["events"] if e.get("is_next"))
     rows, _ = future_inputs(store, market, players, start, start)
-    inputs = live_inputs(store, rows, market, players)
     spec = store.get("fusion_model")
+    inputs = live_inputs(store, rows, market, players, spec["feature_id"])
     old = store.get("decision_model")
     base, p, c = predict_models(
         load_bundle(store, old), np.array([r["x"] for r in rows]), [r["dc_probability"] for r in rows]
@@ -525,6 +568,7 @@ def compare_live(store: Store):
     source_sensitivity: dict[str, dict] = {}
     for kind in ("tree", "network"):
         p, c, _ = candidate_predict(store, spec, inputs, kind)
+        p[np.array([r["availability"] == 0 for r in rows])] = [1, 0, 0, 0]
         means[kind] = (p * (c + 2 * dc)).sum(1)
         source_sensitivity[kind] = {}
         for source in ("news", "market", "workload"):
@@ -666,6 +710,7 @@ def validate_fusion_worlds(store: Store, worlds=512):
         arrays["workload"],
         arrays["text"],
         arrays["sequence"],
+        enrichment=arrays.get("enrichment"),
     )
     groups = np.array([r["deadline_group"] for r in meta])
     unique = sorted(set(groups))
@@ -758,7 +803,7 @@ def production_predictions(store, spec, rows, market, players, scenario=None):
 
     validation = store.get("fusion_model", spec["fusion_model_id"])
     kind = spec["fusion_kind"]
-    inputs = live_inputs(store, rows, market, players)
+    inputs = live_inputs(store, rows, market, players, validation.get("feature_id"))
     p, c, s = candidate_predict(store, validation, inputs, kind)
     healthy = {k: v.copy() for k, v in inputs.items()}
     healthy["text"][:] = 0
@@ -766,15 +811,30 @@ def production_predictions(store, spec, rows, market, players, scenario=None):
     healthy["news"][:, 0] = 1
     healthy["news"][:, 5:7] = 1
     healthy["news"][:, 11] = 0
+    if "enrichment" in healthy:
+        from .enrichment import FEATURES
+
+        for feature in ("report_age_days", "injury_reported"):
+            healthy["enrichment"][:, FEATURES.index(feature)] = 0
     hp, hc, hs = candidate_predict(store, validation, healthy, kind)
-    start = min(r["event"] for r in rows)
-    weight = np.exp(-np.array([r["event"] - start for r in rows]) / 5)
+    # The network already reads immediate published injury chance. Future
+    # interpolation follows the separately validated recovery transition,
+    # rather than multiplying that signal twice or fading it by GW number.
+    weight = np.ones(len(rows))
+    for i, row in enumerate(rows):
+        player = players[row["player_id"]]
+        initial = player.chance if player.chance is not None else (1.0 if player.status == "a" else 0.5)
+        if player.status in ("i", "d") and initial < 1:
+            weight[i] = 1 - float(np.clip((row["availability"] - initial) / (1 - initial), 0, 1))
+        elif player.status == "s" and row["availability"] == 1:
+            weight[i] = 0
     joint = weight[:, None] * p * c + (1 - weight[:, None]) * hp * hc
     probabilities = weight[:, None] * p + (1 - weight[:, None]) * hp
     conditional = np.divide(joint, np.maximum(probabilities, 1e-9))
     starts = weight * s + (1 - weight) * hs
     for i, row in enumerate(rows):
-        row["availability"] = 1.0 if players[row["player_id"]].selectable else 0.0
+        hard_absent = row["availability"] == 0 or not players[row["player_id"]].selectable
+        row["availability"] = 0.0 if hard_absent else 1.0
         for change in (scenario or {}).get("players", []):
             if (
                 change["player_id"] == row["player_id"]
@@ -889,7 +949,7 @@ def promote_fusion(store: Store):
         old.get("limits", [])
         + spec["limits"]
         + [
-            "Current state is carried forward; injury effects mix toward a healthy counterfactual with a five-gameweek decay; future roles, ownership and non-PL workload are not observed",
+            "Current state is carried forward; injury effects mix toward a healthy counterfactual through gated recovery transitions; future roles, ownership and non-PL workload are not observed",
             "Within-team residual dependence retains the established estimate and remains approximate",
         ]
     )
@@ -1056,6 +1116,7 @@ def refit_active_fusion(store: Store):
                 arrays["workload"],
                 arrays["text"],
                 arrays["sequence"],
+                enrichment=arrays.get("enrichment"),
             )
             fitted = fit_tree(arrays, matrix, train, cal)
             curves, offsets = calibrate(*tree_predict(fitted, matrix[cal]), arrays, cal)
@@ -1117,3 +1178,65 @@ def refit_active_fusion(store: Store):
         {k: v for k, v in body.items() if k not in ("predictions", "residuals", "curves")},
     )
     return body
+
+
+def forecast_sources(store, forecast):
+    """Genuine tree/neural predictions for every deadline used by rival choices."""
+    from collections import defaultdict
+
+    from .decision import future_inputs
+    from .ingestion import load_market
+
+    spec = store.get("fusion_model", forecast.get("source_challenger_model_id"))
+    with store.db() as db:
+        cached = db.execute(
+            "SELECT id FROM objects WHERE kind='fusion_forecast' AND json_extract(body,'$.forecast_id')=? AND json_extract(body,'$.fusion_model_id')=? ORDER BY created_at DESC LIMIT 1",
+            (forecast["id"], spec["id"]),
+        ).fetchone()
+    if cached is not None:
+        return store.get("fusion_forecast", cached["id"])
+    from .availability import moment
+
+    if (moment(now()) - moment(forecast["cutoff"])).total_seconds() > 3600:
+        raise ValueError(
+            "No frozen challenger predictions for this older forecast; regenerate current forecasts instead of reading later observations"
+        )
+    players, market = load_market(store, forecast["market_id"])
+    rows, _ = future_inputs(store, market, players, forecast["start_event"], forecast["end_event"])
+    dc = np.array([r["dc_probability"] for r in rows])
+    values = {}
+    for kind in ("tree", "network"):
+        candidate_rows = [dict(r) for r in rows]
+        p, c, _ = production_predictions(
+            store, {"fusion_model_id": spec["id"], "fusion_kind": kind}, candidate_rows, market, players
+        )
+        for i, row in enumerate(candidate_rows):
+            if row["availability"] == 0:
+                p[i] = [1, 0, 0, 0]
+        values[kind] = (p * (c + 2 * dc)).sum(1)
+    totals: dict = defaultdict(lambda: {"tree": 0.0, "network": 0.0})
+    for i, row in enumerate(rows):
+        for kind in values:
+            totals[row["event"], row["player_id"]][kind] += float(values[kind][i])
+    predictions = [
+        {"event": event, "player_id": p, **totals[event, p]}
+        for event in range(forecast["start_event"], forecast["end_event"] + 1)
+        for p in players
+    ]
+    result = {
+        "at": now(),
+        "forecast_id": forecast["id"],
+        "fusion_model_id": spec["id"],
+        "market_id": market["id"],
+        "predictions": predictions,
+        "scope": "Frozen current information and actual separate source forecasts; no invented future manager picks or duplicated reference values",
+    }
+    result["id"] = store.put("fusion_forecast", result)
+    return result
+
+
+def published_availability(news):
+    """Historical counterpart of the reference forecast's immediate adjustment."""
+    if not news[12]:
+        return 1.0
+    return float(news[6]) if news[5] else (1.0 if news[0] else 0.5)

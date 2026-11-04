@@ -1,8 +1,9 @@
 {
-  "at": "2026-10-29T18:13:45.381362+00:00",
+  "at": "2026-11-04T10:11:54.594438+00:00",
   "horizon": 4,
-  "feature_id": "901a403b6c0fc8e14bad1214d331387a9b349df08061de3bb2a73eff540e7cf2",
-  "fusion_model_id": "eaa031ee767d3924d38404aa72b960ca01d73b4b565ac3a8364b1565d478be8d",
+  "feature_id": "5ae94d834d3c29a1f94461f3ef22904190ab112a16e2efc97c7628edcf800b4a",
+  "enrichment_width": 31,
+  "fusion_model_id": "b40734f1d5145f36c1ea37144a316069648f2d74537f5cb201f6a8cfe56e4bef",
   "parameters": {
     "n_estimators": 240,
     "num_leaves": 20,
@@ -94,43 +95,52 @@
       "calibration_rows": 3271,
       "purged_training_label_end_before": "2025/26-GW26",
       "calibration_label_end_before": "2025/26-GW33"
+    },
+    {
+      "test": [
+        "2026/27-GW06"
+      ],
+      "train_rows": 94146,
+      "calibration_rows": 2626,
+      "purged_training_label_end_before": "2025/26-GW34",
+      "calibration_label_end_before": "2026/27-GW06"
     }
   ],
   "baseline": {
-    "n": 29908,
-    "rmse": 5.081505684102699,
-    "mae": 3.0254315149250783,
-    "bias": 0.1331268235146505
+    "n": 30575,
+    "rmse": 4.969741032302575,
+    "mae": 2.813138623264287,
+    "bias": -0.28284947466182553
   },
   "candidates": {
     "context": {
       "metrics": {
-        "n": 29908,
-        "rmse": 4.746419027060905,
-        "mae": 2.8526750758731074,
-        "bias": -0.009084004398550182
+        "n": 30575,
+        "rmse": 4.750003727044516,
+        "mae": 2.857166460998627,
+        "bias": -0.031978637950056316
       },
       "paired_vs_nextweek_repeated_95ci": [
-        -0.4372821666461011,
-        -0.2407525690766169
+        -0.30670104862086944,
+        -0.1426948014737762
       ]
     },
     "advanced": {
       "metrics": {
-        "n": 29908,
-        "rmse": 4.741761427429673,
-        "mae": 2.8542767345294267,
-        "bias": -0.021214264194535738
+        "n": 30575,
+        "rmse": 4.753123869225826,
+        "mae": 2.8611061852189725,
+        "bias": -0.028639756963859047
       },
       "paired_vs_nextweek_repeated_95ci": [
-        -0.4452033315042584,
-        -0.24051609702934934
+        -0.30425957876242815,
+        -0.13835847827924283
       ]
     }
   },
   "advanced_vs_context_95ci": [
-    -0.014979652460258341,
-    0.0035973792220156385
+    -0.00381941987585106,
+    0.01072563183219119
   ],
   "selected": "context",
   "advanced_fields": [
@@ -147,18 +157,17 @@
   ],
   "limits": [
     "Four-week labels are realized outcomes, never inference features",
-    "Only weeks with complete four-week outcomes are scored; current season evaluates starting GW1\u2013GW5",
+    "Only starting weeks with complete four-week outcomes are scored; see the reported prediction coverage",
     "Historical archive/fixture registration limitations remain; this is statistical replay",
     "Defensive-contribution expectation uses a declared current-profile prior, not invented historic action labels",
     "Repeating a one-week reference is a horizon baseline, not a claim to reproduce the full multiweek optimizer"
   ],
-  "directory": "horizon-68edd8f4521245bf09ad",
-  "offset": -0.20752644214480406,
-  "prediction_path": "data/models/horizon-68edd8f4521245bf09ad/heldout.parquet",
-  "model_hash": "1d8a4969b82949718a88937e3aac9be05e7f097284d791671aa96f1448d79a25",
-  "production_fit_label_end_before": "2026/27-GW02",
+  "directory": "horizon-6685e4461d3a29286194",
+  "offset": -0.14510623418193233,
+  "prediction_path": "data/models/horizon-6685e4461d3a29286194/heldout.parquet",
+  "model_hash": "e5f55aad548a07df0c41a50404b4fddcaec1b9c537d8ff384a88384d78e07734",
+  "production_fit_label_end_before": "2026/27-GW03",
   "production_training_rows": 97869,
-  "production_calibration_rows": 2583,
-  "uncertainty": "Circular moving-block bootstrap, length four deadlines, matching overlapping target horizon",
-  "id": "4013b58ab324478d8405673612a62c1913f3ea5feed814436c1b08629516e618"
+  "production_calibration_rows": 2634,
+  "id": "176714bfdc2a9dc7a7c9324d5da38e7a96904ff40916e9199e6afa2ad3f09e75"
 }

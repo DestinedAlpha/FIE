@@ -89,23 +89,23 @@ def effective_ownership(store: Store, league: dict) -> dict:
 
 
 def rival_policy(
-    store: Store, member: dict, league: dict, forecast: dict, end_event: int, style: str
+    store: Store, member: dict, league: dict, forecast: dict, end_event: int, style: str, score=True
 ) -> dict:
-    players, _ = load_market(store)
-    rules = Rules.from_bootstrap(store.latest("bootstrap")[0])
+    players, frozen_market = load_market(store, forecast["market_id"])
+    rules = Rules.from_bootstrap(store.latest("bootstrap", content_hash=frozen_market["source_hash"])[0])
     released = league["released_event"]
     picks, _ = store.latest(f"picks_{member['entry']}_{released}")
     history, _ = store.latest(f"entry_history_{member['entry']}")
+    history = {
+        **history,
+        "current": [r for r in history["current"] if r["event"] <= released],
+        "chips": [r for r in history["chips"] if r["event"] <= released],
+    }
     if any(c["name"] == "freehit" and c["event"] == released for c in history["chips"]):
         picks, _ = store.latest(f"picks_{member['entry']}_{released - 1}")
-    ft = 1
-    for row in history["current"]:
-        gw = row["event"]
-        chips = [c for c in history["chips"] if c["event"] == gw]
-        if gw == 1:
-            ft = 1
-        elif not any(c["name"] in ("wildcard", "freehit") for c in chips):
-            ft = min(rules.ft_cap, max(0, ft - row["event_transfers"]) + 1)
+    from .account_sync import free_transfers_after
+
+    ft = free_transfers_after(history, released, rules)
     state = TeamState(
         season=forecast["season"],
         event=forecast["start_event"],
@@ -142,7 +142,9 @@ def rival_policy(
     if style.startswith("learned"):
         from .manager_policy import policy_models
 
-        learned = policy_models(store)
+        learned = policy_models(store, forecast)
+        if forecast.get("manager_behavior_id"):
+            learned[1]["__behavior"] = store.get("manager_behavior", forecast["manager_behavior_id"])
     for event in range(forecast["start_event"], end_event + 1):
         owned = [lot.player_id for lot in state.lots]
         chosen = Action()
@@ -213,7 +215,8 @@ def rival_policy(
             else "No future rival chip use in these hold/greedy scenarios",
         ],
     }
-    score_plan(store, plan, forecast)
+    if score:
+        score_plan(store, plan, forecast)
     return plan
 
 
@@ -236,52 +239,54 @@ def compare(
     if len(rivals) != 2:
         raise ValueError("Exactly two target rivals must be identified from actual league membership")
     end_event = max(r["event"] for r in plans[0]["ledger"])
-    rival_worlds = {}
-    for member in rivals:
-        for style in ("hold", "greedy"):
-            policy = rival_policy(store, member, league, forecast, end_event, style)
-            rival_worlds[member["entry"], style] = member["points"] + score_plan(store, policy, forecast)
-    behavior = None
-    try:
+    behavior = (
+        store.get("manager_behavior", forecast.get("manager_behavior_id"))
+        if store.list("manager_behavior", 1)
+        else None
+    )
+    if behavior and behavior["event"] != forecast["start_event"]:
+        behavior = None
+    learned_policy = (
+        store.get("manager_policy", forecast.get("manager_policy_id"))
+        if store.list("manager_policy", 1)
+        else None
+    )
+    styles = ["hold", "greedy"]
+    weights = {}
+    if behavior:
         from .manager_behavior import rival_count_probabilities
 
-        behavior = store.get("manager_behavior")
-        if behavior["event"] != forecast["start_event"]:
-            behavior = None
-        else:
-            weights = {
-                member["entry"]: rival_count_probabilities(store, member["entry"]) for member in rivals
-            }
-            for member in rivals:
-                for count in range(4):
-                    policy = rival_policy(store, member, league, forecast, end_event, "behavior" + str(count))
-                    rival_worlds[member["entry"], "behavior" + str(count)] = member["points"] + score_plan(
-                        store, policy, forecast
-                    )
-    except ValueError:
-        behavior = None
-    learned_policy = None
-    if store.list("manager_policy", 1):
-        learned_policy = store.get("manager_policy")
-        for member in rivals:
-            for branch in range(4):
-                policy = rival_policy(store, member, league, forecast, end_event, "learned" + str(branch))
-                rival_worlds[member["entry"], "learned" + str(branch)] = member["points"] + score_plan(
-                    store, policy, forecast
-                )
+        weights = {
+            member["entry"]: rival_count_probabilities(store, member["entry"], behavior) for member in rivals
+        }
+        styles += ["behavior" + str(i) for i in range(4)]
+    if learned_policy:
+        styles += ["learned" + str(i) for i in range(4)]
+    from .rival_cache import rival_outcomes
+    from .simulation import score_plans
+
+    rival_worlds, rival_worlds_id = rival_outcomes(store, rivals, league, forecast, end_event, styles)
+    own_scores = score_plans(store, plans, forecast)
+    learned_in_objective = bool(
+        learned_policy
+        and behavior
+        and behavior.get("promoted_over_frequency")
+        and learned_policy["metrics"]["buy"]["promoted"]
+        and learned_policy["metrics"]["sell"]["promoted"]
+    )
     rows = []
-    for plan in plans:
-        outcomes = own_points + score_plan(store, plan, forecast)
+    for plan, own_score in zip(plans, own_scores):
+        outcomes = own_points + own_score
         probabilities: list[dict[str, Any]] = []
         ties = []
-        for styles in product(("hold", "greedy"), repeat=2):
-            a = rival_worlds[rivals[0]["entry"], styles[0]]
-            b = rival_worlds[rivals[1]["entry"], styles[1]]
+        for combination in product(("hold", "greedy"), repeat=2):
+            a = rival_worlds[rivals[0]["entry"], combination[0]]
+            b = rival_worlds[rivals[1]["entry"], combination[1]]
             win = (outcomes > a) & (outcomes > b)
             tie = ((outcomes == a) & (outcomes >= b)) | ((outcomes == b) & (outcomes >= a))
             probabilities.append(
                 {
-                    "rival_policies": list(styles),
+                    "rival_policies": list(combination),
                     "joint_strict_win": float(win.mean()),
                     "mc_standard_error": float(np.sqrt(win.mean() * (1 - win.mean()) / len(win))),
                     "joint_tie_mass": float(tie.mean()),
@@ -296,32 +301,41 @@ def compare(
                 b = rival_worlds[rivals[1]["entry"], "behavior" + str(cb)]
                 weight = weights[rivals[0]["entry"]][ca] * weights[rivals[1]["entry"]][cb]
                 behavior_probability += weight * float(((outcomes > a) & (outcomes > b)).mean())
+        learned_probabilities = (
+            [
+                float(
+                    (
+                        (outcomes > rival_worlds[rivals[0]["entry"], "learned" + str(a)])
+                        & (outcomes > rival_worlds[rivals[1]["entry"], "learned" + str(b)])
+                    ).mean()
+                )
+                for a, b in product(range(4), repeat=2)
+            ]
+            if learned_policy
+            else []
+        )
+        legacy_robust = min(p["joint_strict_win"] for p in probabilities)
+        robust = min([legacy_robust] + learned_probabilities) if learned_in_objective else legacy_robust
         rows.append(
             {
                 "plan_id": plan["id"],
                 "label": plan.get("label", "optimized"),
                 "expected_net_points": plan["simulation"]["mean"],
                 "policies": probabilities,
-                "robust_joint_win": min(p["joint_strict_win"] for p in probabilities),
+                "legacy_robust_joint_win": legacy_robust,
+                "robust_joint_win": robust,
+                "learned_policy_range": [min(learned_probabilities), max(learned_probabilities)]
+                if learned_probabilities
+                else None,
                 "behavior_conditioned_joint_win": behavior_probability,
-                "learned_policy_joint_win": float(
-                    np.mean(
-                        [
-                            (
-                                (outcomes > rival_worlds[rivals[0]["entry"], "learned" + str(a)])
-                                & (outcomes > rival_worlds[rivals[1]["entry"], "learned" + str(b)])
-                            ).mean()
-                            for a, b in product(range(4), repeat=2)
-                        ]
-                    )
-                )
-                if learned_policy
+                "learned_policy_joint_win": float(np.mean(learned_probabilities))
+                if learned_probabilities
                 else None,
             }
         )
-    best_ev = max(row["expected_net_points"] for row in rows)
-    eligible = [r for r in rows if r["expected_net_points"] >= best_ev - sacrifice_budget]
-    selected = max(eligible, key=lambda r: (r["robust_joint_win"], r["expected_net_points"]))
+    from .objectives import select_policy
+
+    selection = select_policy(rows, "beat_both", sacrifice_budget)
     result = {
         "created_at": now(),
         "forecast_id": forecast_id,
@@ -329,7 +343,13 @@ def compare(
         "starting_points": own_points,
         "candidate_frontier": rows,
         "sacrifice_budget": sacrifice_budget,
-        "selected_plan_id": selected["plan_id"],
+        "selected_plan_id": selection["selected_plan_id"],
+        "selection": selection,
+        "rival_worlds_id": rival_worlds_id,
+        "learned_policy_in_selection": learned_in_objective,
+        "robust_policy_set": "Hold/greedy plus all sixteen validated learned-branch combinations"
+        if learned_in_objective
+        else "Hold/greedy; unaccepted behavioral challengers excluded",
         "optimization_scope": "Robust joint probability among generated feasible policies, not a global probability optimum",
         "ties": "Reported separately; strict-win probability excludes ties. Exact final rank needs final transfer tie-breaks.",
         "shared_worlds": True,

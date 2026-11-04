@@ -2,7 +2,7 @@
 
 ## Updating a laptop installation
 
-Extract the new private package into a separate folder. Run `Update existing.cmd` and select the old folder containing `Start.cmd`. The updater stops only FPL servers whose interpreter is inside that folder, validates the application file manifest, creates a consistent account database/application backup, and copies application files while excluding `.env` and `data/`. It then starts the existing installation with `-RebuildModel`: current official data is refreshed, the four preceding archives are imported if absent, the learned-points model is trained/calibrated/evaluated, and a new forecast/plan is computed for the preserved account.
+Extract the new private package into a separate folder. Run `Update existing.cmd` and select the old folder containing `Start.cmd`. The updater stops only FPL servers whose interpreter is inside that folder, validates the application file manifest, creates a consistent account database/application backup, and copies application files while excluding `.env` and `data/`. It then starts the existing installation with `-RebuildModel`: current official data is refreshed, the four preceding archives are imported if absent, the learned-points model is trained/calibrated/evaluated, and the revealed deadline squad is reconciled, and a new forecast/plan is computed. Newer confirmed account edits are preserved. An unresolved selling quote retains a valid hold analysis and opens the interface.
 
 The current account must still reflect actual submitted FPL actions. The updater cannot infer private transfers or acquisition prices. Model changes invalidate old forecasts/plans. A retired component forecast is never presented as execution-ready. Keep the `artifacts/runtime/before-update-*` backup until the new installation passes its checks.
 
@@ -60,4 +60,15 @@ The interface's **Refresh and recompute** performs a dated official refresh and 
 
 Planning states are stored separately from the actual confirmed account. Full scenario recourse re-optimizes only after each observation; hypothetical prices use explicit purchase-lot bounds. Legal pending transfers and already activated chips are carried into later decisions. No refresh, optimizer, training job or updater submits a transfer to FPL.
 
-`uv run --extra neural python scripts/verify_release.py` verifies current artifact connections, trained-model checksums, structural-world invariants and the independent eleven-week account replay. The release audit records actual acceptance outcomes. The prepared package excludes transient training checkpoints and credentials; updates merge immutable research without replacing the selected account state or local keys.
+`uv run --extra neural python scripts/verify_release.py` verifies current artifact connections, trained-model checksums, structural-world invariants and the independent replay over the selected planning horizon. The release audit records actual acceptance outcomes. The prepared package excludes transient training checkpoints and credentials; updates merge immutable research without replacing the selected account state or local keys.
+
+
+## Current account and historical replay (0.6)
+
+**Refresh data** reconciles the latest public deadline picks and transfer costs, reconstructs saved free transfers, preserves newer confirmed edits, and recomputes the next available deadline. It does not infer private transfers after that deadline. Save current values in the account editor to confirm any further moves. A passed deadline invalidates old actions, including alternative-plan links.
+
+`uv run --extra neural fpl refresh-current` performs the same reconciliation/refresh workflow. Interrupted source-fusion folds and evolving-account deadlines have durable checkpoints. A rejected refit cannot replace the last accepted reference model. Optional source failures retain verified observations; source attempts record bytes, latency, retry and circuit state.
+
+`uv run --extra neural fpl replay-weekly` builds independent £100m GW1–8 teams using pinned pre-deadline bootstrap and fixture versions. Each week refits from earlier completed data, reserves an earlier calibration slice, freezes the selected squad/XI/bench/captain, then reads that week's actual points. Hindsight teams are separately labelled diagnostics. This is a reconstructed historical experiment, not a prospective record or a continuous account with unlimited free transfers.
+
+`uv run --extra neural python scripts/run_checks.py` records actual static, backend, frontend and desktop/mobile browser results. Run a local server first for browser checks. `scripts/verify_release.py` then verifies connected model checksums, the current financial ledger and weekly cutoff/model proofs. The release audit consumes the recorded checks; it does not assume hardcoded passing test counts.

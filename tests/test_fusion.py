@@ -217,16 +217,22 @@ def test_update_merges_research_without_replacing_account_or_active_model(tmp_pa
     new.put("state", {"bank": 999})
     new.put("decision_model", {"id": "unwanted replacement"})
     model = new.put("fusion_model", {"architecture": "verified candidate"})
+    recovery = new.put("availability_model", {"recovery": {"promoted": True}})
+    shots = new.root / "normalized" / "shots.parquet"
+    shots.parent.mkdir()
+    shots.write_bytes(b"immutable-normalized-observations")
     sourcefile = new.root / "models" / "candidate.pt"
     sourcefile.parent.mkdir()
     sourcefile.write_bytes(b"tensor-only-model")
     with new.db() as db:
         db.execute("PRAGMA wal_checkpoint(TRUNCATE)")
     (new.root / "state.sqlite.gz").write_bytes(gzip.compress((new.root / "state.sqlite").read_bytes()))
-    assert module.merge_research(source, target) == 1
+    assert module.merge_research(source, target) == 2
     assert existing.get("state")["bank"] == 3
     assert existing.get("decision_model")["id"] == selected
     assert existing.get("fusion_model")["id"] == model
+    assert existing.get("availability_model")["id"] == recovery
+    assert (existing.root / "normalized/shots.parquet").read_bytes() == shots.read_bytes()
     assert (existing.root / "models/candidate.pt").read_bytes() == b"tensor-only-model"
 
 
@@ -248,12 +254,16 @@ def test_fusion_recovery_mixes_joint_mass_without_double_injury_adjustment(tmp_p
         return p, c, p[:, 3]
 
     monkeypatch.setattr(module, "candidate_predict", predict)
-    rows = [{"player_id": 1, "event": event, "availability": 0.5} for event in (9, 14)]
+    market[1] = market[1].model_copy(update={"status": "i", "chance": 0.5})
+    rows = [
+        {"player_id": 1, "event": event, "availability": probability}
+        for event, probability in ((9, 0.5), (14, 0.75))
+    ]
     spec = {"fusion_model_id": model, "fusion_kind": "tree"}
     p, c, _ = module.production_predictions(store, spec, rows, {}, market)
     means = (p * c).sum(1)
     assert means[0] == pytest.approx(1)
-    assert means[1] == pytest.approx(np.exp(-1) * 1 + (1 - np.exp(-1)) * 6)
+    assert means[1] == pytest.approx(0.5 * 1 + 0.5 * 6)
     assert all(r["availability"] == 1 for r in rows)
     scenario = {"players": [{"player_id": 1, "from_event": 14, "availability": 0.5}]}
     p, c, _ = module.production_predictions(store, spec, rows, {}, market, scenario)

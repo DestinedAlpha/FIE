@@ -42,7 +42,13 @@ def sample_lineup(
     )
     available = health < chances[None, :]
     conditioned = np.zeros(worlds, dtype=bool)
-    for role_mask, required in ((positions == 1, 1), (positions != 1, 10)):
+    role_requirements = [(positions == 1, 1), (positions != 1, 10)]
+    # Broad tactical support permits wingbacks and false nines; it does not
+    # impose fantasy formation rules on a real football team.
+    for role in (2, 3):
+        if np.count_nonzero((positions == role) & (chances > 0)) >= 2:
+            role_requirements.append((positions == role, 2))
+    for role_mask, required in role_requirements:
         support = role_mask & (chances > 0)
         if support.sum() < required:
             raise ValueError("A football XI is impossible under confirmed availability constraints")
@@ -72,16 +78,23 @@ def sample_lineup(
     scores = np.log(odds)[None, :] + rng.gumbel(size=(worlds, n))
     scores[~available] = -1e9
     selected = np.zeros((worlds, n), dtype=bool)
-    for mask, count in [(positions == 1, 1), (positions != 1, 10)]:
+    for mask, count in [(positions == 1, 1), *[(mask, count) for mask, count in role_requirements[2:]]]:
         columns = np.where(mask)[0]
         if len(columns) < count:
             raise ValueError("Incomplete club registration for coherent real lineups")
         chosen = np.argpartition(scores[:, columns], -count, axis=1)[:, -count:]
         selected[np.arange(worlds)[:, None], columns[chosen]] = True
+    remaining = 11 - selected.sum(axis=1)
+    fill_scores = np.where((positions != 1)[None, :] & ~selected, scores, -1e10)
+    ordered = np.argsort(fill_scores, axis=1)[:, ::-1]
+    for slot in range(int(remaining.max(initial=0))):
+        rows = np.where(remaining > slot)[0]
+        selected[rows, ordered[rows, slot]] = True
     selected &= available
     starting_counts = selected.sum(axis=1)
     start = np.zeros((worlds, n), dtype=np.int16)
     end = np.zeros_like(start)
+    parents = np.full((worlds, n), -1, dtype=np.int16)
     long_p = np.array([profiles[p.id]["p_long_start"] for p in members])
     duration = np.array([profiles[p.id]["start_minutes"] for p in members])
     long = rng.random((worlds, n)) < long_p[None, :]
@@ -124,6 +137,7 @@ def sample_lineup(
         indices = np.where(use)[0]
         start[indices, substitute[use]] = departure_time[use]
         end[indices, substitute[use]] = 90
+        parents[indices, substitute[use]] = departing[use]
         # Mark the departed starter as dealt with, leaving their actual interval.
         selected[indices, departing[use]] = False
     short_starters = (start == 0) & (end > 0) & (end < 90) & selected
@@ -136,6 +150,7 @@ def sample_lineup(
         {
             "short_lineup_worlds": int((starting_counts < 11).sum()),
             "conditioned_availability_worlds": int(conditioned.sum()),
+            "_substitution_parents": parents,
         },
     )
 
@@ -151,6 +166,7 @@ def fixture_worlds(
     horizon: int,
     health: dict,
     bps_models=None,
+    goal_distribution=None,
 ):
     members = [
         p for p in players.values() if p.team in (fixture["team_h"], fixture["team_a"]) and p.selectable
@@ -162,10 +178,13 @@ def fixture_worlds(
     starts = np.zeros((worlds, n), dtype=np.int16)
     ends = np.zeros_like(starts)
     quality = []
+    substitution_parents = np.full((worlds, n), -1, dtype=np.int16)
     for club in (fixture["team_h"], fixture["team_a"]):
         columns = np.where(team == club)[0]
         a, b, q = sample_lineup(rng, [members[i] for i in columns], profiles, worlds, horizon, health[club])
         starts[:, columns], ends[:, columns] = a, b
+        parents = q.pop("_substitution_parents")
+        substitution_parents[:, columns] = np.where(parents >= 0, columns[np.maximum(parents, 0)], -1)
         quality.append(q)
     played = ends > starts
     yellows = (
@@ -176,8 +195,15 @@ def fixture_worlds(
         rng.random((worlds, n))
         < np.array([profiles[p].get("red90", 0.004) for p in ids])[None, :] * (ends - starts) / 90
     ) & played
-    red_time = rng.integers(1, 91, (worlds, n))
-    ends = np.where(red, np.maximum(starts + 1, np.minimum(ends, red_time)), ends)
+    red_time = starts + 1 + np.floor(rng.random((worlds, n)) * np.maximum(ends - starts, 1)).astype(np.int16)
+    ends = np.where(red, red_time, ends)
+    # A planned substitute cannot enter for a player dismissed before that
+    # substitution. Other scheduled changes still occur.
+    parent = np.maximum(substitution_parents, 0)
+    cancelled = (substitution_parents >= 0) & np.take_along_axis(red, parent, axis=1)
+    cancelled &= np.take_along_axis(ends, parent, axis=1) <= starts
+    starts[cancelled], ends[cancelled] = 0, 0
+    red[cancelled], yellows[cancelled] = False, False
     minutes = ends - starts
     goals = np.zeros((worlds, n), dtype=np.int16)
     assists = np.zeros_like(goals)
@@ -187,24 +213,59 @@ def fixture_worlds(
     penalty_missed = np.zeros_like(goals)
     penalty_saved = np.zeros_like(goals)
     home_lambda, away_lambda = intensity(fixture["team_h"], fixture["team_a"], rates, horizon)
-    goal_rates = np.array([profiles[p]["goals90"] for p in ids])
+    channels = ("open_play", "set_piece", "penalty")
+    channel_rates = np.array(
+        [
+            [
+                profiles[p]
+                .get("goal_channels90", {})
+                .get(
+                    kind,
+                    profiles[p]["goals90"]
+                    * (
+                        {1: (0.8, 0.2, 0), 2: (0.4, 0.59, 0.01), 3: (0.8, 0.15, 0.05), 4: (0.8, 0.08, 0.12)}[
+                            int(pos[i])
+                        ][k]
+                    ),
+                )
+                for k, kind in enumerate(channels)
+            ]
+            for i, p in enumerate(ids)
+        ]
+    )
     assist_rates = np.array([profiles[p]["assists90"] for p in ids])
-    # Shared parameter uncertainty is distinct from Poisson event randomness.
-    uncertainty = 0.12 + 0.012 * horizon
-    shape = 1 / uncertainty**2
-    match_tempo = rng.gamma(shape, 1 / shape, worlds)
+    # Event noise is distinct from any fitted shared parameter draws supplied
+    # by the score-process model. No fixed gamma is called a learned posterior.
+    match_tempo = np.ones(worlds)
+    if goal_distribution is not None:
+        sampled_totals, home_lambda, away_lambda = goal_distribution
+    else:
+        # Market constraints can still be used with the statistical baseline
+        # when their independently captured reliability test has passed.
+        odds = fixture.get("odds_constraint")
+        if odds:
+            home_lambda = (1 - odds["weight"]) * home_lambda + odds["weight"] * odds["home_goals"]
+            away_lambda = (1 - odds["weight"]) * away_lambda + odds["weight"] * odds["away_goals"]
+        sampled_totals = {
+            fixture["team_h"]: rng.poisson(home_lambda, worlds),
+            fixture["team_a"]: rng.poisson(away_lambda, worlds),
+        }
     totals = {}
+    channel_counts = {kind: 0 for kind in (*channels, "own_goal")}
     for club, other, goal_lambda in [
         (fixture["team_h"], fixture["team_a"], home_lambda),
         (fixture["team_a"], fixture["team_h"], away_lambda),
     ]:
-        totals[club] = rng.poisson(goal_lambda * match_tempo)
+        totals[club] = sampled_totals[club]
         for goal_index in range(int(totals[club].max(initial=0))):
             occurred = totals[club] > goal_index
             moment = rng.integers(1, 91, worlds)
             on_pitch = (starts < moment[:, None]) & (ends >= moment[:, None])
             eligible = on_pitch & (team == club)[None, :]
-            scorer = weighted_choice(rng, eligible * goal_rates[None, :])
+            opportunity = eligible[:, :, None] * channel_rates[None, :, :]
+            category = weighted_choice(rng, opportunity.sum(axis=1))
+            scorer_weights = np.take_along_axis(opportunity, category[:, None, None], axis=2)[:, :, 0]
+            scorer = weighted_choice(rng, scorer_weights)
             valid = occurred & eligible.any(axis=1)
             is_own = (rng.random(worlds) < 0.02) & valid
             scoring = np.where(valid & ~is_own)[0]
@@ -213,10 +274,20 @@ def fixture_worlds(
             own_scorer = weighted_choice(rng, own_eligible * (np.where(pos <= 2, 1, 0.15))[None, :])
             own_indices = np.where(is_own & own_eligible.any(axis=1))[0]
             own[own_indices, own_scorer[own_indices]] += 1
+            for k, kind in enumerate(channels):
+                channel_counts[kind] += int(np.count_nonzero(valid & ~is_own & (category == k)))
+            channel_counts["own_goal"] += len(own_indices)
             assist_eligible = eligible.copy()
-            assist_eligible[np.arange(worlds), scorer] = False
+            assist_eligible[np.where(~is_own)[0], scorer[~is_own]] = False
             assistant = weighted_choice(rng, assist_eligible * assist_rates[None, :])
-            given_assist = valid & ~is_own & (rng.random(worlds) < 0.74) & assist_eligible.any(axis=1)
+            assist_chance = np.full(worlds, 0.74)
+            calibration = next(
+                (profiles[p]["assist_by_channel"] for p in ids if "assist_by_channel" in profiles[p]), None
+            )
+            if calibration:
+                assist_chance = np.array([calibration[k] for k in channels])[category]
+                assist_chance = np.where(is_own, calibration["own_goal"], assist_chance)
+            given_assist = valid & (rng.random(worlds) < assist_chance) & assist_eligible.any(axis=1)
             indices = np.where(given_assist)[0]
             assists[indices, assistant[indices]] += 1
             # Dismissed defenders remain liable for later conceded goals.
@@ -331,6 +402,8 @@ def fixture_worlds(
         "scored_goals": int(goals.sum()),
         "own_goals": int(own.sum()),
         "team_goals": int(sum(value.sum() for value in totals.values())),
+        "goal_channels": channel_counts,
+        "cancelled_substitutions_after_red": int(cancelled.sum()),
     }
     return ids, points, minutes, starts, components, audit
 
@@ -445,13 +518,28 @@ def forecast(
         learned_by_fixture = dict(zip(keys, estimates))
         minutes_model_id = model.spec["id"]
     component_updates = {}
+    from .decision import future_inputs
+
+    component_rows, _ = future_inputs(store, market, players, start_event, end_event, scenario, beliefs)
+    availability_updates = {(r["fixture_id"], r["player_id"]): r["availability"] for r in component_rows}
+    attack_updates, attack_spec = {}, None
+    if store.list("attack_model", 1):
+        from .attack import attack_overrides
+
+        attack_updates, attack_spec = attack_overrides(store, players, profiles)
+    from .score_process import match_goal_draws
+
+    upcoming_fixtures = [
+        f
+        for f in fixtures_source
+        if not f.get("finished") and f.get("event") is not None and start_event <= f["event"] <= end_event
+    ]
+    goal_distributions, score_process_spec = match_goal_draws(store, market, upcoming_fixtures, worlds, seed)
     bps_models = None
     coherent_id = None
     if store.list("coherent_model", 1):
         from .coherent import component_overrides
-        from .decision import future_inputs
 
-        component_rows, _ = future_inputs(store, market, players, start_event, end_event, scenario, beliefs)
         component_updates, coherent_spec, component_bundle = component_overrides(
             store, component_rows, market, players
         )
@@ -478,6 +566,8 @@ def forecast(
                     **p,
                     **learned_by_fixture.get((fixture["id"], identity), {}),
                     **component_updates.get((fixture["id"], identity), {}),
+                    **attack_updates.get(identity, {}),
+                    "availability_override": availability_updates.get((fixture["id"], identity), 0),
                 }
                 for identity, p in profiles.items()
             }
@@ -510,6 +600,7 @@ def forecast(
                 event - start_event,
                 health,
                 bps_models=bps_models,
+                goal_distribution=goal_distributions.get(fixture["id"]),
             )
             columns = [index[i] for i in f_ids]
             points[:, columns] += p
@@ -593,6 +684,11 @@ def forecast(
         "scenario": scenario,
         "minutes_model_id": minutes_model_id,
         "coherent_model_id": coherent_id,
+        "attack_model_id": attack_spec["id"] if attack_spec else None,
+        "score_process_model_id": score_process_spec["id"] if score_process_spec else None,
+        "availability_model_id": store.get("availability_model")["id"]
+        if store.list("availability_model", 1)
+        else None,
         "team_strength_model_id": strength_id,
         "fixtures": fixture_records,
         "match_audit": audits,
@@ -602,16 +698,15 @@ def forecast(
             "Structural football worlds; chronological promotion gates select learned minutes and team rates",
             "Shared match tempo, finite XI, timed goals and on-pitch attribution",
             "Gated conditional BPS proxy; defensive-action count uncertainty remains approximate",
-            "Injury recovery is a horizon sensitivity prior; future prices held constant",
+            "Gated recovery, disciplinary service and goal channels; future prices held constant",
             "Parameter and model uncertainty remain distinct from scenario sampling error",
         ],
         "runtime_seconds": round(time.monotonic() - started, 3),
     }
     artifact_hash = digest(body)
-    path = store.root / "scenarios" / f"{artifact_hash}.npz"
-    path.parent.mkdir(exist_ok=True)
-    np.savez_compressed(path, **arrays)
-    body["scenario_path"] = str(path)
+    from .worlds import save_worlds
+
+    body["scenario_path"] = save_worlds(store, artifact_hash, arrays)
     body["id"] = store.put("component_forecast", body)
     return body
 
@@ -619,12 +714,14 @@ def forecast(
 def lineup_worlds(lineup, points, minutes, ids, players, rules, chip=None):
     index = {p: i for i, p in enumerate(ids)}
     relevant = lineup.xi + lineup.bench
+    local_index = {p: i for i, p in enumerate(relevant)}
+    local_points = points[:, [index[p] for p in relevant]]
     patterns, inverse = np.unique(minutes[:, [index[p] for p in relevant]] > 0, axis=0, return_inverse=True)
-    result = np.zeros(len(points))
+    selected_patterns = np.zeros((len(patterns), len(relevant)), dtype=bool)
     for group, pattern in enumerate(patterns):
         selected = scoring_ids(lineup, dict(zip(relevant, pattern)), players, rules, chip == "bboost")
-        mask = inverse == group
-        result[mask] = points[mask][:, [index[p] for p in selected]].sum(axis=1)
+        selected_patterns[group, [local_index[p] for p in selected]] = True
+    result = (local_points * selected_patterns[inverse]).sum(axis=1)
     captain, vice = index[lineup.captain], index[lineup.vice]
     extra = np.where(
         minutes[:, captain] > 0, points[:, captain], np.where(minutes[:, vice] > 0, points[:, vice], 0)
@@ -632,33 +729,46 @@ def lineup_worlds(lineup, points, minutes, ids, players, rules, chip=None):
     return result + extra * (2 if chip == "3xc" else 1)
 
 
-def score_plan(store: Store, plan: dict, forecast_: dict) -> np.ndarray:
+def score_plans(store: Store, plans: list[dict], forecast_: dict) -> list[np.ndarray]:
+    """Decode each gameweek once while scoring all candidate/rival policies."""
+    from .domain import Lineup
+    from .worlds import load_worlds
+
     players, market = load_market(store, forecast_["market_id"])
     rules = Rules.from_bootstrap(store.latest("bootstrap", content_hash=market["source_hash"])[0])
-    from .domain import Lineup
-
-    worlds = np.zeros(forecast_["worlds"])
-    with np.load(store.artifact_path(forecast_["scenario_path"]), allow_pickle=False) as samples:
+    outcomes = [np.zeros(forecast_["worlds"]) for _ in plans]
+    by_event: dict[int, list[tuple[int, dict]]] = {}
+    for i, plan in enumerate(plans):
         for row in plan["ledger"]:
-            event = row["event"]
-            scores = lineup_worlds(
-                Lineup.model_validate(row["lineup"]),
-                samples[f"points_{event}"],
-                samples[f"minutes_{event}"],
-                forecast_["player_ids"],
-                players,
-                rules,
-                row["chip"],
-            )
-            worlds += scores - row["hit"]
-            row["simulated_net_mean"] = round(float(scores.mean() - row["hit"]), 3)
-            row["net_quantiles"] = np.quantile(scores - row["hit"], [0.1, 0.5, 0.9]).tolist()
-    plan["simulation"] = {
-        "worlds": len(worlds),
-        "seed": forecast_["seed"],
-        "mean": float(worlds.mean()),
-        "sd": float(worlds.std()),
-        "quantiles": np.quantile(worlds, [0.1, 0.5, 0.9]).tolist(),
-        "method": "common match worlds with autosubs and captain fallback",
-    }
-    return worlds
+            by_event.setdefault(row["event"], []).append((i, row))
+    with load_worlds(store, forecast_) as samples:
+        for event, entries in sorted(by_event.items()):
+            points = samples[f"points_{event}"]
+            minutes = samples[f"minutes_{event}"]
+            for i, row in entries:
+                scores = lineup_worlds(
+                    Lineup.model_validate(row["lineup"]),
+                    points,
+                    minutes,
+                    forecast_["player_ids"],
+                    players,
+                    rules,
+                    row["chip"],
+                )
+                outcomes[i] += scores - row["hit"]
+                row["simulated_net_mean"] = round(float(scores.mean() - row["hit"]), 3)
+                row["net_quantiles"] = np.quantile(scores - row["hit"], [0.1, 0.5, 0.9]).tolist()
+    for plan, worlds in zip(plans, outcomes):
+        plan["simulation"] = {
+            "worlds": len(worlds),
+            "seed": forecast_["seed"],
+            "mean": float(worlds.mean()),
+            "sd": float(worlds.std()),
+            "quantiles": np.quantile(worlds, [0.1, 0.5, 0.9]).tolist(),
+            "method": "common match worlds with autosubs and captain fallback",
+        }
+    return outcomes
+
+
+def score_plan(store: Store, plan: dict, forecast_: dict) -> np.ndarray:
+    return score_plans(store, [plan], forecast_)[0]

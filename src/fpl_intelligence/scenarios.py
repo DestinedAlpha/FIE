@@ -240,8 +240,8 @@ def evaluate_scenarios(store: Store, plan_id: str, specs: list[ScenarioSpec]) ->
     results = []
     controls = {}
     for spec in specs:
-        if not base["start_event"] < spec.reveal_event <= base["end_event"]:
-            raise ValueError("Future scenario must be observed after the immediate decision, within the plan")
+        if not base["start_event"] <= spec.reveal_event <= base["end_event"]:
+            raise ValueError("Scenario must be observed at or after the first decision, within the plan")
         for change in spec.fixture_events:
             old = next(
                 (
@@ -264,7 +264,7 @@ def evaluate_scenarios(store: Store, plan_id: str, specs: list[ScenarioSpec]) ->
             branch = forecast(
                 store,
                 start_event=original["start_event"],
-                end_event=original["end_event"],
+                end_event=min(original["end_event"], base["end_event"] + 4),
                 worlds=original["worlds"],
                 seed=original["seed"],
                 scenario=spec.model_dump(exclude_none=True),
@@ -323,9 +323,7 @@ def evaluate_scenarios(store: Store, plan_id: str, specs: list[ScenarioSpec]) ->
 def full_recourse(store: Store, base: dict, branch_forecast: dict, spec: ScenarioSpec, seconds=30):
     """Shared prefix, then full-horizon re-optimization at each new price observation."""
     import copy
-    import shutil
     import tempfile
-    from pathlib import Path
 
     from .ingestion import normalize
     from .optimization import optimize
@@ -371,9 +369,9 @@ def full_recourse(store: Store, base: dict, branch_forecast: dict, spec: Scenari
                 with tempfile.TemporaryDirectory(prefix="fie-recourse-") as temporary:
                     local = Store(temporary)
                     # Copy only the frozen world file; Windows does not require symlink privileges.
-                    scenario_file = store.artifact_path(source_forecast["scenario_path"])
-                    (Path(temporary) / "scenarios").mkdir()
-                    shutil.copy2(scenario_file, Path(temporary) / "scenarios" / scenario_file.name)
+                    from .worlds import copy_worlds
+
+                    copy_worlds(store, source_forecast, temporary)
                     bootstrap = copy.deepcopy(original_bootstrap)
                     for p in bootstrap["elements"]:
                         p["now_cost"] = current_players[p["id"]].price
@@ -382,6 +380,7 @@ def full_recourse(store: Store, base: dict, branch_forecast: dict, spec: Scenari
                         for fixture in fixtures:
                             if fixture["id"] == change.fixture_id:
                                 fixture["event"] = change.event
+                                fixture["kickoff_time"] = None
                     local.snapshot(
                         "bootstrap",
                         "scenario://conditional-bootstrap/" + digest(spec.model_dump()),

@@ -463,8 +463,11 @@ def optimize(
     forecast_id = forecast_id or store.get("forecast")["id"]
     fixed = None if chips == "auto" else {int(k): v for k, v in json.loads(chips).items()}
     result = run(store, state_id, forecast_id, end, seconds, chips=fixed, max_transfers=max_transfers)
-    store.put("selected_plan", {"plan_id": result["id"], "at": now()})
     hold = hold_plan(store, state_id, forecast_id, end)
+    from .objectives import choose_recommendation
+
+    result, _ = choose_recommendation(store, [result, hold], store.get("forecast", forecast_id))
+    store.put("selected_plan", {"plan_id": result["id"], "at": now()})
     show(
         {
             "plan_id": result["id"],
@@ -686,3 +689,19 @@ def population_analysis(per_stratum: int = 16):
     store = Store()
     asyncio.run(collect_population(store, per_stratum))
     show(evaluate_population(store))
+
+
+@app.command("replay-weekly")
+def replay_weekly(worlds: int = 4000, seconds: float = 60):
+    """Build independent GW1–8 squads from deadline-pinned inputs, then score them."""
+    from .replay import run_replay
+
+    show(run_replay(Store(), worlds=worlds, seconds=seconds))
+
+
+@app.command("refresh-current")
+def refresh_current():
+    """Reconcile revealed squad, retrain finalized outcomes and replan the next deadline."""
+    from .workflow import refresh_cycle
+
+    show(refresh_cycle(Store()))

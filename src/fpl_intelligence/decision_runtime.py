@@ -401,7 +401,9 @@ def conditional_plan(store, state_id, forecast_id, end_event, action, seconds=20
     state = TeamState.model_validate({k: v for k, v in saved.items() if k != "id"})
     forecast = store.get("forecast", forecast_id)
     rules = Rules.from_bootstrap(store.latest("bootstrap", content_hash=market["source_hash"])[0])
-    with np.load(store.artifact_path(forecast["scenario_path"])) as worlds:
+    from .worlds import load_worlds
+
+    with load_worlds(store, forecast) as worlds:
         action.lineup = optimize_bench(
             action.lineup,
             worlds[f"points_{state.event}"],
@@ -553,12 +555,15 @@ def refine_frontier(store, seconds=20):
     result["plans"] = [p["id"] for p in plans]
     result["decision_analysis_id"] = analysis["id"]
     result["id"] = store.put("case_comparison", {k: v for k, v in result.items() if k != "id"})
-    if store.get("state")["id"] == state["id"] and store.get("forecast")["id"] == forecast["id"]:
-        store.put("selected_plan", {"plan_id": result["selected_plan_id"], "at": now()})
-    else:
-        result["selection_status"] = (
-            "Account or forecast changed during planning; result retained as an analysis only"
-        )
+    from .account_sync import state_lock
+
+    with state_lock:
+        if store.get("state")["id"] == state["id"] and store.get("forecast")["id"] == forecast["id"]:
+            store.put("selected_plan", {"plan_id": result["selected_plan_id"], "at": now()})
+        else:
+            result["selection_status"] = (
+                "Account or forecast changed during planning; result retained as an analysis only"
+            )
     return result
 
 

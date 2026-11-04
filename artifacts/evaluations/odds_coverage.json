@@ -1,0 +1,11 @@
+{
+  "at": "2026-11-04T08:51:35.378238+00:00",
+  "market_id": "170668223cf726bc1816292633c333b1f1d41c86fa1d1cb57ed2a15151f22dcd",
+  "source_url": "https://football-data.co.uk/fixtures.csv",
+  "premier_league_rows": 0,
+  "observations": [],
+  "rejected": [],
+  "status": "Free feed currently has no compatible pre-deadline Premier League markets",
+  "fallback": "Statistical forecast remains active; no closing odds or market probabilities are invented",
+  "id": "9832de3e8955ca0cc50a8abaf9ba2fd4e15dc5fc46a6952bec2c56fb0c022866"
+}

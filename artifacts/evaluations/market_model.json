@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-29T20:19:59.142104+00:00",
+  "at": "2026-11-04T09:45:41.721150+00:00",
   "features": [
     "price",
     "ownership",
@@ -18,11 +18,11 @@
   ],
   "models": {
     "price": {
-      "path": "data/models/market-8f25f54fc67ddd00b831/price.txt",
+      "path": "data/models/market-3f103aa3e86363532c6a/price.txt",
       "hash": "8d41feae9267c43796b2904438501d6073b611f0c0ab1bb12ac579eaf4951305"
     },
     "news": {
-      "path": "data/models/market-8f25f54fc67ddd00b831/news.txt",
+      "path": "data/models/market-3f103aa3e86363532c6a/news.txt",
       "hash": "54a62144c8841460fd970f206df09f1b437308524af4fbcf5bf7795c5ae38254"
     }
   },
@@ -34,17 +34,17 @@
   ],
   "train_rows": 76599,
   "calibration_rows": 6383,
-  "test_rows": 34771,
-  "test_deadlines": 46,
-  "price_log_loss": 0.08270723999157038,
-  "frequency_log_loss": 0.12830243420426649,
+  "test_rows": 36110,
+  "test_deadlines": 48,
+  "price_log_loss": 0.08239232895184287,
+  "frequency_log_loss": 0.1274934551443308,
   "block_log_loss_difference_95ci": [
-    -0.053245713974697094,
-    -0.03901176627055158
+    -0.052307523237624075,
+    -0.0382004003197553
   ],
   "promoted": true,
-  "news_brier": 0.012604127103918636,
-  "news_frequency_brier": 0.014399809472049333,
+  "news_brier": 0.01224399480312781,
+  "news_frequency_brier": 0.013983009449271475,
   "news_promoted": true,
   "news_prior": 0.01644887142465503,
   "frequency": [
@@ -57,11 +57,11 @@
     72
   ],
   "protocol": "Train before 2024/25 GW31; calibrate final eight prior-season deadlines; test all later deadlines. Inputs and targets both precede each football deadline.",
-  "source_id": "cc5aaa89d7a0e76aad4b6e9ca8aafe4640722c7b38ba313da27cc1b771342ab7",
+  "source_id": "b6df345bc195f2a3fc494f2aef9aa8a1b934259b31ecb2fb8133c344dce918ff",
   "limits": [
     "Conditional transition model, not access to the unpublished FPL price-change algorithm",
     "Approximately 48-hour archives; intraday horizons outside this support are scenario sensitivities",
     "Reported-unavailable transitions concern new official news, not certainty of actual zero minutes"
   ],
-  "id": "8b58a0d27fc0d94f5ca3b1d76614a9da0ca24291f3bb8b6b84fd2faebb440f70"
+  "id": "661b8c3bb8cd450ab2a3f745d6701cba188445d48eee8d15b9bd4af8b8246a29"
 }

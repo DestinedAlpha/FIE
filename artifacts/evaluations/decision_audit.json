@@ -1,27 +1,27 @@
 {
-  "at": "2026-10-29T13:44:09.820329+00:00",
-  "decision_model_id": "39840e58f1e3096877578ce293cf817b00a6f88af5052644292eacdd51c8f65c",
+  "at": "2026-11-04T10:33:27.739000+00:00",
+  "decision_model_id": "4d2dd0e9f0291d667c911343558a5e02dfb970775a4058134f5d0b83befd434e",
   "track": "out-of-fold historical decisions",
   "oracle_use": "Diagnostic upper bound only; no hindsight target is added to model features or live fitting",
   "budget": 1000,
   "price_cohorts": {
     "budget": {
-      "n": 6172,
-      "predicted": 2.77643453572002,
-      "actual": 2.749189889825016,
-      "bias": 0.027244645895003777
+      "n": 6305,
+      "predicted": 2.7754800867577987,
+      "actual": 2.7517842981760507,
+      "bias": 0.023695788581747868
     },
     "midprice": {
-      "n": 2160,
-      "predicted": 3.3067363489220005,
-      "actual": 3.133796296296296,
-      "bias": 0.17294005262570422
+      "n": 2201,
+      "predicted": 3.3055781846267136,
+      "actual": 3.1322126306224445,
+      "bias": 0.17336555400426926
     },
     "premium": {
-      "n": 195,
-      "predicted": 4.832269244952206,
-      "actual": 4.38974358974359,
-      "bias": 0.44252565520861703
+      "n": 199,
+      "predicted": 4.831362961953387,
+      "actual": 4.36180904522613,
+      "bias": 0.46955391672725666
     }
   },
   "limits": [
@@ -29,16 +29,16 @@
     "Perfect-hindsight teams intentionally overfit realized match variance and are not attainable forecasts"
   ],
   "captain_totals": {
-    "learned_bonus": 323,
-    "price_baseline_bonus": 274,
-    "shrinkage_bonus": 283,
-    "hindsight_best": 790,
+    "learned_bonus": 325,
+    "price_baseline_bonus": 276,
+    "shrinkage_bonus": 285,
+    "hindsight_best": 805,
     "defender_captain_weeks": 1
   },
   "team_totals": {
-    "learned": 1791,
-    "shrinkage": 1681,
-    "oracle": 4638
+    "learned": 1872,
+    "shrinkage": 1722,
+    "oracle": 4768
   },
-  "id": "260e1bf921f3db92c5cbe834a28e7e7a84bb583e0ed590860e263b73feb96603"
+  "id": "149157cbda2bfd371a17461d6fdeed3e63e4c8b6ef333d167f478ed56e523373"
 }

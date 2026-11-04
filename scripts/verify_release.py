@@ -49,8 +49,31 @@ def main():
         "horizon_consistency",
         "scenario_evaluation",
         "case_comparison",
+        "availability_model",
+        "attack_model",
+        "score_process_model",
+        "temporal_model",
+        "discipline_report",
+        "odds_refresh",
+        "odds_model",
+        "evidence_impact",
+        "policy_selection",
+        "weekly_replay",
     )
     artifacts = {kind: store.get(kind) for kind in kinds}
+    from fpl_intelligence.decision import load_bundle
+
+    load_bundle(store, store.get("decision_model"))
+    fusion = artifacts["fusion_model"]
+    directory = store.root / "models" / fusion["directory"]
+    for name, expected in fusion["tree_spec"]["hashes"].items():
+        assert hashlib.sha256((directory / (name + ".txt")).read_bytes()).hexdigest() == expected
+    assert (
+        hashlib.sha256((directory / "network.pt").read_bytes()).hexdigest() == fusion["network_spec"]["hash"]
+    )
+    horizon = artifacts["horizon_model"]
+    path = store.root / "models" / horizon["directory"] / "value.txt"
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == horizon["model_hash"]
     for kind in ("timing_analysis", "price_bridge", "population_forecast", "coherent_comparison"):
         assert artifacts[kind]["plan_id"] == plan["id"], f"Stale {kind}"
     for item in artifacts.values():
@@ -64,11 +87,29 @@ def main():
     assert artifacts["scenario_evaluation"]["base_plan_id"] == plan["id"]
     assert artifacts["coherent_comparison"]["invalid_goal_allocations"] == 0
     assert artifacts["coherent_comparison"]["short_lineup_worlds"] == 0
+    replay = artifacts["weekly_replay"]
+    assert [w["event"] for w in replay["weeks"]] == list(range(1, 9))
+    assert replay["account_state_unchanged"]
+    for week in replay["weeks"]:
+        group = f"{week['season']}-GW{week['event']:02d}"
+        assert week["training"]["fit_max_group"] < week["training"]["calibration_max_group"] < group
+        frozen = store.get("weekly_replay_decision", week["decision_id"])
+        assert "actual_points" not in frozen and "hindsight_points" not in frozen
+        source = store.get("replay_inputs", week["input_id"])
+        from fpl_intelligence.availability import moment
+
+        assert moment(source["fixture_proof"]["git_committed_at"]) < moment(source["deadline"])
+        for model in week["training"]["models"].values():
+            assert (
+                hashlib.sha256(store.artifact_path(model["path"]).read_bytes()).hexdigest() == model["hash"]
+            )
+    checks = json.loads(Path("artifacts/runtime/checks/checks.json").read_text())
+    assert checks["passed"] and checks["browser_failed"] == 0
     critic = artifacts["decision_critic"]
     value = artifacts["state_value_model"]
     result = {
         "at": now(),
-        "version": "0.5.0",
+        "version": "0.6.0",
         "account_state_id": state["id"],
         "market_id": market["id"],
         "forecast_id": forecast["id"],
@@ -86,19 +127,18 @@ def main():
         "first_hit": plan["ledger"][0]["hit"],
         "simulation": plan["simulation"],
         "solver": plan["solver"],
+        "weekly_scores": [
+            {"gw": w["event"], "actual_points": w["actual_points"], "hindsight_points": w["hindsight_points"]}
+            for w in replay["weeks"]
+        ],
         "checks": {
-            "backend_tests": 93,
-            "frontend_unit_tests": 2,
-            "browser_journeys": 8,
-            "ruff": "passed",
-            "mypy": "passed",
-            "frontend_build": "passed",
+            **{k: v for k, v in checks.items() if k != "results"},
             "ledger_replay": "passed",
             "connected_model_checksums": "passed",
         },
         "scope": "Executed implementation checks and historical gates; future football outcomes and global optimality are not certified",
     }
-    atomic_json(Path("artifacts/evaluations/release_0_5.json"), result)
+    atomic_json(Path("artifacts/evaluations/release_0_6.json"), result)
     print(
         json.dumps(
             {
