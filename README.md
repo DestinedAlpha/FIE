@@ -4,6 +4,8 @@ A private local FPL decision workspace: learned player-point distributions, exac
 
 The six supplied documents remain byte-for-byte unchanged in [`research/`](research/). Design documents are not evidence of competitive performance.
 
+**Current acceptance status:** the runnable 0.6 release has tested implementation paths, but the requested competitive, fully validated system is not established. Its GW1–8 score of 472 comes from a reference-only weekly reconstruction. A matched ownership control scores 512. The 65-item traceability catalog is not an exhaustive certification of every blueprint requirement. See the [performance audit](docs/performance-audit.md) for the unresolved end-to-end validation and coverage work.
+
 ## Windows
 
 For an existing installation, extract the new private download into a **separate folder** and run **Update existing.cmd**. Select the existing folder containing Start.cmd. The updater backs up the database/application, preserves your `.env` and account data, updates the application, retrains against current completed data and recomputes the plan. It does not apply any FPL account transfer.

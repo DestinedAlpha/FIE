@@ -1,0 +1,3053 @@
+{
+  "at": "2026-11-04T16:21:58.164118+00:00",
+  "weekly_replay_id": "277d16cf71eb6fe1caef62c051601e29a2f75212c5c1224705a423074230c2a5",
+  "weeks": [
+    {
+      "event": 1,
+      "reference_actual": 47,
+      "official_average_context_only": 50,
+      "baselines": {
+        "official_expected": {
+          "season": "2026/27",
+          "event": 1,
+          "method": "official_expected",
+          "definition": "Archived ep_next; already availability-adjusted by its publisher",
+          "input_id": "dd04186338a620c972860044509205b6d71d2165888f401b7bc1c3c35595b0c3",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 60
+            },
+            {
+              "id": 4,
+              "name": "Gabriel",
+              "price": 80
+            },
+            {
+              "id": 79,
+              "name": "Evanilson",
+              "price": 60
+            },
+            {
+              "id": 107,
+              "name": "Furo",
+              "price": 45
+            },
+            {
+              "id": 134,
+              "name": "Oriola",
+              "price": 45
+            },
+            {
+              "id": 154,
+              "name": "Palmer",
+              "price": 95
+            },
+            {
+              "id": 200,
+              "name": "Lacroix",
+              "price": 60
+            },
+            {
+              "id": 555,
+              "name": "Matthews",
+              "price": 40
+            },
+            {
+              "id": 356,
+              "name": "Virgil",
+              "price": 65
+            },
+            {
+              "id": 387,
+              "name": "O'Reilly",
+              "price": 65
+            },
+            {
+              "id": 426,
+              "name": "B.Fernandes",
+              "price": 120
+            },
+            {
+              "id": 427,
+              "name": "Mbeumo",
+              "price": 80
+            },
+            {
+              "id": 441,
+              "name": "Obi",
+              "price": 45
+            },
+            {
+              "id": 480,
+              "name": "Gibbs-White",
+              "price": 80
+            },
+            {
+              "id": 498,
+              "name": "Senesi",
+              "price": 60
+            }
+          ],
+          "bank": 0,
+          "lineup": {
+            "xi": [
+              1,
+              4,
+              356,
+              387,
+              200,
+              498,
+              426,
+              154,
+              427,
+              480,
+              79
+            ],
+            "bench": [
+              555,
+              107,
+              134,
+              441
+            ],
+            "captain": 1,
+            "vice": 4
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 38.6,
+            "best_bound": 38.6,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1683,
+            "constraints": 1154
+          },
+          "selection_utility": 38.6,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:48.053099+00:00",
+          "id": "76ccbda4d44597ea38592cf0056f7245fa8c9133a8cd2b1df07816af258bb2cc",
+          "actual_points": 53.0
+        },
+        "points_per_game": {
+          "season": "2026/27",
+          "event": 1,
+          "method": "points_per_game",
+          "definition": "Archived points_per_game multiplied by published availability",
+          "input_id": "dd04186338a620c972860044509205b6d71d2165888f401b7bc1c3c35595b0c3",
+          "players": [
+            {
+              "id": 4,
+              "name": "Gabriel",
+              "price": 80
+            },
+            {
+              "id": 12,
+              "name": "Saka",
+              "price": 95
+            },
+            {
+              "id": 13,
+              "name": "Rice",
+              "price": 75
+            },
+            {
+              "id": 111,
+              "name": "Steele",
+              "price": 40
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 75
+            },
+            {
+              "id": 199,
+              "name": "Benitez",
+              "price": 45
+            },
+            {
+              "id": 201,
+              "name": "Mu\u00f1oz",
+              "price": 55
+            },
+            {
+              "id": 272,
+              "name": "Kusi-Asare",
+              "price": 45
+            },
+            {
+              "id": 592,
+              "name": "Ouattara",
+              "price": 40
+            },
+            {
+              "id": 388,
+              "name": "Gu\u00e9hi",
+              "price": 60
+            },
+            {
+              "id": 397,
+              "name": "Semenyo",
+              "price": 85
+            },
+            {
+              "id": 426,
+              "name": "B.Fernandes",
+              "price": 120
+            },
+            {
+              "id": 466,
+              "name": "Neave",
+              "price": 45
+            },
+            {
+              "id": 480,
+              "name": "Gibbs-White",
+              "price": 80
+            },
+            {
+              "id": 533,
+              "name": "Mukiele",
+              "price": 55
+            }
+          ],
+          "bank": 5,
+          "lineup": {
+            "xi": [
+              199,
+              4,
+              388,
+              201,
+              533,
+              426,
+              397,
+              12,
+              13,
+              480,
+              165
+            ],
+            "bench": [
+              111,
+              466,
+              272,
+              592
+            ],
+            "captain": 199,
+            "vice": 426
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 67.6,
+            "best_bound": 67.6,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1683,
+            "constraints": 1154
+          },
+          "selection_utility": 67.6,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:48.534019+00:00",
+          "id": "32d61e8a2f73f10643a00a4694d1b808ae2216b5a144fd6658876ea141868596",
+          "actual_points": 47.0
+        },
+        "ownership": {
+          "season": "2026/27",
+          "event": 1,
+          "method": "ownership",
+          "definition": "Archived selected_by_percent multiplied by published availability; ranking signal, not xPts",
+          "input_id": "dd04186338a620c972860044509205b6d71d2165888f401b7bc1c3c35595b0c3",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 60
+            },
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 55
+            },
+            {
+              "id": 40,
+              "name": "Rogers",
+              "price": 75
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 75
+            },
+            {
+              "id": 252,
+              "name": "McNally",
+              "price": 40
+            },
+            {
+              "id": 297,
+              "name": "Gyabi",
+              "price": 45
+            },
+            {
+              "id": 259,
+              "name": "Diop",
+              "price": 40
+            },
+            {
+              "id": 346,
+              "name": "Calvert-Lewin",
+              "price": 60
+            },
+            {
+              "id": 363,
+              "name": "Leoni",
+              "price": 40
+            },
+            {
+              "id": 365,
+              "name": "Ramsay",
+              "price": 40
+            },
+            {
+              "id": 368,
+              "name": "Szoboszlai",
+              "price": 70
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 155
+            },
+            {
+              "id": 423,
+              "name": "Shaw",
+              "price": 45
+            },
+            {
+              "id": 426,
+              "name": "B.Fernandes",
+              "price": 120
+            },
+            {
+              "id": 427,
+              "name": "Mbeumo",
+              "price": 80
+            }
+          ],
+          "bank": 0,
+          "lineup": {
+            "xi": [
+              1,
+              8,
+              423,
+              259,
+              426,
+              368,
+              427,
+              40,
+              411,
+              165,
+              346
+            ],
+            "bench": [
+              252,
+              365,
+              297,
+              363
+            ],
+            "captain": 411,
+            "vice": 165
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 502.7,
+            "best_bound": 502.7,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1683,
+            "constraints": 1154
+          },
+          "selection_utility": 502.70000000000005,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:48.698829+00:00",
+          "id": "4d2a33eabe951782517cbfb29aab2d86f800e4e0ddb101806da3164d56004da3",
+          "actual_points": 54.0
+        }
+      }
+    },
+    {
+      "event": 2,
+      "reference_actual": 89,
+      "official_average_context_only": 81,
+      "baselines": {
+        "official_expected": {
+          "season": "2026/27",
+          "event": 2,
+          "method": "official_expected",
+          "definition": "Archived ep_next; already availability-adjusted by its publisher",
+          "input_id": "009fa3b1829147c03cfb17619a8883d966cfead3a13858e383e3bb9b47ef9e97",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 60
+            },
+            {
+              "id": 4,
+              "name": "Gabriel",
+              "price": 80
+            },
+            {
+              "id": 26,
+              "name": "Havertz",
+              "price": 75
+            },
+            {
+              "id": 251,
+              "name": "Lecomte",
+              "price": 40
+            },
+            {
+              "id": 297,
+              "name": "Gyabi",
+              "price": 45
+            },
+            {
+              "id": 321,
+              "name": "Walle Egeli",
+              "price": 45
+            },
+            {
+              "id": 356,
+              "name": "Virgil",
+              "price": 65
+            },
+            {
+              "id": 387,
+              "name": "O'Reilly",
+              "price": 65
+            },
+            {
+              "id": 388,
+              "name": "Gu\u00e9hi",
+              "price": 60
+            },
+            {
+              "id": 426,
+              "name": "B.Fernandes",
+              "price": 120
+            },
+            {
+              "id": 427,
+              "name": "Mbeumo",
+              "price": 80
+            },
+            {
+              "id": 428,
+              "name": "Cunha",
+              "price": 80
+            },
+            {
+              "id": 466,
+              "name": "Neave",
+              "price": 45
+            },
+            {
+              "id": 480,
+              "name": "Gibbs-White",
+              "price": 80
+            },
+            {
+              "id": 498,
+              "name": "Senesi",
+              "price": 60
+            }
+          ],
+          "bank": 0,
+          "lineup": {
+            "xi": [
+              1,
+              4,
+              356,
+              387,
+              388,
+              498,
+              426,
+              427,
+              428,
+              480,
+              26
+            ],
+            "bench": [
+              251,
+              321,
+              466,
+              297
+            ],
+            "captain": 1,
+            "vice": 4
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 38.6,
+            "best_bound": 38.6,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1713,
+            "constraints": 1174
+          },
+          "selection_utility": 38.6,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:48.893125+00:00",
+          "id": "57358a947a7aa74ca5b2ed5486119b746f2566f2a707cd06883fba0e6025e9ec",
+          "actual_points": 83.0
+        },
+        "points_per_game": {
+          "season": "2026/27",
+          "event": 2,
+          "method": "points_per_game",
+          "definition": "Archived points_per_game multiplied by published availability",
+          "input_id": "009fa3b1829147c03cfb17619a8883d966cfead3a13858e383e3bb9b47ef9e97",
+          "players": [
+            {
+              "id": 56,
+              "name": "Abraham",
+              "price": 55
+            },
+            {
+              "id": 582,
+              "name": "Madjo",
+              "price": 55
+            },
+            {
+              "id": 58,
+              "name": "Forster",
+              "price": 40
+            },
+            {
+              "id": 88,
+              "name": "Kayode",
+              "price": 46
+            },
+            {
+              "id": 565,
+              "name": "M.Sangar\u00e9",
+              "price": 56
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 46
+            },
+            {
+              "id": 154,
+              "name": "Palmer",
+              "price": 95
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 76
+            },
+            {
+              "id": 236,
+              "name": "Dewsbury-Hall",
+              "price": 65
+            },
+            {
+              "id": 279,
+              "name": "Ajayi",
+              "price": 40
+            },
+            {
+              "id": 572,
+              "name": "Tzolakis",
+              "price": 45
+            },
+            {
+              "id": 586,
+              "name": "Mendy",
+              "price": 40
+            },
+            {
+              "id": 335,
+              "name": "Stach",
+              "price": 60
+            },
+            {
+              "id": 367,
+              "name": "Gakpo",
+              "price": 70
+            },
+            {
+              "id": 532,
+              "name": "Ballard",
+              "price": 50
+            }
+          ],
+          "bank": 161,
+          "lineup": {
+            "xi": [
+              572,
+              115,
+              586,
+              279,
+              88,
+              565,
+              154,
+              335,
+              367,
+              236,
+              165
+            ],
+            "bench": [
+              58,
+              56,
+              532,
+              582
+            ],
+            "captain": 115,
+            "vice": 586
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 160.0,
+            "best_bound": 160.0,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1713,
+            "constraints": 1174
+          },
+          "selection_utility": 160.0,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:48.971193+00:00",
+          "id": "f235ef673f7d239c92ac21223d5e5b3dbf2f7b826bc089c4245128e191de0b5f",
+          "actual_points": 50.0
+        },
+        "ownership": {
+          "season": "2026/27",
+          "event": 2,
+          "method": "ownership",
+          "definition": "Archived selected_by_percent multiplied by published availability; ranking signal, not xPts",
+          "input_id": "009fa3b1829147c03cfb17619a8883d966cfead3a13858e383e3bb9b47ef9e97",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 60
+            },
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 56
+            },
+            {
+              "id": 557,
+              "name": "Tzolis",
+              "price": 65
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 76
+            },
+            {
+              "id": 235,
+              "name": "Aznou",
+              "price": 40
+            },
+            {
+              "id": 252,
+              "name": "McNally",
+              "price": 40
+            },
+            {
+              "id": 297,
+              "name": "Gyabi",
+              "price": 45
+            },
+            {
+              "id": 259,
+              "name": "Diop",
+              "price": 40
+            },
+            {
+              "id": 346,
+              "name": "Calvert-Lewin",
+              "price": 60
+            },
+            {
+              "id": 603,
+              "name": "Lienou",
+              "price": 40
+            },
+            {
+              "id": 368,
+              "name": "Szoboszlai",
+              "price": 70
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 155
+            },
+            {
+              "id": 423,
+              "name": "Shaw",
+              "price": 45
+            },
+            {
+              "id": 426,
+              "name": "B.Fernandes",
+              "price": 120
+            },
+            {
+              "id": 427,
+              "name": "Mbeumo",
+              "price": 80
+            }
+          ],
+          "bank": 8,
+          "lineup": {
+            "xi": [
+              1,
+              8,
+              423,
+              259,
+              426,
+              368,
+              427,
+              557,
+              165,
+              411,
+              346
+            ],
+            "bench": [
+              252,
+              235,
+              603,
+              297
+            ],
+            "captain": 165,
+            "vice": 411
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 502.70000000000005,
+            "best_bound": 502.70000000000005,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1713,
+            "constraints": 1174
+          },
+          "selection_utility": 502.70000000000005,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:49.046264+00:00",
+          "id": "1e39da537d9a9838508200f6de2db6403fcb7f8adef3fbc63463c2fdab60112d",
+          "actual_points": 98.0
+        }
+      }
+    },
+    {
+      "event": 3,
+      "reference_actual": 39,
+      "official_average_context_only": 51,
+      "baselines": {
+        "official_expected": {
+          "season": "2026/27",
+          "event": 3,
+          "method": "official_expected",
+          "definition": "Archived ep_next; already availability-adjusted by its publisher",
+          "input_id": "754283143d34ab86a2deccf0d1e7d4c7e272d36ae41f278ae41100719b1dc0fa",
+          "players": [
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 57
+            },
+            {
+              "id": 10,
+              "name": "White",
+              "price": 55
+            },
+            {
+              "id": 12,
+              "name": "Saka",
+              "price": 95
+            },
+            {
+              "id": 565,
+              "name": "M.Sangar\u00e9",
+              "price": 57
+            },
+            {
+              "id": 111,
+              "name": "Steele",
+              "price": 40
+            },
+            {
+              "id": 113,
+              "name": "F.Kad\u0131o\u011flu",
+              "price": 44
+            },
+            {
+              "id": 154,
+              "name": "Palmer",
+              "price": 96
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 77
+            },
+            {
+              "id": 193,
+              "name": "Wright",
+              "price": 54
+            },
+            {
+              "id": 229,
+              "name": "Tarkowski",
+              "price": 60
+            },
+            {
+              "id": 279,
+              "name": "Ajayi",
+              "price": 41
+            },
+            {
+              "id": 572,
+              "name": "Tzolakis",
+              "price": 46
+            },
+            {
+              "id": 399,
+              "name": "Cherki",
+              "price": 77
+            },
+            {
+              "id": 426,
+              "name": "B.Fernandes",
+              "price": 120
+            },
+            {
+              "id": 440,
+              "name": "Zirkzee",
+              "price": 54
+            }
+          ],
+          "bank": 27,
+          "lineup": {
+            "xi": [
+              572,
+              8,
+              279,
+              10,
+              229,
+              426,
+              399,
+              12,
+              154,
+              565,
+              165
+            ],
+            "bench": [
+              111,
+              113,
+              193,
+              440
+            ],
+            "captain": 426,
+            "vice": 399
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 123.0,
+            "best_bound": 123.0,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1659,
+            "constraints": 1138
+          },
+          "selection_utility": 123.0,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:49.175645+00:00",
+          "id": "f8aa22d580607d66c0473be8b40f17fb1ebb756f1baf5e1508ae606376bc4ee6",
+          "actual_points": 29.0
+        },
+        "points_per_game": {
+          "season": "2026/27",
+          "event": 3,
+          "method": "points_per_game",
+          "definition": "Archived points_per_game multiplied by published availability",
+          "input_id": "754283143d34ab86a2deccf0d1e7d4c7e272d36ae41f278ae41100719b1dc0fa",
+          "players": [
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 57
+            },
+            {
+              "id": 10,
+              "name": "White",
+              "price": 55
+            },
+            {
+              "id": 12,
+              "name": "Saka",
+              "price": 95
+            },
+            {
+              "id": 565,
+              "name": "M.Sangar\u00e9",
+              "price": 57
+            },
+            {
+              "id": 111,
+              "name": "Steele",
+              "price": 40
+            },
+            {
+              "id": 113,
+              "name": "F.Kad\u0131o\u011flu",
+              "price": 44
+            },
+            {
+              "id": 154,
+              "name": "Palmer",
+              "price": 96
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 77
+            },
+            {
+              "id": 193,
+              "name": "Wright",
+              "price": 54
+            },
+            {
+              "id": 279,
+              "name": "Ajayi",
+              "price": 41
+            },
+            {
+              "id": 572,
+              "name": "Tzolakis",
+              "price": 46
+            },
+            {
+              "id": 399,
+              "name": "Cherki",
+              "price": 77
+            },
+            {
+              "id": 426,
+              "name": "B.Fernandes",
+              "price": 120
+            },
+            {
+              "id": 440,
+              "name": "Zirkzee",
+              "price": 54
+            },
+            {
+              "id": 533,
+              "name": "Mukiele",
+              "price": 55
+            }
+          ],
+          "bank": 32,
+          "lineup": {
+            "xi": [
+              572,
+              8,
+              279,
+              10,
+              533,
+              426,
+              399,
+              12,
+              154,
+              565,
+              165
+            ],
+            "bench": [
+              111,
+              113,
+              193,
+              440
+            ],
+            "captain": 426,
+            "vice": 399
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 123.0,
+            "best_bound": 123.0,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1659,
+            "constraints": 1138
+          },
+          "selection_utility": 123.0,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:49.225388+00:00",
+          "id": "03a1a5ec1a266dcb50aaeafd47bd252093b1edba39c001d8ac493e854416222a",
+          "actual_points": 30.0
+        },
+        "ownership": {
+          "season": "2026/27",
+          "event": 3,
+          "method": "ownership",
+          "definition": "Archived selected_by_percent multiplied by published availability; ranking signal, not xPts",
+          "input_id": "754283143d34ab86a2deccf0d1e7d4c7e272d36ae41f278ae41100719b1dc0fa",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 60
+            },
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 57
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 47
+            },
+            {
+              "id": 124,
+              "name": "Gro\u00df",
+              "price": 55
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 77
+            },
+            {
+              "id": 180,
+              "name": "Woolfenden",
+              "price": 40
+            },
+            {
+              "id": 182,
+              "name": "Amenda",
+              "price": 40
+            },
+            {
+              "id": 221,
+              "name": "Drakes-Thomas",
+              "price": 45
+            },
+            {
+              "id": 251,
+              "name": "Lecomte",
+              "price": 40
+            },
+            {
+              "id": 346,
+              "name": "Calvert-Lewin",
+              "price": 60
+            },
+            {
+              "id": 368,
+              "name": "Szoboszlai",
+              "price": 70
+            },
+            {
+              "id": 391,
+              "name": "Gvardiol",
+              "price": 56
+            },
+            {
+              "id": 399,
+              "name": "Cherki",
+              "price": 77
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 155
+            },
+            {
+              "id": 426,
+              "name": "B.Fernandes",
+              "price": 120
+            }
+          ],
+          "bank": 1,
+          "lineup": {
+            "xi": [
+              1,
+              8,
+              391,
+              115,
+              426,
+              368,
+              399,
+              124,
+              411,
+              165,
+              346
+            ],
+            "bench": [
+              251,
+              182,
+              221,
+              180
+            ],
+            "captain": 411,
+            "vice": 165
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 495.5000000000003,
+            "best_bound": 495.5000000000003,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1659,
+            "constraints": 1138
+          },
+          "selection_utility": 495.5,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:49.494951+00:00",
+          "id": "8a11a209357b338a015434813d5f1a28c95d4aee71325898830f4d0aa3e9a798",
+          "actual_points": 46.0
+        }
+      }
+    },
+    {
+      "event": 4,
+      "reference_actual": 64,
+      "official_average_context_only": 69,
+      "baselines": {
+        "official_expected": {
+          "season": "2026/27",
+          "event": 4,
+          "method": "official_expected",
+          "definition": "Archived ep_next; already availability-adjusted by its publisher",
+          "input_id": "0eed38282d2fbc15cae6ab1fb112069d811450d32b2dd29bea2b4e9a833472fc",
+          "players": [
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 58
+            },
+            {
+              "id": 15,
+              "name": "\u00d8degaard",
+              "price": 67
+            },
+            {
+              "id": 69,
+              "name": "Scott",
+              "price": 61
+            },
+            {
+              "id": 256,
+              "name": "Tete",
+              "price": 44
+            },
+            {
+              "id": 279,
+              "name": "Ajayi",
+              "price": 42
+            },
+            {
+              "id": 572,
+              "name": "Tzolakis",
+              "price": 46
+            },
+            {
+              "id": 586,
+              "name": "Mendy",
+              "price": 41
+            },
+            {
+              "id": 300,
+              "name": "Walton",
+              "price": 44
+            },
+            {
+              "id": 330,
+              "name": "Bogle",
+              "price": 45
+            },
+            {
+              "id": 347,
+              "name": "Nmecha",
+              "price": 54
+            },
+            {
+              "id": 379,
+              "name": "Isak",
+              "price": 91
+            },
+            {
+              "id": 399,
+              "name": "Cherki",
+              "price": 78
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 155
+            },
+            {
+              "id": 426,
+              "name": "B.Fernandes",
+              "price": 120
+            },
+            {
+              "id": 456,
+              "name": "J.Ramsey",
+              "price": 49
+            }
+          ],
+          "bank": 5,
+          "lineup": {
+            "xi": [
+              572,
+              279,
+              586,
+              8,
+              330,
+              426,
+              399,
+              15,
+              69,
+              411,
+              379
+            ],
+            "bench": [
+              300,
+              456,
+              347,
+              256
+            ],
+            "captain": 426,
+            "vice": 572
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 97.6,
+            "best_bound": 97.6,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1656,
+            "constraints": 1136
+          },
+          "selection_utility": 97.6,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:49.641753+00:00",
+          "id": "61fee2736ed4a70b3e628a1273f7589bd90788de50e8a64b7cb614a2e33594f8",
+          "actual_points": 48.0
+        },
+        "points_per_game": {
+          "season": "2026/27",
+          "event": 4,
+          "method": "points_per_game",
+          "definition": "Archived points_per_game multiplied by published availability",
+          "input_id": "0eed38282d2fbc15cae6ab1fb112069d811450d32b2dd29bea2b4e9a833472fc",
+          "players": [
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 58
+            },
+            {
+              "id": 15,
+              "name": "\u00d8degaard",
+              "price": 67
+            },
+            {
+              "id": 69,
+              "name": "Scott",
+              "price": 61
+            },
+            {
+              "id": 256,
+              "name": "Tete",
+              "price": 44
+            },
+            {
+              "id": 279,
+              "name": "Ajayi",
+              "price": 42
+            },
+            {
+              "id": 572,
+              "name": "Tzolakis",
+              "price": 46
+            },
+            {
+              "id": 586,
+              "name": "Mendy",
+              "price": 41
+            },
+            {
+              "id": 300,
+              "name": "Walton",
+              "price": 44
+            },
+            {
+              "id": 330,
+              "name": "Bogle",
+              "price": 45
+            },
+            {
+              "id": 347,
+              "name": "Nmecha",
+              "price": 54
+            },
+            {
+              "id": 379,
+              "name": "Isak",
+              "price": 91
+            },
+            {
+              "id": 399,
+              "name": "Cherki",
+              "price": 78
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 155
+            },
+            {
+              "id": 426,
+              "name": "B.Fernandes",
+              "price": 120
+            },
+            {
+              "id": 456,
+              "name": "J.Ramsey",
+              "price": 49
+            }
+          ],
+          "bank": 5,
+          "lineup": {
+            "xi": [
+              572,
+              279,
+              586,
+              8,
+              330,
+              426,
+              399,
+              15,
+              69,
+              411,
+              379
+            ],
+            "bench": [
+              300,
+              347,
+              456,
+              256
+            ],
+            "captain": 426,
+            "vice": 572
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 97.6,
+            "best_bound": 97.6,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1656,
+            "constraints": 1136
+          },
+          "selection_utility": 97.6,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:49.717672+00:00",
+          "id": "9fd7edffd65e6408519bbf7552b8dc233271cf754d341d3ff802a060c6f51dcb",
+          "actual_points": 48.0
+        },
+        "ownership": {
+          "season": "2026/27",
+          "event": 4,
+          "method": "ownership",
+          "definition": "Archived selected_by_percent multiplied by published availability; ranking signal, not xPts",
+          "input_id": "0eed38282d2fbc15cae6ab1fb112069d811450d32b2dd29bea2b4e9a833472fc",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 60
+            },
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 58
+            },
+            {
+              "id": 31,
+              "name": "Konsa",
+              "price": 45
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 48
+            },
+            {
+              "id": 40,
+              "name": "Rogers",
+              "price": 76
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 77
+            },
+            {
+              "id": 251,
+              "name": "Lecomte",
+              "price": 40
+            },
+            {
+              "id": 272,
+              "name": "Kusi-Asare",
+              "price": 45
+            },
+            {
+              "id": 259,
+              "name": "Diop",
+              "price": 40
+            },
+            {
+              "id": 363,
+              "name": "Leoni",
+              "price": 40
+            },
+            {
+              "id": 368,
+              "name": "Szoboszlai",
+              "price": 70
+            },
+            {
+              "id": 399,
+              "name": "Cherki",
+              "price": 78
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 155
+            },
+            {
+              "id": 426,
+              "name": "B.Fernandes",
+              "price": 120
+            },
+            {
+              "id": 601,
+              "name": "Williams-Barnett",
+              "price": 45
+            }
+          ],
+          "bank": 3,
+          "lineup": {
+            "xi": [
+              1,
+              8,
+              115,
+              31,
+              259,
+              426,
+              368,
+              40,
+              399,
+              165,
+              411
+            ],
+            "bench": [
+              251,
+              272,
+              601,
+              363
+            ],
+            "captain": 165,
+            "vice": 411
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 505.40000000000003,
+            "best_bound": 505.4000000000001,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1656,
+            "constraints": 1136
+          },
+          "selection_utility": 505.4,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:49.862022+00:00",
+          "id": "40dd226880dcff9ec9a8ec2b47bcfc68308a6eca82cb9bcda2eb648e2bbb148f",
+          "actual_points": 85.0
+        }
+      }
+    },
+    {
+      "event": 5,
+      "reference_actual": 65,
+      "official_average_context_only": 48,
+      "baselines": {
+        "official_expected": {
+          "season": "2026/27",
+          "event": 5,
+          "method": "official_expected",
+          "definition": "Archived ep_next; already availability-adjusted by its publisher",
+          "input_id": "96a973ae1cb316a75e1aca86eeccc955df8f55b4561a018c88fdfbfec07c83bc",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 60
+            },
+            {
+              "id": 12,
+              "name": "Saka",
+              "price": 95
+            },
+            {
+              "id": 582,
+              "name": "Madjo",
+              "price": 54
+            },
+            {
+              "id": 68,
+              "name": "Tavernier",
+              "price": 61
+            },
+            {
+              "id": 89,
+              "name": "Henry",
+              "price": 44
+            },
+            {
+              "id": 94,
+              "name": "Schade",
+              "price": 61
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 49
+            },
+            {
+              "id": 124,
+              "name": "Gro\u00df",
+              "price": 57
+            },
+            {
+              "id": 172,
+              "name": "Wilson",
+              "price": 44
+            },
+            {
+              "id": 193,
+              "name": "Wright",
+              "price": 54
+            },
+            {
+              "id": 229,
+              "name": "Tarkowski",
+              "price": 61
+            },
+            {
+              "id": 330,
+              "name": "Bogle",
+              "price": 46
+            },
+            {
+              "id": 367,
+              "name": "Gakpo",
+              "price": 72
+            },
+            {
+              "id": 391,
+              "name": "Gvardiol",
+              "price": 57
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 156
+            }
+          ],
+          "bank": 29,
+          "lineup": {
+            "xi": [
+              1,
+              330,
+              391,
+              115,
+              229,
+              124,
+              12,
+              94,
+              68,
+              367,
+              411
+            ],
+            "bench": [
+              172,
+              89,
+              193,
+              582
+            ],
+            "captain": 330,
+            "vice": 124
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 94.8,
+            "best_bound": 94.8,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1662,
+            "constraints": 1140
+          },
+          "selection_utility": 94.8,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:49.980434+00:00",
+          "id": "ae9a844fbae50d5c929e5b016bebe5642a201f57fa95e4d807bb201c6b01bc2e",
+          "actual_points": 71.0
+        },
+        "points_per_game": {
+          "season": "2026/27",
+          "event": 5,
+          "method": "points_per_game",
+          "definition": "Archived points_per_game multiplied by published availability",
+          "input_id": "96a973ae1cb316a75e1aca86eeccc955df8f55b4561a018c88fdfbfec07c83bc",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 60
+            },
+            {
+              "id": 12,
+              "name": "Saka",
+              "price": 95
+            },
+            {
+              "id": 582,
+              "name": "Madjo",
+              "price": 54
+            },
+            {
+              "id": 71,
+              "name": "Cook",
+              "price": 50
+            },
+            {
+              "id": 94,
+              "name": "Schade",
+              "price": 61
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 49
+            },
+            {
+              "id": 124,
+              "name": "Gro\u00df",
+              "price": 57
+            },
+            {
+              "id": 172,
+              "name": "Wilson",
+              "price": 44
+            },
+            {
+              "id": 193,
+              "name": "Wright",
+              "price": 54
+            },
+            {
+              "id": 229,
+              "name": "Tarkowski",
+              "price": 61
+            },
+            {
+              "id": 650,
+              "name": "Affengruber",
+              "price": 45
+            },
+            {
+              "id": 330,
+              "name": "Bogle",
+              "price": 46
+            },
+            {
+              "id": 367,
+              "name": "Gakpo",
+              "price": 72
+            },
+            {
+              "id": 391,
+              "name": "Gvardiol",
+              "price": 57
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 156
+            }
+          ],
+          "bank": 39,
+          "lineup": {
+            "xi": [
+              1,
+              330,
+              391,
+              115,
+              650,
+              229,
+              124,
+              12,
+              94,
+              367,
+              411
+            ],
+            "bench": [
+              172,
+              71,
+              193,
+              582
+            ],
+            "captain": 330,
+            "vice": 124
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 95.6,
+            "best_bound": 95.6,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1662,
+            "constraints": 1140
+          },
+          "selection_utility": 95.6,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:50.037575+00:00",
+          "id": "557434d01a7c934a3aaf433a771d308e16c2032d917b7ea9e1f3065f5a170aba",
+          "actual_points": 73.0
+        },
+        "ownership": {
+          "season": "2026/27",
+          "event": 5,
+          "method": "ownership",
+          "definition": "Archived selected_by_percent multiplied by published availability; ranking signal, not xPts",
+          "input_id": "96a973ae1cb316a75e1aca86eeccc955df8f55b4561a018c88fdfbfec07c83bc",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 60
+            },
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 58
+            },
+            {
+              "id": 31,
+              "name": "Konsa",
+              "price": 45
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 49
+            },
+            {
+              "id": 40,
+              "name": "Rogers",
+              "price": 77
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 78
+            },
+            {
+              "id": 189,
+              "name": "Shepherd",
+              "price": 44
+            },
+            {
+              "id": 273,
+              "name": "Phillips",
+              "price": 40
+            },
+            {
+              "id": 303,
+              "name": "Kipr\u00e9",
+              "price": 39
+            },
+            {
+              "id": 346,
+              "name": "Calvert-Lewin",
+              "price": 60
+            },
+            {
+              "id": 368,
+              "name": "Szoboszlai",
+              "price": 70
+            },
+            {
+              "id": 391,
+              "name": "Gvardiol",
+              "price": 57
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 156
+            },
+            {
+              "id": 426,
+              "name": "B.Fernandes",
+              "price": 120
+            },
+            {
+              "id": 524,
+              "name": "Olusesi",
+              "price": 44
+            }
+          ],
+          "bank": 3,
+          "lineup": {
+            "xi": [
+              1,
+              8,
+              391,
+              115,
+              31,
+              426,
+              40,
+              368,
+              411,
+              165,
+              346
+            ],
+            "bench": [
+              273,
+              303,
+              524,
+              189
+            ],
+            "captain": 411,
+            "vice": 165
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 499.175,
+            "best_bound": 499.175,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1662,
+            "constraints": 1140
+          },
+          "selection_utility": 499.175,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:50.243040+00:00",
+          "id": "1d952a57668bfe6b8fc00417fe69e70a7157d9e01540897cab43e55abec8b503",
+          "actual_points": 33.0
+        }
+      }
+    },
+    {
+      "event": 6,
+      "reference_actual": 43,
+      "official_average_context_only": 58,
+      "baselines": {
+        "official_expected": {
+          "season": "2026/27",
+          "event": 6,
+          "method": "official_expected",
+          "definition": "Archived ep_next; already availability-adjusted by its publisher",
+          "input_id": "76caba23594380c4988fa752bfc78a6f4872ce2935303d0369ee706b36fe8b7d",
+          "players": [
+            {
+              "id": 52,
+              "name": "Alysson",
+              "price": 50
+            },
+            {
+              "id": 582,
+              "name": "Madjo",
+              "price": 54
+            },
+            {
+              "id": 93,
+              "name": "Schuster",
+              "price": 45
+            },
+            {
+              "id": 94,
+              "name": "Schade",
+              "price": 62
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 50
+            },
+            {
+              "id": 124,
+              "name": "Gro\u00df",
+              "price": 59
+            },
+            {
+              "id": 138,
+              "name": "Kostoulas",
+              "price": 56
+            },
+            {
+              "id": 170,
+              "name": "Emegha",
+              "price": 49
+            },
+            {
+              "id": 229,
+              "name": "Tarkowski",
+              "price": 62
+            },
+            {
+              "id": 286,
+              "name": "Belloumi",
+              "price": 51
+            },
+            {
+              "id": 564,
+              "name": "Scherpen",
+              "price": 45
+            },
+            {
+              "id": 330,
+              "name": "Bogle",
+              "price": 46
+            },
+            {
+              "id": 350,
+              "name": "A.Becker",
+              "price": 55
+            },
+            {
+              "id": 356,
+              "name": "Virgil",
+              "price": 65
+            },
+            {
+              "id": 397,
+              "name": "Semenyo",
+              "price": 84
+            }
+          ],
+          "bank": 167,
+          "lineup": {
+            "xi": [
+              350,
+              229,
+              330,
+              93,
+              115,
+              356,
+              124,
+              94,
+              286,
+              397,
+              138
+            ],
+            "bench": [
+              564,
+              52,
+              170,
+              582
+            ],
+            "captain": 124,
+            "vice": 94
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 123.5,
+            "best_bound": 123.5,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1686,
+            "constraints": 1156
+          },
+          "selection_utility": 123.5,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:50.368727+00:00",
+          "id": "41a2811d3a309857885737888b33bfb4e2334cdb8c7edf749ee0f5fee0e978ae",
+          "actual_points": 44.0
+        },
+        "points_per_game": {
+          "season": "2026/27",
+          "event": 6,
+          "method": "points_per_game",
+          "definition": "Archived points_per_game multiplied by published availability",
+          "input_id": "76caba23594380c4988fa752bfc78a6f4872ce2935303d0369ee706b36fe8b7d",
+          "players": [
+            {
+              "id": 52,
+              "name": "Alysson",
+              "price": 50
+            },
+            {
+              "id": 53,
+              "name": "Manzambi",
+              "price": 59
+            },
+            {
+              "id": 582,
+              "name": "Madjo",
+              "price": 54
+            },
+            {
+              "id": 94,
+              "name": "Schade",
+              "price": 62
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 50
+            },
+            {
+              "id": 123,
+              "name": "Hinshelwood",
+              "price": 59
+            },
+            {
+              "id": 124,
+              "name": "Gro\u00df",
+              "price": 59
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 77
+            },
+            {
+              "id": 229,
+              "name": "Tarkowski",
+              "price": 62
+            },
+            {
+              "id": 251,
+              "name": "Lecomte",
+              "price": 40
+            },
+            {
+              "id": 572,
+              "name": "Tzolakis",
+              "price": 47
+            },
+            {
+              "id": 330,
+              "name": "Bogle",
+              "price": 46
+            },
+            {
+              "id": 391,
+              "name": "Gvardiol",
+              "price": 57
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 156
+            },
+            {
+              "id": 534,
+              "name": "Hume",
+              "price": 43
+            }
+          ],
+          "bank": 79,
+          "lineup": {
+            "xi": [
+              572,
+              229,
+              330,
+              115,
+              391,
+              124,
+              123,
+              94,
+              53,
+              165,
+              411
+            ],
+            "bench": [
+              251,
+              534,
+              52,
+              582
+            ],
+            "captain": 124,
+            "vice": 229
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 96.4,
+            "best_bound": 96.4,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1686,
+            "constraints": 1156
+          },
+          "selection_utility": 96.4,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:50.423605+00:00",
+          "id": "bd5f697564cb11b4ee89768559716cdf5d85355eafeca6a302de42428c55203b",
+          "actual_points": 62.0
+        },
+        "ownership": {
+          "season": "2026/27",
+          "event": 6,
+          "method": "ownership",
+          "definition": "Archived selected_by_percent multiplied by published availability; ranking signal, not xPts",
+          "input_id": "76caba23594380c4988fa752bfc78a6f4872ce2935303d0369ee706b36fe8b7d",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 61
+            },
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 59
+            },
+            {
+              "id": 667,
+              "name": "Wright",
+              "price": 40
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 50
+            },
+            {
+              "id": 124,
+              "name": "Gro\u00df",
+              "price": 59
+            },
+            {
+              "id": 40,
+              "name": "Rogers",
+              "price": 78
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 77
+            },
+            {
+              "id": 303,
+              "name": "Kipr\u00e9",
+              "price": 39
+            },
+            {
+              "id": 310,
+              "name": "Matusiwa",
+              "price": 49
+            },
+            {
+              "id": 346,
+              "name": "Calvert-Lewin",
+              "price": 60
+            },
+            {
+              "id": 368,
+              "name": "Szoboszlai",
+              "price": 69
+            },
+            {
+              "id": 391,
+              "name": "Gvardiol",
+              "price": 57
+            },
+            {
+              "id": 399,
+              "name": "Cherki",
+              "price": 78
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 156
+            },
+            {
+              "id": 539,
+              "name": "O'Nien",
+              "price": 39
+            }
+          ],
+          "bank": 29,
+          "lineup": {
+            "xi": [
+              1,
+              8,
+              115,
+              391,
+              40,
+              124,
+              368,
+              399,
+              411,
+              165,
+              346
+            ],
+            "bench": [
+              667,
+              539,
+              303,
+              310
+            ],
+            "captain": 411,
+            "vice": 165
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 525.2,
+            "best_bound": 525.2,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1686,
+            "constraints": 1156
+          },
+          "selection_utility": 525.2,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:50.827017+00:00",
+          "id": "a16a13bd21880a2e4906d75c782922bf3d4e47fc82dcc4ef3d65ab80783d2cfc",
+          "actual_points": 82.0
+        }
+      }
+    },
+    {
+      "event": 7,
+      "reference_actual": 61,
+      "official_average_context_only": 59,
+      "baselines": {
+        "official_expected": {
+          "season": "2026/27",
+          "event": 7,
+          "method": "official_expected",
+          "definition": "Archived ep_next; already availability-adjusted by its publisher",
+          "input_id": "4575313f829d4697f1d7e5e65b3f1505eff6151cf0670bbd7bb5f54005433186",
+          "players": [
+            {
+              "id": 53,
+              "name": "Manzambi",
+              "price": 59
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 52
+            },
+            {
+              "id": 124,
+              "name": "Gro\u00df",
+              "price": 61
+            },
+            {
+              "id": 504,
+              "name": "Vuskovic",
+              "price": 51
+            },
+            {
+              "id": 101,
+              "name": "Henderson",
+              "price": 49
+            },
+            {
+              "id": 110,
+              "name": "Rushworth",
+              "price": 45
+            },
+            {
+              "id": 176,
+              "name": "Dasilva",
+              "price": 40
+            },
+            {
+              "id": 229,
+              "name": "Tarkowski",
+              "price": 62
+            },
+            {
+              "id": 272,
+              "name": "Kusi-Asare",
+              "price": 44
+            },
+            {
+              "id": 564,
+              "name": "Scherpen",
+              "price": 45
+            },
+            {
+              "id": 397,
+              "name": "Semenyo",
+              "price": 83
+            },
+            {
+              "id": 428,
+              "name": "Cunha",
+              "price": 79
+            },
+            {
+              "id": 440,
+              "name": "Zirkzee",
+              "price": 53
+            },
+            {
+              "id": 534,
+              "name": "Hume",
+              "price": 43
+            },
+            {
+              "id": 552,
+              "name": "Brobbey",
+              "price": 57
+            }
+          ],
+          "bank": 177,
+          "lineup": {
+            "xi": [
+              110,
+              115,
+              176,
+              229,
+              504,
+              101,
+              124,
+              397,
+              428,
+              53,
+              552
+            ],
+            "bench": [
+              564,
+              440,
+              534,
+              272
+            ],
+            "captain": 115,
+            "vice": 101
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 112.0,
+            "best_bound": 112.0,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1686,
+            "constraints": 1156
+          },
+          "selection_utility": 112.0,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:50.959222+00:00",
+          "id": "9feee5122adc031d49308f87dfdcd98d640ad9a8f57dc6b4892973205d43ca9a",
+          "actual_points": 45.0
+        },
+        "points_per_game": {
+          "season": "2026/27",
+          "event": 7,
+          "method": "points_per_game",
+          "definition": "Archived points_per_game multiplied by published availability",
+          "input_id": "4575313f829d4697f1d7e5e65b3f1505eff6151cf0670bbd7bb5f54005433186",
+          "players": [
+            {
+              "id": 52,
+              "name": "Alysson",
+              "price": 49
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 52
+            },
+            {
+              "id": 123,
+              "name": "Hinshelwood",
+              "price": 59
+            },
+            {
+              "id": 124,
+              "name": "Gro\u00df",
+              "price": 61
+            },
+            {
+              "id": 101,
+              "name": "Henderson",
+              "price": 49
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 78
+            },
+            {
+              "id": 229,
+              "name": "Tarkowski",
+              "price": 62
+            },
+            {
+              "id": 272,
+              "name": "Kusi-Asare",
+              "price": 44
+            },
+            {
+              "id": 572,
+              "name": "Tzolakis",
+              "price": 47
+            },
+            {
+              "id": 564,
+              "name": "Scherpen",
+              "price": 45
+            },
+            {
+              "id": 330,
+              "name": "Bogle",
+              "price": 47
+            },
+            {
+              "id": 391,
+              "name": "Gvardiol",
+              "price": 58
+            },
+            {
+              "id": 399,
+              "name": "Cherki",
+              "price": 79
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 157
+            },
+            {
+              "id": 534,
+              "name": "Hume",
+              "price": 43
+            }
+          ],
+          "bank": 70,
+          "lineup": {
+            "xi": [
+              572,
+              115,
+              229,
+              330,
+              391,
+              123,
+              101,
+              124,
+              399,
+              165,
+              411
+            ],
+            "bench": [
+              564,
+              534,
+              52,
+              272
+            ],
+            "captain": 123,
+            "vice": 101
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 111.1,
+            "best_bound": 111.1,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1686,
+            "constraints": 1156
+          },
+          "selection_utility": 111.1,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:51.017602+00:00",
+          "id": "2820bfc625330e50f7730ff2d244947be5455c250922dfd79cf66b2b08dbee50",
+          "actual_points": 49.0
+        },
+        "ownership": {
+          "season": "2026/27",
+          "event": 7,
+          "method": "ownership",
+          "definition": "Archived selected_by_percent multiplied by published availability; ranking signal, not xPts",
+          "input_id": "4575313f829d4697f1d7e5e65b3f1505eff6151cf0670bbd7bb5f54005433186",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 61
+            },
+            {
+              "id": 4,
+              "name": "Gabriel",
+              "price": 79
+            },
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 59
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 52
+            },
+            {
+              "id": 124,
+              "name": "Gro\u00df",
+              "price": 61
+            },
+            {
+              "id": 40,
+              "name": "Rogers",
+              "price": 79
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 78
+            },
+            {
+              "id": 175,
+              "name": "van Ewijk",
+              "price": 39
+            },
+            {
+              "id": 289,
+              "name": "Crooks",
+              "price": 44
+            },
+            {
+              "id": 339,
+              "name": "Longstaff",
+              "price": 48
+            },
+            {
+              "id": 346,
+              "name": "Calvert-Lewin",
+              "price": 60
+            },
+            {
+              "id": 391,
+              "name": "Gvardiol",
+              "price": 58
+            },
+            {
+              "id": 399,
+              "name": "Cherki",
+              "price": 79
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 157
+            },
+            {
+              "id": 496,
+              "name": "Kinsky",
+              "price": 45
+            }
+          ],
+          "bank": 1,
+          "lineup": {
+            "xi": [
+              1,
+              8,
+              115,
+              391,
+              4,
+              40,
+              124,
+              399,
+              411,
+              165,
+              346
+            ],
+            "bench": [
+              496,
+              175,
+              289,
+              339
+            ],
+            "captain": 411,
+            "vice": 165
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 556.6999999999999,
+            "best_bound": 556.6999999999999,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1686,
+            "constraints": 1156
+          },
+          "selection_utility": 556.7,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:51.335548+00:00",
+          "id": "983ec0c89df78351358cfb77a5929845abdb305dd10e3625206ee3df1ab2a5f5",
+          "actual_points": 74.0
+        }
+      }
+    },
+    {
+      "event": 8,
+      "reference_actual": 64,
+      "official_average_context_only": 45,
+      "baselines": {
+        "official_expected": {
+          "season": "2026/27",
+          "event": 8,
+          "method": "official_expected",
+          "definition": "Archived ep_next; already availability-adjusted by its publisher",
+          "input_id": "db437fb41a182fbd265264f7ecd7b5a1cee5d01461932b3838b81144cdbf8cf8",
+          "players": [
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 60
+            },
+            {
+              "id": 13,
+              "name": "Rice",
+              "price": 73
+            },
+            {
+              "id": 596,
+              "name": "Ruggeri",
+              "price": 44
+            },
+            {
+              "id": 667,
+              "name": "Wright",
+              "price": 40
+            },
+            {
+              "id": 79,
+              "name": "Evanilson",
+              "price": 61
+            },
+            {
+              "id": 109,
+              "name": "Verbruggen",
+              "price": 46
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 53
+            },
+            {
+              "id": 504,
+              "name": "Vuskovic",
+              "price": 51
+            },
+            {
+              "id": 101,
+              "name": "Henderson",
+              "price": 49
+            },
+            {
+              "id": 156,
+              "name": "Neto",
+              "price": 65
+            },
+            {
+              "id": 272,
+              "name": "Kusi-Asare",
+              "price": 44
+            },
+            {
+              "id": 400,
+              "name": "Doku",
+              "price": 75
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 157
+            },
+            {
+              "id": 427,
+              "name": "Mbeumo",
+              "price": 79
+            },
+            {
+              "id": 535,
+              "name": "Alderete",
+              "price": 48
+            }
+          ],
+          "bank": 55,
+          "lineup": {
+            "xi": [
+              109,
+              115,
+              504,
+              8,
+              101,
+              156,
+              400,
+              13,
+              427,
+              79,
+              411
+            ],
+            "bench": [
+              667,
+              272,
+              596,
+              535
+            ],
+            "captain": 101,
+            "vice": 115
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 110.0,
+            "best_bound": 110.0,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1686,
+            "constraints": 1156
+          },
+          "selection_utility": 110.0,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:51.470079+00:00",
+          "id": "4b09db0ee5f082ad065eae8a54287ce750b9efc6292e79861096d330822e6a6d",
+          "actual_points": 33.0
+        },
+        "points_per_game": {
+          "season": "2026/27",
+          "event": 8,
+          "method": "points_per_game",
+          "definition": "Archived points_per_game multiplied by published availability",
+          "input_id": "db437fb41a182fbd265264f7ecd7b5a1cee5d01461932b3838b81144cdbf8cf8",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 61
+            },
+            {
+              "id": 596,
+              "name": "Ruggeri",
+              "price": 44
+            },
+            {
+              "id": 667,
+              "name": "Wright",
+              "price": 40
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 53
+            },
+            {
+              "id": 123,
+              "name": "Hinshelwood",
+              "price": 59
+            },
+            {
+              "id": 124,
+              "name": "Gro\u00df",
+              "price": 62
+            },
+            {
+              "id": 101,
+              "name": "Henderson",
+              "price": 49
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 79
+            },
+            {
+              "id": 229,
+              "name": "Tarkowski",
+              "price": 62
+            },
+            {
+              "id": 645,
+              "name": "Mouzakitis",
+              "price": 50
+            },
+            {
+              "id": 379,
+              "name": "Isak",
+              "price": 90
+            },
+            {
+              "id": 399,
+              "name": "Cherki",
+              "price": 80
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 157
+            },
+            {
+              "id": 508,
+              "name": "Davies",
+              "price": 39
+            },
+            {
+              "id": 535,
+              "name": "Alderete",
+              "price": 48
+            }
+          ],
+          "bank": 27,
+          "lineup": {
+            "xi": [
+              1,
+              115,
+              508,
+              229,
+              123,
+              124,
+              101,
+              399,
+              411,
+              165,
+              379
+            ],
+            "bench": [
+              667,
+              535,
+              596,
+              645
+            ],
+            "captain": 123,
+            "vice": 115
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 96.4,
+            "best_bound": 96.4,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1686,
+            "constraints": 1156
+          },
+          "selection_utility": 96.4,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:51.526032+00:00",
+          "id": "87b3e1b07d0b909ac08f4925225a607d147204a5efd03704668af77bcd6bc8ab",
+          "actual_points": 33.0
+        },
+        "ownership": {
+          "season": "2026/27",
+          "event": 8,
+          "method": "ownership",
+          "definition": "Archived selected_by_percent multiplied by published availability; ranking signal, not xPts",
+          "input_id": "db437fb41a182fbd265264f7ecd7b5a1cee5d01461932b3838b81144cdbf8cf8",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 61
+            },
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 60
+            },
+            {
+              "id": 31,
+              "name": "Konsa",
+              "price": 46
+            },
+            {
+              "id": 661,
+              "name": "Balcombe",
+              "price": 40
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 53
+            },
+            {
+              "id": 124,
+              "name": "Gro\u00df",
+              "price": 62
+            },
+            {
+              "id": 40,
+              "name": "Rogers",
+              "price": 80
+            },
+            {
+              "id": 154,
+              "name": "Palmer",
+              "price": 98
+            },
+            {
+              "id": 165,
+              "name": "Jo\u00e3o Pedro",
+              "price": 79
+            },
+            {
+              "id": 212,
+              "name": "Hughes",
+              "price": 43
+            },
+            {
+              "id": 272,
+              "name": "Kusi-Asare",
+              "price": 44
+            },
+            {
+              "id": 391,
+              "name": "Gvardiol",
+              "price": 58
+            },
+            {
+              "id": 399,
+              "name": "Cherki",
+              "price": 80
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 157
+            },
+            {
+              "id": 476,
+              "name": "O.Richards",
+              "price": 39
+            }
+          ],
+          "bank": 0,
+          "lineup": {
+            "xi": [
+              1,
+              8,
+              115,
+              391,
+              31,
+              40,
+              124,
+              399,
+              154,
+              411,
+              165
+            ],
+            "bench": [
+              661,
+              212,
+              272,
+              476
+            ],
+            "captain": 411,
+            "vice": 165
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 580.3,
+            "best_bound": 580.3000000000001,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1686,
+            "constraints": 1156
+          },
+          "selection_utility": 580.3,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T16:21:51.668365+00:00",
+          "id": "a3ede81db48833c33323b9f8f036dc90de7b2d5fb4c0ad85898006bf8aeff272",
+          "actual_points": 40.0
+        }
+      }
+    }
+  ],
+  "reference_total": 472,
+  "comparisons": {
+    "official_expected": {
+      "baseline_total": 406.0,
+      "reference_minus_baseline_total": 66.0,
+      "weeks_reference_wins": 5,
+      "mean_weekly_difference_two_week_block_95ci": [
+        1.125,
+        16.25
+      ]
+    },
+    "points_per_game": {
+      "baseline_total": 392.0,
+      "reference_minus_baseline_total": 80.0,
+      "weeks_reference_wins": 5,
+      "mean_weekly_difference_two_week_block_95ci": [
+        -2.628124999999999,
+        20.75
+      ]
+    },
+    "ownership": {
+      "baseline_total": 512.0,
+      "reference_minus_baseline_total": -40.0,
+      "weeks_reference_wins": 2,
+      "mean_weekly_difference_two_week_block_95ci": [
+        -15.875,
+        4.0
+      ]
+    }
+  },
+  "account_state_unchanged": true,
+  "matched_constraints": "Same archived registered market/prices, \u00a3100m, 15-player composition, club limits, no chips, independent new team each week, zero requested additive MIP gap and exact actual rule scorer",
+  "limits": [
+    "The 0.6 weekly replay exercises the refitted reference forecaster, not the complete integrated live system.",
+    "Reference retains its world-optimized bench/vice policy; controls order by their own published signal. This is a policy comparison, not a pure isolated forecast-error experiment.",
+    "Eight already-inspected weeks and a descriptive block interval cannot establish prospective superiority; do not tune models on these outcomes and call them untouched tests.",
+    "Official average is context only: ordinary managers have transfer constraints and may use chips."
+  ],
+  "id": "9269fd3d4e23e2f2de15e8d17554da2cec26d07c25c8f3f7458e5b091bdaa0fd"
+}

@@ -705,3 +705,12 @@ def refresh_current():
     from .workflow import refresh_cycle
 
     show(refresh_cycle(Store()))
+
+
+@app.command("benchmark-weekly")
+def benchmark_weekly(seconds: float = 60):
+    """Compare frozen weekly controls against the reference-only replay."""
+    from .replay_benchmarks import compare_weekly_baselines
+
+    result = compare_weekly_baselines(Store(), seconds)
+    show({k: result[k] for k in ("id", "reference_total", "comparisons", "limits")})
