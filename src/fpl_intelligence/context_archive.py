@@ -30,7 +30,11 @@ FIELDS = (
     "penalties_order",
     "direct_freekicks_order",
     "corners_and_indirect_freekicks_order",
+    "ep_next",
+    "points_per_game",
+    "form",
 )
+SCHEMA_VERSION = 2
 
 
 def check_proof(row):
@@ -57,7 +61,10 @@ async def import_context(store: Store):
             source = f"context_{row['season'].replace('/', '-')}_{row['event']}"
             try:
                 body, capture_meta = store.latest(source)
-                if body.get("compressed_sha256") == row["sha256"]:
+                if (
+                    body.get("compressed_sha256") == row["sha256"]
+                    and body.get("schema_version") == SCHEMA_VERSION
+                ):
                     return {
                         **row,
                         "source": source,
@@ -84,6 +91,7 @@ async def import_context(store: Store):
                     raise ValueError("Archived and final deadline disagree; context needs a separate audit")
                 elements = [{k: player.get(k) for k in FIELDS} for player in original["elements"]]
                 body = {
+                    "schema_version": SCHEMA_VERSION,
                     "elements": elements,
                     "season": row["season"],
                     "event": row["event"],
@@ -146,6 +154,7 @@ def capture_live_context(store: Store, bootstrap):
     season = season_of(bootstrap)
     source = f"context_live_{season.replace('/', '-')}_{event['id']}"
     body = {
+        "schema_version": SCHEMA_VERSION,
         "elements": [{k: p.get(k) for k in FIELDS} for p in bootstrap["elements"]],
         "season": season,
         "event": event["id"],

@@ -142,10 +142,15 @@ test("completed weekly replay and football integration are visible",async({page}
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
   await openWorkspace(page);await navigate(page,'Model & data');
   await expect(page.getByRole('heading',{name:'Football models and current coverage'})).toBeVisible();
-  await expect(page.getByRole('heading',{name:'GW1–GW8 weekly teams'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'Historical weekly teams · refitted reference'})).toBeVisible();
   const response=await page.request.get('/api/replay/weekly');expect(response.status()).toBe(200);
-  const replay=await response.json();expect(replay.weeks.map((w:{event:number})=>w.event)).toEqual([1,2,3,4,5,6,7,8]);
+  const replay=await response.json();expect(replay.weeks.map((w:{event:number})=>w.event)).toEqual([1,2,3,4,5,6,7,8,9]);
   expect(replay.total_points).toBeGreaterThan(0);
+  await expect(page.getByRole('heading',{name:'Published-signal fusion · weekly experiment'})).toBeVisible();
+  const fusion=await (await page.request.get('/api/consensus/model')).json();
+  expect(fusion.acceptance.passed).toBe(true);
+  await expect(page.getByRole('link',{name:'Download full experiment and frozen teams'})).toHaveAttribute('href','/api/consensus/model');
+  await expect(page.getByText('Primary multiweek model:',{exact:false})).toContainText('unchanged');
   await navigate(page,'Season planner');
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption('fixture');
   await expect(page.getByRole('combobox',{name:'Fixture',exact:true})).toBeVisible();

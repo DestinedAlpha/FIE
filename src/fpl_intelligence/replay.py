@@ -13,6 +13,7 @@ import json
 import lzma
 from collections import defaultdict
 from datetime import timedelta
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from urllib.parse import urlencode
 
@@ -44,6 +45,19 @@ from .storage import atomic_json, digest, now
 from .transport import PublicTransport
 
 
+def archive_integer(value):
+    """CSV archives sometimes serialize nullable integer columns as '1.0'."""
+    if value in (None, "", "None", "nan"):
+        return None
+    try:
+        number = Decimal(str(value))
+        if not number.is_finite() or number != number.to_integral_value():
+            raise ValueError("Non-integral archive identifier")
+        return int(number)
+    except InvalidOperation as error:
+        raise ValueError("Invalid archive identifier") from error
+
+
 async def capture_replay_inputs(store, season, events):
     """Fetch immutable pre-deadline Git versions; never use today's prices."""
     manifest = json.loads(MANIFEST.read_text())
@@ -55,7 +69,40 @@ async def capture_replay_inputs(store, season, events):
                 (r for r in manifest["snapshots"] if r["season"] == season and r["event"] == event), None
             )
             if row is None:
-                raise ValueError(f"No proven pre-deadline bootstrap for {season} GW{event}")
+                # Locally frozen observations cover deadlines newer than the
+                # upstream Git manifest. Both sources must precede the deadline.
+                context, _ = store.latest(f"context_live_{season.replace('/', '-')}_{event}")
+                deadline = context["deadline"]
+                bootstrap, bm = store.latest("bootstrap", cutoff=deadline)
+                fixtures, fm = store.latest("fixtures", cutoff=deadline)
+                from .ingestion import season_of
+
+                if (
+                    season_of(bootstrap) != season
+                    or next(e["deadline_time"] for e in bootstrap["events"] if e["id"] == event) != deadline
+                    or any(moment(m["captured_at"]) >= moment(deadline) for m in (bm, fm))
+                ):
+                    raise ValueError("Local replay sources do not precede the requested deadline")
+                result = {
+                    "season": season,
+                    "event": event,
+                    "deadline": deadline,
+                    "bootstrap": bootstrap,
+                    "bootstrap_hash": bm["hash"],
+                    "bootstrap_proof": {
+                        "source_captured_at": bm["captured_at"],
+                        "temporal_track": "Locally observed before deadline",
+                    },
+                    "fixture_proof": {
+                        "fixtures": fixtures,
+                        "source_captured_at": fm["captured_at"],
+                        "file_sha256": fm["hash"],
+                        "temporal_track": "Locally observed before deadline",
+                    },
+                }
+                result["id"] = store.put("replay_inputs", result)
+                results.append(result)
+                continue
             check_proof(row)
             source = f"replay_bootstrap_{season.replace('/', '-')}_{event}"
             try:
@@ -96,10 +143,10 @@ async def capture_replay_inputs(store, season, events):
                 for r in csv.DictReader(io.StringIO(text)):
                     fixtures.append(
                         {
-                            "id": int(r["id"]),
-                            "event": int(r["event"]) if r.get("event") else None,
-                            "team_h": int(r["team_h"]),
-                            "team_a": int(r["team_a"]),
+                            "id": archive_integer(r["id"]),
+                            "event": archive_integer(r.get("event")),
+                            "team_h": archive_integer(r["team_h"]),
+                            "team_a": archive_integer(r["team_a"]),
                             "kickoff_time": r.get("kickoff_time") or None,
                         }
                     )
@@ -306,11 +353,11 @@ def weekly_worlds(rows, fitted, pools, dependence, minute_pools, players, worlds
     return ids, points, minutes
 
 
-def run_replay(store, events=None, worlds=4000, seconds=60):
+def run_replay(store, events=None, worlds=4000, seconds=60, publish=True):
     """Independent £100m squads each week, not eight weeks of free account transfers."""
     import asyncio
 
-    events = events or list(range(1, 9))
+    events = events or list(range(1, 10))
     season = store.get("market")["season"]
     if not events or any(g not in range(1, 39) for g in events) or not 100 <= worlds <= 20000:
         raise ValueError("Invalid replay request")
@@ -466,6 +513,40 @@ def run_replay(store, events=None, worlds=4000, seconds=60):
             "Observed minus forecast points includes football randomness, model error and omitted information; it is not identified as pure luck.",
         ],
     }
+    report["id"] = store.put("weekly_replay" if publish else "weekly_replay_segment", report)
+    atomic_json(Path(f"artifacts/evaluations/gw{min(events)}-gw{max(events)}-replay.json"), report)
+    return report
+
+
+def extend_replay(store, end_event=9, seconds=60):
+    """Append newly completed weeks without retraining already frozen decisions."""
+    if not 1 <= end_event <= 38:
+        raise ValueError("Invalid replay end event")
+    try:
+        previous = store.get("weekly_replay")
+    except ValueError:
+        return run_replay(store, list(range(1, end_event + 1)), seconds=seconds)
+    if previous["feature_id"] != store.get("decision_features")["id"]:
+        raise ValueError("Feature lineage changed; request an explicit new replay instead of mixing runs")
+    existing = sorted(w["event"] for w in previous["weeks"])
+    if existing != list(range(1, len(existing) + 1)):
+        raise ValueError("Only a contiguous replay starting GW1 can be extended")
+    if end_event <= existing[-1]:
+        return previous
+    market = store.get("market")
+    finalized = {e["id"] for e in market["events"] if e.get("data_checked")}
+    needed = list(range(existing[-1] + 1, end_event + 1))
+    if not set(needed) <= finalized:
+        raise ValueError("Replay scoring requires finalized target gameweeks")
+    segment = run_replay(store, needed, previous["worlds"], seconds, publish=False)
+    weeks = previous["weeks"] + segment["weeks"]
+    report = {k: v for k, v in segment.items() if k != "id"}
+    report.update(
+        weeks=weeks,
+        total_points=sum(w["actual_points"] for w in weeks),
+        parent_replay_id=previous["id"],
+        segment_id=segment["id"],
+    )
     report["id"] = store.put("weekly_replay", report)
-    atomic_json(Path("artifacts/evaluations/gw1-gw8-replay.json"), report)
+    atomic_json(Path(f"artifacts/evaluations/gw1-gw{end_event}-replay.json"), report)
     return report

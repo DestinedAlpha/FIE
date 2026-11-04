@@ -1,6 +1,6 @@
-# Implementation coverage · 0.6
+# Implementation coverage · 0.7
 
-This is traceability for 65 selected behaviours, not exhaustive acceptance of the complete blueprint or proof of competitive accuracy. The GW1–8 benchmark runs the reference forecaster rather than the whole integrated policy. A current-release, continuous-account replay connecting all deployed inputs, transfers and chips remains outstanding. The [performance audit](performance-audit.md) records these limits and the matched baseline results.
+This traces selected behaviours, not exhaustive acceptance of the complete blueprint or proof of competitive accuracy. GW1–GW9 weekly-team and continuous ordinary-transfer comparisons are now executed. A current-release, continuous-account replay connecting every deployed component, multiweek lookahead, transfers and chips remains outstanding. The [performance audit](performance-audit.md) records these limits, the 586 weekly ensemble result and its failed continuous-policy gate.
 
 The atomic requirement catalog is [implementation_requirements.json](../configs/implementation_requirements.json). The generated [implementation audit](../artifacts/evaluations/implementation_audit.json) links each required behaviour to implementation symbols, regression tests and a concrete runtime artifact. The [release audit](../artifacts/evaluations/release_0_6.json) records actual checks, financial replay, model integrity and weekly scores.
 

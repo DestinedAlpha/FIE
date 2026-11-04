@@ -692,11 +692,13 @@ def population_analysis(per_stratum: int = 16):
 
 
 @app.command("replay-weekly")
-def replay_weekly(worlds: int = 4000, seconds: float = 60):
-    """Build independent GW1–8 squads from deadline-pinned inputs, then score them."""
+def replay_weekly(worlds: int = 4000, seconds: float = 60, end_event: int = 9):
+    """Build independent squads through end-event using deadline-pinned inputs."""
     from .replay import run_replay
 
-    show(run_replay(Store(), worlds=worlds, seconds=seconds))
+    if not 1 <= end_event <= 38:
+        raise typer.BadParameter("end-event must be between 1 and 38")
+    show(run_replay(Store(), events=list(range(1, end_event + 1)), worlds=worlds, seconds=seconds))
 
 
 @app.command("refresh-current")
@@ -714,3 +716,31 @@ def benchmark_weekly(seconds: float = 60):
 
     result = compare_weekly_baselines(Store(), seconds)
     show({k: result[k] for k in ("id", "reference_total", "comparisons", "limits")})
+
+
+@app.command("train-consensus")
+def train_consensus(seconds: float = 10):
+    """Evaluate published-signal fusion on an earlier-season selection/acceptance split."""
+    from .consensus import fit_consensus, prepare_inputs
+
+    asyncio.run(prepare_inputs(Store()))
+    result = fit_consensus(Store(), seconds)
+    show({k: result[k] for k in ("id", "selected", "acceptance", "current_totals", "limits")})
+
+
+@app.command("compare-consensus")
+def compare_consensus(seconds: float = 15):
+    """Compare the tested published-signal model on the current real squad."""
+    from .consensus import compare_live_consensus
+
+    result = compare_live_consensus(Store(), seconds)
+    show({k: result[k] for k in ("id", "event", "historical_gate_passed", "scope", "decisions")})
+
+
+@app.command("validate-consensus-policy")
+def validate_consensus_policy(seconds: float = 10):
+    """Replay legal ordinary transfers with bank, gain sharing, FT and hits."""
+    from .consensus import validate_continuous_policy
+
+    result = validate_continuous_policy(Store(), seconds)
+    show({k: result[k] for k in ("id", "previous_season_totals", "current_totals", "acceptance", "scope")})

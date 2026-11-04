@@ -1,5 +1,5 @@
 {
-  "scope": "Required behaviours from the supplied blueprint and user requests; optional research hypotheses are governed by measured benefit, not compulsory complexity.",
+  "scope": "Selected blueprint and user-request behaviours, not exhaustive project acceptance; research hypotheses require measured benefit rather than compulsory complexity.",
   "items": [
     {
       "id": "data.registry",
@@ -455,6 +455,48 @@
       "implementation": "src/fpl_intelligence/policy_learning.py:random_state",
       "test": "tests/test_completion.py:test_random_squad_sampler_handles_a_legal_low_cost_market",
       "runtime_evidence_kind": "evolving_dataset"
+    },
+    {
+      "id": "forecast.published",
+      "requirement": "Versioned published forecasts, missingness masks and announced-double allocation",
+      "implementation": "src/fpl_intelligence/consensus.py:published_vector",
+      "test": "tests/test_consensus.py:test_announced_double_allocates_weekly_ep_once_and_missing_is_masked",
+      "runtime_evidence_kind": "consensus_model"
+    },
+    {
+      "id": "evaluation.selection",
+      "requirement": "Earlier-season ensemble selection excludes later/current outcomes",
+      "implementation": "src/fpl_intelligence/consensus.py:select_weight",
+      "test": "tests/test_consensus.py:test_weight_selection_ignores_acceptance_and_current_scores",
+      "runtime_evidence_kind": "consensus_weight_selection"
+    },
+    {
+      "id": "replay.local",
+      "requirement": "Locally captured pre-deadline observations extend the Git archive",
+      "implementation": "src/fpl_intelligence/replay.py:capture_replay_inputs",
+      "test": "tests/test_replay_extension.py:test_local_deadline_capture_rejects_future_snapshots",
+      "runtime_evidence_kind": "weekly_replay"
+    },
+    {
+      "id": "replay.extension",
+      "requirement": "Extend completed weeks without retraining frozen earlier decisions",
+      "implementation": "src/fpl_intelligence/replay.py:extend_replay",
+      "test": "tests/test_replay_extension.py:test_replay_extension_retains_frozen_earlier_decisions",
+      "runtime_evidence_kind": "weekly_replay"
+    },
+    {
+      "id": "strategy.grandfathered",
+      "requirement": "Rolling may retain a legal inherited club excess; actual transfers repair it",
+      "implementation": "src/fpl_intelligence/optimization.py:optimize",
+      "test": "tests/test_strategy.py:test_multiweek_grandfathered_excess_survives_roll_only",
+      "runtime_evidence_kind": "consensus_policy_validation"
+    },
+    {
+      "id": "evaluation.cache",
+      "requirement": "Reproduce all utilities and provenance before reusing a cached solve",
+      "implementation": "src/fpl_intelligence/consensus.py:reusable_decision",
+      "test": "tests/test_consensus.py:test_cached_decisions_require_reproduced_full_market_utilities",
+      "runtime_evidence_kind": "consensus_model"
     }
   ]
 }

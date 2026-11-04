@@ -96,7 +96,7 @@ def create_app(root=None):
             stop.set()
             thread.join(timeout=1)
 
-    app = FastAPI(title="FPL Intelligence", version="0.6.0", lifespan=lifespan)
+    app = FastAPI(title="FPL Intelligence", version="0.7.0", lifespan=lifespan)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
 
     @app.middleware("http")
@@ -425,6 +425,10 @@ def create_app(root=None):
             "odds_refresh",
             "odds_model",
             "weekly_replay",
+            "weekly_baseline_comparison",
+            "consensus_model",
+            "consensus_policy_validation",
+            "consensus_comparison",
             "evidence_impact",
             "policy_selection",
             "account_sync",
@@ -432,6 +436,32 @@ def create_app(root=None):
         ):
             try:
                 artifact = store.get(kind)
+                if kind == "consensus_model":
+                    artifact = {k: v for k, v in artifact.items() if k not in ("tree_spec", "reference_spec")}
+                    artifact["weeks"] = [
+                        {k: v for k, v in w.items() if k != "signals"}
+                        for w in artifact["weeks"]
+                        if w["season"] == market["season"]
+                        and w["policy"] in (artifact["selected"], "mix_0", "ownership")
+                    ]
+                if kind == "weekly_baseline_comparison":
+                    artifact = {k: v for k, v in artifact.items() if k != "weeks"}
+                if kind == "consensus_policy_validation":
+                    if artifact["consensus_model_id"] != (result.get("consensus_model") or {}).get("id"):
+                        continue
+                    artifact = {k: v for k, v in artifact.items() if k != "weeks"}
+                if kind == "consensus_comparison":
+                    from .consensus import comparison_is_current
+
+                    if not comparison_is_current(
+                        artifact,
+                        market,
+                        (result["state"] or {}).get("id"),
+                        (result["decision_model"] or {}).get("id"),
+                        (result.get("consensus_model") or {}).get("id"),
+                        now(),
+                    ):
+                        continue
                 if kind == "discipline_report":
                     if artifact["market_id"] != market["id"]:
                         continue
@@ -632,13 +662,23 @@ def create_app(root=None):
 
     @app.post("/api/replay/weekly")
     def replay_weekly():
-        from .replay import run_replay
+        from .replay import extend_replay
 
-        return launch("weekly-replay", {}, lambda: run_replay(store))
+        return launch("weekly-replay", {}, lambda: extend_replay(store))
 
     @app.get("/api/replay/weekly")
     def replay_weekly_results():
         return store.get("weekly_replay")
+
+    @app.get("/api/consensus/model")
+    def consensus_model():
+        return store.get("consensus_model")
+
+    @app.post("/api/consensus/compare")
+    def consensus_compare():
+        from .consensus import compare_live_consensus
+
+        return launch("consensus-comparison", {}, lambda: compare_live_consensus(store))
 
     @app.post("/api/discipline/decisions")
     def disciplinary_decision(request: BanDecision):

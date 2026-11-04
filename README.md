@@ -4,7 +4,7 @@ A private local FPL decision workspace: learned player-point distributions, exac
 
 The six supplied documents remain byte-for-byte unchanged in [`research/`](research/). Design documents are not evidence of competitive performance.
 
-**Current acceptance status:** the runnable 0.6 release has tested implementation paths, but the requested competitive, fully validated system is not established. Its GW1–8 score of 472 comes from a reference-only weekly reconstruction. A matched ownership control scores 512. The 65-item traceability catalog is not an exhaustive certification of every blueprint requirement. See the [performance audit](docs/performance-audit.md) for the unresolved end-to-end validation and coverage work.
+**Current acceptance status:** the refitted reference scores **551 over GW1–GW9** in independent weekly £100m teams. An earlier-season-selected published-signal ensemble scores **586**, versus 563 for ownership. These are fresh weekly squads. From identical initial squads in a separate continuous-account test, the ensemble scores **481**, its frozen reference 503 and a no-hit ownership policy 561. The ensemble therefore remains a separate analysis and **does not replace the primary multiweek planner**. Consistent 550+ continuous-account performance and overall competitive superiority are not demonstrated. See the [performance audit](docs/performance-audit.md).
 
 ## Windows
 
@@ -25,14 +25,23 @@ npm --prefix apps/web run build
 uv run fpl ingest
 uv run fpl reconcile-team
 uv run fpl train
-uv run fpl forecast --end 38 --worlds 4000
-uv run fpl optimize --end 19 --seconds 90
+uv run fpl refresh-current
 uv run fpl serve
 ```
 
 Open http://127.0.0.1:8000. `reconcile-team` imports the **dated** research seed; confirm current account facts before acting. The private prepared package uses the user's separately confirmed selling quotes, bank, FT and chips. Unknown purchase prices remain null. The original seed cannot overwrite a confirmed account.
 
 `fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. `fpl refresh-current` and the Refresh data button reconcile revealed deadline squads, advance to the next deadline, update finalized labels and recompute the recommendation. Confirm any additional unrevealed transfers in My squad; public endpoints cannot see them.
+
+## What changed in 0.7
+
+Added archived official expected points, form and points per game to multi-source football features, with missingness masks and correct allocation of weekly expected points across announced doubles. Select the reference/crowd blend on 2025/26 GW1–19 and check GW20–38 before reporting the already-inspected current-season diagnostic. Its 87-point earlier-season weekly-team gain passes the weekly gate, but it fails a separate ordinary-transfer gate from identical starting states. Failed evidence remains visible.
+
+Model & data shows complete GW1–GW9 tables, matched controls, weekly versus continuous-account results and legal current-squad ensemble alternatives, including hold and no-hit. Its current one-deadline analysis is Cherki → Mbeumo, no hit, Haaland captain. This does not replace the selected multiweek plan.
+
+Fixed floating-point archive fixture IDs, accepted proven local pre-deadline GW9 captures, zeroed baselines in announced blanks, preserved frozen earlier weeks during replay extension, handled club changes and GW1 FT initialization in continuous replay, reproduced predictions before reusing cached solves, and included these research artifacts in Windows updates. Commands: `fpl train-consensus`, `fpl validate-consensus-policy`, `fpl compare-consensus`. The prepared package contains completed results.
+
+[Executed 0.7 checks](artifacts/evaluations/release_0_7.json). The full multiweek/chip/rival policy still needs synchronized competitive validation; this release does not claim exhaustive blueprint acceptance or guaranteed future scores.
 
 ## What changed in 0.6
 

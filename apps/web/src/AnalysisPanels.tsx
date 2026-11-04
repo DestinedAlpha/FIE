@@ -1607,7 +1607,7 @@ export function FootballEvidence({data,busy,act}:Props) {
       {!!bans?.length && <p>Squad discipline: {bans.map(r=>`${name(r.player_id)}: ${r.cautions_range[0]===r.cautions_range[1]?r.cautions:r.cautions_range.join('–')} cautions${r.fixture_ids.some(f=>future.has(f))?', published/inferred upcoming ban':''}`).join('; ')}.</p>}
     </section>
     <section className="panel">
-      <div className="section-title"><div><h3>GW1–GW8 weekly teams</h3><p>Independent £100m teams. Each week refits using earlier completed results.</p></div>
+      <div className="section-title"><div><h3>Historical weekly teams · refitted reference</h3><p>Independent £100m teams. Each week refits using earlier completed results.</p></div>
         <button className="button secondary" disabled={busy} onClick={()=>act('/replay/weekly')}>Run weekly replay</button></div>
       {data.weekly_replay ? <>
         <p>{data.weekly_replay.learning}</p>
@@ -1615,8 +1615,20 @@ export function FootballEvidence({data,busy,act}:Props) {
           {data.weekly_replay.weeks.map(w=><tr key={w.event}><td>{w.event}</td><td>{w.forecast_mean.toFixed(1)}</td><td>{w.actual_points}</td><td>{w.hindsight_points}</td><td>{w.solver.gap===null?'Bound unavailable':percent(w.solver.gap)}</td></tr>)}
         </tbody></table></div>
         <p>Total actual points: <b>{data.weekly_replay.total_points}</b>. Reconstructed historical experiment; these are separate weekly squads, not a continuous account with free transfers.</p>
+        {data.weekly_baseline_comparison && <p>Matched controls: {Object.entries(data.weekly_baseline_comparison.comparisons).map(([k,v])=>`${k.replaceAll('_',' ')} ${v.baseline_total}`).join(' · ')} points.</p>}
         <a href="/api/replay/weekly" download="weekly-replay.json">Download teams, captaincy, bench and cutoff proofs</a>
       </>:<p>No completed weekly replay is saved yet.</p>}
     </section>
+    {data.consensus_model && <section className="panel">
+      <div className="section-title"><div><h3>Published-signal fusion · weekly experiment</h3><p>Football history, ownership, official forecast, form, advanced statistics and dated source features. Weights chosen on {data.consensus_model.protocol.weight_selection}; checked on {data.consensus_model.protocol.acceptance}.</p></div><button className="button secondary" disabled={busy} onClick={()=>act('/consensus/compare')}>Compare current squad</button></div>
+      <p>Selected crowd-model weight: {percent(data.consensus_model.weight)}. Weekly validation: {data.consensus_model.acceptance.passed?'passed':'reference retained'}. Primary multiweek model: {data.consensus_model.promoted?'active':'unchanged; separate policy acceptance required'}.</p>
+      <p>GW1–GW9 actual points: <b>{data.consensus_model.current_totals[data.consensus_model.selected]}</b>; matched frozen reference {data.consensus_model.current_totals.mix_0}; ownership {data.consensus_model.current_totals.ownership}. Independent weekly squads, no chips.</p>
+      <div className="table-scroll"><table><thead><tr><th>GW</th><th>Selected ensemble</th><th>Frozen reference</th><th>Ownership</th><th>Ensemble captain</th></tr></thead><tbody>{data.consensus_model.weeks.filter(w=>w.policy===data.consensus_model!.selected).map(w=><tr key={w.event}><td>{w.event}</td><td>{w.actual_points}</td><td>{data.consensus_model!.weeks.find(v=>v.event===w.event&&v.policy==='mix_0')?.actual_points}</td><td>{data.consensus_model!.weeks.find(v=>v.event===w.event&&v.policy==='ownership')?.actual_points}</td><td>{w.players.find(p=>p.id===w.lineup.captain)?.name}</td></tr>)}</tbody></table></div>
+      <p>Earlier-season return gain: {data.consensus_model.acceptance.return_delta} points; block interval for the weekly gain {data.consensus_model.acceptance.weekly_return_delta_95ci.map(n=>n.toFixed(2)).join(' to ')}. A short historical result cannot guarantee future scores.</p>
+      {data.consensus_policy_validation && <><p>{data.consensus_policy_validation.scope}</p><p>Continuous-account GW1–GW9 net points: {Object.entries(data.consensus_policy_validation.current_totals).map(([p,n])=>`${p===data.consensus_model!.selected?'ensemble':p.replaceAll('_',' ')} ${n}`).join(' · ')}. Ordinary-policy validation: {data.consensus_policy_validation.acceptance.passed?'passed':'benefit not established; primary retained'}.</p></>}
+      {data.consensus_comparison && <><p>{data.consensus_comparison.scope}</p><div className="table-scroll"><table><thead><tr><th>Current GW{data.consensus_comparison.event} comparison</th><th>Transfers</th><th>Hit</th><th>Captain</th><th>Expected net</th><th>Additive solve gap</th></tr></thead><tbody>{data.consensus_comparison.decisions.map(d=><tr key={d.name}><td>{d.name.replaceAll('_',' ')}</td><td>{d.action.sell.map(name).join(', ')||'Hold'}{d.action.buy.length>0?` → ${d.action.buy.map(name).join(', ')}`:''}</td><td>{d.ledger.hit}</td><td>{name(d.action.lineup.captain)}</td><td>{d.additive_expected_net.toFixed(1)}</td><td>{d.solver.gap===null?'Unavailable':percent(d.solver.gap)}</td></tr>)}</tbody></table></div></>}
+      <a href="/api/consensus/model" download="published-fusion.json">Download full experiment and frozen teams</a>
+      <details><summary>Scope and limits</summary>{data.consensus_model.limits.map(v=><p key={v}>{v}</p>)}</details>
+    </section>}
   </>;
 }

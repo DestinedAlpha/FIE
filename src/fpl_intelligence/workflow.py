@@ -45,6 +45,12 @@ def full_training(store: Store, samples=24, epochs=20, refresh=False):
     record("source_fusion", train_fusion(store, epochs))
     record("fusion_review", review_fusion(store))
     compare_live(store)
+    from .consensus import compare_live_consensus, fit_consensus, prepare_inputs, validate_continuous_policy
+
+    asyncio.run(prepare_inputs(store))
+    record("published_signal_fusion", fit_consensus(store))
+    record("published_signal_transfer_validation", validate_continuous_policy(store))
+    record("published_signal_current_comparison", compare_live_consensus(store))
     record("horizon", train_horizon(store))
     if refresh or not store.list("top_manager_history", 1):
         record("top_1000", asyncio.run(collect_top_managers(store)))
@@ -217,6 +223,18 @@ def refresh_cycle(store: Store):
             "account_changed": synchronization.get("account_changed", False),
         }
     result = forecast(store, event, 38, 4000)
+    consensus_status = None
+    if store.list("consensus_model", 1):
+        from .consensus import compare_live_consensus
+
+        try:
+            comparison = compare_live_consensus(store)
+            consensus_status = {"status": "Updated separate weekly comparison", "id": comparison["id"]}
+        except ValueError as error:
+            consensus_status = {
+                "status": "Comparison unavailable; primary policy retained",
+                "reason": str(error),
+            }
     try:
         plan = optimize(store, state["id"], result["id"], 19 if event <= 19 else 38, 60)
         from .objectives import choose_recommendation
@@ -241,10 +259,12 @@ def refresh_cycle(store: Store):
             "fallback": "Validated hold policy retained; inspect the reported planning error before acting",
             "account_sync": synchronization,
             "account_changed": synchronization.get("account_changed", False),
+            "consensus_comparison": consensus_status,
         }
     return {
         "at": now(),
         "status": "Refreshed and recomputed",
+        "consensus_comparison": consensus_status,
         "forecast_id": result["id"],
         "plan_id": plan["id"],
         "account_sync": synchronization,

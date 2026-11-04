@@ -557,6 +557,10 @@ export type ValidationMetric = {
   block_difference_95ci?: number[];
 };
 export type FootballEvidenceData = {
+  consensus_policy_validation?: {scope:string;acceptance:{passed:boolean;ordinary_return_delta_95ci:number[]};current_totals:Record<string,number>;previous_season_totals:Record<string,number>}|null;
+  weekly_baseline_comparison?: {reference_total:number;comparisons:Record<string,{baseline_total:number}>}|null;
+  consensus_model?: {id:string;selected:string;weight:number;promoted:boolean;current_totals:Record<string,number>;acceptance:{passed:boolean;return_delta:number;weekly_return_delta_95ci:number[];deadline_mse_delta_95ci:number[]};protocol:{weight_selection:string;acceptance:string};weeks:{event:number;policy:string;actual_points:number;lineup:{captain:number};players:{id:number;name:string;price:number}[]}[];limits:string[]}|null;
+  consensus_comparison?: {event:number;scope:string;production_active:boolean;historical_gate_passed:boolean;players:{player_id:number;name:string;consensus:number;frozen_reference:number}[];decisions:{name:string;additive_expected_net:number;ledger:{hit:number};action:{buy:number[];sell:number[];lineup:{captain:number;vice:number}};solver:{gap:number|null}}[]}|null;
   request_metrics_24h?: {host:string;calls:number;bytes:number;mean_latency_seconds:number;errors:number}[];
   evidence_impact?: {scope:string;links:{claim_id:string;use:string;assumption?:string}[];branches:{name:string;paired_scenario_delta?:number}[]}|null;
   availability_model?: { recovery: ValidationMetric; rotation: ValidationMetric & {joint_validation?: ValidationMetric & {test_pairs:number;test_deadlines:number}} } | null;

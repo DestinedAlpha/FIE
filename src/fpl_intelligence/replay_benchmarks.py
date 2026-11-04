@@ -26,7 +26,7 @@ BASELINES = {
 }
 
 
-def baseline_signals(players, method):
+def baseline_signals(players, method, scheduled=None):
     if method not in BASELINES:
         raise ValueError("Unknown weekly baseline")
     field = {
@@ -36,7 +36,7 @@ def baseline_signals(players, method):
     }[method]
     result = {}
     for identity, player in players.items():
-        if not player.selectable:
+        if not player.selectable or (scheduled is not None and identity not in scheduled):
             result[identity] = 0.0
             continue
         raw = player.raw.get(field)
@@ -62,7 +62,7 @@ def compare_weekly_baselines(store, seconds=60):
     # Decisions use only archived signals; scoring waits for every frozen team.
     for week in replay["weeks"]:
         source = store.get("replay_inputs", week["input_id"])
-        players, _ = deadline_rows(
+        players, fixture_rows = deadline_rows(
             [],
             source["bootstrap"],
             source["fixture_proof"]["fixtures"],
@@ -73,7 +73,7 @@ def compare_weekly_baselines(store, seconds=60):
         rules = Rules.from_bootstrap(source["bootstrap"])
         packets[week["event"]] = (players, rules)
         for method in BASELINES:
-            signals = baseline_signals(players, method)
+            signals = baseline_signals(players, method, {r["player_id"] for r in fixture_rows})
             solver: dict = {}
             squad = select_squad(
                 None,
@@ -156,7 +156,7 @@ def compare_weekly_baselines(store, seconds=60):
         "limits": [
             "The 0.6 weekly replay exercises the refitted reference forecaster, not the complete integrated live system.",
             "Reference retains its world-optimized bench/vice policy; controls order by their own published signal. This is a policy comparison, not a pure isolated forecast-error experiment.",
-            "Eight already-inspected weeks and a descriptive block interval cannot establish prospective superiority; do not tune models on these outcomes and call them untouched tests.",
+            "Already-inspected weeks and a descriptive block interval cannot establish prospective superiority; do not tune models on these outcomes and call them untouched tests.",
             "Official average is context only: ordinary managers have transfer constraints and may use chips.",
         ],
     }

@@ -36,6 +36,98 @@ def test_full_market_one_transfer_matches_exhaustive_oracle(market, rules, state
     assert result.solver["gap"] == pytest.approx(0)
 
 
+def test_search_can_roll_grandfathered_club_excess_or_repair_on_transfer(market, rules, state):
+    for player in (1, 3, 8, 13):
+        market[player] = market[player].model_copy(update={"team": 99})
+    state = state.model_copy(update={"grandfathered_clubs": [99]})
+    owned = {lot.player_id for lot in state.lots}
+    means = {p: 10.0 if p in owned else 0.0 for p in market}
+    values = {p: 1.0 if p in owned else 0.0 for p in market}
+    held = solve_action(
+        state, market, rules, means, squad_value=values, max_transfers=15, seconds=3, relative_gap=0
+    )
+    assert held.action.buy == held.action.sell == []
+    assert sum(market[lot.player_id].team == 99 for lot in held.state.lots) == 4
+    changed = solve_action(
+        state, market, rules, means, min_transfers=1, max_transfers=1, seconds=3, relative_gap=0
+    )
+    assert len(changed.action.buy) == 1
+    assert sum(market[lot.player_id].team == 99 for lot in changed.state.lots) <= 3
+
+
+@pytest.mark.parametrize("mode", ["roll", "transfer", "freehit"])
+def test_multiweek_grandfathered_excess_survives_roll_only(tmp_path, market, rules, state, monkeypatch, mode):
+    import fpl_intelligence.optimization as optimizer
+
+    for p in (1, 3, 8, 13):
+        market[p] = market[p].model_copy(update={"team": 99})
+    state = state.model_copy(
+        update={"grandfathered_clubs": [99], "free_transfers": 0, "status": "dated_seed"}
+    )
+    store = Store(tmp_path)
+    frozen = {
+        "id": "market",
+        "season": state.season,
+        "source_hash": "bootstrap",
+        "events": [],
+        "teams": [{"id": team} for team in sorted({p.team for p in market.values()})],
+    }
+    monkeypatch.setattr(optimizer, "load_market", lambda *a: (market, frozen))
+    monkeypatch.setattr("fpl_intelligence.simulation.load_market", lambda *a: (market, frozen))
+    monkeypatch.setattr("fpl_intelligence.rules.Rules.from_bootstrap", lambda *a: rules)
+    monkeypatch.setattr(store, "latest", lambda *a, **kw: ({}, {}))
+    ids = sorted(market)
+    means = {p: 10.0 if p <= 15 else 0.0 for p in ids}
+    path = tmp_path / "scenarios" / "worlds.npz"
+    path.parent.mkdir()
+    np.savez_compressed(
+        path,
+        **{
+            f"{name}_{event}": np.tile([means[p] if name == "points" else 90 for p in ids], (100, 1)).astype(
+                np.int16
+            )
+            for event in (9, 10)
+            for name in ("points", "minutes")
+        },
+    )
+    model_id = store.put("decision_model", {"promoted": True})
+    forecast_id = store.put(
+        "forecast",
+        {
+            "market_id": "market",
+            "rules_hash": rules.hash,
+            "start_event": 9,
+            "end_event": 14,
+            "worlds": 100,
+            "seed": 11,
+            "scenario_path": str(path),
+            "player_ids": ids,
+            "players": [{"event": e, "player_id": p, "mean": means[p]} for e in range(9, 15) for p in ids],
+            "input_hashes": [],
+            "model_version": "learned-points-v1",
+            "decision_model_id": model_id,
+        },
+    )
+    result = optimizer.optimize(
+        store,
+        store.put("state", state.model_dump()),
+        forecast_id,
+        10,
+        5,
+        chips={9: "freehit"} if mode == "freehit" else {},
+        automatic_chips=False,
+        forced_sell={9: [1]} if mode == "transfer" else None,
+        relative_gap=0,
+    )
+    if mode == "roll":
+        assert all(not row["buy"] for row in result["ledger"])
+    for row in result["ledger"]:
+        count = sum(market[p].team == 99 for p in row["permanent_squad"])
+        assert count <= 3 if mode == "transfer" else count == 4
+        if mode == "freehit" and row["buy"]:
+            assert sum(market[p].team == 99 for p in row["playing_squad"]) <= 3
+
+
 def test_early_transfers_and_late_recourse_charge_only_incremental_hits(market, rules, state):
     state = state.model_copy(update={"free_transfers": 1})
     means = {p: 1.0 for p in market}

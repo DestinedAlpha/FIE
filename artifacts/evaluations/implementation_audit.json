@@ -1,9 +1,9 @@
 {
-  "at": "2026-11-04T14:52:51.089121+00:00",
-  "requirements_traced": 65,
+  "at": "2026-11-04T19:41:51.329928+00:00",
+  "requirements_traced": 71,
   "verification_scope": "Implementation symbols, executed mapped regressions and existing runtime evidence; not a proof that all possible behaviours are error-free",
-  "scope": "Required behaviours from the supplied blueprint and user requests; optional research hypotheses are governed by measured benefit, not compulsory complexity.",
-  "checks_at": "2026-11-04T14:52:42.730745+00:00",
+  "scope": "Selected blueprint and user-request behaviours, not exhaustive project acceptance; research hypotheses require measured benefit rather than compulsory complexity.",
+  "checks_at": "2026-11-04T19:41:21.178704+00:00",
   "items": [
     {
       "id": "data.registry",
@@ -43,7 +43,7 @@
       "runtime_evidence_kind": "context_archive",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "1df4590e82229a8533d5637fd86f4dddb2859d3665e254821ce9fee4ca58bca1"
+      "runtime_artifact_id": "037daccdb73cd5efd0d02fe48beb831cb2d14020f68d6ec0fd78a38aa8cf9695"
     },
     {
       "id": "data.labels",
@@ -553,7 +553,7 @@
       "runtime_evidence_kind": "weekly_replay",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "277d16cf71eb6fe1caef62c051601e29a2f75212c5c1224705a423074230c2a5"
+      "runtime_artifact_id": "7cfeaaf4480f565ae7cf7ca243466594ad53823b1e6185e12c5f906e93640493"
     },
     {
       "id": "evaluation.prospective",
@@ -583,7 +583,7 @@
       "runtime_evidence_kind": "source_request",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "e919126b1dfc790ea56fc30cf74c9c78e5b0a2b30f637672f955bcf8d121085a"
+      "runtime_artifact_id": "284bea1bcdc31cccfc49200ef9aa4c6cfbc998162d4dfab8263dda6edd82482c"
     },
     {
       "id": "operations.worlds",
@@ -623,7 +623,7 @@
       "runtime_evidence_kind": "release_checks",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "897b9259ca92b39268208700ba5674ff630e18c20d852250f10ca1e74065aba1"
+      "runtime_artifact_id": "5b78bb1481047c09b968945cba96ed69810d63289a323078a18a080dbc0bcfe3"
     },
     {
       "id": "ops.updater",
@@ -654,6 +654,66 @@
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
       "runtime_artifact_id": "2b019ac7d7364b2224aa75c4ae0acd410b3862a932cd3f6f8901a60c62400967"
+    },
+    {
+      "id": "forecast.published",
+      "requirement": "Versioned published forecasts, missingness masks and announced-double allocation",
+      "implementation": "src/fpl_intelligence/consensus.py:published_vector",
+      "test": "tests/test_consensus.py:test_announced_double_allocates_weekly_ep_once_and_missing_is_masked",
+      "runtime_evidence_kind": "consensus_model",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "29d535cc367d3c6c706851e052f8058d717c506a28d5645da3e6c95a430d4014"
+    },
+    {
+      "id": "evaluation.selection",
+      "requirement": "Earlier-season ensemble selection excludes later/current outcomes",
+      "implementation": "src/fpl_intelligence/consensus.py:select_weight",
+      "test": "tests/test_consensus.py:test_weight_selection_ignores_acceptance_and_current_scores",
+      "runtime_evidence_kind": "consensus_weight_selection",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "96a9563fd8ea10cae0554edd1e8db79df2960c76d7c159131793d859e19ba64f"
+    },
+    {
+      "id": "replay.local",
+      "requirement": "Locally captured pre-deadline observations extend the Git archive",
+      "implementation": "src/fpl_intelligence/replay.py:capture_replay_inputs",
+      "test": "tests/test_replay_extension.py:test_local_deadline_capture_rejects_future_snapshots",
+      "runtime_evidence_kind": "weekly_replay",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "7cfeaaf4480f565ae7cf7ca243466594ad53823b1e6185e12c5f906e93640493"
+    },
+    {
+      "id": "replay.extension",
+      "requirement": "Extend completed weeks without retraining frozen earlier decisions",
+      "implementation": "src/fpl_intelligence/replay.py:extend_replay",
+      "test": "tests/test_replay_extension.py:test_replay_extension_retains_frozen_earlier_decisions",
+      "runtime_evidence_kind": "weekly_replay",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "7cfeaaf4480f565ae7cf7ca243466594ad53823b1e6185e12c5f906e93640493"
+    },
+    {
+      "id": "strategy.grandfathered",
+      "requirement": "Rolling may retain a legal inherited club excess; actual transfers repair it",
+      "implementation": "src/fpl_intelligence/optimization.py:optimize",
+      "test": "tests/test_strategy.py:test_multiweek_grandfathered_excess_survives_roll_only",
+      "runtime_evidence_kind": "consensus_policy_validation",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "2694185e2b89a84d95829539f57c1f214f786bd5b55006d9967ffce7bdd1e80c"
+    },
+    {
+      "id": "evaluation.cache",
+      "requirement": "Reproduce all utilities and provenance before reusing a cached solve",
+      "implementation": "src/fpl_intelligence/consensus.py:reusable_decision",
+      "test": "tests/test_consensus.py:test_cached_decisions_require_reproduced_full_market_utilities",
+      "runtime_evidence_kind": "consensus_model",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "29d535cc367d3c6c706851e052f8058d717c506a28d5645da3e6c95a430d4014"
     }
   ],
   "scientific_limits": [
@@ -661,5 +721,5 @@
     "Unavailable optional inputs are recorded as unavailable; no observations are invented.",
     "Prospective competitive advantage and future ranks require future finalized matches."
   ],
-  "id": "6f3dff36b0fa4290666ae1f86f8031aaa500cd370b47beb60a15f5eba1e736fb"
+  "id": "4a3d42d4e0dd28729d6dcff9e40afc5643ce7b7c4c64161cb8ee5e116c1fce27"
 }

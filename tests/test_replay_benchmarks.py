@@ -20,6 +20,7 @@ def test_baselines_use_archived_signals_and_do_not_double_adjust_ep(market):
     assert baseline_signals({1: player}, "official_expected") == {1: 3}
     assert baseline_signals({1: player}, "points_per_game") == {1: 3}
     assert baseline_signals({1: player}, "ownership") == {1: 20}
+    assert all(baseline_signals({1: player}, method, scheduled=set())[1] == 0 for method in BASELINES)
     unavailable = player.model_copy(update={"chance": 0})
     assert all(baseline_signals({1: unavailable}, method)[1] == 0 for method in BASELINES)
     with pytest.raises(ValueError, match="Missing"):

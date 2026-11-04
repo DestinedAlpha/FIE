@@ -69,6 +69,13 @@ RESEARCH_KINDS = {
     "replay_inputs",
     "weekly_replay_decision",
     "weekly_replay",
+    "weekly_replay_segment",
+    "weekly_baseline_comparison",
+    "consensus_model",
+    "consensus_weight_selection",
+    "consensus_decision",
+    "consensus_policy_validation",
+    "continuous_consensus_decision",
 }
 
 

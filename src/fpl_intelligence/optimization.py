@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import os
 import time
-from collections import defaultdict
+from collections import Counter, defaultdict
 from typing import Mapping, cast
 
 import highspy
@@ -317,6 +317,14 @@ def optimize(
     means = {(r["event"], r["player_id"]): r["mean"] for r in forecast["players"]}
     lots = {lot.player_id: lot for lot in state.lots}
     old_ids = set(lots)
+    old_clubs = Counter(players[p].team for p in old_ids)
+    grandfathered = {
+        c: n - rules.club_limit
+        for c, n in old_clubs.items()
+        if n > rules.club_limit and c in state.grandfathered_clubs
+    }
+    changed_permanently: dict[int, int] = {}
+    changed_scoring: dict[int, int] = {}
     sell_quotes = {p: quote(lot, players[p].price) for p, lot in lots.items()}
     # Difference between market cost and original sale proceeds is tracked until
     # that exact ownership lot is sold. A later repurchase creates a fresh lot.
@@ -403,8 +411,37 @@ def optimize(
             mip.row([(xi[t, p], 1) for p in members], rules.minimum[pos], rules.maximum[pos])
         for club in market["teams"]:
             members = [p for p in ids if players[p].team == club["id"]]
-            mip.row([(y[t, p], 1) for p in members], upper=rules.club_limit)
-            mip.row([(z[t, p], 1) for p in members], upper=rules.club_limit)
+            extra = grandfathered.get(club["id"], 0)
+            if extra:
+                if t not in changed_permanently:
+                    moved = changed_permanently[t] = mip.var(("permanent_change", t))
+                    scoring = changed_scoring[t] = mip.var(("scoring_change", t))
+                    buys = [(incoming[t, p], 1) for p in ids]
+                    mip.row(buys + [(moved, -15)], upper=0)
+                    terms = [(moved, 1)] + [(incoming[t, p], -1) for p in ids]
+                    if previous in changed_permanently:
+                        prior = changed_permanently[previous]
+                        mip.row({moved: 1, prior: -1}, lower=0)
+                        terms.append((prior, -1))
+                    mip.row(terms, upper=0)
+                    different = [(z[t, p], 1) for p in ids if p not in old_ids]
+                    mip.row(different + [(scoring, -15)], upper=0)
+                    mip.row(different + [(scoring, -1)], lower=0)
+                mip.row(
+                    [(y[t, p], 1) for p in members] + [(changed_permanently[t], extra)],
+                    upper=rules.club_limit + extra,
+                )
+                mip.row(
+                    [(z[t, p], 1) for p in members] + [(changed_permanently[t], extra)],
+                    upper=rules.club_limit + extra,
+                )
+                mip.row(
+                    [(z[t, p], 1) for p in members] + [(changed_scoring[t], extra)],
+                    upper=rules.club_limit + extra,
+                )
+            else:
+                mip.row([(y[t, p], 1) for p in members], upper=rules.club_limit)
+                mip.row([(z[t, p], 1) for p in members], upper=rules.club_limit)
         budget = [(bank[t], 1)]
         if previous in events:
             budget.append((bank[previous], -1))
@@ -541,6 +578,12 @@ def optimize(
         ordinary_sell = [] if seed_chip == "freehit" else action.sell
         sold_old = surviving_original & set(ordinary_sell)
         surviving_original -= sold_old
+        if t in changed_permanently:
+            before_changed = (
+                bool(vector[changed_permanently[t - 1]]) if t - 1 in changed_permanently else False
+            )
+            warm[changed_permanently[t]] = int(before_changed or bool(ordinary_buy))
+            warm[changed_scoring[t]] = int(bool(set(playing) - old_ids))
         for p in ids:
             for kind, on in [
                 ("squad", p in permanent),

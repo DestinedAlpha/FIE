@@ -124,15 +124,23 @@ def solve_action(
     from collections import Counter
 
     oldclubs = Counter(players[p].team for p in owned)
-    for club in {players[p].team for p in ids}:
-        # Grandfathered excess is only preserved when no ordinary transfers occur.
-        limit = (
-            max(rules.club_limit, oldclubs[club])
-            if max_transfers == 0 and not unlimited
-            else rules.club_limit
-        )
-        model.row([(y[p], 1) for p in ids if players[p].team == club], upper=limit)
     purchases = [(y[p], 1) for p in ids if p not in owned]
+    grandfathered = {
+        c: n - rules.club_limit
+        for c, n in oldclubs.items()
+        if n > rules.club_limit and c in state.grandfathered_clubs
+    }
+    changed = None
+    if grandfathered:
+        changed = model.var(("new_squad_member",))
+        model.row(purchases + [(changed, -15)], upper=0)
+        model.row(purchases + [(changed, -1)], lower=0)
+    for club in {players[p].team for p in ids}:
+        terms = [(y[p], 1) for p in ids if players[p].team == club]
+        extra = grandfathered.get(club, 0)
+        if extra and changed is not None:
+            terms.append((changed, extra))
+        model.row(terms, upper=rules.club_limit + extra)
     if not unlimited:
         model.row(
             purchases,
@@ -191,6 +199,8 @@ def solve_action(
                 proposed[cap[p]] = int(p == line.captain)
             proposed[hit] = max(0, len(bought) + state.transfers_made - state.free_transfers)
             warm = proposed
+    if changed is not None:
+        warm[changed] = int(any(warm[y[p]] > 0.5 for p in ids if p not in owned))
     rows = np.bincount(
         np.asarray(model.rows, dtype=int),
         weights=np.asarray(model.values) * warm[np.asarray(model.cols, dtype=int)],

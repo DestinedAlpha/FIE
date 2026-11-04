@@ -59,6 +59,10 @@ def main():
         "evidence_impact",
         "policy_selection",
         "weekly_replay",
+        "weekly_baseline_comparison",
+        "consensus_model",
+        "consensus_comparison",
+        "consensus_policy_validation",
     )
     artifacts = {kind: store.get(kind) for kind in kinds}
     from fpl_intelligence.decision import load_bundle
@@ -88,7 +92,7 @@ def main():
     assert artifacts["coherent_comparison"]["invalid_goal_allocations"] == 0
     assert artifacts["coherent_comparison"]["short_lineup_worlds"] == 0
     replay = artifacts["weekly_replay"]
-    assert [w["event"] for w in replay["weeks"]] == list(range(1, 9))
+    assert [w["event"] for w in replay["weeks"]] == list(range(1, 10))
     assert replay["account_state_unchanged"]
     for week in replay["weeks"]:
         group = f"{week['season']}-GW{week['event']:02d}"
@@ -98,18 +102,30 @@ def main():
         source = store.get("replay_inputs", week["input_id"])
         from fpl_intelligence.availability import moment
 
-        assert moment(source["fixture_proof"]["git_committed_at"]) < moment(source["deadline"])
+        proof = source["fixture_proof"]
+        assert moment(proof.get("git_committed_at", proof.get("source_captured_at"))) < moment(
+            source["deadline"]
+        )
         for model in week["training"]["models"].values():
             assert (
                 hashlib.sha256(store.artifact_path(model["path"]).read_bytes()).hexdigest() == model["hash"]
             )
+    from fpl_intelligence.consensus import load_verified_models
+
+    consensus = artifacts["consensus_model"]
+    load_verified_models(store, consensus["tree_spec"])
+    load_verified_models(store, consensus["reference_spec"])
+    assert not consensus["promoted"]
+    assert artifacts["consensus_comparison"]["consensus_model_id"] == consensus["id"]
+    assert artifacts["consensus_comparison"]["state_id"] == state["id"]
+    assert artifacts["consensus_policy_validation"]["consensus_model_id"] == consensus["id"]
     checks = json.loads(Path("artifacts/runtime/checks/checks.json").read_text())
     assert checks["passed"] and checks["browser_failed"] == 0
     critic = artifacts["decision_critic"]
     value = artifacts["state_value_model"]
     result = {
         "at": now(),
-        "version": "0.6.0",
+        "version": "0.7.0",
         "account_state_id": state["id"],
         "market_id": market["id"],
         "forecast_id": forecast["id"],
@@ -131,6 +147,11 @@ def main():
             {"gw": w["event"], "actual_points": w["actual_points"], "hindsight_points": w["hindsight_points"]}
             for w in replay["weeks"]
         ],
+        "consensus_weekly_totals": consensus["current_totals"],
+        "consensus_weekly_acceptance": consensus["acceptance"],
+        "consensus_continuous_totals": artifacts["consensus_policy_validation"]["current_totals"],
+        "consensus_continuous_acceptance": artifacts["consensus_policy_validation"]["acceptance"],
+        "consensus_promoted": False,
         "checks": {
             **{k: v for k, v in checks.items() if k != "results"},
             "ledger_replay": "passed",
@@ -138,7 +159,7 @@ def main():
         },
         "scope": "Executed implementation checks and historical gates; future football outcomes and global optimality are not certified",
     }
-    atomic_json(Path("artifacts/evaluations/release_0_6.json"), result)
+    atomic_json(Path("artifacts/evaluations/release_0_7.json"), result)
     print(
         json.dumps(
             {

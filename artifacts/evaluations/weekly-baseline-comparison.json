@@ -1,6 +1,6 @@
 {
-  "at": "2026-11-04T16:21:58.164118+00:00",
-  "weekly_replay_id": "277d16cf71eb6fe1caef62c051601e29a2f75212c5c1224705a423074230c2a5",
+  "at": "2026-11-04T17:41:27.343024+00:00",
+  "weekly_replay_id": "7cfeaaf4480f565ae7cf7ca243466594ad53823b1e6185e12c5f906e93640493",
   "weeks": [
     {
       "event": 1,
@@ -126,8 +126,8 @@
           },
           "selection_utility": 38.6,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:48.053099+00:00",
-          "id": "76ccbda4d44597ea38592cf0056f7245fa8c9133a8cd2b1df07816af258bb2cc",
+          "frozen_at": "2026-11-04T17:41:18.369934+00:00",
+          "id": "930c4d324afc6ea08010eb5711dfaccec773bd9465a59cd514686d8bf0b8e77d",
           "actual_points": 53.0
         },
         "points_per_game": {
@@ -249,8 +249,8 @@
           },
           "selection_utility": 67.6,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:48.534019+00:00",
-          "id": "32d61e8a2f73f10643a00a4694d1b808ae2216b5a144fd6658876ea141868596",
+          "frozen_at": "2026-11-04T17:41:18.793617+00:00",
+          "id": "9a1363c57b15b01f5a791c7fda559aa00bf4d2c4edee13d19432c63841e74052",
           "actual_points": 47.0
         },
         "ownership": {
@@ -372,8 +372,8 @@
           },
           "selection_utility": 502.70000000000005,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:48.698829+00:00",
-          "id": "4d2a33eabe951782517cbfb29aab2d86f800e4e0ddb101806da3164d56004da3",
+          "frozen_at": "2026-11-04T17:41:18.925735+00:00",
+          "id": "f5f979308346ef5c1e6114ded9fb119a5dd791d32362ed9f2fd2f412acbeb445",
           "actual_points": 54.0
         }
       }
@@ -502,8 +502,8 @@
           },
           "selection_utility": 38.6,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:48.893125+00:00",
-          "id": "57358a947a7aa74ca5b2ed5486119b746f2566f2a707cd06883fba0e6025e9ec",
+          "frozen_at": "2026-11-04T17:41:19.067963+00:00",
+          "id": "994827a1c9f13d33993d2ddf7e17f68e16a872a17fab7d1626ab728c7459e869",
           "actual_points": 83.0
         },
         "points_per_game": {
@@ -625,8 +625,8 @@
           },
           "selection_utility": 160.0,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:48.971193+00:00",
-          "id": "f235ef673f7d239c92ac21223d5e5b3dbf2f7b826bc089c4245128e191de0b5f",
+          "frozen_at": "2026-11-04T17:41:19.124455+00:00",
+          "id": "f2d93fee9c7edcdf8cf530f535a7627f6b28dbd53c69cb7b446155d9abb7cbf9",
           "actual_points": 50.0
         },
         "ownership": {
@@ -748,8 +748,8 @@
           },
           "selection_utility": 502.70000000000005,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:49.046264+00:00",
-          "id": "1e39da537d9a9838508200f6de2db6403fcb7f8adef3fbc63463c2fdab60112d",
+          "frozen_at": "2026-11-04T17:41:19.197150+00:00",
+          "id": "cd2344bd080a9be922c55c76ce6f1411fad69e6e2be123013071930f65d9feec",
           "actual_points": 98.0
         }
       }
@@ -878,8 +878,8 @@
           },
           "selection_utility": 123.0,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:49.175645+00:00",
-          "id": "f8aa22d580607d66c0473be8b40f17fb1ebb756f1baf5e1508ae606376bc4ee6",
+          "frozen_at": "2026-11-04T17:41:19.362330+00:00",
+          "id": "ac56b96dea547ffbab898ea5c72632f47f66d2346342f7683fafa2d75091e544",
           "actual_points": 29.0
         },
         "points_per_game": {
@@ -1001,8 +1001,8 @@
           },
           "selection_utility": 123.0,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:49.225388+00:00",
-          "id": "03a1a5ec1a266dcb50aaeafd47bd252093b1edba39c001d8ac493e854416222a",
+          "frozen_at": "2026-11-04T17:41:19.416888+00:00",
+          "id": "d2a481227b7ef50854201f1b543cb9e06b189f4f7777cef2baacc4e6af9dd545",
           "actual_points": 30.0
         },
         "ownership": {
@@ -1124,8 +1124,8 @@
           },
           "selection_utility": 495.5,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:49.494951+00:00",
-          "id": "8a11a209357b338a015434813d5f1a28c95d4aee71325898830f4d0aa3e9a798",
+          "frozen_at": "2026-11-04T17:41:19.625840+00:00",
+          "id": "58ad0c9ea2c0cd0920012f61e50805f5ea418dd6307597ddf4bcf03b0c5869ce",
           "actual_points": 46.0
         }
       }
@@ -1254,8 +1254,8 @@
           },
           "selection_utility": 97.6,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:49.641753+00:00",
-          "id": "61fee2736ed4a70b3e628a1273f7589bd90788de50e8a64b7cb614a2e33594f8",
+          "frozen_at": "2026-11-04T17:41:19.756135+00:00",
+          "id": "471a6723322a38454ecafd30ff3f6535e3594a9972425e44541c06ee8ec01e5d",
           "actual_points": 48.0
         },
         "points_per_game": {
@@ -1377,8 +1377,8 @@
           },
           "selection_utility": 97.6,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:49.717672+00:00",
-          "id": "9fd7edffd65e6408519bbf7552b8dc233271cf754d341d3ff802a060c6f51dcb",
+          "frozen_at": "2026-11-04T17:41:19.815255+00:00",
+          "id": "78c6e43b90185b76a7f97c629ac30925b35f9e4b4929b57f50be7c93b73bd716",
           "actual_points": 48.0
         },
         "ownership": {
@@ -1500,8 +1500,8 @@
           },
           "selection_utility": 505.4,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:49.862022+00:00",
-          "id": "40dd226880dcff9ec9a8ec2b47bcfc68308a6eca82cb9bcda2eb648e2bbb148f",
+          "frozen_at": "2026-11-04T17:41:19.973058+00:00",
+          "id": "63cdeb7ad9e5275487979f89288049a3c75c4ca6c5ce4c494282409692f3bc7d",
           "actual_points": 85.0
         }
       }
@@ -1630,8 +1630,8 @@
           },
           "selection_utility": 94.8,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:49.980434+00:00",
-          "id": "ae9a844fbae50d5c929e5b016bebe5642a201f57fa95e4d807bb201c6b01bc2e",
+          "frozen_at": "2026-11-04T17:41:20.106899+00:00",
+          "id": "405747ee9bae82681e381ac6d4fd4153a5570bf51b214d0d3c363e15352b38fb",
           "actual_points": 71.0
         },
         "points_per_game": {
@@ -1753,8 +1753,8 @@
           },
           "selection_utility": 95.6,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:50.037575+00:00",
-          "id": "557434d01a7c934a3aaf433a771d308e16c2032d917b7ea9e1f3065f5a170aba",
+          "frozen_at": "2026-11-04T17:41:20.165566+00:00",
+          "id": "fcf483c1a7a6ba65046a1c9196618691a5e4f90ebe182ebdc1365fbf16b12076",
           "actual_points": 73.0
         },
         "ownership": {
@@ -1876,8 +1876,8 @@
           },
           "selection_utility": 499.175,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:50.243040+00:00",
-          "id": "1d952a57668bfe6b8fc00417fe69e70a7157d9e01540897cab43e55abec8b503",
+          "frozen_at": "2026-11-04T17:41:20.380721+00:00",
+          "id": "603af8407fc1450a643ae8c3d9bb884f884dd5d3fa0ec475ca02efecd397b5f4",
           "actual_points": 33.0
         }
       }
@@ -2006,8 +2006,8 @@
           },
           "selection_utility": 123.5,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:50.368727+00:00",
-          "id": "41a2811d3a309857885737888b33bfb4e2334cdb8c7edf749ee0f5fee0e978ae",
+          "frozen_at": "2026-11-04T17:41:20.526917+00:00",
+          "id": "a6f3bee1815164b8acd390e749b34d7c10c8e10c4ad8c55588b9304d6966aa5e",
           "actual_points": 44.0
         },
         "points_per_game": {
@@ -2129,8 +2129,8 @@
           },
           "selection_utility": 96.4,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:50.423605+00:00",
-          "id": "bd5f697564cb11b4ee89768559716cdf5d85355eafeca6a302de42428c55203b",
+          "frozen_at": "2026-11-04T17:41:20.584381+00:00",
+          "id": "756a22342662ea8d28fcceb82291ee05cfc2ac1a4504af8ad70bd2da936dd30c",
           "actual_points": 62.0
         },
         "ownership": {
@@ -2252,8 +2252,8 @@
           },
           "selection_utility": 525.2,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:50.827017+00:00",
-          "id": "a16a13bd21880a2e4906d75c782922bf3d4e47fc82dcc4ef3d65ab80783d2cfc",
+          "frozen_at": "2026-11-04T17:41:20.985517+00:00",
+          "id": "c7dd68b5c1dc81b54c7fc3c5f224533a3872d9b8487e24255467f40622775815",
           "actual_points": 82.0
         }
       }
@@ -2382,8 +2382,8 @@
           },
           "selection_utility": 112.0,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:50.959222+00:00",
-          "id": "9feee5122adc031d49308f87dfdcd98d640ad9a8f57dc6b4892973205d43ca9a",
+          "frozen_at": "2026-11-04T17:41:21.130721+00:00",
+          "id": "b9e4340fe89bf51323206cab16aefced2f07e08a8a020b730d829dd8c046e4ba",
           "actual_points": 45.0
         },
         "points_per_game": {
@@ -2505,8 +2505,8 @@
           },
           "selection_utility": 111.1,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:51.017602+00:00",
-          "id": "2820bfc625330e50f7730ff2d244947be5455c250922dfd79cf66b2b08dbee50",
+          "frozen_at": "2026-11-04T17:41:21.185950+00:00",
+          "id": "1d0a4d69e0a19c69dab058c1149e45199e89714c658fd0e3b54e15293e5f4232",
           "actual_points": 49.0
         },
         "ownership": {
@@ -2628,8 +2628,8 @@
           },
           "selection_utility": 556.7,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:51.335548+00:00",
-          "id": "983ec0c89df78351358cfb77a5929845abdb305dd10e3625206ee3df1ab2a5f5",
+          "frozen_at": "2026-11-04T17:41:21.437188+00:00",
+          "id": "9e9dafc0f688887d85d4ceb54298df21498b410c78ef3f29d7b7b3237e61cd88",
           "actual_points": 74.0
         }
       }
@@ -2758,8 +2758,8 @@
           },
           "selection_utility": 110.0,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:51.470079+00:00",
-          "id": "4b09db0ee5f082ad065eae8a54287ce750b9efc6292e79861096d330822e6a6d",
+          "frozen_at": "2026-11-04T17:41:21.580425+00:00",
+          "id": "f59bbbee802a7679f1be67d9d9c21d1e6500b8671392de1bc0b2aab782e9a9c7",
           "actual_points": 33.0
         },
         "points_per_game": {
@@ -2881,8 +2881,8 @@
           },
           "selection_utility": 96.4,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:51.526032+00:00",
-          "id": "87b3e1b07d0b909ac08f4925225a607d147204a5efd03704668af77bcd6bc8ab",
+          "frozen_at": "2026-11-04T17:41:21.637700+00:00",
+          "id": "5e6a2cc08e3d4c570dd27a8380c65373e99445180c42e8ae7f656b4f461a523a",
           "actual_points": 33.0
         },
         "ownership": {
@@ -3004,40 +3004,416 @@
           },
           "selection_utility": 580.3,
           "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
-          "frozen_at": "2026-11-04T16:21:51.668365+00:00",
-          "id": "a3ede81db48833c33323b9f8f036dc90de7b2d5fb4c0ad85898006bf8aeff272",
+          "frozen_at": "2026-11-04T17:41:21.781575+00:00",
+          "id": "921eae1d278fdf1f3ad3ab658e8ebcdd8bc06074f72370d9515c74ad533ecd2d",
           "actual_points": 40.0
+        }
+      }
+    },
+    {
+      "event": 9,
+      "reference_actual": 79,
+      "official_average_context_only": 47,
+      "baselines": {
+        "official_expected": {
+          "season": "2026/27",
+          "event": 9,
+          "method": "official_expected",
+          "definition": "Archived ep_next; already availability-adjusted by its publisher",
+          "input_id": "7c417163ebe7163e4234a01bdf05d8e57ffd5428320628e12dab0e4bed2d3d2b",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 62
+            },
+            {
+              "id": 4,
+              "name": "Gabriel",
+              "price": 79
+            },
+            {
+              "id": 31,
+              "name": "Konsa",
+              "price": 47
+            },
+            {
+              "id": 29,
+              "name": "M.Bizot",
+              "price": 45
+            },
+            {
+              "id": 166,
+              "name": "N.Jackson",
+              "price": 68
+            },
+            {
+              "id": 68,
+              "name": "Tavernier",
+              "price": 64
+            },
+            {
+              "id": 79,
+              "name": "Evanilson",
+              "price": 62
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 53
+            },
+            {
+              "id": 504,
+              "name": "Vuskovic",
+              "price": 52
+            },
+            {
+              "id": 600,
+              "name": "Osman",
+              "price": 49
+            },
+            {
+              "id": 101,
+              "name": "Henderson",
+              "price": 49
+            },
+            {
+              "id": 156,
+              "name": "Neto",
+              "price": 66
+            },
+            {
+              "id": 269,
+              "name": "Sessegnon",
+              "price": 43
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 158
+            },
+            {
+              "id": 559,
+              "name": "Bamba",
+              "price": 48
+            }
+          ],
+          "bank": 55,
+          "lineup": {
+            "xi": [
+              1,
+              4,
+              31,
+              115,
+              504,
+              101,
+              156,
+              68,
+              411,
+              79,
+              166
+            ],
+            "bench": [
+              29,
+              269,
+              559,
+              600
+            ],
+            "captain": 4,
+            "vice": 31
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 95.0,
+            "best_bound": 95.0,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1689,
+            "constraints": 1158
+          },
+          "selection_utility": 95.0,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T17:41:21.962338+00:00",
+          "id": "08cec685f9d83cb422d5ecb7a806687df1003ef3e702d2a14220cf808bcdec93",
+          "actual_points": 68.0
+        },
+        "points_per_game": {
+          "season": "2026/27",
+          "event": 9,
+          "method": "points_per_game",
+          "definition": "Archived points_per_game multiplied by published availability",
+          "input_id": "7c417163ebe7163e4234a01bdf05d8e57ffd5428320628e12dab0e4bed2d3d2b",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 62
+            },
+            {
+              "id": 4,
+              "name": "Gabriel",
+              "price": 79
+            },
+            {
+              "id": 29,
+              "name": "M.Bizot",
+              "price": 45
+            },
+            {
+              "id": 53,
+              "name": "Manzambi",
+              "price": 61
+            },
+            {
+              "id": 68,
+              "name": "Tavernier",
+              "price": 64
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 53
+            },
+            {
+              "id": 123,
+              "name": "Hinshelwood",
+              "price": 59
+            },
+            {
+              "id": 124,
+              "name": "Gro\u00df",
+              "price": 62
+            },
+            {
+              "id": 232,
+              "name": "O'Brien",
+              "price": 48
+            },
+            {
+              "id": 269,
+              "name": "Sessegnon",
+              "price": 43
+            },
+            {
+              "id": 272,
+              "name": "Kusi-Asare",
+              "price": 44
+            },
+            {
+              "id": 330,
+              "name": "Bogle",
+              "price": 48
+            },
+            {
+              "id": 379,
+              "name": "Isak",
+              "price": 91
+            },
+            {
+              "id": 399,
+              "name": "Cherki",
+              "price": 80
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 158
+            }
+          ],
+          "bank": 3,
+          "lineup": {
+            "xi": [
+              1,
+              115,
+              4,
+              330,
+              123,
+              124,
+              68,
+              399,
+              53,
+              411,
+              379
+            ],
+            "bench": [
+              29,
+              232,
+              269,
+              272
+            ],
+            "captain": 411,
+            "vice": 123
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 83.9,
+            "best_bound": 83.9,
+            "gap": 0.0,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1689,
+            "constraints": 1158
+          },
+          "selection_utility": 83.9,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T17:41:22.065801+00:00",
+          "id": "773fc72416c2c830b8b27da7d931f237be124bbe11c591d0f31ed714268741c5",
+          "actual_points": 41.0
+        },
+        "ownership": {
+          "season": "2026/27",
+          "event": 9,
+          "method": "ownership",
+          "definition": "Archived selected_by_percent multiplied by published availability; ranking signal, not xPts",
+          "input_id": "7c417163ebe7163e4234a01bdf05d8e57ffd5428320628e12dab0e4bed2d3d2b",
+          "players": [
+            {
+              "id": 1,
+              "name": "Raya",
+              "price": 62
+            },
+            {
+              "id": 8,
+              "name": "Calafiori",
+              "price": 60
+            },
+            {
+              "id": 68,
+              "name": "Tavernier",
+              "price": 64
+            },
+            {
+              "id": 115,
+              "name": "De Cuyper",
+              "price": 53
+            },
+            {
+              "id": 124,
+              "name": "Gro\u00df",
+              "price": 62
+            },
+            {
+              "id": 40,
+              "name": "Rogers",
+              "price": 80
+            },
+            {
+              "id": 154,
+              "name": "Palmer",
+              "price": 98
+            },
+            {
+              "id": 272,
+              "name": "Kusi-Asare",
+              "price": 44
+            },
+            {
+              "id": 346,
+              "name": "Calvert-Lewin",
+              "price": 61
+            },
+            {
+              "id": 391,
+              "name": "Gvardiol",
+              "price": 57
+            },
+            {
+              "id": 399,
+              "name": "Cherki",
+              "price": 80
+            },
+            {
+              "id": 411,
+              "name": "Haaland",
+              "price": 158
+            },
+            {
+              "id": 414,
+              "name": "Heaton",
+              "price": 40
+            },
+            {
+              "id": 476,
+              "name": "O.Richards",
+              "price": 39
+            },
+            {
+              "id": 510,
+              "name": "Rowswell",
+              "price": 40
+            }
+          ],
+          "bank": 2,
+          "lineup": {
+            "xi": [
+              1,
+              115,
+              8,
+              391,
+              40,
+              124,
+              399,
+              154,
+              68,
+              411,
+              346
+            ],
+            "bench": [
+              414,
+              272,
+              476,
+              510
+            ],
+            "captain": 411,
+            "vice": 40
+          },
+          "solver": {
+            "status": "Optimal",
+            "objective": 513.0500000000001,
+            "best_bound": 513.0500000000001,
+            "gap": 2.2159017195520133e-16,
+            "bound_available": true,
+            "nodes": 1,
+            "variables": 1689,
+            "constraints": 1158
+          },
+          "selection_utility": 513.0500000000001,
+          "bench_policy": "Descending baseline signal; goalkeeper first; standard legal formation-preserving actual autosubs",
+          "frozen_at": "2026-11-04T17:41:22.146343+00:00",
+          "id": "f9e0dd7841f7ec1a7bd7ed791c8a8685428ce2c7b33176416db464602adb4a11",
+          "actual_points": 51.0
         }
       }
     }
   ],
-  "reference_total": 472,
+  "reference_total": 551,
   "comparisons": {
     "official_expected": {
-      "baseline_total": 406.0,
-      "reference_minus_baseline_total": 66.0,
-      "weeks_reference_wins": 5,
+      "baseline_total": 474.0,
+      "reference_minus_baseline_total": 77.0,
+      "weeks_reference_wins": 6,
       "mean_weekly_difference_two_week_block_95ci": [
-        1.125,
-        16.25
+        1.3333333333333333,
+        16.88888888888889
       ]
     },
     "points_per_game": {
-      "baseline_total": 392.0,
-      "reference_minus_baseline_total": 80.0,
-      "weeks_reference_wins": 5,
+      "baseline_total": 433.0,
+      "reference_minus_baseline_total": 118.0,
+      "weeks_reference_wins": 6,
       "mean_weekly_difference_two_week_block_95ci": [
-        -2.628124999999999,
-        20.75
+        -0.4444444444444444,
+        25.444444444444443
       ]
     },
     "ownership": {
-      "baseline_total": 512.0,
-      "reference_minus_baseline_total": -40.0,
-      "weeks_reference_wins": 2,
+      "baseline_total": 563.0,
+      "reference_minus_baseline_total": -12.0,
+      "weeks_reference_wins": 3,
       "mean_weekly_difference_two_week_block_95ci": [
-        -15.875,
-        4.0
+        -14.444444444444445,
+        12.777777777777779
       ]
     }
   },
@@ -3049,5 +3425,5 @@
     "Eight already-inspected weeks and a descriptive block interval cannot establish prospective superiority; do not tune models on these outcomes and call them untouched tests.",
     "Official average is context only: ordinary managers have transfer constraints and may use chips."
   ],
-  "id": "9269fd3d4e23e2f2de15e8d17554da2cec26d07c25c8f3f7458e5b091bdaa0fd"
+  "id": "22b983f07d69e7d7ecf48300dbfe8e54554567279d8ea7098f7de4e4075cab50"
 }
