@@ -1,6 +1,6 @@
 {
-  "at": "2026-10-29T13:44:25.772529+00:00",
-  "decision_model_id": "39840e58f1e3096877578ce293cf817b00a6f88af5052644292eacdd51c8f65c",
+  "at": "2026-11-05T05:23:44.624686+00:00",
+  "decision_model_id": "28c6f6ef07ed425b38f7e353e757f153b05ca0b7b7cbe57a0dff58ff7dbcc254",
   "season": "2025/26",
   "events": 30,
   "shared_initial_state": true,
@@ -37,5 +37,5 @@
     "Historical archived quotes are not guaranteed captured before deadline",
     "No guarantee of rank or future returns"
   ],
-  "id": "844472196d0a19e81cb4c4b013dea454d37e82189ebd4594838ba2b68d9dfa0e"
+  "id": "6709e70ffb530f3aa4e4b21382bcac5f216affb2bc7608270ed03be8be64417f"
 }

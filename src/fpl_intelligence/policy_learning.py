@@ -399,12 +399,13 @@ def personalized_analysis(store: Store):
     import hashlib
 
     from .horizon import live_values
+    from .reports import transfer_pairs
     from .rules import quote
 
     model = store.get("transfer_policy_model")
     values, players, market, horizon = live_values(store)
     if model["horizon_model_id"] != horizon["id"]:
-        raise ValueError("Transfer critic must be retrained for the current horizon model")
+        model = train_policy(store)
     saved = store.get("state")
     state = TeamState.model_validate({k: v for k, v in saved.items() if k != "id"})
     rules = Rules.from_bootstrap(store.latest("bootstrap")[0])
@@ -443,8 +444,8 @@ def personalized_analysis(store: Store):
                 "sell": action.sell,
                 "buy": action.buy,
                 "transfers": [
-                    {"out": players[a].web_name, "in": players[b].web_name}
-                    for a, b in zip(action.sell, action.buy)
+                    {"out": players[a["player_id"]].web_name, "in": players[b["player_id"]].web_name}
+                    for a, b in transfer_pairs(ledger, players)
                 ],
                 "estimated_fourweek_gain": value,
                 "hit": ledger["hit"],

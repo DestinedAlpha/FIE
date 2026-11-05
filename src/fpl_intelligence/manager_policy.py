@@ -373,6 +373,7 @@ def action_preferences(store, state, players, means, models=None):
 
 def rollout_action(store, member, state, players, rules, means, history, branch, step, loaded):
     """Learned action type, legal chip state, conditional player choices and exact search."""
+    from .reports import transfer_pairs
     from .strategy import allowed_chips, solve_action
 
     spec, bundle = loaded
@@ -514,11 +515,11 @@ def rollout_action(store, member, state, players, rules, means, history, branch,
     record["transfers"].extend(
         {
             "event": state.event,
-            "element_out": old,
-            "element_in": new,
-            "element_out_cost": players[old].price,
-            "element_in_cost": players[new].price,
+            "element_out": old["player_id"],
+            "element_in": new["player_id"],
+            "element_out_cost": old["units"],
+            "element_in_cost": new["units"],
         }
-        for old, new in zip(d.action.sell, d.action.buy)
+        for old, new in transfer_pairs(d.ledger, players)
     )
     return d

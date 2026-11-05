@@ -51,7 +51,13 @@ def full_training(store: Store, samples=24, epochs=20, refresh=False):
     record("published_signal_fusion", fit_consensus(store))
     record("published_signal_transfer_validation", validate_continuous_policy(store))
     record("published_signal_current_comparison", compare_live_consensus(store))
+    from .future_training import train_future_component
+
+    record("future_fixture_learning", train_future_component(store))
     record("horizon", train_horizon(store))
+    from .policy_learning import train_policy
+
+    record("transfer_value_learning", train_policy(store))
     if refresh or not store.list("top_manager_history", 1):
         record("top_1000", asyncio.run(collect_top_managers(store)))
     record("manager_counts", train_behavior(store))

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "FPL Intelligence",
-    "version": "0.6.0"
+    "version": "0.9.0"
   },
   "paths": {
     "/api/health": {
@@ -347,6 +347,160 @@
       "post": {
         "summary": "Replay Weekly",
         "operationId": "replay_weekly_api_replay_weekly_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/consensus/model": {
+      "get": {
+        "summary": "Consensus Model",
+        "operationId": "consensus_model_api_consensus_model_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horizon/expert": {
+      "get": {
+        "summary": "Future Expert Evidence",
+        "operationId": "future_expert_evidence_api_horizon_expert_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/replay/pipeline": {
+      "get": {
+        "summary": "Replay Pipeline Results",
+        "operationId": "replay_pipeline_results_api_replay_pipeline_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Replay Pipeline",
+        "operationId": "replay_pipeline_api_replay_pipeline_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/replay/pipeline/decision/{season}/{event}": {
+      "get": {
+        "summary": "Replay Pipeline Decision",
+        "operationId": "replay_pipeline_decision_api_replay_pipeline_decision__season___event__get",
+        "parameters": [
+          {
+            "name": "season",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Season"
+            }
+          },
+          {
+            "name": "event",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/prospective/accounts": {
+      "get": {
+        "summary": "Prospective Account Results",
+        "operationId": "prospective_account_results_api_prospective_accounts_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Prospective Accounts",
+        "operationId": "prospective_accounts_api_prospective_accounts_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/consensus/compare": {
+      "post": {
+        "summary": "Consensus Compare",
+        "operationId": "consensus_compare_api_consensus_compare_post",
         "responses": {
           "200": {
             "description": "Successful Response",

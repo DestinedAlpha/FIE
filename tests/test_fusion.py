@@ -218,6 +218,8 @@ def test_update_merges_research_without_replacing_account_or_active_model(tmp_pa
     new.put("decision_model", {"id": "unwanted replacement"})
     model = new.put("fusion_model", {"architecture": "verified candidate"})
     recovery = new.put("availability_model", {"recovery": {"promoted": True}})
+    horizon = new.put("horizon_refinement", {"forecast_gate_passed": True})
+    future = new.put("future_policy_replay", {"policy_gate_passed": True})
     shots = new.root / "normalized" / "shots.parquet"
     shots.parent.mkdir()
     shots.write_bytes(b"immutable-normalized-observations")
@@ -227,11 +229,13 @@ def test_update_merges_research_without_replacing_account_or_active_model(tmp_pa
     with new.db() as db:
         db.execute("PRAGMA wal_checkpoint(TRUNCATE)")
     (new.root / "state.sqlite.gz").write_bytes(gzip.compress((new.root / "state.sqlite").read_bytes()))
-    assert module.merge_research(source, target) == 2
+    assert module.merge_research(source, target) == 4
     assert existing.get("state")["bank"] == 3
     assert existing.get("decision_model")["id"] == selected
     assert existing.get("fusion_model")["id"] == model
     assert existing.get("availability_model")["id"] == recovery
+    assert existing.get("horizon_refinement")["id"] == horizon
+    assert existing.get("future_policy_replay")["id"] == future
     assert (existing.root / "normalized/shots.parquet").read_bytes() == shots.read_bytes()
     assert (existing.root / "models/candidate.pt").read_bytes() == b"tensor-only-model"
 

@@ -1,0 +1,3192 @@
+{
+  "at": "2026-11-05T04:54:49.197735+00:00",
+  "protocol": {
+    "signature": "78cd0167974432df006daaa7b8bf0bf59cbe3ea468501c7ef15e4fd3609b8a45",
+    "at": "2026-11-05T04:08:55.704146+00:00",
+    "scope": "Complete chip-window expected-points policy; learned expert only beyond the current gameweek",
+    "weight": 0.5,
+    "training_before": "2025/26-GW01",
+    "worlds": 4000,
+    "seconds": 60,
+    "baseline_id": "6e0cb9303d4fec42c7fb76a53b810117666ed0a18b3639e05ee3881a6c69caf7",
+    "refinement_id": "860112b7ad692fccc4f1ca2b92c2eaa63be4b452baa5206f154ae5603ab0950d",
+    "gate": "Identical current-week worlds and no illegal transitions; positive net return gain plus lower future weighted loss against the refitted deployed reference",
+    "current_season": "Diagnostic only after earlier-season policy acceptance; never selects configuration"
+  },
+  "season": "2025/26",
+  "weeks": [
+    {
+      "season": "2025/26",
+      "event": 20,
+      "net_points": 45.0,
+      "baseline_points": 45.0,
+      "hit": 0,
+      "chip": "3xc",
+      "next_state": {
+        "season": "2025/26",
+        "event": 21,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 3,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 60,
+            "quote_market_price": 60,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 8,
+            "purchase_price": 64,
+            "sell_price": 64,
+            "quote_market_price": 64,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 75,
+            "sell_price": 75,
+            "quote_market_price": 75,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 702,
+            "purchase_price": 44,
+            "sell_price": 44,
+            "quote_market_price": 44,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 82,
+            "purchase_price": 77,
+            "sell_price": 77,
+            "quote_market_price": 77,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 260,
+            "purchase_price": 53,
+            "sell_price": 53,
+            "quote_market_price": 53,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 298,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 59,
+            "quote_market_price": 59,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 661,
+            "purchase_price": 91,
+            "sell_price": 91,
+            "quote_market_price": 91,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 414,
+            "purchase_price": 89,
+            "sell_price": 89,
+            "quote_market_price": 89,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 151,
+            "quote_market_price": 151,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 530,
+            "purchase_price": 39,
+            "sell_price": 39,
+            "quote_market_price": 39,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 575,
+            "purchase_price": 45,
+            "sell_price": 45,
+            "quote_market_price": 45,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 621,
+            "purchase_price": 43,
+            "sell_price": 43,
+            "quote_market_price": 43,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 69,
+            "sell_price": 69,
+            "quote_market_price": 69,
+            "provenance": "plan_gw20",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          }
+        ],
+        "active_chip": null,
+        "points": 45,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-01-03T11:00:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw20-decision.json",
+      "decision_sha256": "864ff9f51ec3dc3dfe827c589d104bc0969d63ef1da56fed0b95e90616ef2c0e",
+      "future_weighted_loss_delta": -0.3201743194145838,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 21,
+      "net_points": 81.0,
+      "baseline_points": 81.0,
+      "hit": 0,
+      "chip": "freehit",
+      "next_state": {
+        "season": "2025/26",
+        "event": 22,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 3,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 60,
+            "quote_market_price": 60,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 8,
+            "purchase_price": 64,
+            "sell_price": 63,
+            "quote_market_price": 63,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 75,
+            "sell_price": 75,
+            "quote_market_price": 76,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 702,
+            "purchase_price": 44,
+            "sell_price": 44,
+            "quote_market_price": 44,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 82,
+            "purchase_price": 77,
+            "sell_price": 76,
+            "quote_market_price": 76,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 260,
+            "purchase_price": 53,
+            "sell_price": 53,
+            "quote_market_price": 53,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 298,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 59,
+            "quote_market_price": 59,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 661,
+            "purchase_price": 91,
+            "sell_price": 90,
+            "quote_market_price": 90,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 414,
+            "purchase_price": 89,
+            "sell_price": 88,
+            "quote_market_price": 88,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 151,
+            "quote_market_price": 151,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 530,
+            "purchase_price": 39,
+            "sell_price": 39,
+            "quote_market_price": 39,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 575,
+            "purchase_price": 45,
+            "sell_price": 45,
+            "quote_market_price": 45,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 621,
+            "purchase_price": 43,
+            "sell_price": 43,
+            "quote_market_price": 43,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 69,
+            "sell_price": 69,
+            "quote_market_price": 70,
+            "provenance": "plan_gw20",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          }
+        ],
+        "active_chip": null,
+        "points": 126,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-01-06T18:30:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw21-decision.json",
+      "decision_sha256": "c4f90807436fdc74b140c6ab390c7f3944af4dacb125609059838fab118a4bf6",
+      "future_weighted_loss_delta": -0.33275967220185926,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 22,
+      "net_points": 29.0,
+      "baseline_points": 26.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 23,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 0,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 59,
+            "quote_market_price": 59,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 8,
+            "purchase_price": 64,
+            "sell_price": 63,
+            "quote_market_price": 63,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 75,
+            "sell_price": 76,
+            "quote_market_price": 77,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 702,
+            "purchase_price": 44,
+            "sell_price": 44,
+            "quote_market_price": 44,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 82,
+            "purchase_price": 77,
+            "sell_price": 76,
+            "quote_market_price": 76,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 260,
+            "purchase_price": 53,
+            "sell_price": 53,
+            "quote_market_price": 53,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 298,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 59,
+            "quote_market_price": 59,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 661,
+            "purchase_price": 91,
+            "sell_price": 89,
+            "quote_market_price": 89,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 414,
+            "purchase_price": 89,
+            "sell_price": 87,
+            "quote_market_price": 87,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 151,
+            "quote_market_price": 151,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 530,
+            "purchase_price": 39,
+            "sell_price": 39,
+            "quote_market_price": 39,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 621,
+            "purchase_price": 43,
+            "sell_price": 43,
+            "quote_market_price": 43,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 69,
+            "sell_price": 70,
+            "quote_market_price": 71,
+            "provenance": "plan_gw20",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 48,
+            "quote_market_price": 48,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          }
+        ],
+        "active_chip": null,
+        "points": 155,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-01-17T11:00:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw22-decision.json",
+      "decision_sha256": "2d41c4251bb214acc156a3f222348cce6022d0dee0d396b6cc3b5ff523e63b3f",
+      "future_weighted_loss_delta": -0.287636130685487,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 23,
+      "net_points": 49.0,
+      "baseline_points": 50.0,
+      "hit": 4,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 24,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 25,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 59,
+            "quote_market_price": 59,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 8,
+            "purchase_price": 64,
+            "sell_price": 63,
+            "quote_market_price": 63,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 75,
+            "sell_price": 76,
+            "quote_market_price": 77,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 702,
+            "purchase_price": 44,
+            "sell_price": 44,
+            "quote_market_price": 44,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 82,
+            "purchase_price": 77,
+            "sell_price": 77,
+            "quote_market_price": 77,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 260,
+            "purchase_price": 53,
+            "sell_price": 52,
+            "quote_market_price": 52,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 298,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 59,
+            "quote_market_price": 59,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 151,
+            "quote_market_price": 151,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 530,
+            "purchase_price": 39,
+            "sell_price": 39,
+            "quote_market_price": 39,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 621,
+            "purchase_price": 43,
+            "sell_price": 43,
+            "quote_market_price": 43,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 69,
+            "sell_price": 70,
+            "quote_market_price": 72,
+            "provenance": "plan_gw20",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 48,
+            "quote_market_price": 48,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 74,
+            "sell_price": 74,
+            "quote_market_price": 74,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 624,
+            "purchase_price": 76,
+            "sell_price": 76,
+            "quote_market_price": 76,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          }
+        ],
+        "active_chip": null,
+        "points": 204,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [
+          13
+        ],
+        "status": "dated_seed",
+        "known_at": "2026-01-24T11:00:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw23-decision.json",
+      "decision_sha256": "9a1f9e25dd4ad09db053bc2f13553a93909da03f8eabcb1a39e358006fd568a9",
+      "future_weighted_loss_delta": -0.23050010954891892,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 24,
+      "net_points": 63.0,
+      "baseline_points": 45.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 25,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 1,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 59,
+            "quote_market_price": 59,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 8,
+            "purchase_price": 64,
+            "sell_price": 63,
+            "quote_market_price": 63,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 75,
+            "sell_price": 76,
+            "quote_market_price": 77,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 702,
+            "purchase_price": 44,
+            "sell_price": 44,
+            "quote_market_price": 44,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 82,
+            "purchase_price": 77,
+            "sell_price": 77,
+            "quote_market_price": 78,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 260,
+            "purchase_price": 53,
+            "sell_price": 52,
+            "quote_market_price": 52,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 298,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 59,
+            "quote_market_price": 59,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 150,
+            "quote_market_price": 150,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 530,
+            "purchase_price": 39,
+            "sell_price": 39,
+            "quote_market_price": 39,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 69,
+            "sell_price": 70,
+            "quote_market_price": 72,
+            "provenance": "plan_gw20",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 48,
+            "quote_market_price": 48,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 74,
+            "sell_price": 74,
+            "quote_market_price": 74,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 624,
+            "purchase_price": 76,
+            "sell_price": 76,
+            "quote_market_price": 76,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 237,
+            "purchase_price": 67,
+            "sell_price": 67,
+            "quote_market_price": 67,
+            "provenance": "plan_gw24",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          }
+        ],
+        "active_chip": null,
+        "points": 267,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-01-31T13:30:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw24-decision.json",
+      "decision_sha256": "e315f0f9f06b526884a14f1db9f76632cb75b2557c77dce9d6eee5f4bb7738b4",
+      "future_weighted_loss_delta": -0.1601686599206016,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 25,
+      "net_points": 57.0,
+      "baseline_points": 63.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 26,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 23,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 59,
+            "quote_market_price": 59,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 8,
+            "purchase_price": 64,
+            "sell_price": 64,
+            "quote_market_price": 64,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 702,
+            "purchase_price": 44,
+            "sell_price": 44,
+            "quote_market_price": 44,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 82,
+            "purchase_price": 77,
+            "sell_price": 77,
+            "quote_market_price": 78,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 260,
+            "purchase_price": 53,
+            "sell_price": 52,
+            "quote_market_price": 52,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 298,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 59,
+            "quote_market_price": 59,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 149,
+            "quote_market_price": 149,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 530,
+            "purchase_price": 39,
+            "sell_price": 39,
+            "quote_market_price": 39,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 69,
+            "sell_price": 70,
+            "quote_market_price": 71,
+            "provenance": "plan_gw20",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 48,
+            "quote_market_price": 48,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 74,
+            "sell_price": 74,
+            "quote_market_price": 75,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 624,
+            "purchase_price": 76,
+            "sell_price": 76,
+            "quote_market_price": 77,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 237,
+            "purchase_price": 67,
+            "sell_price": 67,
+            "quote_market_price": 68,
+            "provenance": "plan_gw24",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 517,
+            "purchase_price": 53,
+            "sell_price": 53,
+            "quote_market_price": 53,
+            "provenance": "plan_gw25",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          }
+        ],
+        "active_chip": null,
+        "points": 324,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-02-06T18:30:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw25-decision.json",
+      "decision_sha256": "6f247d9928352c437d63def335749359bed9cc690823e7bfafc5ad53977a8698",
+      "future_weighted_loss_delta": -0.11022193697036553,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 26,
+      "net_points": 90.0,
+      "baseline_points": 85.0,
+      "hit": 0,
+      "chip": "bboost",
+      "next_state": {
+        "season": "2025/26",
+        "event": 27,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 0,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 59,
+            "quote_market_price": 59,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 8,
+            "purchase_price": 64,
+            "sell_price": 64,
+            "quote_market_price": 64,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 702,
+            "purchase_price": 44,
+            "sell_price": 44,
+            "quote_market_price": 44,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 82,
+            "purchase_price": 77,
+            "sell_price": 78,
+            "quote_market_price": 79,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 260,
+            "purchase_price": 53,
+            "sell_price": 52,
+            "quote_market_price": 52,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 298,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 59,
+            "quote_market_price": 59,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 149,
+            "quote_market_price": 149,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 530,
+            "purchase_price": 39,
+            "sell_price": 39,
+            "quote_market_price": 39,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 69,
+            "sell_price": 69,
+            "quote_market_price": 70,
+            "provenance": "plan_gw20",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 48,
+            "quote_market_price": 48,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 74,
+            "sell_price": 74,
+            "quote_market_price": 75,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 624,
+            "purchase_price": 76,
+            "sell_price": 76,
+            "quote_market_price": 77,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 237,
+            "purchase_price": 67,
+            "sell_price": 68,
+            "quote_market_price": 69,
+            "provenance": "plan_gw24",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 76,
+            "sell_price": 76,
+            "quote_market_price": 76,
+            "provenance": "plan_gw26",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          },
+          {
+            "chip": "bboost",
+            "event": 26
+          }
+        ],
+        "active_chip": null,
+        "points": 414,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-02-10T18:00:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw26-decision.json",
+      "decision_sha256": "542023d8b21813a388f75a32c8fe14b0b15a1c18c4ee4e7944638d2fec912444",
+      "future_weighted_loss_delta": -0.15597533900809313,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 27,
+      "net_points": 50.0,
+      "baseline_points": 51.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 28,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 7,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 60,
+            "quote_market_price": 60,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 702,
+            "purchase_price": 44,
+            "sell_price": 44,
+            "quote_market_price": 44,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 82,
+            "purchase_price": 77,
+            "sell_price": 78,
+            "quote_market_price": 80,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 260,
+            "purchase_price": 53,
+            "sell_price": 52,
+            "quote_market_price": 52,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 298,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 59,
+            "quote_market_price": 59,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 148,
+            "quote_market_price": 148,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 530,
+            "purchase_price": 39,
+            "sell_price": 39,
+            "quote_market_price": 39,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 69,
+            "sell_price": 69,
+            "quote_market_price": 70,
+            "provenance": "plan_gw20",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 48,
+            "quote_market_price": 48,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 74,
+            "sell_price": 75,
+            "quote_market_price": 76,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 624,
+            "purchase_price": 76,
+            "sell_price": 76,
+            "quote_market_price": 76,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 237,
+            "purchase_price": 67,
+            "sell_price": 68,
+            "quote_market_price": 69,
+            "provenance": "plan_gw24",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 76,
+            "sell_price": 76,
+            "quote_market_price": 77,
+            "provenance": "plan_gw26",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 291,
+            "purchase_price": 57,
+            "sell_price": 57,
+            "quote_market_price": 57,
+            "provenance": "plan_gw27",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          },
+          {
+            "chip": "bboost",
+            "event": 26
+          }
+        ],
+        "active_chip": null,
+        "points": 464,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-02-21T13:30:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw27-decision.json",
+      "decision_sha256": "d579213c7a704c1f9aa5fab3c644b1b0045363fde40f9e1915a57e0b453d1b0f",
+      "future_weighted_loss_delta": -0.16832243169084982,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 28,
+      "net_points": 63.0,
+      "baseline_points": 67.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 29,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 18,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 60,
+            "quote_market_price": 60,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 702,
+            "purchase_price": 44,
+            "sell_price": 44,
+            "quote_market_price": 44,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 82,
+            "purchase_price": 77,
+            "sell_price": 79,
+            "quote_market_price": 81,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 260,
+            "purchase_price": 53,
+            "sell_price": 52,
+            "quote_market_price": 52,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 298,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 59,
+            "quote_market_price": 60,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 148,
+            "quote_market_price": 148,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 530,
+            "purchase_price": 39,
+            "sell_price": 39,
+            "quote_market_price": 39,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 69,
+            "sell_price": 70,
+            "quote_market_price": 71,
+            "provenance": "plan_gw20",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 48,
+            "quote_market_price": 49,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 74,
+            "sell_price": 75,
+            "quote_market_price": 76,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 624,
+            "purchase_price": 76,
+            "sell_price": 76,
+            "quote_market_price": 76,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 76,
+            "sell_price": 76,
+            "quote_market_price": 77,
+            "provenance": "plan_gw26",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 291,
+            "purchase_price": 57,
+            "sell_price": 57,
+            "quote_market_price": 57,
+            "provenance": "plan_gw27",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 457,
+            "purchase_price": 56,
+            "sell_price": 56,
+            "quote_market_price": 56,
+            "provenance": "plan_gw28",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          },
+          {
+            "chip": "bboost",
+            "event": 26
+          }
+        ],
+        "active_chip": null,
+        "points": 527,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-02-27T18:30:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw28-decision.json",
+      "decision_sha256": "13ea8ec3cd9aa02c596e58a14d8ac21ba0aca26f7fcbb5fc158512561b08b88d",
+      "future_weighted_loss_delta": -0.18102593035525283,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 29,
+      "net_points": 66.0,
+      "baseline_points": 56.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 30,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 22,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 702,
+            "purchase_price": 44,
+            "sell_price": 44,
+            "quote_market_price": 44,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 82,
+            "purchase_price": 77,
+            "sell_price": 79,
+            "quote_market_price": 82,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 260,
+            "purchase_price": 53,
+            "sell_price": 52,
+            "quote_market_price": 52,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 298,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 60,
+            "quote_market_price": 61,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 147,
+            "quote_market_price": 147,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 530,
+            "purchase_price": 39,
+            "sell_price": 39,
+            "quote_market_price": 39,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 69,
+            "sell_price": 70,
+            "quote_market_price": 72,
+            "provenance": "plan_gw20",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 48,
+            "quote_market_price": 49,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 74,
+            "sell_price": 74,
+            "quote_market_price": 75,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 624,
+            "purchase_price": 76,
+            "sell_price": 75,
+            "quote_market_price": 75,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 76,
+            "sell_price": 76,
+            "quote_market_price": 76,
+            "provenance": "plan_gw26",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 291,
+            "purchase_price": 57,
+            "sell_price": 57,
+            "quote_market_price": 57,
+            "provenance": "plan_gw27",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 457,
+            "purchase_price": 56,
+            "sell_price": 56,
+            "quote_market_price": 56,
+            "provenance": "plan_gw28",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 287,
+            "purchase_price": 56,
+            "sell_price": 56,
+            "quote_market_price": 56,
+            "provenance": "plan_gw29",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          },
+          {
+            "chip": "bboost",
+            "event": 26
+          }
+        ],
+        "active_chip": null,
+        "points": 593,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-03-03T18:00:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw29-decision.json",
+      "decision_sha256": "1c1484761a09935bd99928f6982302ad924ba2cd5619dc40e539ea073d1a4507",
+      "future_weighted_loss_delta": -0.1462793846552452,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 30,
+      "net_points": 53.0,
+      "baseline_points": 53.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 31,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 1,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 702,
+            "purchase_price": 44,
+            "sell_price": 44,
+            "quote_market_price": 44,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 260,
+            "purchase_price": 53,
+            "sell_price": 52,
+            "quote_market_price": 52,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 298,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 60,
+            "quote_market_price": 62,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 146,
+            "quote_market_price": 146,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 530,
+            "purchase_price": 39,
+            "sell_price": 39,
+            "quote_market_price": 39,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 69,
+            "sell_price": 70,
+            "quote_market_price": 72,
+            "provenance": "plan_gw20",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 49,
+            "quote_market_price": 50,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 74,
+            "sell_price": 74,
+            "quote_market_price": 74,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 624,
+            "purchase_price": 76,
+            "sell_price": 75,
+            "quote_market_price": 75,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 76,
+            "sell_price": 75,
+            "quote_market_price": 75,
+            "provenance": "plan_gw26",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 291,
+            "purchase_price": 57,
+            "sell_price": 57,
+            "quote_market_price": 57,
+            "provenance": "plan_gw27",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 457,
+            "purchase_price": 56,
+            "sell_price": 56,
+            "quote_market_price": 56,
+            "provenance": "plan_gw28",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 287,
+            "purchase_price": 56,
+            "sell_price": 56,
+            "quote_market_price": 56,
+            "provenance": "plan_gw29",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 449,
+            "purchase_price": 101,
+            "sell_price": 101,
+            "quote_market_price": 101,
+            "provenance": "plan_gw30",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          },
+          {
+            "chip": "bboost",
+            "event": 26
+          }
+        ],
+        "active_chip": null,
+        "points": 646,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-03-14T13:30:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw30-decision.json",
+      "decision_sha256": "594f748b5dd77c683327035c256e7eda14ac5962577b986dd9fef158382263f9",
+      "future_weighted_loss_delta": -0.18672129312196833,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 31,
+      "net_points": 63.0,
+      "baseline_points": 67.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 32,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 1,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 702,
+            "purchase_price": 44,
+            "sell_price": 44,
+            "quote_market_price": 44,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 260,
+            "purchase_price": 53,
+            "sell_price": 51,
+            "quote_market_price": 51,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 298,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 61,
+            "quote_market_price": 63,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 145,
+            "quote_market_price": 145,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 530,
+            "purchase_price": 39,
+            "sell_price": 39,
+            "quote_market_price": 39,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 69,
+            "sell_price": 71,
+            "quote_market_price": 73,
+            "provenance": "plan_gw20",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 49,
+            "quote_market_price": 51,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 624,
+            "purchase_price": 76,
+            "sell_price": 75,
+            "quote_market_price": 75,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 76,
+            "sell_price": 75,
+            "quote_market_price": 75,
+            "provenance": "plan_gw26",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 291,
+            "purchase_price": 57,
+            "sell_price": 57,
+            "quote_market_price": 57,
+            "provenance": "plan_gw27",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 457,
+            "purchase_price": 56,
+            "sell_price": 56,
+            "quote_market_price": 57,
+            "provenance": "plan_gw28",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 287,
+            "purchase_price": 56,
+            "sell_price": 56,
+            "quote_market_price": 56,
+            "provenance": "plan_gw29",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 449,
+            "purchase_price": 101,
+            "sell_price": 101,
+            "quote_market_price": 102,
+            "provenance": "plan_gw30",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 485,
+            "purchase_price": 73,
+            "sell_price": 73,
+            "quote_market_price": 73,
+            "provenance": "plan_gw31",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          },
+          {
+            "chip": "bboost",
+            "event": 26
+          }
+        ],
+        "active_chip": null,
+        "points": 709,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-03-20T18:30:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw31-decision.json",
+      "decision_sha256": "848e90db5bab5451d8281a59fcffe6b8cfc7b8a07d5adfc26344ff58f5f7566a",
+      "future_weighted_loss_delta": -0.1493475380800444,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 32,
+      "net_points": 75.0,
+      "baseline_points": 66.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 33,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 2,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 702,
+            "purchase_price": 44,
+            "sell_price": 44,
+            "quote_market_price": 44,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 260,
+            "purchase_price": 53,
+            "sell_price": 51,
+            "quote_market_price": 51,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 298,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 61,
+            "quote_market_price": 63,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 144,
+            "quote_market_price": 144,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 530,
+            "purchase_price": 39,
+            "sell_price": 39,
+            "quote_market_price": 39,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 69,
+            "sell_price": 71,
+            "quote_market_price": 73,
+            "provenance": "plan_gw20",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 49,
+            "quote_market_price": 51,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 624,
+            "purchase_price": 76,
+            "sell_price": 76,
+            "quote_market_price": 76,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 76,
+            "sell_price": 74,
+            "quote_market_price": 74,
+            "provenance": "plan_gw26",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 291,
+            "purchase_price": 57,
+            "sell_price": 57,
+            "quote_market_price": 57,
+            "provenance": "plan_gw27",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 287,
+            "purchase_price": 56,
+            "sell_price": 56,
+            "quote_market_price": 56,
+            "provenance": "plan_gw29",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 449,
+            "purchase_price": 101,
+            "sell_price": 102,
+            "quote_market_price": 103,
+            "provenance": "plan_gw30",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 485,
+            "purchase_price": 73,
+            "sell_price": 73,
+            "quote_market_price": 74,
+            "provenance": "plan_gw31",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 517,
+            "purchase_price": 55,
+            "sell_price": 55,
+            "quote_market_price": 55,
+            "provenance": "plan_gw32",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          },
+          {
+            "chip": "bboost",
+            "event": 26
+          }
+        ],
+        "active_chip": null,
+        "points": 784,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-04-10T17:30:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw32-decision.json",
+      "decision_sha256": "72b8b946015f4e78acb3ff219773a6cc126d65c6c164492d116e5883bfe3c189",
+      "future_weighted_loss_delta": -0.14237837111907933,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 33,
+      "net_points": 71.0,
+      "baseline_points": 56.0,
+      "hit": 0,
+      "chip": "wildcard",
+      "next_state": {
+        "season": "2025/26",
+        "event": 34,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 6,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 61,
+            "quote_market_price": 63,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 151,
+            "sell_price": 145,
+            "quote_market_price": 145,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 50,
+            "quote_market_price": 52,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 624,
+            "purchase_price": 76,
+            "sell_price": 76,
+            "quote_market_price": 76,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 76,
+            "sell_price": 74,
+            "quote_market_price": 74,
+            "provenance": "plan_gw26",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 449,
+            "purchase_price": 101,
+            "sell_price": 102,
+            "quote_market_price": 103,
+            "provenance": "plan_gw30",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 517,
+            "purchase_price": 55,
+            "sell_price": 55,
+            "quote_market_price": 56,
+            "provenance": "plan_gw32",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 60,
+            "quote_market_price": 60,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 368,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 5,
+            "purchase_price": 71,
+            "sell_price": 71,
+            "quote_market_price": 71,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 106,
+            "purchase_price": 49,
+            "sell_price": 49,
+            "quote_market_price": 49,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 448,
+            "purchase_price": 37,
+            "sell_price": 37,
+            "quote_market_price": 37,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 72,
+            "sell_price": 72,
+            "quote_market_price": 72,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 457,
+            "purchase_price": 57,
+            "sell_price": 57,
+            "quote_market_price": 57,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 252,
+            "purchase_price": 40,
+            "sell_price": 40,
+            "quote_market_price": 40,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          },
+          {
+            "chip": "bboost",
+            "event": 26
+          },
+          {
+            "chip": "wildcard",
+            "event": 33
+          }
+        ],
+        "active_chip": null,
+        "points": 855,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-04-18T10:00:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw33-decision.json",
+      "decision_sha256": "4fde4f987f5742bd835ad67fc160d8e91012af7ad434379e73d472bbfd7ecba3",
+      "future_weighted_loss_delta": -0.11181422829454048,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 34,
+      "net_points": 70.0,
+      "baseline_points": 39.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 35,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 77,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 60,
+            "quote_market_price": 62,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 50,
+            "quote_market_price": 52,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 624,
+            "purchase_price": 76,
+            "sell_price": 76,
+            "quote_market_price": 77,
+            "provenance": "plan_gw23",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 76,
+            "sell_price": 74,
+            "quote_market_price": 74,
+            "provenance": "plan_gw26",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 449,
+            "purchase_price": 101,
+            "sell_price": 102,
+            "quote_market_price": 103,
+            "provenance": "plan_gw30",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 517,
+            "purchase_price": 55,
+            "sell_price": 55,
+            "quote_market_price": 56,
+            "provenance": "plan_gw32",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 60,
+            "quote_market_price": 60,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 368,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 5,
+            "purchase_price": 71,
+            "sell_price": 71,
+            "quote_market_price": 71,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 106,
+            "purchase_price": 49,
+            "sell_price": 49,
+            "quote_market_price": 49,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 448,
+            "purchase_price": 37,
+            "sell_price": 37,
+            "quote_market_price": 37,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 72,
+            "sell_price": 72,
+            "quote_market_price": 72,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 457,
+            "purchase_price": 57,
+            "sell_price": 57,
+            "quote_market_price": 57,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 252,
+            "purchase_price": 40,
+            "sell_price": 40,
+            "quote_market_price": 40,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 74,
+            "sell_price": 74,
+            "quote_market_price": 74,
+            "provenance": "plan_gw34",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          },
+          {
+            "chip": "bboost",
+            "event": 26
+          },
+          {
+            "chip": "wildcard",
+            "event": 33
+          }
+        ],
+        "active_chip": null,
+        "points": 925,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-04-24T17:30:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw34-decision.json",
+      "decision_sha256": "696418bb82604e1d5e337e0dff9c1ba910023ed851d6cca934876aed33cf0066",
+      "future_weighted_loss_delta": -0.08200334026419294,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 35,
+      "net_points": 68.0,
+      "baseline_points": 70.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 36,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 8,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 60,
+            "quote_market_price": 62,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 50,
+            "quote_market_price": 52,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 76,
+            "sell_price": 75,
+            "quote_market_price": 75,
+            "provenance": "plan_gw26",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 449,
+            "purchase_price": 101,
+            "sell_price": 102,
+            "quote_market_price": 104,
+            "provenance": "plan_gw30",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 517,
+            "purchase_price": 55,
+            "sell_price": 55,
+            "quote_market_price": 56,
+            "provenance": "plan_gw32",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 60,
+            "quote_market_price": 60,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 368,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 5,
+            "purchase_price": 71,
+            "sell_price": 71,
+            "quote_market_price": 72,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 106,
+            "purchase_price": 49,
+            "sell_price": 49,
+            "quote_market_price": 49,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 448,
+            "purchase_price": 37,
+            "sell_price": 37,
+            "quote_market_price": 37,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 72,
+            "sell_price": 72,
+            "quote_market_price": 72,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 457,
+            "purchase_price": 57,
+            "sell_price": 57,
+            "quote_market_price": 58,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 252,
+            "purchase_price": 40,
+            "sell_price": 40,
+            "quote_market_price": 40,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 74,
+            "sell_price": 74,
+            "quote_market_price": 74,
+            "provenance": "plan_gw34",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 146,
+            "sell_price": 146,
+            "quote_market_price": 146,
+            "provenance": "plan_gw35",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          },
+          {
+            "chip": "bboost",
+            "event": 26
+          },
+          {
+            "chip": "wildcard",
+            "event": 33
+          }
+        ],
+        "active_chip": null,
+        "points": 993,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-05-01T17:30:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw35-decision.json",
+      "decision_sha256": "0599d574bdc0ce23fdd88219ab4fa1d7f84155d575cb7d2ad596040418348afd",
+      "future_weighted_loss_delta": -0.11195308612837822,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 36,
+      "net_points": 89.0,
+      "baseline_points": 50.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 37,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 0,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 60,
+            "quote_market_price": 61,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 50,
+            "quote_market_price": 52,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 47,
+            "purchase_price": 76,
+            "sell_price": 75,
+            "quote_market_price": 75,
+            "provenance": "plan_gw26",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 449,
+            "purchase_price": 101,
+            "sell_price": 102,
+            "quote_market_price": 104,
+            "provenance": "plan_gw30",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 517,
+            "purchase_price": 55,
+            "sell_price": 55,
+            "quote_market_price": 56,
+            "provenance": "plan_gw32",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 60,
+            "quote_market_price": 61,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 368,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 5,
+            "purchase_price": 71,
+            "sell_price": 71,
+            "quote_market_price": 72,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 448,
+            "purchase_price": 37,
+            "sell_price": 37,
+            "quote_market_price": 37,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 72,
+            "sell_price": 72,
+            "quote_market_price": 72,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 457,
+            "purchase_price": 57,
+            "sell_price": 57,
+            "quote_market_price": 58,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 252,
+            "purchase_price": 40,
+            "sell_price": 40,
+            "quote_market_price": 40,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 74,
+            "sell_price": 73,
+            "quote_market_price": 73,
+            "provenance": "plan_gw34",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 146,
+            "sell_price": 146,
+            "quote_market_price": 147,
+            "provenance": "plan_gw35",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 291,
+            "purchase_price": 57,
+            "sell_price": 57,
+            "quote_market_price": 57,
+            "provenance": "plan_gw36",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          },
+          {
+            "chip": "bboost",
+            "event": 26
+          },
+          {
+            "chip": "wildcard",
+            "event": 33
+          }
+        ],
+        "active_chip": null,
+        "points": 1082,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-05-09T10:00:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw36-decision.json",
+      "decision_sha256": "2b281850415f3b075fdedfd3d7e4365175c0e93931b169a233282e500f786822",
+      "future_weighted_loss_delta": -0.060084995793152,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 37,
+      "net_points": 85.0,
+      "baseline_points": 82.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 38,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 4,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 60,
+            "quote_market_price": 61,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 50,
+            "quote_market_price": 52,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 449,
+            "purchase_price": 101,
+            "sell_price": 102,
+            "quote_market_price": 104,
+            "provenance": "plan_gw30",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 517,
+            "purchase_price": 55,
+            "sell_price": 55,
+            "quote_market_price": 56,
+            "provenance": "plan_gw32",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 60,
+            "quote_market_price": 61,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 368,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 5,
+            "purchase_price": 71,
+            "sell_price": 72,
+            "quote_market_price": 73,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 448,
+            "purchase_price": 37,
+            "sell_price": 37,
+            "quote_market_price": 37,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 72,
+            "sell_price": 72,
+            "quote_market_price": 72,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 457,
+            "purchase_price": 57,
+            "sell_price": 58,
+            "quote_market_price": 59,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 252,
+            "purchase_price": 40,
+            "sell_price": 40,
+            "quote_market_price": 40,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 74,
+            "sell_price": 73,
+            "quote_market_price": 73,
+            "provenance": "plan_gw34",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 146,
+            "sell_price": 146,
+            "quote_market_price": 147,
+            "provenance": "plan_gw35",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 291,
+            "purchase_price": 57,
+            "sell_price": 57,
+            "quote_market_price": 57,
+            "provenance": "plan_gw36",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 387,
+            "purchase_price": 70,
+            "sell_price": 70,
+            "quote_market_price": 70,
+            "provenance": "plan_gw37",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          },
+          {
+            "chip": "bboost",
+            "event": 26
+          },
+          {
+            "chip": "wildcard",
+            "event": 33
+          }
+        ],
+        "active_chip": null,
+        "points": 1167,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-05-15T17:30:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw37-decision.json",
+      "decision_sha256": "05c3c9a5f916af35c937a9855879310f772b98a05088fcfabd8f9c0a3749496b",
+      "future_weighted_loss_delta": -0.004026610848792434,
+      "immediate_worlds_identical": true
+    },
+    {
+      "season": "2025/26",
+      "event": 38,
+      "net_points": 35.0,
+      "baseline_points": 46.0,
+      "hit": 0,
+      "chip": null,
+      "next_state": {
+        "season": "2025/26",
+        "event": 38,
+        "name": "My team",
+        "entry_id": null,
+        "bank": 9,
+        "free_transfers": 1,
+        "lots": [
+          {
+            "player_id": 373,
+            "purchase_price": 59,
+            "sell_price": 60,
+            "quote_market_price": 61,
+            "provenance": "manual",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 72,
+            "purchase_price": 48,
+            "sell_price": 50,
+            "quote_market_price": 52,
+            "provenance": "plan_gw22",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 449,
+            "purchase_price": 101,
+            "sell_price": 102,
+            "quote_market_price": 104,
+            "provenance": "plan_gw30",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 517,
+            "purchase_price": 55,
+            "sell_price": 56,
+            "quote_market_price": 57,
+            "provenance": "plan_gw32",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 1,
+            "purchase_price": 60,
+            "sell_price": 61,
+            "quote_market_price": 62,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 368,
+            "purchase_price": 38,
+            "sell_price": 38,
+            "quote_market_price": 38,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 5,
+            "purchase_price": 71,
+            "sell_price": 72,
+            "quote_market_price": 73,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 448,
+            "purchase_price": 37,
+            "sell_price": 37,
+            "quote_market_price": 37,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 21,
+            "purchase_price": 72,
+            "sell_price": 72,
+            "quote_market_price": 72,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 252,
+            "purchase_price": 40,
+            "sell_price": 40,
+            "quote_market_price": 40,
+            "provenance": "plan_gw33",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 136,
+            "purchase_price": 74,
+            "sell_price": 72,
+            "quote_market_price": 72,
+            "provenance": "plan_gw34",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 430,
+            "purchase_price": 146,
+            "sell_price": 146,
+            "quote_market_price": 147,
+            "provenance": "plan_gw35",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 291,
+            "purchase_price": 57,
+            "sell_price": 57,
+            "quote_market_price": 58,
+            "provenance": "plan_gw36",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 387,
+            "purchase_price": 70,
+            "sell_price": 70,
+            "quote_market_price": 71,
+            "provenance": "plan_gw37",
+            "quote_confirmed": true
+          },
+          {
+            "player_id": 303,
+            "purchase_price": 52,
+            "sell_price": 52,
+            "quote_market_price": 52,
+            "provenance": "plan_gw38",
+            "quote_confirmed": true
+          }
+        ],
+        "used_chips": [
+          {
+            "chip": "3xc",
+            "event": 20
+          },
+          {
+            "chip": "freehit",
+            "event": 21
+          },
+          {
+            "chip": "bboost",
+            "event": 26
+          },
+          {
+            "chip": "wildcard",
+            "event": 33
+          }
+        ],
+        "active_chip": null,
+        "points": 1202,
+        "transfers_made": 0,
+        "hit_paid": 0,
+        "deadline_lots": null,
+        "deadline_bank": null,
+        "initial": false,
+        "grandfathered_clubs": [],
+        "status": "dated_seed",
+        "known_at": "2026-05-24T13:30:00Z"
+      },
+      "decision_file": "data/models/future-policy-78cd0167974432df006d/gw38-decision.json",
+      "decision_sha256": "7ca31f6530edb9b8879d52e71446db1432a9b16f234e3832e3b869ff73061a7b",
+      "future_weighted_loss_delta": null,
+      "immediate_worlds_identical": true
+    }
+  ],
+  "candidate_points": 1202.0,
+  "baseline_points": 1098.0,
+  "net_return_delta_95ci": [
+    0.5789473684210527,
+    11.052631578947368
+  ],
+  "future_weighted_loss_delta_95ci": [
+    -0.21362510708773755,
+    -0.11912146099116316
+  ],
+  "live_pointers_unchanged": true,
+  "policy_gate_passed": true,
+  "promoted": false,
+  "directory": "data/models/future-policy-78cd0167974432df006d",
+  "verification": {
+    "sealed_deadlines": 19,
+    "training_cutoffs_and_model_checksums": "passed",
+    "current_week_world_identity": "passed",
+    "continuous_accounts_and_actual_scores": "passed"
+  },
+  "id": "07cd1fb60b1abdc69c926e29720e085485f28a3fc1f2bd99d693ab2aff2e1a3f"
+}

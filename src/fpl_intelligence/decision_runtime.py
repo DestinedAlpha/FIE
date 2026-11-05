@@ -125,7 +125,11 @@ def analyze_decisions(store, seconds=0.4):
     saved, state, players, market, rules, forecast, q, long = decision_inputs(store)
     candidates, errors = candidate_actions(state, players, rules, q, seconds=seconds, alternatives=2)
     baseline = store.get("plan", store.get("selected_plan")["plan_id"])
-    if baseline["market_id"] != market["id"] or baseline["state_id"] != saved["id"]:
+    if (
+        baseline["market_id"] != market["id"]
+        or baseline["state_id"] != saved["id"]
+        or baseline["forecast_id"] != forecast["id"]
+    ):
         raise ValueError("Selected baseline plan is stale")
     from .scenarios import action_from_row
 
@@ -521,10 +525,12 @@ def refine_frontier(store, seconds=20):
             max(range(len(pool)), key=lambda i: pool[i]["critic_scores"][analysis["selected_architecture"]])
         )
     plans = [
+        old,
         optimize(store, state["id"], forecast["id"], end, max(60, seconds), use_decision_critic=False),
         hold_plan(store, state["id"], forecast["id"], end),
     ]
-    plans[0]["label"] = "Joint full-market search"
+    plans[0]["label"] = "Current validated policy"
+    plans[1]["label"] = "Joint full-market search"
     if store.list("case_comparison", 1):
         previous = store.get("case_comparison")
         for plan_id in previous.get("plans", []):

@@ -150,7 +150,7 @@ test("completed weekly replay and football integration are visible",async({page}
   const fusion=await (await page.request.get('/api/consensus/model')).json();
   expect(fusion.acceptance.passed).toBe(true);
   await expect(page.getByRole('link',{name:'Download full experiment and frozen teams'})).toHaveAttribute('href','/api/consensus/model');
-  await expect(page.getByText('Primary multiweek model:',{exact:false})).toContainText('unchanged');
+  await expect(page.getByText('Published-signal ensemble in primary policy:',{exact:false})).toContainText('comparison only');
   await navigate(page,'Season planner');
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption('fixture');
   await expect(page.getByRole('combobox',{name:'Fixture',exact:true})).toBeVisible();
@@ -174,7 +174,15 @@ test("integrated replay proofs and synchronized future accounts are accessible",
   page.on('pageerror', error => errors.push(error.message));
   await openWorkspace(page);
   await navigate(page, 'Model & data');
-  await expect(page.getByRole('heading', {name:'Production pipeline · continuous account'})).toBeVisible();
+  await expect(page.getByRole('heading', {name:/(?:Production|Reference) pipeline · continuous account/})).toBeVisible();
+  await expect(page.getByRole('heading', {name:'Future-fixture forecasting'})).toBeVisible();
+  const expert = await (await page.request.get('/api/horizon/expert')).json();
+  expect(expert.active.features.length).toBe(138);
+  expect(expert.active.policy_gate_passed).toBe(true);
+  expect(expert.forecast_validation.forecast_gate_passed).toBe(true);
+  expect(expert.distribution_validation.passed).toBe(true);
+  expect(expert.policy_validation.verification.sealed_deadlines).toBe(19);
+  expect(expert.current_diagnostic.diagnostic_only).toBe(true);
   await expect(page.getByRole('heading', {name:'Prospective continuous accounts'})).toBeVisible();
   const replayResponse = await page.request.get('/api/replay/pipeline');
   expect(replayResponse.status()).toBe(200);

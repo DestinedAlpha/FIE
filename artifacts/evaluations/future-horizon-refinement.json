@@ -1,0 +1,99 @@
+{
+  "at": "2026-11-05T03:45:26.999059+00:00",
+  "protocol": {
+    "at": "2026-11-05T03:44:16.667741+00:00",
+    "scope": "Future-only forecast expert; immediate forecasts remain exactly the reference",
+    "selection": "2024/25 source GW1-19, target labels ending by GW19, lead > 0",
+    "acceptance": "2024/25 source GW20-38; separate frozen-configuration 2025/26 replication",
+    "weights": [
+      0.25,
+      0.5,
+      1.0
+    ],
+    "loss": "Predeadline ownership-weighted squared error, 1 + 4 min(ownership/20,1)",
+    "promotion": "Paired future loss interval below zero, no all-player or relevant-player RMSE deterioration, followed by positive full transfer/chip replay gain; current season never selects configuration",
+    "limits": "Historical reconstruction on previously studied archives; not blinded prospective evidence"
+  },
+  "selected": "uniform_0.5",
+  "selection_losses": {
+    "reference": 6.538296789584193,
+    "uniform_0.25": 6.4650752241784,
+    "uniform_0.5": 6.424245837792273,
+    "uniform_1": 6.439763602079019,
+    "squad_0.25": 6.46337460491612,
+    "squad_0.5": 6.425890772561751,
+    "squad_1": 6.46323816479413
+  },
+  "metrics": {
+    "2024/25": {
+      "reference": {
+        "n": 62984,
+        "rmse": 1.9483756906020724,
+        "mae": 1.0090551180063434,
+        "bias": -0.007095612679392794
+      },
+      "candidate": {
+        "n": 62984,
+        "rmse": 1.919810802577746,
+        "mae": 1.0075943045096887,
+        "bias": 0.011544145340568758
+      },
+      "relevant_reference": {
+        "n": 10340,
+        "rmse": 3.0857515872723,
+        "mae": 2.2398375628742793,
+        "bias": 0.09261361938641431
+      },
+      "relevant_candidate": {
+        "n": 10340,
+        "rmse": 3.0507210527399113,
+        "mae": 2.2352633088498575,
+        "bias": 0.10265818089629351
+      },
+      "weighted_loss_delta_95ci": [
+        -0.16025183216521274,
+        -0.09045918079137856
+      ]
+    },
+    "2025/26": {
+      "reference": {
+        "n": 166695,
+        "rmse": 2.060361712262266,
+        "mae": 1.0820300506216685,
+        "bias": 0.006017216931517513
+      },
+      "candidate": {
+        "n": 166695,
+        "rmse": 2.029663165428751,
+        "mae": 1.0682263167614812,
+        "bias": -0.0016657596927334235
+      },
+      "relevant_reference": {
+        "n": 28300,
+        "rmse": 3.1230356005578837,
+        "mae": 2.255220000994532,
+        "bias": 0.1794867933171259
+      },
+      "relevant_candidate": {
+        "n": 28300,
+        "rmse": 3.073779108248812,
+        "mae": 2.209304585593407,
+        "bias": 0.14025288896867436
+      },
+      "weighted_loss_delta_95ci": [
+        -0.22782989040412568,
+        -0.14137011502625785
+      ]
+    }
+  },
+  "weighted_loss_delta_95ci": [
+    -0.19790535438192913,
+    -0.1326934221030517
+  ],
+  "forecast_gate_passed": true,
+  "promoted": false,
+  "trial_id": "74273585e7cf9511b3bba85129414d594b1024a54e2d9d3e1d4a2e7250fbd33c",
+  "directory": "data/models/horizon-trial-10b14e6bded9a05212a0",
+  "next_gate": "Full production transfer/chip comparison",
+  "id": "860112b7ad692fccc4f1ca2b92c2eaa63be4b452baa5206f154ae5603ab0950d"
+}

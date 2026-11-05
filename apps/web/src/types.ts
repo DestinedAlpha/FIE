@@ -364,6 +364,7 @@ export type Dashboard = FootballEvidenceData & {
     }[];
   } | null;
   decision_model?: {
+    future_horizon_model_id?: string;
     promoted: boolean;
     seasons: string[];
     candidate: { n: number; rmse: number };
@@ -556,7 +557,20 @@ export type ValidationMetric = {
   baseline_log_loss?: number;
   block_difference_95ci?: number[];
 };
+export type FuturePolicyReport = {
+  id:string;season:string;candidate_points:number;baseline_points:number;policy_gate_passed:boolean;
+  net_return_delta_95ci:number[];future_weighted_loss_delta_95ci:number[];
+  weeks:{event:number;net_points:number;baseline_points:number;hit:number;chip:string|null}[];
+  verification:{sealed_deadlines:number;current_week_world_identity:string;continuous_accounts_and_actual_scores:string};
+};
+
 export type FootballEvidenceData = {
+  future_horizon_model?: {id:string;fit_before:string;fit_as_of:string;training_evidence:{training_rows:number;calibration_rows:number;fit_max_label:string;cal_max_label:string};weight:number;max_lead:number;learning:string;feature_count:number}|null;
+  horizon_refinement?: {selected:string;forecast_gate_passed:boolean;protocol:{scope:string;limits:string};metrics:Record<string,{reference:{rmse:number};candidate:{rmse:number};relevant_reference:{rmse:number};relevant_candidate:{rmse:number};weighted_loss_delta_95ci:number[]}>}|null;
+  future_policy_replay?: FuturePolicyReport|null;
+  future_policy_diagnostic?: FuturePolicyReport|null;
+  future_policy_progress?: {season:string;event:number;completed:number;total:number}|null;
+  future_distribution_validation?: {passed:boolean;rows:number;deadlines:number;metrics:Record<string,{reference:{crps:number;coverage80:number;appearance_brier:number;sixty_brier:number};candidate:{crps:number;coverage80:number;appearance_brier:number;sixty_brier:number};crps_delta_95ci:number[]}>}|null;
   shadow_capture_status?: {at:string;status:string;reason?:string}|null;
   shadow_registry?: {seed_event:number;season:string;seed_scope:string;missed_capture_policy:string}|null;
   shadow_cohort?: {event:number;frozen_at:string;track:string;real_account_unchanged?:boolean;actions:Record<string,{action:{chip:string|null;lineup:{captain:number;vice:number}}}>}|null;

@@ -1,0 +1,8869 @@
+{
+  "at": "2026-11-05T03:38:18.513807+00:00",
+  "protocol": {
+    "at": "2026-11-05T03:33:53.345324+00:00",
+    "fit_before": "2024/25-GW01",
+    "selection": "2024/25 GW1-19 legal net returns",
+    "acceptance": "2024/25 GW20-38 then frozen-configuration 2025/26 replication",
+    "current_season": "diagnostic only; never selects weights",
+    "features": [
+      "position",
+      "home",
+      "p_start",
+      "p_cameo",
+      "start_minutes",
+      "goals90",
+      "assists90",
+      "actions90",
+      "saves90",
+      "yellow90",
+      "points_mean",
+      "exposure",
+      "rest_days",
+      "price_lag",
+      "goals_actual90",
+      "assists_actual90",
+      "bonus90",
+      "last3_minutes",
+      "last5_points",
+      "long_probability",
+      "team_attack",
+      "team_defence",
+      "opponent_attack",
+      "opponent_defence",
+      "season_week",
+      "history_missing",
+      "now_cost",
+      "selected_by_percent",
+      "form",
+      "points_per_game",
+      "total_points",
+      "minutes",
+      "starts",
+      "goals_scored",
+      "assists",
+      "clean_sheets",
+      "goals_conceded",
+      "own_goals",
+      "penalties_saved",
+      "penalties_missed",
+      "yellow_cards",
+      "red_cards",
+      "saves",
+      "bonus",
+      "bps",
+      "influence",
+      "creativity",
+      "threat",
+      "ict_index",
+      "expected_goals",
+      "expected_assists",
+      "expected_goal_involvements",
+      "expected_goals_conceded",
+      "expected_goals_per_90",
+      "expected_assists_per_90",
+      "expected_goal_involvements_per_90",
+      "expected_goals_conceded_per_90",
+      "saves_per_90",
+      "clean_sheets_per_90",
+      "starts_per_90",
+      "goals_conceded_per_90",
+      "clearances_blocks_interceptions",
+      "tackles",
+      "recoveries",
+      "defensive_contribution",
+      "transfers_in_event",
+      "transfers_out_event",
+      "cost_change_start",
+      "cost_change_event",
+      "penalties_order",
+      "direct_freekicks_order",
+      "corners_and_indirect_freekicks_order",
+      "chance_of_playing_next_round",
+      "observed_now_cost",
+      "observed_selected_by_percent",
+      "observed_form",
+      "observed_points_per_game",
+      "observed_total_points",
+      "observed_minutes",
+      "observed_starts",
+      "observed_goals_scored",
+      "observed_assists",
+      "observed_clean_sheets",
+      "observed_goals_conceded",
+      "observed_own_goals",
+      "observed_penalties_saved",
+      "observed_penalties_missed",
+      "observed_yellow_cards",
+      "observed_red_cards",
+      "observed_saves",
+      "observed_bonus",
+      "observed_bps",
+      "observed_influence",
+      "observed_creativity",
+      "observed_threat",
+      "observed_ict_index",
+      "observed_expected_goals",
+      "observed_expected_assists",
+      "observed_expected_goal_involvements",
+      "observed_expected_goals_conceded",
+      "observed_expected_goals_per_90",
+      "observed_expected_assists_per_90",
+      "observed_expected_goal_involvements_per_90",
+      "observed_expected_goals_conceded_per_90",
+      "observed_saves_per_90",
+      "observed_clean_sheets_per_90",
+      "observed_starts_per_90",
+      "observed_goals_conceded_per_90",
+      "observed_clearances_blocks_interceptions",
+      "observed_tackles",
+      "observed_recoveries",
+      "observed_defensive_contribution",
+      "observed_transfers_in_event",
+      "observed_transfers_out_event",
+      "observed_cost_change_start",
+      "observed_cost_change_event",
+      "observed_penalties_order",
+      "observed_direct_freekicks_order",
+      "observed_corners_and_indirect_freekicks_order",
+      "observed_chance_of_playing_next_round",
+      "lead_weeks",
+      "lead_days",
+      "source_week",
+      "target_week",
+      "fixture_count",
+      "home_difficulty",
+      "away_difficulty",
+      "official_own_attack",
+      "official_opponent_defence",
+      "rest_scheduled",
+      "ep_next",
+      "ep_available",
+      "selectable",
+      "status_a",
+      "status_d",
+      "status_i",
+      "status_s",
+      "status_u"
+    ],
+    "leads": "0,1,2,3,5,8,12,18 announced weeks",
+    "purging": "Training label completion precedes calibration source start; all calibration labels precede test start",
+    "candidate_weights": [
+      0.5,
+      1.0
+    ],
+    "families": [
+      "uniform",
+      "squad"
+    ],
+    "parameters": {
+      "n_estimators": 260,
+      "num_leaves": 24,
+      "learning_rate": 0.035,
+      "min_child_samples": 100,
+      "reg_lambda": 20,
+      "verbosity": -1,
+      "n_jobs": 1,
+      "random_state": 137
+    },
+    "acceptance_gate": "Nonnegative legal-return gains in each old-year acceptance period; positive pooled deadline-block gain interval; no immediate or future RMSE degradation versus matched reference",
+    "historical_scope": "Ordinary 15-player policies; the 2024 Assistant Manager chip is excluded for every policy"
+  },
+  "selected": "uniform_0.5",
+  "selection_totals": {
+    "reference": 1191.0,
+    "uniform_0.5": 1169.0,
+    "uniform_1": 1138.0,
+    "squad_0.5": 1134.0,
+    "squad_1": 1046.0
+  },
+  "forecast_metrics": {
+    "reference": {
+      "immediate": {
+        "n": 27224,
+        "rmse": 1.8960477168263796,
+        "mae": 0.9381992644260359,
+        "bias": -0.05326777985797957
+      },
+      "future": {
+        "n": 152115,
+        "rmse": 2.0443388752219858,
+        "mae": 1.103104172559566,
+        "bias": 0.01720794479163167
+      },
+      "relevant_immediate": {
+        "n": 3103,
+        "rmse": 3.11426260167293,
+        "mae": 2.100692360269452,
+        "bias": -0.10434620038271071
+      },
+      "participation": {
+        "brier": 0.1346831202257692,
+        "log_loss": 0.43525218787958947
+      }
+    },
+    "uniform_0.5": {
+      "immediate": {
+        "n": 27224,
+        "rmse": 1.881348632165708,
+        "mae": 0.9476418445037784,
+        "bias": -0.010600713739717294
+      },
+      "future": {
+        "n": 152115,
+        "rmse": 2.016410123216084,
+        "mae": 1.0939452090696764,
+        "bias": 0.020623803029663816
+      },
+      "relevant_immediate": {
+        "n": 3103,
+        "rmse": 3.0956909624550395,
+        "mae": 2.123406922885846,
+        "bias": -0.0016297540070095515
+      },
+      "participation": {
+        "brier": 0.12431925053715322,
+        "log_loss": 0.38663848713732013
+      }
+    },
+    "uniform_1": {
+      "immediate": {
+        "n": 27224,
+        "rmse": 1.8850649461313538,
+        "mae": 0.9671732100262908,
+        "bias": 0.03206635237854498
+      },
+      "future": {
+        "n": 152115,
+        "rmse": 2.0155439943061144,
+        "mae": 1.0991737587006392,
+        "bias": 0.02403966126769596
+      },
+      "relevant_immediate": {
+        "n": 3103,
+        "rmse": 3.111295870102717,
+        "mae": 2.165511513581678,
+        "bias": 0.10108669236869161
+      },
+      "participation": {
+        "brier": 0.12233004703470926,
+        "log_loss": 0.3837189467347325
+      }
+    },
+    "squad_0.5": {
+      "immediate": {
+        "n": 27224,
+        "rmse": 1.8826858711244352,
+        "mae": 0.9500174903029486,
+        "bias": -0.005447948645217535
+      },
+      "future": {
+        "n": 152115,
+        "rmse": 2.017433039174539,
+        "mae": 1.0968993243548226,
+        "bias": 0.02807412001073206
+      },
+      "relevant_immediate": {
+        "n": 3103,
+        "rmse": 3.10307462598785,
+        "mae": 2.1281860794742626,
+        "bias": 0.010142862707118212
+      },
+      "participation": {
+        "brier": 0.12455051829273318,
+        "log_loss": 0.3873735144566732
+      }
+    },
+    "squad_1": {
+      "immediate": {
+        "n": 27224,
+        "rmse": 1.8892920724689184,
+        "mae": 0.9725361647882509,
+        "bias": 0.0423718825675445
+      },
+      "future": {
+        "n": 152115,
+        "rmse": 2.01813332257549,
+        "mae": 1.1046119016722924,
+        "bias": 0.038940295229832445
+      },
+      "relevant_immediate": {
+        "n": 3103,
+        "rmse": 3.133484221312374,
+        "mae": 2.1777860754362925,
+        "bias": 0.12463192579694715
+      },
+      "participation": {
+        "brier": 0.12236432185456851,
+        "log_loss": 0.38380532315974636
+      }
+    }
+  },
+  "acceptance_totals": {
+    "uniform_0.5": 1120.0,
+    "reference": 1122.0,
+    "ownership_no_hits": 1065.0
+  },
+  "return_delta_95ci": [
+    -4.368421052631579,
+    4.578947368421052
+  ],
+  "weeks": [
+    {
+      "season": "2024/25",
+      "event": 20,
+      "policy": "reference",
+      "net_points": 82.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          422
+        ],
+        "buy": [
+          70
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            255,
+            3,
+            70,
+            18,
+            495,
+            328,
+            182,
+            99,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            287,
+            442,
+            473
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 57.06070293389424,
+        "best_bound": 57.06070293389424,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1792,
+        "constraints": 1228
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 21,
+      "policy": "reference",
+      "net_points": 64.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          495
+        ],
+        "buy": [
+          339
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            339,
+            255,
+            3,
+            18,
+            70,
+            182,
+            328,
+            99,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            287,
+            442,
+            473
+          ],
+          "captain": 182,
+          "vice": 328
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 54.29918693689051,
+        "best_bound": 54.29918693689051,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1819,
+        "constraints": 1246
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 22,
+      "policy": "reference",
+      "net_points": 46.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          70
+        ],
+        "buy": [
+          241
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            255,
+            3,
+            18,
+            241,
+            339,
+            328,
+            182,
+            99,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            287,
+            442,
+            473
+          ],
+          "captain": 328,
+          "vice": 401
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.62740728802422,
+        "best_bound": 56.99104715618072,
+        "gap": 0.006421623125122327,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1822,
+        "constraints": 1248
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 23,
+      "policy": "reference",
+      "net_points": 64.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          18
+        ],
+        "buy": [
+          145
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            3,
+            145,
+            339,
+            255,
+            241,
+            328,
+            182,
+            99,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            287,
+            442,
+            473
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 62.433058544852,
+        "best_bound": 62.99176100629877,
+        "gap": 0.008948824140105168,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1825,
+        "constraints": 1250
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 24,
+      "policy": "reference",
+      "net_points": 107.0,
+      "hit": 4,
+      "action": {
+        "sell": [
+          15,
+          255
+        ],
+        "buy": [
+          235,
+          311
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            235,
+            339,
+            311,
+            3,
+            145,
+            241,
+            328,
+            182,
+            99,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            442,
+            287,
+            473
+          ],
+          "captain": 328,
+          "vice": 339
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 75.00317932837817,
+        "best_bound": 75.00317932837817,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1810,
+        "constraints": 1240
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 25,
+      "policy": "reference",
+      "net_points": 97.0,
+      "hit": 4,
+      "action": {
+        "sell": [
+          99,
+          287
+        ],
+        "buy": [
+          54,
+          57
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            235,
+            339,
+            311,
+            3,
+            241,
+            328,
+            182,
+            54,
+            57,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            145,
+            442,
+            473
+          ],
+          "captain": 328,
+          "vice": 339
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 84.31096795024492,
+        "best_bound": 84.77434275081313,
+        "gap": 0.005496020409131975,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1768,
+        "constraints": 1212
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 26,
+      "policy": "reference",
+      "net_points": 52.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          442
+        ],
+        "buy": [
+          74
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            235,
+            3,
+            339,
+            241,
+            182,
+            328,
+            74,
+            54,
+            57,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            145,
+            311,
+            473
+          ],
+          "captain": 182,
+          "vice": 328
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 57.33340938782088,
+        "best_bound": 57.398951349817736,
+        "gap": 0.00114317223930485,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1783,
+        "constraints": 1222
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 27,
+      "policy": "reference",
+      "net_points": 44.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          54
+        ],
+        "buy": [
+          168
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            235,
+            3,
+            339,
+            311,
+            182,
+            328,
+            168,
+            74,
+            57,
+            447,
+            401
+          ],
+          "bench": [
+            280,
+            241,
+            145,
+            473
+          ],
+          "captain": 182,
+          "vice": 328
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 54.01192974253048,
+        "best_bound": 54.2143629699336,
+        "gap": 0.0037479354721837526,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1795,
+        "constraints": 1230
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 28,
+      "policy": "reference",
+      "net_points": 61.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          57
+        ],
+        "buy": [
+          585
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            235,
+            3,
+            311,
+            339,
+            328,
+            182,
+            168,
+            585,
+            74,
+            447,
+            401
+          ],
+          "bench": [
+            280,
+            241,
+            473,
+            145
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 65.43469813496068,
+        "best_bound": 65.43469813496068,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1795,
+        "constraints": 1230
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 29,
+      "policy": "reference",
+      "net_points": 39.0,
+      "hit": 12,
+      "action": {
+        "sell": [
+          311,
+          328,
+          401,
+          585
+        ],
+        "buy": [
+          70,
+          71,
+          351,
+          366
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            235,
+            70,
+            3,
+            241,
+            71,
+            366,
+            182,
+            74,
+            168,
+            447,
+            351
+          ],
+          "bench": [
+            280,
+            473,
+            145,
+            339
+          ],
+          "captain": 71,
+          "vice": 366
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 39.4850537307237,
+        "best_bound": 39.4850537307237,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 30,
+      "policy": "reference",
+      "net_points": 32.0,
+      "hit": 4,
+      "action": {
+        "sell": [
+          182,
+          351
+        ],
+        "buy": [
+          129,
+          328
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            235,
+            70,
+            3,
+            339,
+            328,
+            71,
+            366,
+            168,
+            74,
+            129,
+            447
+          ],
+          "bench": [
+            280,
+            241,
+            145,
+            473
+          ],
+          "captain": 328,
+          "vice": 71
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 53.056846167611454,
+        "best_bound": 53.056846167611454,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 31,
+      "policy": "reference",
+      "net_points": 22.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          71
+        ],
+        "buy": [
+          99
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            235,
+            339,
+            70,
+            241,
+            328,
+            99,
+            366,
+            168,
+            74,
+            129,
+            447
+          ],
+          "bench": [
+            280,
+            473,
+            3,
+            145
+          ],
+          "captain": 328,
+          "vice": 99
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 46.73811642036118,
+        "best_bound": 46.73811642036118,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1813,
+        "constraints": 1242
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 32,
+      "policy": "reference",
+      "net_points": 98.0,
+      "hit": 8,
+      "action": {
+        "sell": [
+          3,
+          74,
+          447
+        ],
+        "buy": [
+          392,
+          401,
+          409
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            235,
+            409,
+            339,
+            70,
+            392,
+            328,
+            168,
+            99,
+            366,
+            401,
+            129
+          ],
+          "bench": [
+            280,
+            241,
+            473,
+            145
+          ],
+          "captain": 401,
+          "vice": 392
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 66.29426022003767,
+        "best_bound": 66.29426022003767,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1816,
+        "constraints": 1244
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 33,
+      "policy": "reference",
+      "net_points": 72.0,
+      "hit": 24,
+      "action": {
+        "sell": [
+          70,
+          129,
+          168,
+          235,
+          366,
+          392,
+          409
+        ],
+        "buy": [
+          16,
+          18,
+          23,
+          201,
+          350,
+          585,
+          755
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            201,
+            18,
+            350,
+            339,
+            585,
+            23,
+            16,
+            328,
+            99,
+            755,
+            401
+          ],
+          "bench": [
+            280,
+            241,
+            473,
+            145
+          ],
+          "captain": 585,
+          "vice": 23
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 64.64696340526937,
+        "best_bound": 64.68607231953345,
+        "gap": 0.0006049613501395924,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1834,
+        "constraints": 1256
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 34,
+      "policy": "reference",
+      "net_points": 41.0,
+      "hit": 16,
+      "action": {
+        "sell": [
+          16,
+          18,
+          23,
+          201,
+          585
+        ],
+        "buy": [
+          70,
+          78,
+          327,
+          392,
+          413
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            413,
+            70,
+            339,
+            241,
+            328,
+            392,
+            327,
+            78,
+            99,
+            401,
+            473
+          ],
+          "bench": [
+            280,
+            145,
+            350,
+            755
+          ],
+          "captain": 328,
+          "vice": 401
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 43.596555898400894,
+        "best_bound": 43.596555898400894,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1837,
+        "constraints": 1258
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 35,
+      "policy": "reference",
+      "net_points": 43.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          78
+        ],
+        "buy": [
+          585
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            413,
+            339,
+            350,
+            70,
+            328,
+            99,
+            327,
+            585,
+            392,
+            401,
+            755
+          ],
+          "bench": [
+            280,
+            241,
+            473,
+            145
+          ],
+          "captain": 328,
+          "vice": 99
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.26595210114383,
+        "best_bound": 55.469969651846554,
+        "gap": 0.0036915595035682076,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1840,
+        "constraints": 1260
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 36,
+      "policy": "reference",
+      "net_points": 51.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          327
+        ],
+        "buy": [
+          433
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            413,
+            350,
+            339,
+            70,
+            328,
+            99,
+            433,
+            392,
+            585,
+            401,
+            755
+          ],
+          "bench": [
+            280,
+            241,
+            473,
+            145
+          ],
+          "captain": 328,
+          "vice": 99
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 61.755423099246,
+        "best_bound": 62.061624164163256,
+        "gap": 0.004958286245163659,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1843,
+        "constraints": 1262
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 37,
+      "policy": "reference",
+      "net_points": 45.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          755
+        ],
+        "buy": [
+          110
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            413,
+            350,
+            339,
+            70,
+            328,
+            99,
+            585,
+            433,
+            392,
+            110,
+            401
+          ],
+          "bench": [
+            280,
+            241,
+            473,
+            145
+          ],
+          "captain": 328,
+          "vice": 99
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 57.61342750628045,
+        "best_bound": 58.169470914331356,
+        "gap": 0.0096512815174949,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1843,
+        "constraints": 1262
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 38,
+      "policy": "reference",
+      "net_points": 62.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          401
+        ],
+        "buy": [
+          447
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            413,
+            350,
+            70,
+            339,
+            328,
+            99,
+            433,
+            392,
+            585,
+            447,
+            110
+          ],
+          "bench": [
+            280,
+            241,
+            473,
+            145
+          ],
+          "captain": 328,
+          "vice": 99
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 59.445947320726184,
+        "best_bound": 59.445947320726184,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1843,
+        "constraints": 1262
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 20,
+      "policy": "uniform_0.5",
+      "net_points": 71.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          422
+        ],
+        "buy": [
+          241
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            255,
+            241,
+            18,
+            3,
+            495,
+            328,
+            182,
+            99,
+            447,
+            401
+          ],
+          "bench": [
+            280,
+            287,
+            442,
+            473
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.36940879353839,
+        "best_bound": 56.71124346407528,
+        "gap": 0.006064187612627005,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1792,
+        "constraints": 1228
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 21,
+      "policy": "uniform_0.5",
+      "net_points": 64.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          495
+        ],
+        "buy": [
+          339
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            339,
+            255,
+            18,
+            3,
+            241,
+            182,
+            328,
+            99,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            287,
+            442,
+            473
+          ],
+          "captain": 182,
+          "vice": 328
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.16198585670403,
+        "best_bound": 56.16198585670403,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1819,
+        "constraints": 1246
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 22,
+      "policy": "uniform_0.5",
+      "net_points": 45.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          15
+        ],
+        "buy": [
+          383
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            383,
+            255,
+            3,
+            18,
+            339,
+            241,
+            182,
+            328,
+            99,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            287,
+            442,
+            473
+          ],
+          "captain": 182,
+          "vice": 328
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 57.6058517487924,
+        "best_bound": 57.6058517487924,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1822,
+        "constraints": 1248
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 23,
+      "policy": "uniform_0.5",
+      "net_points": 61.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          18
+        ],
+        "buy": [
+          145
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            383,
+            3,
+            339,
+            145,
+            255,
+            241,
+            328,
+            182,
+            99,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            287,
+            442,
+            473
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 60.56301631473397,
+        "best_bound": 60.56301631473397,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1825,
+        "constraints": 1250
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 24,
+      "policy": "uniform_0.5",
+      "net_points": 102.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          255
+        ],
+        "buy": [
+          311
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            383,
+            339,
+            311,
+            3,
+            145,
+            241,
+            328,
+            182,
+            99,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            442,
+            287,
+            473
+          ],
+          "captain": 328,
+          "vice": 339
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 76.2003633978537,
+        "best_bound": 76.2003633978537,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1810,
+        "constraints": 1240
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 25,
+      "policy": "uniform_0.5",
+      "net_points": 95.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          383
+        ],
+        "buy": [
+          47
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            47,
+            339,
+            311,
+            3,
+            241,
+            145,
+            328,
+            182,
+            99,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            442,
+            287,
+            473
+          ],
+          "captain": 328,
+          "vice": 339
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 82.36828336198906,
+        "best_bound": 82.59023389411041,
+        "gap": 0.0026946116036670902,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1768,
+        "constraints": 1212
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 26,
+      "policy": "uniform_0.5",
+      "net_points": 64.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          311
+        ],
+        "buy": [
+          255
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            47,
+            3,
+            255,
+            241,
+            339,
+            145,
+            182,
+            99,
+            328,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            442,
+            287,
+            473
+          ],
+          "captain": 182,
+          "vice": 99
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.327865148283784,
+        "best_bound": 56.648147885108386,
+        "gap": 0.005686044304740587,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1786,
+        "constraints": 1224
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 27,
+      "policy": "uniform_0.5",
+      "net_points": 38.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          287
+        ],
+        "buy": [
+          168
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            47,
+            3,
+            339,
+            255,
+            241,
+            182,
+            328,
+            99,
+            168,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            442,
+            145,
+            473
+          ],
+          "captain": 182,
+          "vice": 328
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.57636516266855,
+        "best_bound": 56.57636516266855,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1798,
+        "constraints": 1232
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 28,
+      "policy": "uniform_0.5",
+      "net_points": 44.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          442
+        ],
+        "buy": [
+          585
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            47,
+            3,
+            339,
+            255,
+            182,
+            328,
+            99,
+            168,
+            585,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            241,
+            473,
+            145
+          ],
+          "captain": 182,
+          "vice": 328
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 65.08386838007245,
+        "best_bound": 65.08386838007245,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1795,
+        "constraints": 1230
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 29,
+      "policy": "uniform_0.5",
+      "net_points": 50.0,
+      "hit": 12,
+      "action": {
+        "sell": [
+          47,
+          328,
+          401,
+          585
+        ],
+        "buy": [
+          71,
+          152,
+          351,
+          366
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            152,
+            3,
+            255,
+            241,
+            366,
+            182,
+            71,
+            99,
+            168,
+            351,
+            447
+          ],
+          "bench": [
+            280,
+            473,
+            145,
+            339
+          ],
+          "captain": 351,
+          "vice": 366
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 40.274579863048146,
+        "best_bound": 40.526837109919235,
+        "gap": 0.006263435837912605,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 30,
+      "policy": "uniform_0.5",
+      "net_points": 40.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          351
+        ],
+        "buy": [
+          207
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            152,
+            339,
+            3,
+            255,
+            71,
+            99,
+            182,
+            366,
+            168,
+            207,
+            447
+          ],
+          "bench": [
+            280,
+            241,
+            145,
+            473
+          ],
+          "captain": 71,
+          "vice": 207
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.45053863279502,
+        "best_bound": 55.76333081427091,
+        "gap": 0.005640922328045535,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 31,
+      "policy": "uniform_0.5",
+      "net_points": 31.0,
+      "hit": 4,
+      "action": {
+        "sell": [
+          3,
+          71
+        ],
+        "buy": [
+          328,
+          415
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            152,
+            339,
+            415,
+            255,
+            328,
+            182,
+            99,
+            366,
+            168,
+            207,
+            447
+          ],
+          "bench": [
+            280,
+            241,
+            473,
+            145
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 47.361665586008776,
+        "best_bound": 47.41310155976447,
+        "gap": 0.0010860254410243809,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1813,
+        "constraints": 1242
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 32,
+      "policy": "uniform_0.5",
+      "net_points": 98.0,
+      "hit": 4,
+      "action": {
+        "sell": [
+          366,
+          447
+        ],
+        "buy": [
+          392,
+          401
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            152,
+            415,
+            339,
+            255,
+            392,
+            328,
+            182,
+            99,
+            168,
+            401,
+            207
+          ],
+          "bench": [
+            280,
+            241,
+            473,
+            145
+          ],
+          "captain": 401,
+          "vice": 392
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 75.10622656404145,
+        "best_bound": 75.10622656404145,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1816,
+        "constraints": 1244
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 33,
+      "policy": "uniform_0.5",
+      "net_points": 101.0,
+      "hit": 12,
+      "action": {
+        "sell": [
+          168,
+          182,
+          392,
+          415
+        ],
+        "buy": [
+          16,
+          18,
+          23,
+          585
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            152,
+            18,
+            339,
+            255,
+            23,
+            16,
+            585,
+            328,
+            99,
+            207,
+            401
+          ],
+          "bench": [
+            280,
+            241,
+            473,
+            145
+          ],
+          "captain": 23,
+          "vice": 16
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 70.49130873279819,
+        "best_bound": 71.07390931764125,
+        "gap": 0.008264856977637467,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1834,
+        "constraints": 1256
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 34,
+      "policy": "uniform_0.5",
+      "net_points": 33.0,
+      "hit": 8,
+      "action": {
+        "sell": [
+          16,
+          23,
+          207
+        ],
+        "buy": [
+          182,
+          392,
+          617
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            152,
+            339,
+            255,
+            241,
+            328,
+            182,
+            392,
+            99,
+            401,
+            617,
+            473
+          ],
+          "bench": [
+            280,
+            145,
+            18,
+            585
+          ],
+          "captain": 328,
+          "vice": 401
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 50.59166261599309,
+        "best_bound": 50.59166261599309,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1837,
+        "constraints": 1258
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 35,
+      "policy": "uniform_0.5",
+      "net_points": 48.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          152
+        ],
+        "buy": [
+          91
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            91,
+            18,
+            339,
+            255,
+            328,
+            99,
+            182,
+            585,
+            392,
+            401,
+            617
+          ],
+          "bench": [
+            280,
+            241,
+            473,
+            145
+          ],
+          "captain": 328,
+          "vice": 99
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 54.89748546565816,
+        "best_bound": 55.091412941135616,
+        "gap": 0.0035325384001199784,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1840,
+        "constraints": 1260
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 36,
+      "policy": "uniform_0.5",
+      "net_points": 42.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          18
+        ],
+        "buy": [
+          350
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            91,
+            350,
+            339,
+            255,
+            328,
+            99,
+            182,
+            392,
+            585,
+            401,
+            617
+          ],
+          "bench": [
+            280,
+            241,
+            473,
+            145
+          ],
+          "captain": 328,
+          "vice": 99
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 60.19177267411657,
+        "best_bound": 60.19177267411657,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1843,
+        "constraints": 1262
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 37,
+      "policy": "uniform_0.5",
+      "net_points": 34.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          145
+        ],
+        "buy": [
+          231
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            91,
+            231,
+            350,
+            339,
+            328,
+            182,
+            99,
+            585,
+            392,
+            401,
+            617
+          ],
+          "bench": [
+            280,
+            241,
+            255,
+            473
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 57.133322750607405,
+        "best_bound": 57.133322750607405,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1843,
+        "constraints": 1262
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 38,
+      "policy": "uniform_0.5",
+      "net_points": 59.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          401
+        ],
+        "buy": [
+          58
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            91,
+            350,
+            339,
+            255,
+            328,
+            182,
+            99,
+            392,
+            585,
+            58,
+            617
+          ],
+          "bench": [
+            280,
+            241,
+            231,
+            473
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.951150387860665,
+        "best_bound": 55.951150387860665,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1843,
+        "constraints": 1262
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 20,
+      "policy": "ownership_no_hits",
+      "net_points": 76.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            18,
+            3,
+            255,
+            495,
+            422,
+            328,
+            182,
+            99,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            287,
+            442,
+            473
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 484.2,
+        "best_bound": 485.0,
+        "gap": 0.0016522098306485159,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1792,
+        "constraints": 1228
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 21,
+      "policy": "ownership_no_hits",
+      "net_points": 56.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            18,
+            3,
+            255,
+            422,
+            495,
+            328,
+            182,
+            99,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            287,
+            442,
+            473
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 477.95,
+        "best_bound": 478.8,
+        "gap": 0.0017784287059316305,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1819,
+        "constraints": 1246
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 22,
+      "policy": "ownership_no_hits",
+      "net_points": 39.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            3,
+            18,
+            422,
+            255,
+            495,
+            328,
+            182,
+            99,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            287,
+            442,
+            473
+          ],
+          "captain": 328,
+          "vice": 401
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 484.15,
+        "best_bound": 486.325,
+        "gap": 0.004492409377259137,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1822,
+        "constraints": 1248
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 23,
+      "policy": "ownership_no_hits",
+      "net_points": 60.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          3,
+          18,
+          442,
+          495
+        ],
+        "buy": [
+          54,
+          311,
+          399,
+          404
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            311,
+            422,
+            399,
+            255,
+            328,
+            182,
+            99,
+            54,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            287,
+            404,
+            473
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 510.1,
+        "best_bound": 510.1,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1825,
+        "constraints": 1250
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 24,
+      "policy": "ownership_no_hits",
+      "net_points": 107.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            311,
+            422,
+            399,
+            255,
+            328,
+            182,
+            99,
+            54,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            404,
+            287,
+            473
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 501.825,
+        "best_bound": 503.825,
+        "gap": 0.003985453096198874,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1810,
+        "constraints": 1240
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 25,
+      "policy": "ownership_no_hits",
+      "net_points": 83.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            311,
+            422,
+            255,
+            399,
+            328,
+            182,
+            99,
+            54,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            287,
+            404,
+            473
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 510.40000000000003,
+        "best_bound": 513.4,
+        "gap": 0.005877742946708352,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1771,
+        "constraints": 1214
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 26,
+      "policy": "ownership_no_hits",
+      "net_points": 75.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          287,
+          399,
+          404
+        ],
+        "buy": [
+          71,
+          270,
+          558
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            311,
+            422,
+            255,
+            328,
+            182,
+            99,
+            71,
+            54,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            270,
+            473,
+            558
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 514.0,
+        "best_bound": 514.0,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1789,
+        "constraints": 1226
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 27,
+      "policy": "ownership_no_hits",
+      "net_points": 58.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            311,
+            422,
+            255,
+            328,
+            182,
+            99,
+            71,
+            54,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            270,
+            473,
+            558
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 506.125,
+        "best_bound": 511.025,
+        "gap": 0.009681402815509957,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1795,
+        "constraints": 1230
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 28,
+      "policy": "ownership_no_hits",
+      "net_points": 56.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            311,
+            422,
+            255,
+            328,
+            182,
+            99,
+            71,
+            54,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            270,
+            473,
+            558
+          ],
+          "captain": 328,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 509.8,
+        "best_bound": 514.125,
+        "gap": 0.008483719105531558,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1795,
+        "constraints": 1230
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 29,
+      "policy": "ownership_no_hits",
+      "net_points": 55.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          311,
+          328,
+          401
+        ],
+        "buy": [
+          3,
+          351,
+          366
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            422,
+            3,
+            255,
+            270,
+            182,
+            99,
+            71,
+            366,
+            447,
+            351
+          ],
+          "bench": [
+            280,
+            473,
+            54,
+            558
+          ],
+          "captain": 447,
+          "vice": 182
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 412.5,
+        "best_bound": 412.5,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 30,
+      "policy": "ownership_no_hits",
+      "net_points": 47.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          351
+        ],
+        "buy": [
+          401
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            3,
+            422,
+            255,
+            99,
+            71,
+            182,
+            366,
+            54,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            270,
+            473,
+            558
+          ],
+          "captain": 401,
+          "vice": 99
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 400.0,
+        "best_bound": 400.0,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 0,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 31,
+      "policy": "ownership_no_hits",
+      "net_points": 23.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          366
+        ],
+        "buy": [
+          328
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            255,
+            270,
+            3,
+            328,
+            182,
+            99,
+            54,
+            71,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            473,
+            422,
+            558
+          ],
+          "captain": 328,
+          "vice": 401
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 374.50000000000006,
+        "best_bound": 374.50000000000006,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1813,
+        "constraints": 1242
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 32,
+      "policy": "ownership_no_hits",
+      "net_points": 43.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          3
+        ],
+        "buy": [
+          18
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            18,
+            255,
+            270,
+            328,
+            182,
+            99,
+            54,
+            71,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            473,
+            422,
+            558
+          ],
+          "captain": 328,
+          "vice": 401
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 413.0,
+        "best_bound": 413.0,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1816,
+        "constraints": 1244
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 33,
+      "policy": "ownership_no_hits",
+      "net_points": 66.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          422
+        ],
+        "buy": [
+          211
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            18,
+            211,
+            255,
+            328,
+            182,
+            99,
+            54,
+            71,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            270,
+            473,
+            558
+          ],
+          "captain": 328,
+          "vice": 401
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 438.2,
+        "best_bound": 438.2,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1834,
+        "constraints": 1256
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 34,
+      "policy": "ownership_no_hits",
+      "net_points": 35.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          18
+        ],
+        "buy": [
+          339
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            280,
+            339,
+            255,
+            270,
+            328,
+            182,
+            99,
+            71,
+            401,
+            447,
+            473
+          ],
+          "bench": [
+            15,
+            54,
+            211,
+            558
+          ],
+          "captain": 328,
+          "vice": 401
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 378.59999999999997,
+        "best_bound": 378.59999999999997,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1837,
+        "constraints": 1258
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 35,
+      "policy": "ownership_no_hits",
+      "net_points": 44.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          71
+        ],
+        "buy": [
+          402
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            339,
+            211,
+            255,
+            328,
+            99,
+            182,
+            54,
+            402,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            270,
+            473,
+            558
+          ],
+          "captain": 328,
+          "vice": 401
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 445.9,
+        "best_bound": 445.9,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 0,
+        "variables": 1840,
+        "constraints": 1260
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 36,
+      "policy": "ownership_no_hits",
+      "net_points": 54.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          339
+        ],
+        "buy": [
+          350
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            350,
+            211,
+            255,
+            328,
+            99,
+            182,
+            54,
+            402,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            270,
+            473,
+            558
+          ],
+          "captain": 328,
+          "vice": 401
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 454.0,
+        "best_bound": 454.0,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1843,
+        "constraints": 1262
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 37,
+      "policy": "ownership_no_hits",
+      "net_points": 33.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            350,
+            211,
+            255,
+            328,
+            99,
+            182,
+            54,
+            402,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            270,
+            473,
+            558
+          ],
+          "captain": 328,
+          "vice": 401
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 451.8,
+        "best_bound": 454.625,
+        "gap": 0.006252766710934016,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1843,
+        "constraints": 1262
+      }
+    },
+    {
+      "season": "2024/25",
+      "event": 38,
+      "policy": "ownership_no_hits",
+      "net_points": 55.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          402,
+          558
+        ],
+        "buy": [
+          70,
+          608
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            15,
+            350,
+            70,
+            211,
+            255,
+            328,
+            99,
+            182,
+            54,
+            401,
+            447
+          ],
+          "bench": [
+            280,
+            270,
+            473,
+            608
+          ],
+          "captain": 328,
+          "vice": 99
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 432.275,
+        "best_bound": 432.47499999999997,
+        "gap": 0.0004626684402289946,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1843,
+        "constraints": 1262
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 1,
+      "policy": "reference",
+      "net_points": 47.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          33,
+          38,
+          64,
+          249,
+          370,
+          382,
+          470,
+          496,
+          497,
+          575,
+          641,
+          666
+        ],
+        "buy": [
+          17,
+          106,
+          119,
+          198,
+          218,
+          267,
+          403,
+          484,
+          502,
+          525,
+          567,
+          624
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            403,
+            106,
+            610,
+            381,
+            235,
+            119,
+            17,
+            267,
+            525,
+            624
+          ],
+          "bench": [
+            567,
+            198,
+            218,
+            484
+          ],
+          "captain": 381,
+          "vice": 235
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 57.712712583925764,
+        "best_bound": 57.712712583925764,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1912,
+        "constraints": 1306
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 2,
+      "policy": "reference",
+      "net_points": 37.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          403
+        ],
+        "buy": [
+          531
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            531,
+            106,
+            610,
+            381,
+            17,
+            119,
+            235,
+            267,
+            624,
+            525
+          ],
+          "bench": [
+            567,
+            198,
+            218,
+            484
+          ],
+          "captain": 381,
+          "vice": 17
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.26870630191686,
+        "best_bound": 56.26870630191686,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1924,
+        "constraints": 1316
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 3,
+      "policy": "reference",
+      "net_points": 47.0,
+      "hit": 4,
+      "action": {
+        "sell": [
+          17,
+          235
+        ],
+        "buy": [
+          449,
+          515
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            106,
+            610,
+            198,
+            381,
+            449,
+            515,
+            119,
+            267,
+            525,
+            624
+          ],
+          "bench": [
+            567,
+            218,
+            484,
+            531
+          ],
+          "captain": 381,
+          "vice": 525
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 54.10732546627877,
+        "best_bound": 54.2213296051593,
+        "gap": 0.0021070000762017896,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1924,
+        "constraints": 1316
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 4,
+      "policy": "reference",
+      "net_points": 48.0,
+      "hit": 4,
+      "action": {
+        "sell": [
+          267,
+          484
+        ],
+        "buy": [
+          82,
+          373
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            373,
+            106,
+            610,
+            381,
+            119,
+            82,
+            449,
+            515,
+            624,
+            525
+          ],
+          "bench": [
+            567,
+            198,
+            218,
+            531
+          ],
+          "captain": 381,
+          "vice": 624
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 49.23107410482158,
+        "best_bound": 49.23107410482158,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1828,
+        "constraints": 1252
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 5,
+      "policy": "reference",
+      "net_points": 51.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          531
+        ],
+        "buy": [
+          631
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            373,
+            631,
+            106,
+            381,
+            449,
+            119,
+            82,
+            515,
+            624,
+            525
+          ],
+          "bench": [
+            567,
+            198,
+            218,
+            610
+          ],
+          "captain": 381,
+          "vice": 624
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.7775626330719,
+        "best_bound": 56.7775626330719,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1831,
+        "constraints": 1254
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 6,
+      "policy": "reference",
+      "net_points": 23.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          624
+        ],
+        "buy": [
+          249
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            373,
+            106,
+            631,
+            381,
+            82,
+            449,
+            119,
+            515,
+            249,
+            525
+          ],
+          "bench": [
+            567,
+            198,
+            218,
+            610
+          ],
+          "captain": 381,
+          "vice": 249
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 57.35735558142502,
+        "best_bound": 57.35735558142502,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1762,
+        "constraints": 1208
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 7,
+      "policy": "reference",
+      "net_points": 48.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          631
+        ],
+        "buy": [
+          261
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            373,
+            261,
+            106,
+            381,
+            82,
+            449,
+            119,
+            515,
+            249,
+            525
+          ],
+          "bench": [
+            567,
+            610,
+            198,
+            218
+          ],
+          "captain": 381,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 53.81285647068718,
+        "best_bound": 53.81285647068718,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1765,
+        "constraints": 1210
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 8,
+      "policy": "reference",
+      "net_points": 63.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          525
+        ],
+        "buy": [
+          283
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            373,
+            261,
+            106,
+            381,
+            82,
+            449,
+            119,
+            515,
+            283,
+            249
+          ],
+          "bench": [
+            567,
+            610,
+            198,
+            218
+          ],
+          "captain": 381,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 52.93405912788759,
+        "best_bound": 52.93405912788759,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1768,
+        "constraints": 1212
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 9,
+      "policy": "reference",
+      "net_points": 50.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          283
+        ],
+        "buy": [
+          714
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            373,
+            106,
+            261,
+            381,
+            82,
+            449,
+            119,
+            515,
+            714,
+            249
+          ],
+          "bench": [
+            567,
+            610,
+            198,
+            218
+          ],
+          "captain": 381,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.086343796306025,
+        "best_bound": 56.086343796306025,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1774,
+        "constraints": 1216
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 10,
+      "policy": "reference",
+      "net_points": 57.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          249
+        ],
+        "buy": [
+          178
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            373,
+            261,
+            106,
+            381,
+            119,
+            449,
+            515,
+            82,
+            178,
+            714
+          ],
+          "bench": [
+            567,
+            198,
+            610,
+            218
+          ],
+          "captain": 381,
+          "vice": 119
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.20329396665739,
+        "best_bound": 56.20329396665739,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1777,
+        "constraints": 1218
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 11,
+      "policy": "reference",
+      "net_points": 51.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          178
+        ],
+        "buy": [
+          249
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            106,
+            373,
+            261,
+            381,
+            119,
+            449,
+            82,
+            515,
+            249,
+            714
+          ],
+          "bench": [
+            567,
+            610,
+            198,
+            218
+          ],
+          "captain": 381,
+          "vice": 119
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.77313783016074,
+        "best_bound": 55.77313783016074,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1783,
+        "constraints": 1222
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 12,
+      "policy": "reference",
+      "net_points": 37.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          82
+        ],
+        "buy": [
+          387
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            373,
+            261,
+            106,
+            381,
+            387,
+            119,
+            449,
+            515,
+            249,
+            714
+          ],
+          "bench": [
+            567,
+            610,
+            198,
+            218
+          ],
+          "captain": 381,
+          "vice": 387
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 53.563612309058676,
+        "best_bound": 53.563612309058676,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1795,
+        "constraints": 1230
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 13,
+      "policy": "reference",
+      "net_points": 43.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          515
+        ],
+        "buy": [
+          120
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            106,
+            261,
+            373,
+            610,
+            381,
+            120,
+            119,
+            449,
+            387,
+            249
+          ],
+          "bench": [
+            567,
+            714,
+            198,
+            218
+          ],
+          "captain": 381,
+          "vice": 120
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 54.99133385944052,
+        "best_bound": 55.478944230763744,
+        "gap": 0.008867040260735768,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1804,
+        "constraints": 1236
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 14,
+      "policy": "reference",
+      "net_points": 41.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          120
+        ],
+        "buy": [
+          21
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            373,
+            261,
+            106,
+            387,
+            381,
+            21,
+            119,
+            449,
+            714,
+            249
+          ],
+          "bench": [
+            567,
+            610,
+            198,
+            218
+          ],
+          "captain": 387,
+          "vice": 381
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.90582504769293,
+        "best_bound": 57.11084952401105,
+        "gap": 0.003602873276088889,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1804,
+        "constraints": 1236
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 15,
+      "policy": "reference",
+      "net_points": 76.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          21
+        ],
+        "buy": [
+          452
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            373,
+            261,
+            106,
+            449,
+            119,
+            387,
+            452,
+            381,
+            714,
+            249
+          ],
+          "bench": [
+            567,
+            610,
+            218,
+            198
+          ],
+          "captain": 449,
+          "vice": 119
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.606873324284216,
+        "best_bound": 55.606873324284216,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1813,
+        "constraints": 1242
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 16,
+      "policy": "reference",
+      "net_points": 62.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          381
+        ],
+        "buy": [
+          16
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            373,
+            261,
+            106,
+            449,
+            16,
+            119,
+            387,
+            452,
+            714,
+            249
+          ],
+          "bench": [
+            567,
+            610,
+            198,
+            218
+          ],
+          "captain": 449,
+          "vice": 16
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 50.82592986954808,
+        "best_bound": 50.82592986954808,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1816,
+        "constraints": 1244
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 17,
+      "policy": "reference",
+      "net_points": 65.0,
+      "hit": 8,
+      "action": {
+        "sell": [
+          119,
+          249,
+          452
+        ],
+        "buy": [
+          82,
+          173,
+          430
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            373,
+            106,
+            261,
+            82,
+            449,
+            16,
+            173,
+            387,
+            430,
+            714
+          ],
+          "bench": [
+            567,
+            218,
+            198,
+            610
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 45.35910030133603,
+        "best_bound": 45.78977551952886,
+        "gap": 0.009494791901332011,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1819,
+        "constraints": 1246
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 18,
+      "policy": "reference",
+      "net_points": 32.0,
+      "hit": 4,
+      "action": {
+        "sell": [
+          387,
+          449
+        ],
+        "buy": [
+          21,
+          236
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            502,
+            373,
+            106,
+            261,
+            21,
+            16,
+            236,
+            82,
+            173,
+            430,
+            714
+          ],
+          "bench": [
+            567,
+            218,
+            198,
+            610
+          ],
+          "captain": 430,
+          "vice": 21
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 44.990302513042494,
+        "best_bound": 44.990302513042494,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1849,
+        "constraints": 1266
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 19,
+      "policy": "reference",
+      "net_points": 34.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          567
+        ],
+        "buy": [
+          139
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            139,
+            373,
+            106,
+            261,
+            16,
+            236,
+            21,
+            82,
+            173,
+            430,
+            714
+          ],
+          "bench": [
+            502,
+            218,
+            198,
+            610
+          ],
+          "captain": 430,
+          "vice": 16
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 53.5041721592585,
+        "best_bound": 53.5041721592585,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1864,
+        "constraints": 1276
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 20,
+      "policy": "reference",
+      "net_points": 54.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          173
+        ],
+        "buy": [
+          497
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            139,
+            106,
+            373,
+            261,
+            16,
+            82,
+            497,
+            236,
+            21,
+            430,
+            714
+          ],
+          "bench": [
+            502,
+            218,
+            198,
+            610
+          ],
+          "captain": 430,
+          "vice": 16
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 51.142564552236735,
+        "best_bound": 51.49023854786276,
+        "gap": 0.006798133778976068,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1870,
+        "constraints": 1280
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 21,
+      "policy": "reference",
+      "net_points": 66.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          198
+        ],
+        "buy": [
+          108
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            139,
+            106,
+            108,
+            373,
+            82,
+            16,
+            21,
+            497,
+            236,
+            430,
+            714
+          ],
+          "bench": [
+            502,
+            218,
+            261,
+            610
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.93811191888631,
+        "best_bound": 55.93811191888631,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1900,
+        "constraints": 1300
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 22,
+      "policy": "reference",
+      "net_points": 21.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          236
+        ],
+        "buy": [
+          47
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            139,
+            373,
+            106,
+            108,
+            47,
+            16,
+            82,
+            21,
+            497,
+            430,
+            714
+          ],
+          "bench": [
+            502,
+            261,
+            610,
+            218
+          ],
+          "captain": 430,
+          "vice": 47
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 52.55782512373174,
+        "best_bound": 52.55782512373174,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1867,
+        "constraints": 1278
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 23,
+      "policy": "reference",
+      "net_points": 37.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          714
+        ],
+        "buy": [
+          136
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            139,
+            106,
+            373,
+            108,
+            82,
+            21,
+            47,
+            16,
+            497,
+            430,
+            136
+          ],
+          "bench": [
+            502,
+            610,
+            261,
+            218
+          ],
+          "captain": 430,
+          "vice": 136
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 57.036965530353456,
+        "best_bound": 57.036965530353456,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1879,
+        "constraints": 1286
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 24,
+      "policy": "reference",
+      "net_points": 55.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          261
+        ],
+        "buy": [
+          694
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            139,
+            373,
+            694,
+            106,
+            21,
+            16,
+            47,
+            82,
+            497,
+            430,
+            136
+          ],
+          "bench": [
+            502,
+            610,
+            108,
+            218
+          ],
+          "captain": 430,
+          "vice": 21
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 54.20255678966963,
+        "best_bound": 54.20255678966963,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1879,
+        "constraints": 1286
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 25,
+      "policy": "reference",
+      "net_points": 61.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          16
+        ],
+        "buy": [
+          237
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            139,
+            373,
+            106,
+            610,
+            108,
+            237,
+            21,
+            82,
+            47,
+            430,
+            136
+          ],
+          "bench": [
+            502,
+            694,
+            497,
+            218
+          ],
+          "captain": 430,
+          "vice": 237
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 53.593413693198585,
+        "best_bound": 53.593413693198585,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1855,
+        "constraints": 1270
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 26,
+      "policy": "reference",
+      "net_points": 65.0,
+      "hit": 4,
+      "action": {
+        "sell": [
+          106,
+          373
+        ],
+        "buy": [
+          5,
+          8
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            139,
+            5,
+            8,
+            694,
+            610,
+            21,
+            237,
+            82,
+            47,
+            430,
+            136
+          ],
+          "bench": [
+            502,
+            108,
+            497,
+            218
+          ],
+          "captain": 21,
+          "vice": 5
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 66.71406213375084,
+        "best_bound": 67.36133258475391,
+        "gap": 0.009702159189548296,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1804,
+        "constraints": 1236
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 27,
+      "policy": "reference",
+      "net_points": 35.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          502
+        ],
+        "buy": [
+          101
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            101,
+            5,
+            108,
+            8,
+            694,
+            237,
+            82,
+            47,
+            21,
+            430,
+            136
+          ],
+          "bench": [
+            139,
+            610,
+            218,
+            497
+          ],
+          "captain": 430,
+          "vice": 237
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 58.90843887627139,
+        "best_bound": 58.90843887627139,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1804,
+        "constraints": 1236
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 28,
+      "policy": "reference",
+      "net_points": 49.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          694
+        ],
+        "buy": [
+          684
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            101,
+            684,
+            5,
+            8,
+            108,
+            21,
+            82,
+            47,
+            237,
+            430,
+            136
+          ],
+          "bench": [
+            139,
+            610,
+            218,
+            497
+          ],
+          "captain": 430,
+          "vice": 21
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.3154191501376,
+        "best_bound": 55.3154191501376,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 29,
+      "policy": "reference",
+      "net_points": 62.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          21
+        ],
+        "buy": [
+          807
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            139,
+            5,
+            8,
+            684,
+            108,
+            82,
+            237,
+            47,
+            807,
+            136,
+            430
+          ],
+          "bench": [
+            101,
+            610,
+            218,
+            497
+          ],
+          "captain": 82,
+          "vice": 237
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 51.62361692038796,
+        "best_bound": 51.923230488976,
+        "gap": 0.005803808149477326,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1810,
+        "constraints": 1240
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 30,
+      "policy": "reference",
+      "net_points": 53.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          807
+        ],
+        "buy": [
+          387
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            139,
+            5,
+            8,
+            108,
+            684,
+            387,
+            237,
+            82,
+            47,
+            430,
+            136
+          ],
+          "bench": [
+            101,
+            610,
+            218,
+            497
+          ],
+          "captain": 430,
+          "vice": 387
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.63688359342199,
+        "best_bound": 55.63688359342199,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1813,
+        "constraints": 1242
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 31,
+      "policy": "reference",
+      "net_points": 26.0,
+      "hit": 8,
+      "action": {
+        "sell": [
+          82,
+          430,
+          497
+        ],
+        "buy": [
+          235,
+          485,
+          624
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            139,
+            684,
+            610,
+            108,
+            235,
+            387,
+            485,
+            47,
+            237,
+            624,
+            136
+          ],
+          "bench": [
+            101,
+            218,
+            5,
+            8
+          ],
+          "captain": 235,
+          "vice": 387
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 44.021361932658536,
+        "best_bound": 44.021361932658536,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1819,
+        "constraints": 1246
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 32,
+      "policy": "reference",
+      "net_points": 65.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          237
+        ],
+        "buy": [
+          457
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            101,
+            5,
+            610,
+            684,
+            235,
+            485,
+            457,
+            387,
+            47,
+            624,
+            136
+          ],
+          "bench": [
+            139,
+            8,
+            108,
+            218
+          ],
+          "captain": 235,
+          "vice": 624
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 53.28003499823055,
+        "best_bound": 53.72925915228154,
+        "gap": 0.008431378734377971,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1828,
+        "constraints": 1252
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 33,
+      "policy": "reference",
+      "net_points": 42.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          8
+        ],
+        "buy": [
+          373
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            101,
+            5,
+            373,
+            684,
+            235,
+            47,
+            485,
+            457,
+            387,
+            624,
+            136
+          ],
+          "bench": [
+            139,
+            610,
+            108,
+            218
+          ],
+          "captain": 235,
+          "vice": 624
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.71389340064224,
+        "best_bound": 55.71389340064224,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1831,
+        "constraints": 1254
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 34,
+      "policy": "reference",
+      "net_points": 52.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          235
+        ],
+        "buy": [
+          449
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            101,
+            5,
+            373,
+            684,
+            610,
+            449,
+            457,
+            387,
+            47,
+            624,
+            136
+          ],
+          "bench": [
+            139,
+            108,
+            218,
+            485
+          ],
+          "captain": 449,
+          "vice": 624
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 52.15411968882871,
+        "best_bound": 52.15411968882871,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1840,
+        "constraints": 1260
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 35,
+      "policy": "reference",
+      "net_points": 58.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          485
+        ],
+        "buy": [
+          21
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            101,
+            5,
+            373,
+            684,
+            449,
+            21,
+            457,
+            47,
+            387,
+            136,
+            624
+          ],
+          "bench": [
+            139,
+            108,
+            610,
+            218
+          ],
+          "captain": 449,
+          "vice": 5
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.34833771293965,
+        "best_bound": 56.34833771293965,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1843,
+        "constraints": 1262
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 36,
+      "policy": "reference",
+      "net_points": 40.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          684
+        ],
+        "buy": [
+          374
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            139,
+            5,
+            373,
+            374,
+            449,
+            47,
+            387,
+            457,
+            21,
+            136,
+            624
+          ],
+          "bench": [
+            101,
+            610,
+            108,
+            218
+          ],
+          "captain": 449,
+          "vice": 47
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 57.23113467530515,
+        "best_bound": 57.23113467530515,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1849,
+        "constraints": 1266
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 37,
+      "policy": "reference",
+      "net_points": 80.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          457
+        ],
+        "buy": [
+          237
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            101,
+            5,
+            373,
+            374,
+            21,
+            449,
+            237,
+            387,
+            47,
+            136,
+            624
+          ],
+          "bench": [
+            139,
+            108,
+            610,
+            218
+          ],
+          "captain": 5,
+          "vice": 21
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 59.895765591507256,
+        "best_bound": 59.895765591507256,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1867,
+        "constraints": 1278
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 38,
+      "policy": "reference",
+      "net_points": 45.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          47
+        ],
+        "buy": [
+          82
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            139,
+            5,
+            373,
+            374,
+            387,
+            82,
+            21,
+            237,
+            449,
+            624,
+            136
+          ],
+          "bench": [
+            101,
+            610,
+            108,
+            218
+          ],
+          "captain": 387,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 54.52034246988821,
+        "best_bound": 54.52034246988821,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1873,
+        "constraints": 1282
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 1,
+      "policy": "uniform_0.5",
+      "net_points": 54.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          33,
+          38,
+          64,
+          249,
+          370,
+          382,
+          470,
+          496,
+          497,
+          575,
+          641,
+          666
+        ],
+        "buy": [
+          21,
+          119,
+          198,
+          237,
+          287,
+          403,
+          408,
+          484,
+          525,
+          567,
+          624,
+          626
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            403,
+            408,
+            610,
+            381,
+            235,
+            119,
+            237,
+            21,
+            624,
+            525
+          ],
+          "bench": [
+            567,
+            198,
+            484,
+            626
+          ],
+          "captain": 381,
+          "vice": 235
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 60.2360704506045,
+        "best_bound": 60.399663365604766,
+        "gap": 0.0027158629999680457,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1912,
+        "constraints": 1306
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 2,
+      "policy": "uniform_0.5",
+      "net_points": 49.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          403
+        ],
+        "buy": [
+          402
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            402,
+            610,
+            408,
+            381,
+            235,
+            119,
+            21,
+            237,
+            624,
+            525
+          ],
+          "bench": [
+            567,
+            198,
+            626,
+            484
+          ],
+          "captain": 381,
+          "vice": 235
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.52863577281153,
+        "best_bound": 55.52863577281153,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1924,
+        "constraints": 1316
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 3,
+      "policy": "uniform_0.5",
+      "net_points": 55.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          235
+        ],
+        "buy": [
+          449
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            402,
+            408,
+            610,
+            381,
+            449,
+            119,
+            237,
+            21,
+            525,
+            624
+          ],
+          "bench": [
+            567,
+            198,
+            484,
+            626
+          ],
+          "captain": 381,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.565791558084975,
+        "best_bound": 56.565791558084975,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1924,
+        "constraints": 1316
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 4,
+      "policy": "uniform_0.5",
+      "net_points": 50.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          402
+        ],
+        "buy": [
+          373
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            408,
+            610,
+            381,
+            449,
+            119,
+            21,
+            237,
+            624,
+            525
+          ],
+          "bench": [
+            567,
+            198,
+            626,
+            484
+          ],
+          "captain": 381,
+          "vice": 624
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 53.190717382351956,
+        "best_bound": 53.190717382351956,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1828,
+        "constraints": 1252
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 5,
+      "policy": "uniform_0.5",
+      "net_points": 45.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          610
+        ],
+        "buy": [
+          106
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            106,
+            408,
+            381,
+            449,
+            119,
+            237,
+            21,
+            624,
+            525
+          ],
+          "bench": [
+            567,
+            198,
+            626,
+            484
+          ],
+          "captain": 381,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.39819026497962,
+        "best_bound": 56.39819026497962,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1834,
+        "constraints": 1256
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 6,
+      "policy": "uniform_0.5",
+      "net_points": 34.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          21
+        ],
+        "buy": [
+          419
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            106,
+            408,
+            381,
+            449,
+            419,
+            237,
+            119,
+            525,
+            624
+          ],
+          "bench": [
+            567,
+            198,
+            626,
+            484
+          ],
+          "captain": 381,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 57.54792832984669,
+        "best_bound": 57.54792832984669,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1765,
+        "constraints": 1210
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 7,
+      "policy": "uniform_0.5",
+      "net_points": 56.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          119
+        ],
+        "buy": [
+          82
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            408,
+            106,
+            381,
+            449,
+            82,
+            237,
+            419,
+            624,
+            525
+          ],
+          "bench": [
+            567,
+            198,
+            626,
+            484
+          ],
+          "captain": 381,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 54.36146327057596,
+        "best_bound": 54.742943982598845,
+        "gap": 0.0070174842447511465,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1768,
+        "constraints": 1212
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 8,
+      "policy": "uniform_0.5",
+      "net_points": 51.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          419
+        ],
+        "buy": [
+          387
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            408,
+            106,
+            381,
+            82,
+            387,
+            449,
+            237,
+            624,
+            525
+          ],
+          "bench": [
+            567,
+            198,
+            626,
+            484
+          ],
+          "captain": 381,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 53.40358747998756,
+        "best_bound": 53.40358747998756,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1771,
+        "constraints": 1214
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 9,
+      "policy": "uniform_0.5",
+      "net_points": 49.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          525
+        ],
+        "buy": [
+          714
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            408,
+            106,
+            381,
+            82,
+            449,
+            237,
+            387,
+            714,
+            624
+          ],
+          "bench": [
+            567,
+            198,
+            626,
+            484
+          ],
+          "captain": 381,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.98217136021286,
+        "best_bound": 56.25830581576926,
+        "gap": 0.004932542787231973,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1777,
+        "constraints": 1218
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 10,
+      "policy": "uniform_0.5",
+      "net_points": 43.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          82
+        ],
+        "buy": [
+          119
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            408,
+            106,
+            381,
+            449,
+            119,
+            387,
+            237,
+            624,
+            714
+          ],
+          "bench": [
+            567,
+            198,
+            626,
+            484
+          ],
+          "captain": 381,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.89827336907547,
+        "best_bound": 57.12346196004109,
+        "gap": 0.003957740325526532,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1780,
+        "constraints": 1220
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 11,
+      "policy": "uniform_0.5",
+      "net_points": 45.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          714
+        ],
+        "buy": [
+          249
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            106,
+            373,
+            408,
+            381,
+            449,
+            119,
+            237,
+            387,
+            249,
+            624
+          ],
+          "bench": [
+            567,
+            198,
+            626,
+            484
+          ],
+          "captain": 381,
+          "vice": 249
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.96254053870807,
+        "best_bound": 56.96254053870807,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1786,
+        "constraints": 1224
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 12,
+      "policy": "uniform_0.5",
+      "net_points": 48.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          106
+        ],
+        "buy": [
+          72
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            72,
+            408,
+            381,
+            387,
+            119,
+            449,
+            237,
+            624,
+            249
+          ],
+          "bench": [
+            567,
+            198,
+            626,
+            484
+          ],
+          "captain": 381,
+          "vice": 387
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 57.19193206488826,
+        "best_bound": 57.19193206488826,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1798,
+        "constraints": 1232
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 13,
+      "policy": "uniform_0.5",
+      "net_points": 53.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          249
+        ],
+        "buy": [
+          136
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            72,
+            373,
+            408,
+            381,
+            449,
+            119,
+            387,
+            237,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            198,
+            626,
+            484
+          ],
+          "captain": 381,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.22470606936853,
+        "best_bound": 55.64626606304113,
+        "gap": 0.007633539835288119,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 14,
+      "policy": "uniform_0.5",
+      "net_points": 37.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          72
+        ],
+        "buy": [
+          257
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            257,
+            408,
+            381,
+            449,
+            119,
+            237,
+            387,
+            624,
+            136
+          ],
+          "bench": [
+            567,
+            198,
+            626,
+            484
+          ],
+          "captain": 381,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.24658958362362,
+        "best_bound": 56.24658958362362,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 15,
+      "policy": "uniform_0.5",
+      "net_points": 94.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          381
+        ],
+        "buy": [
+          16
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            257,
+            408,
+            449,
+            119,
+            16,
+            387,
+            237,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            626,
+            198,
+            484
+          ],
+          "captain": 449,
+          "vice": 119
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 57.91119180502777,
+        "best_bound": 57.91119180502776,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1816,
+        "constraints": 1244
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 16,
+      "policy": "uniform_0.5",
+      "net_points": 78.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          484
+        ],
+        "buy": [
+          226
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            226,
+            408,
+            16,
+            449,
+            119,
+            387,
+            237,
+            624,
+            136
+          ],
+          "bench": [
+            567,
+            257,
+            198,
+            626
+          ],
+          "captain": 16,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.07124503799586,
+        "best_bound": 55.07124503799586,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1819,
+        "constraints": 1246
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 17,
+      "policy": "uniform_0.5",
+      "net_points": 35.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          119
+        ],
+        "buy": [
+          82
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            257,
+            226,
+            408,
+            16,
+            449,
+            82,
+            237,
+            624,
+            136
+          ],
+          "bench": [
+            567,
+            387,
+            626,
+            198
+          ],
+          "captain": 16,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 52.156861596548126,
+        "best_bound": 52.156861596548126,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1819,
+        "constraints": 1246
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 18,
+      "policy": "uniform_0.5",
+      "net_points": 47.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          449
+        ],
+        "buy": [
+          414
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            257,
+            226,
+            408,
+            16,
+            414,
+            82,
+            237,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            626,
+            198,
+            387
+          ],
+          "captain": 16,
+          "vice": 414
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 53.66665469035235,
+        "best_bound": 53.66665469035235,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1849,
+        "constraints": 1266
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 19,
+      "policy": "uniform_0.5",
+      "net_points": 59.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          387
+        ],
+        "buy": [
+          450
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            257,
+            373,
+            226,
+            16,
+            450,
+            414,
+            82,
+            237,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            408,
+            626,
+            198
+          ],
+          "captain": 16,
+          "vice": 450
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.27254934359773,
+        "best_bound": 56.27254934359773,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1864,
+        "constraints": 1276
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 20,
+      "policy": "uniform_0.5",
+      "net_points": 61.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          237
+        ],
+        "buy": [
+          488
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            373,
+            257,
+            408,
+            16,
+            414,
+            488,
+            82,
+            450,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            226,
+            626,
+            198
+          ],
+          "captain": 16,
+          "vice": 414
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.295124863029315,
+        "best_bound": 56.295124863029315,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1870,
+        "constraints": 1280
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 21,
+      "policy": "uniform_0.5",
+      "net_points": 68.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          373
+        ],
+        "buy": [
+          106
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            106,
+            226,
+            257,
+            16,
+            414,
+            82,
+            488,
+            450,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            408,
+            626,
+            198
+          ],
+          "captain": 16,
+          "vice": 414
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.597947619721936,
+        "best_bound": 56.597947619721936,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1900,
+        "constraints": 1300
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 22,
+      "policy": "uniform_0.5",
+      "net_points": 33.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          450
+        ],
+        "buy": [
+          387
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            257,
+            226,
+            106,
+            16,
+            387,
+            488,
+            414,
+            82,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            198,
+            408,
+            626
+          ],
+          "captain": 16,
+          "vice": 387
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 51.650036273262714,
+        "best_bound": 51.650036273262714,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1870,
+        "constraints": 1280
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 23,
+      "policy": "uniform_0.5",
+      "net_points": 51.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          488
+        ],
+        "buy": [
+          382
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            106,
+            257,
+            226,
+            82,
+            414,
+            382,
+            16,
+            387,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            198,
+            408,
+            626
+          ],
+          "captain": 136,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.298641402290954,
+        "best_bound": 55.298641402290954,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1882,
+        "constraints": 1288
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 24,
+      "policy": "uniform_0.5",
+      "net_points": 46.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          414
+        ],
+        "buy": [
+          21
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            226,
+            257,
+            106,
+            16,
+            21,
+            82,
+            387,
+            382,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            198,
+            408,
+            626
+          ],
+          "captain": 16,
+          "vice": 21
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 53.134321119548105,
+        "best_bound": 53.134321119548105,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1882,
+        "constraints": 1288
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 25,
+      "policy": "uniform_0.5",
+      "net_points": 49.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          16
+        ],
+        "buy": [
+          237
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            226,
+            257,
+            106,
+            21,
+            237,
+            82,
+            382,
+            387,
+            624,
+            136
+          ],
+          "bench": [
+            567,
+            198,
+            408,
+            626
+          ],
+          "captain": 21,
+          "vice": 237
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 53.08940530400314,
+        "best_bound": 53.5064826155022,
+        "gap": 0.007856130787504124,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1858,
+        "constraints": 1272
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 26,
+      "policy": "uniform_0.5",
+      "net_points": 67.0,
+      "hit": 4,
+      "action": {
+        "sell": [
+          106,
+          408
+        ],
+        "buy": [
+          5,
+          8
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            5,
+            8,
+            257,
+            226,
+            21,
+            82,
+            237,
+            382,
+            624,
+            136
+          ],
+          "bench": [
+            567,
+            198,
+            387,
+            626
+          ],
+          "captain": 21,
+          "vice": 5
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 69.27128799274551,
+        "best_bound": 69.27128799274551,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 27,
+      "policy": "uniform_0.5",
+      "net_points": 30.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          387
+        ],
+        "buy": [
+          235
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            5,
+            8,
+            226,
+            235,
+            237,
+            21,
+            82,
+            382,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            257,
+            198,
+            626
+          ],
+          "captain": 235,
+          "vice": 237
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 58.856158095749606,
+        "best_bound": 58.856158095749606,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 28,
+      "policy": "uniform_0.5",
+      "net_points": 57.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          382
+        ],
+        "buy": [
+          457
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            5,
+            8,
+            226,
+            21,
+            82,
+            457,
+            235,
+            237,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            257,
+            198,
+            626
+          ],
+          "captain": 21,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 53.13818284986656,
+        "best_bound": 53.13818284986656,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1810,
+        "constraints": 1240
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 29,
+      "policy": "uniform_0.5",
+      "net_points": 81.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          21
+        ],
+        "buy": [
+          449
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            287,
+            5,
+            8,
+            226,
+            82,
+            449,
+            235,
+            457,
+            237,
+            624,
+            136
+          ],
+          "bench": [
+            567,
+            198,
+            257,
+            626
+          ],
+          "captain": 82,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 54.58178085279803,
+        "best_bound": 54.58178085279803,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1813,
+        "constraints": 1242
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 30,
+      "policy": "uniform_0.5",
+      "net_points": 55.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          287
+        ],
+        "buy": [
+          1
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            1,
+            5,
+            226,
+            8,
+            235,
+            449,
+            237,
+            82,
+            457,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            257,
+            198,
+            626
+          ],
+          "captain": 235,
+          "vice": 136
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.637000151291105,
+        "best_bound": 56.637000151291105,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1816,
+        "constraints": 1244
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 31,
+      "policy": "uniform_0.5",
+      "net_points": 28.0,
+      "hit": 12,
+      "action": {
+        "sell": [
+          5,
+          8,
+          82,
+          257
+        ],
+        "buy": [
+          72,
+          373,
+          485,
+          684
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            567,
+            684,
+            373,
+            72,
+            235,
+            449,
+            485,
+            237,
+            457,
+            624,
+            136
+          ],
+          "bench": [
+            1,
+            198,
+            226,
+            626
+          ],
+          "captain": 235,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 38.08269166675002,
+        "best_bound": 38.08269166675002,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1822,
+        "constraints": 1248
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 32,
+      "policy": "uniform_0.5",
+      "net_points": 71.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          237
+        ],
+        "buy": [
+          21
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            1,
+            373,
+            684,
+            72,
+            449,
+            21,
+            235,
+            485,
+            457,
+            624,
+            136
+          ],
+          "bench": [
+            567,
+            198,
+            226,
+            626
+          ],
+          "captain": 449,
+          "vice": 21
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 55.53800829699974,
+        "best_bound": 55.53800829699974,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1831,
+        "constraints": 1254
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 33,
+      "policy": "uniform_0.5",
+      "net_points": 43.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          684
+        ],
+        "buy": [
+          505
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            1,
+            505,
+            373,
+            72,
+            235,
+            449,
+            21,
+            485,
+            457,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            226,
+            198,
+            626
+          ],
+          "captain": 235,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 56.154083569940674,
+        "best_bound": 56.154083569940674,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1834,
+        "constraints": 1256
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 34,
+      "policy": "uniform_0.5",
+      "net_points": 47.0,
+      "hit": 8,
+      "action": {
+        "sell": [
+          226,
+          235,
+          485
+        ],
+        "buy": [
+          381,
+          387,
+          683
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            1,
+            373,
+            505,
+            683,
+            381,
+            387,
+            449,
+            21,
+            457,
+            624,
+            136
+          ],
+          "bench": [
+            567,
+            72,
+            198,
+            626
+          ],
+          "captain": 381,
+          "vice": 387
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 49.15080748849709,
+        "best_bound": 49.42543715694845,
+        "gap": 0.005587490470337305,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1843,
+        "constraints": 1262
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 35,
+      "policy": "uniform_0.5",
+      "net_points": 67.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          381
+        ],
+        "buy": [
+          303
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            1,
+            72,
+            505,
+            373,
+            449,
+            21,
+            457,
+            303,
+            387,
+            136,
+            624
+          ],
+          "bench": [
+            567,
+            683,
+            198,
+            626
+          ],
+          "captain": 449,
+          "vice": 21
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 54.68976154711486,
+        "best_bound": 54.87572319851559,
+        "gap": 0.0034003010095505115,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1846,
+        "constraints": 1264
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 36,
+      "policy": "uniform_0.5",
+      "net_points": 62.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          624
+        ],
+        "buy": [
+          430
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            1,
+            72,
+            373,
+            505,
+            449,
+            387,
+            21,
+            457,
+            303,
+            430,
+            136
+          ],
+          "bench": [
+            567,
+            683,
+            198,
+            626
+          ],
+          "captain": 430,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 59.907918636468736,
+        "best_bound": 59.907918636468736,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1852,
+        "constraints": 1268
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 37,
+      "policy": "uniform_0.5",
+      "net_points": 62.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          373
+        ],
+        "buy": [
+          5
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            1,
+            5,
+            72,
+            683,
+            21,
+            303,
+            449,
+            387,
+            457,
+            430,
+            136
+          ],
+          "bench": [
+            567,
+            505,
+            198,
+            626
+          ],
+          "captain": 430,
+          "vice": 5
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 58.58664777868175,
+        "best_bound": 59.02464042301911,
+        "gap": 0.00747598063626933,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1870,
+        "constraints": 1280
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 38,
+      "policy": "uniform_0.5",
+      "net_points": 40.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          457
+        ],
+        "buy": [
+          517
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            1,
+            5,
+            72,
+            505,
+            387,
+            517,
+            21,
+            303,
+            449,
+            430,
+            136
+          ],
+          "bench": [
+            567,
+            198,
+            683,
+            626
+          ],
+          "captain": 430,
+          "vice": 387
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 58.287173635007406,
+        "best_bound": 58.287173635007406,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1876,
+        "constraints": 1284
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 1,
+      "policy": "ownership_no_hits",
+      "net_points": 34.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            370,
+            610,
+            575,
+            38,
+            235,
+            381,
+            382,
+            249,
+            64,
+            666
+          ],
+          "bench": [
+            33,
+            497,
+            641,
+            496
+          ],
+          "captain": 235,
+          "vice": 249
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 465.9,
+        "best_bound": 466.925,
+        "gap": 0.0022000429276669547,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1912,
+        "constraints": 1306
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 2,
+      "policy": "ownership_no_hits",
+      "net_points": 57.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          370
+        ],
+        "buy": [
+          373
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            575,
+            373,
+            610,
+            235,
+            381,
+            382,
+            497,
+            249,
+            64,
+            666
+          ],
+          "bench": [
+            33,
+            641,
+            496,
+            38
+          ],
+          "captain": 235,
+          "vice": 381
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 411.2,
+        "best_bound": 411.2,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1924,
+        "constraints": 1316
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 3,
+      "policy": "ownership_no_hits",
+      "net_points": 42.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          235
+        ],
+        "buy": [
+          427
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            575,
+            373,
+            610,
+            38,
+            381,
+            427,
+            382,
+            249,
+            666,
+            64
+          ],
+          "bench": [
+            33,
+            497,
+            641,
+            496
+          ],
+          "captain": 249,
+          "vice": 381
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 392.6,
+        "best_bound": 392.6,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1924,
+        "constraints": 1316
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 4,
+      "policy": "ownership_no_hits",
+      "net_points": 81.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          497
+        ],
+        "buy": [
+          82
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            575,
+            373,
+            610,
+            381,
+            82,
+            427,
+            382,
+            249,
+            666,
+            64
+          ],
+          "bench": [
+            33,
+            38,
+            641,
+            496
+          ],
+          "captain": 249,
+          "vice": 381
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 416.0,
+        "best_bound": 416.0,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1825,
+        "constraints": 1250
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 5,
+      "policy": "ownership_no_hits",
+      "net_points": 36.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          38
+        ],
+        "buy": [
+          224
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            575,
+            373,
+            224,
+            381,
+            82,
+            427,
+            382,
+            249,
+            666,
+            64
+          ],
+          "bench": [
+            33,
+            641,
+            496,
+            610
+          ],
+          "captain": 249,
+          "vice": 381
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 442.0,
+        "best_bound": 442.0,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1831,
+        "constraints": 1254
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 6,
+      "policy": "ownership_no_hits",
+      "net_points": 32.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          382
+        ],
+        "buy": [
+          582
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            575,
+            373,
+            224,
+            82,
+            381,
+            427,
+            582,
+            249,
+            666,
+            64
+          ],
+          "bench": [
+            33,
+            641,
+            496,
+            610
+          ],
+          "captain": 249,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 460.6,
+        "best_bound": 460.6,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1765,
+        "constraints": 1210
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 7,
+      "policy": "ownership_no_hits",
+      "net_points": 56.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          641
+        ],
+        "buy": [
+          260
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            575,
+            260,
+            373,
+            224,
+            82,
+            381,
+            427,
+            582,
+            249,
+            666
+          ],
+          "bench": [
+            33,
+            64,
+            610,
+            496
+          ],
+          "captain": 249,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 466.3,
+        "best_bound": 466.3,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1768,
+        "constraints": 1212
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 8,
+      "policy": "ownership_no_hits",
+      "net_points": 45.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          224
+        ],
+        "buy": [
+          5
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            575,
+            260,
+            5,
+            373,
+            82,
+            381,
+            582,
+            427,
+            249,
+            666
+          ],
+          "bench": [
+            33,
+            64,
+            610,
+            496
+          ],
+          "captain": 82,
+          "vice": 249
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 470.9,
+        "best_bound": 470.9,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1771,
+        "constraints": 1214
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 9,
+      "policy": "ownership_no_hits",
+      "net_points": 61.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            5,
+            260,
+            575,
+            373,
+            82,
+            582,
+            381,
+            427,
+            249,
+            666
+          ],
+          "bench": [
+            33,
+            64,
+            610,
+            496
+          ],
+          "captain": 82,
+          "vice": 249
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 462.5,
+        "best_bound": 466.25,
+        "gap": 0.008108108108108109,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1777,
+        "constraints": 1218
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 10,
+      "policy": "ownership_no_hits",
+      "net_points": 72.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          381,
+          666
+        ],
+        "buy": [
+          119,
+          430
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            5,
+            260,
+            575,
+            373,
+            82,
+            582,
+            119,
+            427,
+            430,
+            249
+          ],
+          "bench": [
+            33,
+            64,
+            610,
+            496
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 494.4,
+        "best_bound": 494.4,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1780,
+        "constraints": 1220
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 11,
+      "policy": "ownership_no_hits",
+      "net_points": 32.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          64
+        ],
+        "buy": [
+          283
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            5,
+            260,
+            575,
+            373,
+            82,
+            119,
+            427,
+            430,
+            249,
+            283
+          ],
+          "bench": [
+            33,
+            582,
+            610,
+            496
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 498.2,
+        "best_bound": 498.2,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1786,
+        "constraints": 1224
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 12,
+      "policy": "ownership_no_hits",
+      "net_points": 25.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          5
+        ],
+        "buy": [
+          8
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            260,
+            575,
+            8,
+            373,
+            82,
+            119,
+            427,
+            430,
+            249,
+            283
+          ],
+          "bench": [
+            33,
+            582,
+            610,
+            496
+          ],
+          "captain": 430,
+          "vice": 249
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 476.325,
+        "best_bound": 476.325,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1798,
+        "constraints": 1232
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 13,
+      "policy": "ownership_no_hits",
+      "net_points": 24.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          610
+        ],
+        "buy": [
+          72
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            260,
+            575,
+            8,
+            373,
+            72,
+            82,
+            119,
+            430,
+            249,
+            283
+          ],
+          "bench": [
+            33,
+            582,
+            427,
+            496
+          ],
+          "captain": 430,
+          "vice": 249
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 471.6,
+        "best_bound": 471.6,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 14,
+      "policy": "ownership_no_hits",
+      "net_points": 69.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          582
+        ],
+        "buy": [
+          21
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            260,
+            8,
+            575,
+            373,
+            82,
+            119,
+            21,
+            430,
+            249,
+            283
+          ],
+          "bench": [
+            33,
+            427,
+            72,
+            496
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 490.7,
+        "best_bound": 490.7,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 15,
+      "policy": "ownership_no_hits",
+      "net_points": 48.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            260,
+            8,
+            575,
+            373,
+            72,
+            82,
+            119,
+            430,
+            249,
+            283
+          ],
+          "bench": [
+            33,
+            21,
+            427,
+            496
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 474.4,
+        "best_bound": 474.4,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 0,
+        "variables": 1816,
+        "constraints": 1244
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 16,
+      "policy": "ownership_no_hits",
+      "net_points": 60.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          119,
+          283
+        ],
+        "buy": [
+          136,
+          414
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            260,
+            575,
+            8,
+            373,
+            82,
+            414,
+            21,
+            430,
+            136,
+            249
+          ],
+          "bench": [
+            33,
+            427,
+            72,
+            496
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 457.6249999999998,
+        "best_bound": 457.6249999999998,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1819,
+        "constraints": 1246
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 17,
+      "policy": "ownership_no_hits",
+      "net_points": 75.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            260,
+            8,
+            575,
+            373,
+            82,
+            414,
+            21,
+            430,
+            249,
+            136
+          ],
+          "bench": [
+            33,
+            72,
+            427,
+            496
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 471.025,
+        "best_bound": 474.5,
+        "gap": 0.007377527732073718,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1822,
+        "constraints": 1248
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 18,
+      "policy": "ownership_no_hits",
+      "net_points": 61.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            260,
+            8,
+            575,
+            373,
+            82,
+            414,
+            21,
+            430,
+            136,
+            249
+          ],
+          "bench": [
+            33,
+            72,
+            427,
+            496
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 479.70000000000005,
+        "best_bound": 484.05,
+        "gap": 0.009068167604752899,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1852,
+        "constraints": 1268
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 19,
+      "policy": "ownership_no_hits",
+      "net_points": 42.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          72,
+          136,
+          427
+        ],
+        "buy": [
+          623,
+          661,
+          678
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            260,
+            575,
+            373,
+            8,
+            82,
+            414,
+            21,
+            430,
+            661,
+            249
+          ],
+          "bench": [
+            33,
+            623,
+            496,
+            678
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 472.6,
+        "best_bound": 472.6,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1867,
+        "constraints": 1278
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 20,
+      "policy": "ownership_no_hits",
+      "net_points": 30.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          21
+        ],
+        "buy": [
+          329
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            260,
+            8,
+            575,
+            373,
+            82,
+            414,
+            329,
+            430,
+            661,
+            249
+          ],
+          "bench": [
+            33,
+            623,
+            496,
+            678
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 468.7,
+        "best_bound": 468.7,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1873,
+        "constraints": 1282
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 21,
+      "policy": "ownership_no_hits",
+      "net_points": 63.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          661
+        ],
+        "buy": [
+          136
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            260,
+            575,
+            8,
+            373,
+            82,
+            414,
+            329,
+            430,
+            136,
+            249
+          ],
+          "bench": [
+            33,
+            623,
+            496,
+            678
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 455.6,
+        "best_bound": 455.6,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1903,
+        "constraints": 1302
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 22,
+      "policy": "ownership_no_hits",
+      "net_points": 39.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          678
+        ],
+        "buy": [
+          5
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            260,
+            5,
+            575,
+            8,
+            373,
+            82,
+            414,
+            430,
+            136,
+            249
+          ],
+          "bench": [
+            33,
+            329,
+            623,
+            496
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 470.7,
+        "best_bound": 470.7,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1870,
+        "constraints": 1280
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 23,
+      "policy": "ownership_no_hits",
+      "net_points": 62.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          414
+        ],
+        "buy": [
+          47
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            260,
+            5,
+            8,
+            575,
+            82,
+            47,
+            329,
+            430,
+            136,
+            249
+          ],
+          "bench": [
+            33,
+            373,
+            623,
+            496
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 475.9,
+        "best_bound": 475.9,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1883,
+        "constraints": 1290
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 24,
+      "policy": "ownership_no_hits",
+      "net_points": 55.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          47
+        ],
+        "buy": [
+          21
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            5,
+            260,
+            8,
+            373,
+            82,
+            21,
+            329,
+            430,
+            136,
+            249
+          ],
+          "bench": [
+            33,
+            575,
+            623,
+            496
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 478.6,
+        "best_bound": 478.89999999999986,
+        "gap": 0.0006268282490594251,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1882,
+        "constraints": 1288
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 25,
+      "policy": "ownership_no_hits",
+      "net_points": 61.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            5,
+            260,
+            8,
+            575,
+            82,
+            21,
+            329,
+            430,
+            249,
+            136
+          ],
+          "bench": [
+            33,
+            373,
+            623,
+            496
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 484.8,
+        "best_bound": 484.8,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1858,
+        "constraints": 1272
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 26,
+      "policy": "ownership_no_hits",
+      "net_points": 73.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          329,
+          373
+        ],
+        "buy": [
+          47,
+          156
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            5,
+            260,
+            8,
+            575,
+            82,
+            21,
+            47,
+            430,
+            249,
+            136
+          ],
+          "bench": [
+            33,
+            623,
+            156,
+            496
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 492.9999999999999,
+        "best_bound": 492.9999999999999,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 27,
+      "policy": "ownership_no_hits",
+      "net_points": 42.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          575
+        ],
+        "buy": [
+          226
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            5,
+            260,
+            8,
+            226,
+            82,
+            21,
+            47,
+            430,
+            249,
+            136
+          ],
+          "bench": [
+            33,
+            156,
+            496,
+            623
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 497.4,
+        "best_bound": 497.4,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1807,
+        "constraints": 1238
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 28,
+      "policy": "ownership_no_hits",
+      "net_points": 61.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          226
+        ],
+        "buy": [
+          373
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            5,
+            260,
+            8,
+            373,
+            82,
+            21,
+            47,
+            430,
+            249,
+            136
+          ],
+          "bench": [
+            33,
+            156,
+            496,
+            623
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 499.8,
+        "best_bound": 499.8,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1810,
+        "constraints": 1240
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 29,
+      "policy": "ownership_no_hits",
+      "net_points": 69.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            5,
+            260,
+            373,
+            8,
+            82,
+            47,
+            21,
+            430,
+            249,
+            136
+          ],
+          "bench": [
+            33,
+            156,
+            496,
+            623
+          ],
+          "captain": 82,
+          "vice": 430
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 462.375,
+        "best_bound": 462.375,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 0,
+        "variables": 1813,
+        "constraints": 1242
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 30,
+      "policy": "ownership_no_hits",
+      "net_points": 39.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            5,
+            260,
+            373,
+            8,
+            82,
+            21,
+            47,
+            430,
+            249,
+            136
+          ],
+          "bench": [
+            33,
+            623,
+            156,
+            496
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 491.40000000000003,
+        "best_bound": 494.15000000000003,
+        "gap": 0.005596255596255596,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1816,
+        "constraints": 1244
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 31,
+      "policy": "ownership_no_hits",
+      "net_points": 43.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          21,
+          82,
+          430
+        ],
+        "buy": [
+          329,
+          449,
+          661
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            373,
+            156,
+            5,
+            449,
+            329,
+            47,
+            623,
+            249,
+            136,
+            661
+          ],
+          "bench": [
+            33,
+            8,
+            260,
+            496
+          ],
+          "captain": 249,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 342.3,
+        "best_bound": 342.3,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1822,
+        "constraints": 1248
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 32,
+      "policy": "ownership_no_hits",
+      "net_points": 61.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          496
+        ],
+        "buy": [
+          82
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            5,
+            373,
+            260,
+            82,
+            449,
+            329,
+            47,
+            249,
+            136,
+            661
+          ],
+          "bench": [
+            33,
+            8,
+            623,
+            156
+          ],
+          "captain": 82,
+          "vice": 249
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 462.4,
+        "best_bound": 462.4,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1831,
+        "constraints": 1254
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 33,
+      "policy": "ownership_no_hits",
+      "net_points": 56.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          8
+        ],
+        "buy": [
+          72
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            470,
+            5,
+            260,
+            373,
+            72,
+            82,
+            449,
+            47,
+            329,
+            249,
+            136
+          ],
+          "bench": [
+            33,
+            623,
+            156,
+            661
+          ],
+          "captain": 82,
+          "vice": 249
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 442.8,
+        "best_bound": 442.8,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1831,
+        "constraints": 1254
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 34,
+      "policy": "ownership_no_hits",
+      "net_points": 38.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          33
+        ],
+        "buy": [
+          1
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            1,
+            5,
+            373,
+            72,
+            449,
+            47,
+            329,
+            623,
+            136,
+            249,
+            661
+          ],
+          "bench": [
+            470,
+            82,
+            156,
+            260
+          ],
+          "captain": 449,
+          "vice": 5
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 296.2,
+        "best_bound": 296.2,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1840,
+        "constraints": 1260
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 35,
+      "policy": "ownership_no_hits",
+      "net_points": 57.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            1,
+            5,
+            260,
+            373,
+            72,
+            82,
+            449,
+            47,
+            329,
+            249,
+            136
+          ],
+          "bench": [
+            470,
+            623,
+            156,
+            661
+          ],
+          "captain": 82,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 435.5,
+        "best_bound": 438.575,
+        "gap": 0.0070608495981630045,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1843,
+        "constraints": 1262
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 36,
+      "policy": "ownership_no_hits",
+      "net_points": 87.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          449,
+          661
+        ],
+        "buy": [
+          430,
+          711
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            1,
+            5,
+            260,
+            373,
+            72,
+            82,
+            47,
+            329,
+            430,
+            249,
+            136
+          ],
+          "bench": [
+            470,
+            623,
+            156,
+            711
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 455.8000000000036,
+        "best_bound": 455.8000000000036,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1849,
+        "constraints": 1266
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 37,
+      "policy": "ownership_no_hits",
+      "net_points": 66.0,
+      "hit": 0,
+      "action": {
+        "sell": [],
+        "buy": [],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            1,
+            5,
+            260,
+            373,
+            72,
+            82,
+            47,
+            329,
+            430,
+            249,
+            136
+          ],
+          "bench": [
+            470,
+            623,
+            156,
+            711
+          ],
+          "captain": 430,
+          "vice": 82
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 453.8,
+        "best_bound": 453.8,
+        "gap": 0.0,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1867,
+        "constraints": 1278
+      }
+    },
+    {
+      "season": "2025/26",
+      "event": 38,
+      "policy": "ownership_no_hits",
+      "net_points": 45.0,
+      "hit": 0,
+      "action": {
+        "sell": [
+          47,
+          249
+        ],
+        "buy": [
+          252,
+          449
+        ],
+        "chip": null,
+        "lineup": {
+          "xi": [
+            1,
+            5,
+            260,
+            373,
+            72,
+            449,
+            82,
+            329,
+            430,
+            136,
+            252
+          ],
+          "bench": [
+            470,
+            623,
+            156,
+            711
+          ],
+          "captain": 430,
+          "vice": 449
+        }
+      },
+      "solver": {
+        "status": "Optimal",
+        "objective": 443.9,
+        "best_bound": 446.8,
+        "gap": 0.006533002928587597,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 1873,
+        "constraints": 1282
+      }
+    }
+  ],
+  "promoted": false,
+  "directory": "data/models/horizon-trial-10b14e6bded9a05212a0",
+  "replication_totals": {
+    "uniform_0.5": 2000.0,
+    "reference": 1878.0,
+    "ownership_no_hits": 1999.0
+  },
+  "replication_metrics": {
+    "reference": {
+      "immediate": {
+        "n": 29315,
+        "rmse": 1.8981268478813298,
+        "mae": 0.9151379897596836,
+        "bias": -0.0633818796177584
+      },
+      "future": {
+        "n": 166695,
+        "rmse": 2.060361712262266,
+        "mae": 1.0820300506216685,
+        "bias": 0.006017216931517513
+      },
+      "relevant_immediate": {
+        "n": 3432,
+        "rmse": 2.8965431792189746,
+        "mae": 1.8857594940328979,
+        "bias": -0.03909050240614296
+      },
+      "participation": {
+        "brier": 0.1218970627142319,
+        "log_loss": 0.39451393830353154
+      }
+    },
+    "uniform_0.5": {
+      "immediate": {
+        "n": 29315,
+        "rmse": 1.8866196814494902,
+        "mae": 0.9216327261621309,
+        "bias": -0.03380986590406771
+      },
+      "future": {
+        "n": 166695,
+        "rmse": 2.029663165428751,
+        "mae": 1.0682263167614812,
+        "bias": -0.0016657596927334235
+      },
+      "relevant_immediate": {
+        "n": 3432,
+        "rmse": 2.8742095438237776,
+        "mae": 1.8946969045250832,
+        "bias": 0.030732706077938113
+      },
+      "participation": {
+        "brier": 0.11272444674945957,
+        "log_loss": 0.35147659645586243
+      }
+    },
+    "uniform_1": {
+      "immediate": {
+        "n": 29315,
+        "rmse": 1.8887153666853627,
+        "mae": 0.9355624911005046,
+        "bias": -0.004237852190377017
+      },
+      "future": {
+        "n": 166695,
+        "rmse": 2.0208358660768564,
+        "mae": 1.0665341854688375,
+        "bias": -0.009348736316984355
+      },
+      "relevant_immediate": {
+        "n": 3432,
+        "rmse": 2.8764170544812124,
+        "mae": 1.9190563792004722,
+        "bias": 0.10055591456201916
+      },
+      "participation": {
+        "brier": 0.11009310924327427,
+        "log_loss": 0.34938174424296514
+      }
+    }
+  },
+  "pooled_return_delta_95ci": [
+    -0.7894736842105263,
+    5.2105263157894735
+  ],
+  "ordinary_gate_passed": false,
+  "id": "74273585e7cf9511b3bba85129414d594b1024a54e2d9d3e1d4a2e7250fbd33c"
+}

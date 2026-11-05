@@ -7,6 +7,7 @@ import gzip
 import hashlib
 import json
 import tempfile
+from importlib.metadata import version
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -34,6 +35,17 @@ def verify(archive: Path):
         "selected_plan",
         "pipeline_replay",
         "shadow_cohort",
+    )
+    kinds += tuple(
+        k
+        for k in (
+            "horizon_refinement",
+            "future_policy_replay",
+            "future_policy_diagnostic",
+            "future_policy_suite",
+            "future_distribution_validation",
+        )
+        if original.list(k, 1)
     )
     expected_ids = {k: original.get(k)["id"] for k in kinds}
     secrets = [v.encode() for k, v in dotenv_values(source / ".env").items() if k.endswith("API_KEY") and v]
@@ -107,6 +119,33 @@ def verify(archive: Path):
                 raise ValueError("Downloaded database failed full integrity verification")
         report = restored.get("pipeline_replay")
         pipeline = verify_pipeline_replay(restored, report)
+        future = {}
+        if restored.list("future_policy_replay", 1):
+            from fpl_intelligence.future_policy_verification import verify_future_policy
+
+            future["earlier_policy"] = verify_future_policy(restored, restored.get("future_policy_replay"))
+            if restored.list("future_policy_diagnostic", 1):
+                future["current_policy"] = verify_future_policy(
+                    restored, restored.get("future_policy_diagnostic")
+                )
+        identity = restored.get("decision_model").get("future_horizon_model_id")
+        if identity:
+            from fpl_intelligence.future_expert import load_expert
+
+            spec = restored.get("future_horizon_model", identity)
+            before, after = load_expert(original, spec), load_expert(restored, spec)
+            for name in spec["models"]:
+                values = np.random.default_rng(71).normal(size=(3, before[name].num_feature()))
+                if not np.array_equal(
+                    before[name].predict(values, num_threads=1), after[name].predict(values, num_threads=1)
+                ):
+                    raise ValueError("Relocated future expert inference differs")
+            if (
+                hashlib.sha256(restored.artifact_path(spec["data_path"]).read_bytes()).hexdigest()
+                != spec["data_hash"]
+            ):
+                raise ValueError("Relocated future expert training data differs")
+            future["relocated_expert_inference"] = "identical"
         shadow = advance_shadow_accounts(restored)
         finalized = {e["id"] for e in restored.get("market")["events"] if e.get("data_checked")}
         if any(r["event"] not in finalized for r in shadow["outcomes"]):
@@ -145,12 +184,14 @@ def verify(archive: Path):
             "database": "ok",
             "credentials": "excluded",
             "pipeline": pipeline,
+            "future_expert": future,
             "prospective_pending": shadow["pending_deadlines"],
             "restored_worlds_identical": len(actual),
             "account_ids": expected_ids,
             "plan_id": plan["id"],
         }
-    atomic_json(runtime / "handoff-0.8-verification.json", result)
+    release = ".".join(version("fpl-intelligence").split(".")[:2])
+    atomic_json(runtime / f"handoff-{release}-verification.json", result)
     print(json.dumps(result))
     return result
 

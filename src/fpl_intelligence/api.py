@@ -96,7 +96,7 @@ def create_app(root=None):
             stop.set()
             thread.join(timeout=1)
 
-    app = FastAPI(title="FPL Intelligence", version="0.8.0", lifespan=lifespan)
+    app = FastAPI(title="FPL Intelligence", version="0.9.0", lifespan=lifespan)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
 
     @app.middleware("http")
@@ -350,6 +350,22 @@ def create_app(root=None):
                     artifact = {k: v for k, v in artifact.items() if k not in ("match_audit", "fixtures")}
                     artifact["players"] = [r for r in artifact["players"] if r["event"] == event]
                 if kind == "decision_model":
+                    future_id = artifact.get("future_horizon_model_id")
+                    if future_id:
+                        expert = store.get("future_horizon_model", future_id)
+                        result["future_horizon_model"] = {
+                            k: expert[k]
+                            for k in (
+                                "id",
+                                "fit_before",
+                                "fit_as_of",
+                                "training_evidence",
+                                "weight",
+                                "max_lead",
+                                "learning",
+                            )
+                        }
+                        result["future_horizon_model"]["feature_count"] = len(expert["features"])
                     artifact = {
                         k: v
                         for k, v in artifact.items()
@@ -428,6 +444,11 @@ def create_app(root=None):
             "weekly_baseline_comparison",
             "pipeline_replay",
             "pipeline_replay_progress",
+            "horizon_refinement",
+            "future_distribution_validation",
+            "future_policy_replay",
+            "future_policy_diagnostic",
+            "future_policy_progress",
             "shadow_evaluation",
             "shadow_registry",
             "shadow_cohort",
@@ -449,6 +470,10 @@ def create_app(root=None):
                     continue
                 if kind == "pipeline_replay":
                     artifact = {k: v for k, v in artifact.items() if k != "epochs"}
+                if kind in ("future_policy_replay", "future_policy_diagnostic"):
+                    artifact["weeks"] = [
+                        {k: v for k, v in r.items() if k != "next_state"} for r in artifact["weeks"]
+                    ]
                 if kind == "consensus_model":
                     artifact = {k: v for k, v in artifact.items() if k not in ("tree_spec", "reference_spec")}
                     artifact["weeks"] = [
@@ -686,6 +711,25 @@ def create_app(root=None):
     @app.get("/api/consensus/model")
     def consensus_model():
         return store.get("consensus_model")
+
+    @app.get("/api/horizon/expert")
+    def future_expert_evidence():
+        active = store.get("decision_model").get("future_horizon_model_id")
+        return {
+            "active": store.get("future_horizon_model", active) if active else None,
+            "forecast_validation": store.get("horizon_refinement")
+            if store.list("horizon_refinement", 1)
+            else None,
+            "distribution_validation": store.get("future_distribution_validation")
+            if store.list("future_distribution_validation", 1)
+            else None,
+            "policy_validation": store.get("future_policy_replay")
+            if store.list("future_policy_replay", 1)
+            else None,
+            "current_diagnostic": store.get("future_policy_diagnostic")
+            if store.list("future_policy_diagnostic", 1)
+            else None,
+        }
 
     @app.post("/api/replay/pipeline")
     def replay_pipeline():

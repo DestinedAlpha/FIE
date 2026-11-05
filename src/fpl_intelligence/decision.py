@@ -366,6 +366,9 @@ def ensure_history(store: Store):
 
 
 def train_decisions(store: Store, neural=True):
+    active_future = None
+    if store.list("decision_model", 1):
+        active_future = store.get("decision_model").get("future_horizon_model_id")
     protocol = {
         "version": VERSION,
         "features": NAMES,
@@ -511,6 +514,30 @@ def train_decisions(store: Store, neural=True):
     # A failed weekly refit is a candidate, not a replacement for the last
     # accepted production model. Keep the usable path available.
     kind = "decision_model" if summary["promoted"] else "decision_candidate"
+    acceptance_id = None
+    if kind == "decision_model" and active_future:
+        acceptance_id = store.get("future_horizon_model", active_future)["acceptance_id"]
+    elif (
+        kind == "decision_model"
+        and store.list("future_policy_replay", 1)
+        and store.list("future_distribution_validation", 1)
+    ):
+        accepted = store.get("future_policy_replay")
+        distribution = store.get("future_distribution_validation")
+        if (
+            accepted["policy_gate_passed"]
+            and distribution["passed"]
+            and distribution["protocol"]["refinement_id"] == accepted["protocol"]["refinement_id"]
+            and distribution["protocol"]["baseline_id"] == accepted["protocol"]["baseline_id"]
+        ):
+            from .future_policy_verification import verify_future_policy
+
+            verify_future_policy(store, accepted)
+            acceptance_id = accepted["id"]
+    if acceptance_id:
+        from .future_training import refit_expert
+
+        summary["future_horizon_model_id"] = refit_expert(store, acceptance_id)["id"]
     summary["id"] = store.put(kind, summary)
     atomic_json(
         Path("artifacts/evaluations/decision_model.json"),
@@ -674,6 +701,7 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
                 availability = recovery_path(player.raw, information_time(store), elapsed, recovery)
             if not player.selectable:
                 availability = 0
+            suspension_served = False
             if f["id"] in suspended.get(player.id, set()):
                 availability = 0
             elif player.status == "s" and suspended.get(player.id):
@@ -681,6 +709,8 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
                 # medical recovery curve. Separate concurrent injury news can
                 # still be supplied as an explicit scenario.
                 availability = 1
+                suspension_served = True
+            base_availability = availability
             for belief in beliefs:
                 if belief["player_id"] == player.id:
                     values[belief["parameter"]] = belief["value"]
@@ -705,6 +735,8 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
                     "x": [values[k] for k in NAMES],
                     "profile": p,
                     "availability": availability,
+                    "base_availability": base_availability,
+                    "suspension_served": suspension_served,
                     "minutes_cap": cap,
                     "kickoff_time": f.get("kickoff_time"),
                     "recent_history": history[-8:],
@@ -783,6 +815,23 @@ def learned_forecast(
         _, probabilities, conditional = predict_models(bundle, matrix, [r["dc_probability"] for r in rows])
         raw_start = bundle["starter"].predict(matrix, num_threads=1)
         starts = curve_apply(raw_start, spec["curves"]["start"])
+    availability_included = np.zeros(len(rows), dtype=bool)
+    if spec.get("future_horizon_model_id"):
+        from .future_expert import combine
+
+        probabilities, conditional, starts, availability_included = combine(
+            store,
+            spec,
+            rows,
+            scheduled,
+            market,
+            players,
+            probabilities,
+            conditional,
+            starts,
+            start,
+            information_time(store),
+        )
     ids = sorted(players)
     index = {p: i for i, p in enumerate(ids)}
     arrays: dict[str, Any] = {}
@@ -821,8 +870,9 @@ def learned_forecast(
             player = players[pid]
             rng = np.random.default_rng(np.random.SeedSequence([seed, row["fixture_id"], pid]))
             probs = probabilities[i].copy()
-            probs[1:] *= row["availability"]
-            probs[0] = 1 - probs[1:].sum()
+            if not availability_included[i]:
+                probs[1:] *= row["availability"]
+                probs[0] = 1 - probs[1:].sum()
             cap = row["minutes_cap"]
             if cap < 60:
                 probs[1] += probs[2:].sum()
@@ -893,7 +943,11 @@ def learned_forecast(
                 component_totals[key][column] += value
             marginal_probabilities = probs.mean(axis=0) if probs.ndim == 2 else probs
             start_prob[column] = max(
-                start_prob[column], min(1 - marginal_probabilities[0], starts[i] * row["availability"])
+                start_prob[column],
+                min(
+                    1 - marginal_probabilities[0],
+                    starts[i] if availability_included[i] else starts[i] * row["availability"],
+                ),
             )
             fixture_count[column] += 1
             fixture_records.append(
@@ -951,6 +1005,7 @@ def learned_forecast(
         "issued_at": now(),
         "cutoff": information_time(store),
         "information_cutoff": information_time(store),
+        "future_horizon_model_id": spec.get("future_horizon_model_id"),
         "season": market["season"],
         "start_event": start,
         "end_event": end_event,

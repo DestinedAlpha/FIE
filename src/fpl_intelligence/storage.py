@@ -180,10 +180,9 @@ class Store:
         value = Path(reference)
         if ".." in value.parts:
             raise ValueError("Unrecognized local artifact reference")
-        if "models" in value.parts:
-            position = len(value.parts) - 1 - tuple(reversed(value.parts)).index("models")
-            if position < len(value.parts) - 1:
-                return self.root / "models" / Path(*value.parts[position + 1 :])
-        if len(value.parts) < 2 or value.parts[-2] not in {"scenarios", "models", "features", "normalized"}:
+        categories = {"scenarios", "models", "features", "normalized"}
+        positions = [(i, part) for i, part in enumerate(value.parts[:-1]) if part in categories]
+        if not positions:
             raise ValueError("Unrecognized local artifact reference")
-        return self.root / value.parts[-2] / value.name
+        position, category = positions[-1]
+        return self.root / category / Path(*value.parts[position + 1 :])

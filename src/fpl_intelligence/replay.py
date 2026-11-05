@@ -172,6 +172,38 @@ async def capture_replay_inputs(store, season, events):
     return results
 
 
+def capture_observed_inputs(store, bootstrap, fixtures):
+    """Retain a real predeadline registry and schedule for later learning."""
+    from .ingestion import season_of
+
+    event = next((e for e in bootstrap["events"] if e.get("is_next")), None)
+    if event is None or moment(now()) >= moment(event["deadline_time"]):
+        return None
+    _, bm = store.latest("bootstrap", content_hash=digest(bootstrap))
+    _, fm = store.latest("fixtures", content_hash=digest(fixtures))
+    deadline = event["deadline_time"]
+    if any(moment(m["captured_at"]) >= moment(deadline) for m in (bm, fm)):
+        raise ValueError("Observed replay sources must precede their target deadline")
+    body = {
+        "season": season_of(bootstrap),
+        "event": event["id"],
+        "deadline": deadline,
+        "bootstrap": bootstrap,
+        "bootstrap_hash": bm["hash"],
+        "bootstrap_proof": {
+            "source_captured_at": bm["captured_at"],
+            "temporal_track": "Locally observed before deadline",
+        },
+        "fixture_proof": {
+            "fixtures": fixtures,
+            "source_captured_at": fm["captured_at"],
+            "file_sha256": fm["hash"],
+            "temporal_track": "Locally observed before deadline",
+        },
+    }
+    return body | {"id": store.put("replay_inputs", body)}
+
+
 def deadline_rows(originals, bootstrap, schedule, season, event, deadline):
     """The same core feature transform as serving, using only completed past facts."""
     players = {

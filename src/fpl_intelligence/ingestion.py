@@ -54,6 +54,9 @@ class Official:
             from .context_archive import capture_live_context
 
             capture_live_context(self.store, bootstrap)
+            from .replay import capture_observed_inputs
+
+            capture_observed_inputs(self.store, bootstrap, fixtures)
             current = next((e["id"] for e in bootstrap["events"] if e.get("is_current")), None)
             tasks: list[Any] = []
             if histories:

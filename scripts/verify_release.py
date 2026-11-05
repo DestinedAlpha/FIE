@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from importlib.metadata import version
 from pathlib import Path
 
 from fpl_intelligence.domain import TeamState
@@ -33,6 +34,8 @@ def main():
     kinds = (
         "fusion_model",
         "horizon_model",
+        "transfer_policy_model",
+        "personalized_policy_analysis",
         "manager_behavior",
         "manager_policy",
         "market_model",
@@ -79,6 +82,11 @@ def main():
         hashlib.sha256((directory / "network.pt").read_bytes()).hexdigest() == fusion["network_spec"]["hash"]
     )
     horizon = artifacts["horizon_model"]
+    assert artifacts["transfer_policy_model"]["horizon_model_id"] == horizon["id"]
+    personalized = artifacts["personalized_policy_analysis"]
+    assert personalized["policy_model_id"] == artifacts["transfer_policy_model"]["id"]
+    assert personalized["horizon_model_id"] == horizon["id"]
+    assert personalized["state_id"] == state["id"] and personalized["market_id"] == market["id"]
     path = store.root / "models" / horizon["directory"] / "value.txt"
     assert hashlib.sha256(path.read_bytes()).hexdigest() == horizon["model_hash"]
     for kind in ("timing_analysis", "price_bridge", "population_forecast", "coherent_comparison"):
@@ -132,13 +140,46 @@ def main():
     from fpl_intelligence.availability import moment
 
     assert moment(artifacts["shadow_cohort"]["frozen_at"]) < moment(artifacts["shadow_cohort"]["deadline"])
+    future = {}
+    if store.list("future_policy_replay", 1):
+        from fpl_intelligence.future_policy_verification import verify_future_policy
+
+        accepted = store.get("future_policy_replay")
+        future["earlier_policy"] = verify_future_policy(store, accepted)
+        future["earlier_points"] = accepted["candidate_points"]
+        future["earlier_reference"] = accepted["baseline_points"]
+        future["policy_gate_passed"] = accepted["policy_gate_passed"]
+        if store.list("future_policy_diagnostic", 1):
+            diagnostic = store.get("future_policy_diagnostic")
+            future["current_policy"] = verify_future_policy(store, diagnostic)
+            future["current_points"] = diagnostic["candidate_points"]
+            future["current_weekly_points"] = [
+                {"gw": r["event"], "points": r["net_points"]} for r in diagnostic["weeks"]
+            ]
+    identity = store.get("decision_model").get("future_horizon_model_id")
+    if identity:
+        from fpl_intelligence.future_expert import load_expert
+
+        expert = store.get("future_horizon_model", identity)
+        distribution = store.get("future_distribution_validation", expert["distribution_validation_id"])
+        assert distribution["passed"]
+        assert expert["policy_gate_passed"] and expert["forecast_gate_passed"]
+        assert forecast["future_horizon_model_id"] == identity
+        assert expert["acceptance_id"] == store.get("future_policy_replay")["id"]
+        load_expert(store, expert)
+        assert (
+            hashlib.sha256(store.artifact_path(expert["data_path"]).read_bytes()).hexdigest()
+            == expert["data_hash"]
+        )
+        future["active_expert_id"] = identity
+        future["distribution_validation_id"] = distribution["id"]
     checks = json.loads(Path("artifacts/runtime/checks/checks.json").read_text())
     assert checks["passed"] and checks["browser_failed"] == 0
     critic = artifacts["decision_critic"]
     value = artifacts["state_value_model"]
     result = {
         "at": now(),
-        "version": "0.8.0",
+        "version": version("fpl-intelligence"),
         "account_state_id": state["id"],
         "market_id": market["id"],
         "forecast_id": forecast["id"],
@@ -167,6 +208,7 @@ def main():
         "consensus_promoted": False,
         "integrated_policy_summaries": pipeline["summaries"],
         "integrated_policy_verification": pipeline_proof,
+        "future_fixture_validation": future,
         "prospective_account_cohort_id": artifacts["shadow_cohort"]["id"],
         "prospective_outcomes": {
             k: artifacts["shadow_evaluation"][k] for k in ("finalized_deadlines", "pending_deadlines")
@@ -178,7 +220,8 @@ def main():
         },
         "scope": "Executed implementation checks and historical gates; future football outcomes and global optimality are not certified",
     }
-    atomic_json(Path("artifacts/evaluations/release_0_8.json"), result)
+    release = "_".join(result["version"].split(".")[:2])
+    atomic_json(Path(f"artifacts/evaluations/release_{release}.json"), result)
     print(
         json.dumps(
             {

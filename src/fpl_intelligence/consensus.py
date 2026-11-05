@@ -39,13 +39,15 @@ async def prepare_inputs(store):
     from .context_archive import MANIFEST
     from .replay import capture_replay_inputs
 
-    current = store.get("market")["season"]
+    market = store.get("market")
+    current = market["season"]
+    completed = max((e["id"] for e in market["events"] if e.get("data_checked")), default=0)
     keys = {
         (r["season"], r["event"])
         for r in json.loads(MANIFEST.read_text())["snapshots"]
-        if r["season"] < current or r["event"] <= 9
+        if r["season"] < current or r["event"] <= completed
     }
-    keys.update((current, g) for g in range(1, 10))
+    keys.update((current, g) for g in range(1, completed + 1))
     semaphore = asyncio.Semaphore(3)
 
     async def one(key):

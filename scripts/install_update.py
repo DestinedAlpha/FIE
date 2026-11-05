@@ -78,6 +78,14 @@ RESEARCH_KINDS = {
     "consensus_policy_validation",
     "continuous_consensus_decision",
     "pipeline_replay",
+    "horizon_trial",
+    "horizon_refinement",
+    "future_distribution_protocol",
+    "future_distribution_validation",
+    "future_policy_replay",
+    "future_policy_diagnostic",
+    "future_policy_suite",
+    "future_horizon_model",
 }
 
 
@@ -88,7 +96,9 @@ def merge_research(source: Path, target: Path):
     destination = target / "data/state.sqlite"
     if not (packed.is_file() or legacy.is_file()) or not destination.is_file():
         return 0
-    with tempfile.TemporaryDirectory() as temporary:
+    runtime = target / "artifacts/runtime"
+    runtime.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=runtime) as temporary:
         restored = Path(temporary) / "research.sqlite"
         unpack_database(source / "data", restored)
         with (

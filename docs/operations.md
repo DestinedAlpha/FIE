@@ -87,3 +87,11 @@ Automatic refresh remains an explicit local control and operates only while the 
 Portable database parts are listed in `data/state.sqlite.manifest.json`; each part and the reconstructed database have checksums. The launcher restores them and checks SQLite integrity before opening the app. It also accepts older `state.sqlite.gz` packages. Restoration refuses to replace an existing account database. The updater merges research artifacts into a backed-up installation while retaining its account/model selections and keys.
 
 `uv run --extra neural python scripts/verify_download.py PATH_TO_DOWNLOADED_ZIP` verifies the actual GitHub download: application/model hashes, credentials exclusion, database restoration, all historical decision proofs, pending prospective accounts, relocated inference and exact live-plan world scores. Large verification scratch files use the project runtime directory, avoiding memory-backed temporary-download storage.
+
+## Accepted future-fixture model updates
+
+The 0.9 update imports future-model research, frozen policy proofs and distribution validation as immutable artifacts. It preserves the existing account and active model selection during file installation. The launcher's chronological retraining verifies passed earlier-season evidence, refits the accepted expert on completed labels and connects it before refreshing the forecast and plan. A failed or partial/current-season-only experiment cannot enable this path.
+
+Regular `fpl train` and scheduled completed-week refits retain this accepted component. `fpl train-complete` includes the research/acceptance stages when absent. `fpl validate-future-policy` reproduces the earlier-season comparison; `--current` runs a diagnostic with preseason future weights, without using current outcomes for selection. `fpl replay-pipeline` follows the active model family. Completed diagnostic decisions carry forward when extending to a new finalized week.
+
+Large database verification, replay and recourse scratch files stay on the workspace/data disk. The portable package includes checksummed model text, feature data, independent decision proofs and selected worlds. The download verifier checks the actual GitHub archive, relocates model/data paths and reproduces the selected plan's sampled outcomes.

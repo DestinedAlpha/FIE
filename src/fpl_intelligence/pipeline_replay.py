@@ -311,18 +311,28 @@ def verify_pipeline_replay(parent, report):
     }
 
 
-def run_pipeline_replay(parent: Store, *, worlds=4000, seconds=60, periods=None, resume_protocol_id=None):
+def run_pipeline_replay(
+    parent: Store,
+    *,
+    worlds=4000,
+    seconds=60,
+    periods=None,
+    resume_protocol_id=None,
+    reference_family_only=False,
+):
     """Execute the full production primary path, never a hindsight-guided policy."""
     if not 100 <= worlds <= 20000 or not 1 <= seconds <= 300:
         raise ValueError("Invalid replay budget")
-    if parent.get("decision_model").get("fusion_model_id"):
+    active = parent.get("decision_model")
+    if active.get("fusion_model_id") or (active.get("future_horizon_model_id") and not reference_family_only):
         raise ValueError("This reference-family replay cannot certify a different promoted model family")
     live_before = {
         k: parent.get(k)["id"] for k in ("state", "market", "decision_model", "forecast", "selected_plan")
     }
     packets = replay_packets(parent)
     season = parent.get("market")["season"]
-    periods = periods or [(season, list(range(1, 10))), ("2025/26", list(range(20, 39)))]
+    last = max((e["id"] for e in parent.get("market")["events"] if e.get("data_checked")), default=0)
+    periods = periods or [(season, list(range(1, last + 1))), ("2025/26", list(range(20, 39)))]
     protocol = {
         "version": "integrated-primary-v1",
         "worlds": worlds,
@@ -398,6 +408,24 @@ def run_pipeline_replay(parent: Store, *, worlds=4000, seconds=60, periods=None,
         if not re.fullmatch(r"[0-9a-f]{64}", resume_protocol_id):
             raise ValueError("Invalid source replay identity")
         source_cache = cache.parent / resume_protocol_id[:20]
+        trusted = set()
+        source_report = next(
+            (
+                parent.get("pipeline_replay", r["id"])
+                for r in parent.list("pipeline_replay", 100)
+                if parent.get("pipeline_replay", r["id"])["protocol_id"] == resume_protocol_id
+            ),
+            None,
+        )
+        if source_report:
+            from .pipeline_checkpoints import recover_portable_report
+
+            verify_pipeline_replay(parent, source_report)
+            recover_portable_report(parent, source_report, source_cache, packets, originals)
+            trusted = {
+                (str(parent.artifact_path(r["decision_file"]).resolve()), r["decision_sha256"])
+                for r in source_report["weeks"]
+            }
         for prior_season, games in periods:
             for game in games:
                 relative = Path(prior_season.replace("/", "-")) / f"gw{game}.json"
@@ -409,7 +437,14 @@ def run_pipeline_replay(parent: Store, *, worlds=4000, seconds=60, periods=None,
                 sealed = json.loads(parent.artifact_path(first_row["decision_file"]).read_text())
                 forecast_spec = sealed["actions"][0]["forecast_summary"]
                 if (
-                    sealed["protocol_id"] != resume_protocol_id
+                    (
+                        sealed["protocol_id"] != resume_protocol_id
+                        and (
+                            str(parent.artifact_path(first_row["decision_file"]).resolve()),
+                            first_row["decision_sha256"],
+                        )
+                        not in trusted
+                    )
                     or forecast_spec["worlds"] != worlds
                     or forecast_spec["seed"] != 11
                     or sealed["input_id"] != packets[prior_season, game]["id"]
@@ -507,7 +542,9 @@ def run_pipeline_replay(parent: Store, *, worlds=4000, seconds=60, periods=None,
                 states = {k: TeamState.model_validate(v) for k, v in saved["next_states"].items()}
                 print("Restored complete integrated deadline", season, event, flush=True)
                 continue
-            with tempfile.TemporaryDirectory(prefix="fie-primary-replay-") as temporary:
+            scratch = Path("artifacts/runtime/pipeline-scratch")
+            scratch.mkdir(parents=True, exist_ok=True)
+            with tempfile.TemporaryDirectory(prefix="fie-primary-replay-", dir=scratch) as temporary:
                 store = Store(Path(temporary) / "data")
                 attach_observations(store, archive, packet)
                 players, market = attach_market(store, packet, originals)

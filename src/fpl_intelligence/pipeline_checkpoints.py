@@ -11,6 +11,23 @@ from .domain import Action, TeamState
 from .pipeline_verification import frozen_availability
 from .replay import deadline_rows
 from .rules import Rules, score_gameweek, transition
+from .storage import atomic_json
+
+
+def recover_portable_report(store, report, cache, packets, originals):
+    """Recover mixed resumed epochs from the individually sealed decisions."""
+    entries = {(r["season"], r["event"]): r for r in report["weeks"]}
+    previous: dict = {}
+    for (season, event), row in sorted(entries.items()):
+        path = store.artifact_path(row["decision_file"])
+        if hashlib.sha256(path.read_bytes()).hexdigest() != row["decision_sha256"]:
+            raise ValueError("Portable source decision checksum mismatch")
+        protocol = json.loads(path.read_text())["protocol_id"]
+        saved = recover_deadline(
+            store, path, packets[season, event], protocol, originals, previous.get(season, {})
+        )
+        atomic_json(cache / season.replace("/", "-") / f"gw{event}.json", saved)
+        previous[season] = {k: TeamState.model_validate(v) for k, v in saved["next_states"].items()}
 
 
 def recover_deadline(store, path, packet, protocol_id, originals, previous):

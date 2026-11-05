@@ -35,3 +35,15 @@ Random legal accounts evolve through observed prices and exact transfer/chip rul
 The production multiweek replay freezes all policy actions before actual scoring, executes only the first action, and carries the resulting account to the next deadline. It keeps the full chip window beyond a short scored interval. Prospective synchronized accounts separately freeze real future decisions, apply the prior standing hold if a capture is missed, and rescore official revisions without duplicating accumulated points.
 
 Failed model gates retain the accepted model. Future observations can improve learning, but neither more data nor a larger network guarantees improved realized returns.
+
+## Future-fixture expert
+
+The future expert uses 138 inputs: the shared 26 historical football features, 47 dated official player statistics and their observation masks, and 18 fixture, lead-time, availability and published-estimate indicators. Separate models learn four minute bands, conditional points and starts. Missing appearances in completed registered fixtures are zero outcomes; missing source measurements remain missing. Archived Assistant Manager assets are excluded from ordinary 15-player squad training.
+
+Training rows bind a source deadline to an announced target fixture. Target labels must finish before the calibration source window; calibration labels must finish before the prediction cutoff, including a four-hour completion margin. This purges overlapping future targets rather than splitting rows randomly. Fitting reserves eight earlier source deadlines for calibration. A late or rescheduled match cannot cross these boundaries merely because its assigned gameweek is earlier.
+
+Family and blend selection use 2024/25 early deadlines and targets ending by GW19. Later 2024/25 and a separate 2025/26 replication evaluate prediction error. Marginal distribution checks use actual frozen reference weights, recovery/discipline inputs and the production mixture, three fixed sampling seeds and source-deadline block intervals. Continuous transfer/chip validation carries an identical initial account forward. Current-season results cannot authorize promotion.
+
+The mixture applies only beyond the current gameweek and within an 18-week lead. Immediate probabilities and sampled points/minutes remain unchanged. Published next-week expected points are unavailable for distant fixtures. Injury news enters the learned expert once; explicit absence, recovery and served-suspension assumptions override it through the same scenario constructor.
+
+Once all acceptance gates pass, ordinary retraining refits the accepted family using newly completed earlier labels and retained predeadline registries. Source snapshots are captured during ingestion; yearly cached chunks avoid rebuilding unchanged historical seasons. Existing-installation updates import the immutable evidence and weights while preserving the account and keys, then attach the accepted expert during chronological retraining. Failed candidates do not replace the primary model.

@@ -45,4 +45,8 @@ def run_pipeline_job(store, **options):
     from .pipeline_replay import run_pipeline_replay
 
     with replay_lock(store.root / "pipeline-replay.lock"):
+        if store.get("decision_model").get("future_horizon_model_id"):
+            from .future_policy_jobs import run_future_suite
+
+            return run_future_suite(store, **options)
         return run_pipeline_replay(store, **options)

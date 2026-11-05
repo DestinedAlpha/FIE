@@ -62,3 +62,26 @@ def test_local_deadline_capture_rejects_future_snapshots(tmp_path, monkeypatch):
     when["stamp"] = "2026-10-31T11:00:00+00:00"
     with pytest.raises(ValueError, match="do not precede"):
         asyncio.run(capture_replay_inputs(store, "2026/27", [9]))
+
+
+def test_live_refresh_preserves_the_registry_for_next_weeks_training(tmp_path, monkeypatch):
+    import fpl_intelligence.replay as module
+    import fpl_intelligence.storage as storage
+
+    store = Store(tmp_path / "data")
+    when = "2026-11-05T10:00:00+00:00"
+    monkeypatch.setattr(module, "now", lambda: when)
+    monkeypatch.setattr(storage, "now", lambda: when)
+    bootstrap = {
+        "events": [{"id": 10, "is_next": True, "deadline_time": "2026-11-06T18:30:00Z"}],
+        "elements": [{"id": 1, "now_cost": 61}],
+    }
+    fixtures = [{"id": 90, "event": 10, "team_h": 1, "team_a": 2}]
+    store.snapshot("bootstrap", "test://bootstrap", bootstrap)
+    store.snapshot("fixtures", "test://fixtures", fixtures)
+    result = module.capture_observed_inputs(store, bootstrap, fixtures)
+    assert result["event"] == 10 and result["bootstrap"]["elements"][0]["now_cost"] == 61
+    assert result["fixture_proof"]["source_captured_at"] == when
+    when = "2026-11-06T18:30:00+00:00"
+    assert module.capture_observed_inputs(store, bootstrap, fixtures) is None
+    assert store.get("replay_inputs")["id"] == result["id"]

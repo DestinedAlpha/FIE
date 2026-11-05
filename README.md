@@ -4,7 +4,7 @@ A private local FPL decision workspace: learned player-point distributions, exac
 
 The six supplied documents remain byte-for-byte unchanged in [`research/`](research/). Design documents are not evidence of competitive performance.
 
-**Current acceptance status:** the production forecaster and full transfer/chip planner score **536 net points over GW1–GW9** in a continuous account, versus 561 for ownership with free transfers. Separately, independent weekly £100m teams score 551 for the refitted reference and 586 for a published-signal ensemble. Fresh weekly squads do not establish continuous-account strength. The ensemble fails its ordinary-policy replacement gate and remains a separate analysis. **Consistent 550+ continuous-account performance is not established.** See the [performance audit](docs/performance-audit.md).
+**Current acceptance status:** the validated future-fixture expert scores **1,202 versus 1,098** in a matched earlier-season 19-week continuous replay, and **538 versus 536** over current GW1–GW9. Future prediction and distribution error also improve. Separately, independent weekly £100m teams score 551 for the refitted reference and 586 for a published-signal ensemble; those are different account problems. **Consistent 550+ continuous-account performance and future top-1% strength are not established.** See the [performance audit](docs/performance-audit.md).
 
 ## Windows
 
@@ -32,6 +32,14 @@ uv run fpl serve
 Open http://127.0.0.1:8000. `reconcile-team` imports the **dated** research seed; confirm current account facts before acting. The private prepared package uses the user's separately confirmed selling quotes, bank, FT and chips. Unknown purchase prices remain null. The original seed cannot overwrite a confirmed account.
 
 `fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. `fpl refresh-current` and the Refresh data button reconcile revealed deadline squads, advance to the next deadline, update finalized labels and recompute the recommendation. Confirm any additional unrevealed transfers in My squad; public endpoints cannot see them.
+
+## What changed in 0.9
+
+Connected a validated future-fixture expert to the production forecaster, ordinary weekly retraining, full transfer/chip optimizer, scenario overrides, dashboard and existing-installation updates. Three heads learn minutes, conditional points and starts from 138 dated inputs, including advanced statistics, prices, ownership and missingness. Target windows are purged across fitting/calibration/test boundaries. Published next-week estimates are excluded from distant weeks; current-week worlds remain unchanged. Forecast, marginal distribution and full continuous-policy gates all pass. Final fitting uses completed labels through GW9 with reserved calibration data.
+
+Ingestion now preserves actual predeadline registries for subsequent learning. Historical feature chunks are reused when unchanged. Independent verification covers the new sealed teams, training cutoffs, model files, current-world identity, continuous finances and actual returns; the real account stays separate from historical and prospective comparisons. Frontier refinement retains the stronger existing policy. Large replay/recourse scratch files use the data/workspace disk.
+
+The prepared release includes the new models, completed scorecards, latest personalized report and built interface. The updater preserves accounts and keys, imports the new acceptance evidence and attaches an accepted expert during retraining. Full training includes this component; failed experiments remain comparisons. [Forecast and policy results](docs/performance-audit.md) · [Learning contract](docs/data-contract.md).
 
 ## What changed in 0.8
 

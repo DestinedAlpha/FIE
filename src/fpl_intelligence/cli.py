@@ -752,8 +752,13 @@ def replay_pipeline(worlds: int = 4000, seconds: float = 60, current_only: bool 
     from .pipeline_jobs import run_pipeline_job
 
     store = Store()
-    periods = [(store.get("market")["season"], list(range(1, 10)))] if current_only else None
+    market = store.get("market")
+    last = max((e["id"] for e in market["events"] if e.get("data_checked")), default=0)
+    periods = [(market["season"], list(range(1, last + 1)))] if current_only else None
     result = run_pipeline_job(store, worlds=worlds, seconds=seconds, periods=periods)
+    if result.get("future_horizon_model_id"):
+        show(result)
+        return
     show(
         {
             k: result[k]
@@ -789,3 +794,28 @@ def score_accounts():
     from .shadow_accounts import advance_shadow_accounts
 
     show(advance_shadow_accounts(Store()))
+
+
+@app.command("validate-future-policy")
+def validate_future_policy(current: bool = False, seconds: int = 60, worlds: int = 4000):
+    """Compare the future-only expert through legal full-window chip decisions."""
+    from .fixture_horizon import build_data
+    from .future_policy_replay import run_future_policy
+    from .horizon_trial import fitted
+    from .pipeline_jobs import replay_lock
+
+    store = Store()
+    options = {}
+    with replay_lock(store.root / "pipeline-replay.lock"):
+        if current:
+            import polars as pl
+
+            market = store.get("market")
+            refinement = store.get("horizon_refinement")
+            family = refinement["selected"].rsplit("_", 1)[0]
+            directory = store.artifact_path(refinement["directory"] + "/protocol.json").parent
+            fitted(store, pl.read_parquet(build_data(store)), market["season"] + "-GW01", family, directory)
+            last = max(e["id"] for e in market["events"] if e.get("data_checked"))
+            options = {"season": market["season"], "events": list(range(1, last + 1))}
+        result = run_future_policy(store, seconds=seconds, worlds=worlds, **options)
+    show({k: v for k, v in result.items() if k != "weeks"})

@@ -1,6 +1,8 @@
 import copy
 import hashlib
 import json
+import shutil
+from pathlib import Path
 
 import pytest
 
@@ -8,6 +10,43 @@ from fpl_intelligence.domain import Action
 from fpl_intelligence.pipeline_verification import audit_continuity
 from fpl_intelligence.rules import best_lineup, transition
 from fpl_intelligence.storage import Store
+
+
+def test_portable_recovery_keeps_mixed_epochs_after_installation_moves(continuous_proof, tmp_path):
+    from fpl_intelligence.pipeline_checkpoints import recover_portable_report
+
+    original, report = continuous_proof
+    moved = Store(tmp_path / "moved" / "data")
+    shutil.copytree(original.root / "models", moved.root / "models")
+    packets, observations = {}, []
+    for event in (9, 10):
+        row = next(r for r in report["weeks"] if r["event"] == event)
+        path = moved.artifact_path(row["decision_file"])
+        body = json.loads(path.read_text())
+        body["protocol_id"] = "older-epoch" if event == 9 else "resumed-epoch"
+        path.write_text(json.dumps(body))
+        checksum = hashlib.sha256(path.read_bytes()).hexdigest()
+        for record in report["weeks"]:
+            if record["event"] == event:
+                record["decision_sha256"] = checksum
+        packets[row["season"], event] = {
+            "season": row["season"],
+            "event": event,
+            "bootstrap": {},
+            "fixture_proof": {"fixtures": []},
+            "id": body["input_id"],
+            "deadline": body["information_cutoff"],
+        }
+        observations.extend(
+            {"season": row["season"], "round": event, "element": p, "total_points": 1, "minutes": 90}
+            for p in range(1, 46)
+        )
+    cache = tmp_path / "recovered"
+    recover_portable_report(moved, report, cache, packets, observations)
+    recovered = json.loads((cache / "2026-27/gw10.json").read_text())
+    resolved = moved.artifact_path(report["weeks"][-1]["decision_file"]).resolve()
+    assert Path(recovered["weeks"][0]["decision_file"]).resolve() == resolved
+    assert recovered["next_states"]["primary"]["points"] == 24
 
 
 @pytest.fixture

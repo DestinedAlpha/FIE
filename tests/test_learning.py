@@ -13,8 +13,42 @@ def test_relocated_nested_model_artifacts_reject_parent_traversal(tmp_path):
         store.artifact_path("/old/computer/data/models/fusion-123/heldout.parquet")
         == tmp_path / "models/fusion-123/heldout.parquet"
     )
+    assert (
+        store.artifact_path("C:/old/data/features/horizon/data.parquet")
+        == tmp_path / "features/horizon/data.parquet"
+    )
     with pytest.raises(ValueError):
         store.artifact_path("data/models/../../.env")
+
+
+def test_policy_analysis_refits_an_incompatible_transfer_critic(tmp_path, market, monkeypatch):
+    import fpl_intelligence.policy_learning as module
+
+    store = Store(tmp_path / "data")
+    store.put("transfer_policy_model", {"horizon_model_id": "older"})
+    monkeypatch.setattr(
+        "fpl_intelligence.horizon.live_values", lambda *_: ({}, market, {}, {"id": "current"})
+    )
+
+    def refit(saved):
+        assert saved is store
+        raise RuntimeError("matched refit started")
+
+    monkeypatch.setattr(module, "train_policy", refit)
+    with pytest.raises(RuntimeError, match="matched refit started"):
+        module.personalized_analysis(store)
+
+
+def test_cross_position_bundles_are_displayed_with_matching_roles_and_exact_quotes(market):
+    from fpl_intelligence.reports import transfer_pairs
+
+    row = {
+        "sell": [{"player_id": 1, "units": 49}, {"player_id": 3, "units": 48}],
+        "buy": [{"player_id": 18, "units": 51}, {"player_id": 16, "units": 51}],
+    }
+    pairs = transfer_pairs(row, market)
+    assert [(a["player_id"], b["player_id"]) for a, b in pairs] == [(1, 16), (3, 18)]
+    assert pairs[0][0]["units"] == 49
 
 
 def test_manager_training_features_ignore_future_transfers_and_initial_ft():

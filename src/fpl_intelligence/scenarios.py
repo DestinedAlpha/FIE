@@ -366,7 +366,9 @@ def full_recourse(store: Store, base: dict, branch_forecast: dict, spec: Scenari
             action = action_from_row(original)
         else:
             if event == spec.reveal_event or changes:
-                with tempfile.TemporaryDirectory(prefix="fie-recourse-") as temporary:
+                scratch = store.root / "runtime" / "recourse"
+                scratch.mkdir(parents=True, exist_ok=True)
+                with tempfile.TemporaryDirectory(prefix="fie-recourse-", dir=scratch) as temporary:
                     local = Store(temporary)
                     # Copy only the frozen world file; Windows does not require symlink privileges.
                     from .worlds import copy_worlds
