@@ -99,12 +99,16 @@ def full_training(store: Store, samples=24, epochs=20, refresh=False):
     record("frontier", refine_frontier(store))
     if end - state["event"] > 3:
         record("horizon_consistency", validate_horizons(store))
+    from .chips import compare_chips, compare_immediate_hit, rebase_chip_comparison
+
+    chip_report = compare_chips(store, store.get("selected_plan")["plan_id"])
     from .objectives import choose_recommendation
 
     selected, selection = choose_recommendation(
         store, [store.get("plan", store.get("selected_plan")["plan_id"])], current_forecast
     )
     select(selected["id"])
+    record("chip_counterfactual", rebase_chip_comparison(store, chip_report, selected["id"]))
     record("final_selection", selection)
     from .context import analyze_evidence
 
@@ -116,9 +120,6 @@ def full_training(store: Store, samples=24, epochs=20, refresh=False):
     record("prospective", freeze(store, store.get("selected_plan")["plan_id"]))
     score_frozen_decisions(store)
     plan = store.get("plan", store.get("selected_plan")["plan_id"])
-    from .chips import compare_chips, compare_immediate_hit
-
-    record("chip_counterfactual", compare_chips(store, plan["id"]))
     record("hit_counterfactual", compare_immediate_hit(store, plan["id"]))
     if end > state["event"]:
         from .scenarios import PlayerChange, ScenarioSpec, evaluate_scenarios

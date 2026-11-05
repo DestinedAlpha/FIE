@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Activity, FlaskConical, RefreshCw, ShieldCheck } from "lucide-react";
 import { Dashboard, Plan, money, percent } from "./types";
 
+const chipNames: Record<string, string> = { freehit: "Free Hit", bboost: "Bench Boost", wildcard: "Wildcard", "3xc": "Triple Captain" };
+
 type Props = {
   data: Dashboard;
   busy: boolean;
@@ -437,10 +439,10 @@ export function ChipPanel({
           result.
         </p>
         {comparisons.map((c) => (
-          <p key={c.chip}>
+          <p key={`${c.chip}-${c.window?.[0]}`}>
             <b>
-              {c.chip === "freehit" ? "Free Hit" : "Bench Boost"} · GW
-              {c.chosen_event}
+              {chipNames[c.chip] ?? c.chip}
+              {c.chosen_event == null ? " · retained" : ` · GW${c.chosen_event}`}
             </b>
             : {c.whole_policy_mean_delta.toFixed(1)} points versus reoptimizing
             without it · Monte Carlo interval [
@@ -448,6 +450,22 @@ export function ChipPanel({
             alternative solver gap {c.counterfactual_solver_gap == null ? "bound unavailable" : percent(c.counterfactual_solver_gap)}
           </p>
         ))}
+        {data.chip_counterfactual?.base_plan_id === plan.id &&
+          !!data.chip_counterfactual.calendar?.length && (
+            <details>
+              <summary>Compare every feasible chip date ({data.chip_counterfactual.dates_evaluated})</summary>
+              <p>{data.chip_counterfactual.scope}</p>
+              <div className="table-scroll"><table>
+                <thead><tr><th>Chip</th><th>GW</th><th>Net points</th><th>Versus selected</th><th>Solver gap</th><th>Ledger</th></tr></thead>
+                <tbody>{data.chip_counterfactual.calendar.map(c => (
+                  <tr key={`${c.chip}-${c.event}`}><td>{chipNames[c.chip] ?? c.chip}</td>
+                    <td>{c.event}</td><td>{c.mean.toFixed(1)}</td><td>{c.delta_vs_selected.toFixed(1)}</td>
+                    <td>{c.solver.gap == null ? "unavailable" : percent(c.solver.gap)}</td>
+                    <td><a href={`/api/export/${c.plan_id}/json`} download>Download</a></td></tr>
+                ))}</tbody>
+              </table></div>
+            </details>
+          )}
         <small>
           Intervals measure simulation noise; model and solver uncertainty
           remain separate.

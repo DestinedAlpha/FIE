@@ -1,5 +1,5 @@
 {
-  "scope": "Selected blueprint and user-request behaviours, not exhaustive project acceptance; research hypotheses require measured benefit rather than compulsory complexity.",
+  "scope": "Concrete behavioral regressions and retained runtime evidence, accompanied by a complete section/body-line review of both original design documents in specification_sections.json. Conditional research alternatives require measured benefit; future performance requires future observations.",
   "items": [
     {
       "id": "data.registry",
@@ -588,6 +588,20 @@
       "implementation": "src/fpl_intelligence/replay.py:capture_observed_inputs",
       "test": "tests/test_replay_extension.py:test_live_refresh_preserves_the_registry_for_next_weeks_training",
       "runtime_evidence_kind": "replay_inputs"
+    },
+    {
+      "id": "strategy.chip_calendar",
+      "requirement": "Every feasible date of all four unused chip entitlements, independent periods and whole-policy common-world comparison",
+      "implementation": "src/fpl_intelligence/chips.py:compare_chips",
+      "test": "tests/test_chip_calendar.py:test_chip_calendar_covers_all_four_chips_and_independent_periods",
+      "runtime_evidence_kind": "chip_counterfactual"
+    },
+    {
+      "id": "strategy.restored_freehit",
+      "requirement": "Prior transfers neither disable later Free Hits nor prevent exact current Free Hit restoration with constrained continuation",
+      "implementation": "src/fpl_intelligence/optimization.py:optimize",
+      "test": "tests/test_chip_calendar.py:test_freehit_after_prior_transfers_restores_bank_and_preserves_tail_constraints",
+      "runtime_evidence_kind": "chip_counterfactual"
     }
   ]
 }

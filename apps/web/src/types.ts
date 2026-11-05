@@ -442,9 +442,13 @@ export type Dashboard = FootballEvidenceData & {
   } | null;
   chip_counterfactual?: {
     base_plan_id: string;
+    dates_evaluated?: number;
+    scope?: string;
+    calendar?: { chip: string; event: number; plan_id: string; mean: number; delta_vs_selected: number; solver: { gap: number | null } }[];
     comparisons: {
       chip: string;
-      chosen_event: number;
+      chosen_event: number | null;
+      window?: number[];
       whole_policy_mean_delta: number;
       paired_mc_interval_95: number[];
       counterfactual_solver_gap: number | null;

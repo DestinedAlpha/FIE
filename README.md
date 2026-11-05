@@ -33,6 +33,14 @@ Open http://127.0.0.1:8000. `reconcile-team` imports the **dated** research seed
 
 `fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. `fpl refresh-current` and the Refresh data button reconcile revealed deadline squads, advance to the next deadline, update finalized labels and recompute the recommendation. Confirm any additional unrevealed transfers in My squad; public endpoints cannot see them.
 
+## What changed in 0.10
+
+Completed the review of all 36 numbered sections in both original design documents. The [specification review](docs/specification-review.md) indexes their body clauses and connects every section to concrete implementation evidence; release verification rejects unreviewed source changes or missing sections. This supersedes the earlier selected-behaviour-only review without claiming exhaustive testing of every input.
+
+The chip report now evaluates every feasible date for all four available chip types, with separate first/second-half entitlements, complete transfer preparation/cleanup and common-world scores. Other chips remain jointly optimized in each comparison. Date-specific solver diagnostics and downloadable ledgers appear in the planner. Full training considers these candidates before final policy selection.
+
+Fixed Free Hit planning after already-confirmed transfers: future weeks remain eligible, and a current Free Hit uses the original deadline squad/bank, reverses applicable earlier costs and preserves the requested continuation constraints. Regression tests exercise actual solver/account transitions across chip periods and restoration.
+
 ## What changed in 0.9
 
 Connected a validated future-fixture expert to the production forecaster, ordinary weekly retraining, full transfer/chip optimizer, scenario overrides, dashboard and existing-installation updates. Three heads learn minutes, conditional points and starts from 138 dated inputs, including advanced statistics, prices, ownership and missingness. Target windows are purged across fitting/calibration/test boundaries. Published next-week estimates are excluded from distant weeks; current-week worlds remain unchanged. Forecast, marginal distribution and full continuous-policy gates all pass. Final fitting uses completed labels through GW9 with reserved calibration data.

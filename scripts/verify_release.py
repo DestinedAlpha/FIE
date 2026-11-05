@@ -69,8 +69,57 @@ def main():
         "pipeline_replay",
         "shadow_cohort",
         "shadow_evaluation",
+        "chip_counterfactual",
     )
     artifacts = {kind: store.get(kind) for kind in kinds}
+    chip_report = artifacts["chip_counterfactual"]
+    assert chip_report["base_plan_id"] == plan["id"]
+    assert chip_report["forecast_id"] == forecast["id"]
+    actual_dates = {(r["chip"], r["event"]) for r in chip_report["calendar"]}
+    expected_dates = set()
+    account = TeamState.model_validate({k: v for k, v in state.items() if k != "id"})
+    for event in range(account.event, plan["end_event"] + 1):
+        for chip in ("wildcard", "freehit", "bboost", "3xc"):
+            try:
+                lo, hi = rules.chip_window(chip, event)
+            except ValueError:
+                continue
+            if any(c.chip == chip and lo <= c.event <= hi for c in account.used_chips):
+                continue
+            if account.active_chip == chip and lo <= account.event <= hi:
+                continue
+            if event == account.event:
+                if account.active_chip not in (None, chip):
+                    continue
+                if chip == "freehit" and (
+                    any(c.chip == chip and c.event == event - 1 for c in account.used_chips)
+                    or (
+                        account.transfers_made
+                        and (account.deadline_lots is None or account.deadline_bank is None)
+                    )
+                ):
+                    continue
+            expected_dates.add((chip, event))
+    assert actual_dates == expected_dates
+    assert len(actual_dates) == chip_report["dates_evaluated"] == len(chip_report["calendar"])
+    for date in chip_report["calendar"]:
+        counterfactual = store.get("plan", date["plan_id"])
+        assert all(counterfactual[k] == plan[k] for k in ("state_id", "forecast_id", "end_event"))
+        assert any(
+            r["chip"] == date["chip"] and r["event"] == date["event"] for r in counterfactual["ledger"]
+        )
+        replayed_date = account.model_copy(deep=True)
+        for row in counterfactual["ledger"]:
+            replayed_date, checked = transition(replayed_date, action_from_row(row), players, rules)
+            assert checked["bank_after"] == row["bank_after"] and checked["hit"] == row["hit"]
+            assert checked["free_transfers_after"] == row["free_transfers_after"]
+            assert set(checked["playing_squad"]) == set(row["playing_squad"])
+    for comparison in chip_report["comparisons"]:
+        counterfactual = store.get("plan", comparison["without_plan_id"])
+        lo, hi = comparison["window"]
+        assert not any(
+            r["chip"] == comparison["chip"] and lo <= r["event"] <= hi for r in counterfactual["ledger"]
+        )
     from fpl_intelligence.decision import load_bundle
 
     load_bundle(store, store.get("decision_model"))
@@ -185,6 +234,7 @@ def main():
         "forecast_id": forecast["id"],
         "plan_id": plan["id"],
         "replayed_events": len(plan["ledger"]),
+        "chip_dates_verified": len(actual_dates),
         "source_artifacts": {k: v["id"] for k, v in artifacts.items()},
         "evolving_accounts": artifacts["evolving_dataset"]["accounts"],
         "evolving_actions": artifacts["evolving_dataset"]["actions"],

@@ -227,6 +227,7 @@ def optimize(
     first_week_hit_budget: int | None = None,
     use_decision_critic: bool = True,
     relative_gap: float = 0.001,
+    blocked_chips: Mapping[int, tuple[str, ...]] | None = None,
 ) -> dict:
     started = time.monotonic()
     if first_week_hit_budget is not None and first_week_hit_budget < 0:
@@ -257,38 +258,63 @@ def optimize(
         raise ValueError("Forecast inputs are stale: refresh/recompute before solving")
     if not forecast["start_event"] <= state.event <= end_event <= forecast["end_event"]:
         raise ValueError("State/horizon is outside the forecast")
-    if state.active_chip is not None:
-        if state.active_chip == "freehit":
-            from .decision_runtime import conditional_plan
-            from .strategy import solve_action
+    requested_first_chip = (chips if chips is not None else pin_chips or {}).get(state.event)
+    if state.active_chip is not None and requested_first_chip not in (None, state.active_chip):
+        raise ValueError("Requested chip conflicts with an already activated chip")
+    if state.active_chip == "freehit" or (requested_first_chip == "freehit" and state.transfers_made):
+        if "freehit" in disabled_chips or "freehit" in (blocked_chips or {}).get(state.event, ()):
+            raise ValueError("Requested Free Hit is disabled")
+        if state.active_chip not in (None, "freehit"):
+            raise ValueError("Requested chip conflicts with an already activated chip")
+        if state.deadline_lots is None or state.deadline_bank is None:
+            raise ValueError("Free Hit needs prior deadline state after earlier transfers")
+        from .decision_runtime import conditional_plan
+        from .strategy import solve_action
 
-            current_means = {
-                r["player_id"]: r["mean"] for r in forecast["players"] if r["event"] == state.event
-            }
-            first = solve_action(
-                state, players, rules, current_means, chip="freehit", seconds=min(time_limit, 5)
-            )
-            return conditional_plan(
-                store,
-                state_id,
-                forecast_id,
-                end_event,
-                first.action,
-                time_limit,
-                origin="Activated Free Hit with exact underlying restoration",
-            )
+        current_means = {r["player_id"]: r["mean"] for r in forecast["players"] if r["event"] == state.event}
+        first = solve_action(
+            state,
+            players,
+            rules,
+            current_means,
+            chip="freehit",
+            seconds=min(time_limit, 15),
+            forced_sell=(forced_sell or {}).get(state.event, ()),
+            relative_gap=relative_gap,
+        )
+        restored_plan = conditional_plan(
+            store,
+            state_id,
+            forecast_id,
+            end_event,
+            first.action,
+            time_limit,
+            origin="Activated Free Hit with exact underlying restoration",
+            continuation_options={
+                "chips": None if chips is None else {t: c for t, c in chips.items() if t > state.event},
+                "pin_chips": {t: c for t, c in (pin_chips or {}).items() if t > state.event},
+                "forced_sell": {t: p for t, p in (forced_sell or {}).items() if t > state.event},
+                "blocked_chips": {t: c for t, c in (blocked_chips or {}).items() if t > state.event},
+                "disabled_chips": disabled_chips,
+                "automatic_chips": automatic_chips,
+                "max_transfers": max_transfers,
+                "relative_gap": relative_gap,
+            },
+        )
+        restored_plan["solver"]["first_action_solver"] = first.solver
+        restored_plan["id"] = store.put("plan", {k: v for k, v in restored_plan.items() if k != "id"})
+        return restored_plan
+    if state.active_chip is not None:
         if (chips or pin_chips or {}).get(state.event, state.active_chip) != state.active_chip:
             raise ValueError("Requested chip conflicts with an already activated chip")
         pin_chips = {**(pin_chips or {}), state.event: state.active_chip}
-    if state.transfers_made and any(c == "freehit" for c in (chips or {}).values()):
-        # Full prior-deadline restoration requires an explicitly frozen prior state.
-        if state.deadline_lots is None or state.deadline_bank is None:
-            raise ValueError("Free Hit needs prior deadline state after earlier transfers")
     if (
         use_decision_critic
         and chips is None
         and pin_chips is None
         and not forced_sell
+        and not blocked_chips
+        and not disabled_chips
         and first_week_hit_budget is None
         and automatic_chips
         and store.list("decision_analysis", 1)
@@ -314,6 +340,11 @@ def optimize(
             t not in events or c not in ("wildcard", "freehit", "bboost", "3xc") for t, c in schedule.items()
         ):
             raise ValueError("Chip schedule is outside the plan horizon or contains an unknown chip")
+    if any(
+        t not in events or any(c not in ("wildcard", "freehit", "bboost", "3xc") for c in names)
+        for t, names in (blocked_chips or {}).items()
+    ):
+        raise ValueError("Blocked chip schedule is outside the plan horizon or contains an unknown chip")
     means = {(r["event"], r["player_id"]): r["mean"] for r in forecast["players"]}
     lots = {lot.player_id: lot for lot in state.lots}
     old_ids = set(lots)
@@ -345,9 +376,9 @@ def optimize(
                 allowed = not any(c.chip == chip and a <= c.event <= b for c in state.used_chips)
             except ValueError:
                 pass
-            if chip in disabled_chips:
+            if chip in disabled_chips or chip in (blocked_chips or {}).get(t, ()):
                 allowed = False
-            if chip == "freehit" and state.transfers_made:
+            if chip == "freehit" and state.transfers_made and t == state.event:
                 # Keep prior-event transfer restoration out of the generator;
                 # deterministic state engine supports it and validates imports.
                 allowed = False
@@ -840,6 +871,36 @@ def optimize(
     }
     score_plan(store, plan, forecast)
     plan["id"] = store.put("plan", plan)
+    if (
+        state.transfers_made
+        and state.deadline_lots is not None
+        and state.deadline_bank is not None
+        and chips is None
+        and automatic_chips
+        and state.event not in (pin_chips or {})
+        and "freehit" not in disabled_chips
+        and "freehit" not in (blocked_chips or {}).get(state.event, ())
+    ):
+        from .strategy import allowed_chips
+
+        if "freehit" in allowed_chips(state, rules):
+            restored = optimize(
+                store,
+                state_id,
+                forecast_id,
+                end_event,
+                time_limit,
+                max_transfers=max_transfers,
+                pin_chips={**(pin_chips or {}), state.event: "freehit"},
+                forced_sell=forced_sell,
+                disabled_chips=disabled_chips,
+                first_week_hit_budget=first_week_hit_budget,
+                use_decision_critic=False,
+                relative_gap=relative_gap,
+                blocked_chips=blocked_chips,
+            )
+            if restored["simulation"]["mean"] > plan["simulation"]["mean"]:
+                return restored
     return plan
 
 

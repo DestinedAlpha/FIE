@@ -205,3 +205,31 @@ test("integrated replay proofs and synchronized future accounts are accessible",
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(false);
   expect(errors).toEqual([]);
 });
+
+test("chip calendar renders all four chip types, retained chips and date ledgers", async ({page}) => {
+  await page.route('**/api/dashboard*', async route => {
+    const response = await route.fetch();
+    const body = await response.json();
+    const chips = ['wildcard', 'freehit', 'bboost', '3xc'];
+    body.chip_counterfactual = {
+      base_plan_id: body.plan.id,
+      dates_evaluated: 4,
+      scope: 'Each forced-date policy jointly optimizes the other chips.',
+      comparisons: chips.map((chip, i) => ({chip, window: [1, 19], chosen_event: i ? 12 : null,
+        whole_policy_mean_delta: 1.25, paired_mc_interval_95: [0.5, 2], counterfactual_solver_gap: 0.02})),
+      calendar: chips.map((chip, i) => ({chip, event: 10 + i, plan_id: body.plan.id,
+        mean: 600 + i, delta_vs_selected: i - 1, solver: {gap: 0.02}})),
+    };
+    await route.fulfill({response, json: body});
+  });
+  await openWorkspace(page);
+  await navigate(page, 'Season planner');
+  const panel = page.locator('section').filter({has: page.getByRole('heading', {name: 'Chip value across the whole plan'})});
+  await expect(panel.getByText('Wildcard · retained')).toBeVisible();
+  await panel.getByText('Compare every feasible chip date (4)').click();
+  for (const name of ['Wildcard', 'Free Hit', 'Bench Boost', 'Triple Captain']) {
+    await expect(panel.getByRole('cell', {name, exact: true})).toBeVisible();
+  }
+  await expect(panel.getByRole('link', {name: 'Download', exact: true})).toHaveCount(4);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(false);
+});

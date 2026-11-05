@@ -64,6 +64,7 @@ def solve_action(
     transfer_bias=None,
     forbidden=(),
     relative_gap=0.01,
+    forced_sell=(),
 ):
     """Joint squad/XI/captain/chip solve; hits and gain-sharing use exact quotes.
 
@@ -113,6 +114,10 @@ def solve_action(
         if chip == "bboost":
             model.costs[y[p]] += means.get(p, 0)
             model.costs[xi[p]] -= means.get(p, 0)
+    for p in forced_sell:
+        if p not in owned:
+            raise ValueError("Forced sale is not owned")
+        model.equal([(y[p], 1)], 0)
     model.equal([(y[p], 1) for p in ids], 15)
     model.equal([(xi[p], 1) for p in ids], 11)
     model.equal([(cap[p], 1) for p in ids], 1)

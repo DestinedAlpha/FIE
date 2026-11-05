@@ -393,7 +393,9 @@ def timing_analysis(store, worlds=24):
     return result
 
 
-def conditional_plan(store, state_id, forecast_id, end_event, action, seconds=20, origin=None):
+def conditional_plan(
+    store, state_id, forecast_id, end_event, action, seconds=20, origin=None, continuation_options=None
+):
     """Fix one legal first action and solve its full remaining horizon independently."""
     from .ingestion import load_market
     from .optimization import optimize
@@ -469,7 +471,15 @@ def conditional_plan(store, state_id, forecast_id, end_event, action, seconds=20
                 "warm_parent_id": parent,
             }
             store.put("warm_start", seed)
-        tail = optimize(store, identity, forecast_id, end_event, seconds, use_decision_critic=False)
+        tail = optimize(
+            store,
+            identity,
+            forecast_id,
+            end_event,
+            seconds,
+            use_decision_critic=False,
+            **(continuation_options or {}),
+        )
         plan = {k: v for k, v in tail.items() if k != "id"}
         plan["ledger"] = [row] + tail["ledger"]
         plan["solver"] = {

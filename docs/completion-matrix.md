@@ -1,4 +1,4 @@
-# Functional coverage · 0.9
+# Functional coverage · 0.10
 
 The release connects the accepted future-fixture expert, production forecaster, full-window transfer/chip planner, exact account engine, historical evaluation and prospective continuous accounts. The [performance audit](performance-audit.md) separates observed results from predictive claims. Consistent 550+ continuous-account performance is not established.
 
@@ -19,7 +19,7 @@ The release connects the accepted future-fixture expert, production forecaster, 
 | Product and operation | Squad editor, market/planner/rival/research/model views, durable jobs and progress, exports, local refresh controls, backups and protected existing-installation updates |
 | Delivery | Locked dependencies, built Windows UI, checksummed database parts, legacy restoration, actual GitHub-download verification and model/world reproduction |
 
-The [atomic catalog](../configs/implementation_requirements.json) traces 84 selected behaviours to concrete symbols, executed regressions and runtime artifacts. The generated [implementation audit](../artifacts/evaluations/implementation_audit.json) and [release audit](../artifacts/evaluations/release_0_9.json) record the actual checks. These are auditable implementation evidence, not a formal proof that every possible input is error-free. The [data contract](data-contract.md) explains fields, clocks, missingness and learning.
+The [specification review](specification-review.md) covers all 36 numbered sections and indexes every nonblank body line from both original design documents. The [atomic catalog](../configs/implementation_requirements.json) separately traces 86 concrete behaviours to symbols, executed regressions and runtime artifacts. The generated [implementation audit](../artifacts/evaluations/implementation_audit.json) and [release audit](../artifacts/evaluations/release_0_10.json) record the actual checks. These are auditable implementation evidence, not a formal proof that every possible input is error-free. The [data contract](data-contract.md) explains fields, clocks, missingness and learning.
 
 Alternative football, neural, fusion, decision and continuation models are implemented and tested. Failed replacement gates keep their outputs in labelled comparisons rather than silently changing the primary policy. The reference and future-expert continuous replays identify their model families and validation scope; they do not certify every research objective or rival probability.
 

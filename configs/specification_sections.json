@@ -1,0 +1,605 @@
+{
+  "schema_version": 1,
+  "reviewed_documents": [
+    {
+      "path": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "sha256": "1202840f7a1aca2f44d4d61a1200ddadbe92e122811b110bf5b7608306de90f7"
+    },
+    {
+      "path": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "sha256": "b2666a0621531384c48df2121ac4c4988ab1d4748136e5f542c97b5116a5f3ef"
+    }
+  ],
+  "sections": [
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 1,
+      "title": "The product to build",
+      "line": 5,
+      "evidence_ids": [
+        "product.workspaces",
+        "strategy.mip",
+        "strategy.objectives",
+        "evidence.free",
+        "evaluation.production_policy"
+      ],
+      "review": "Complete local product; rank and superiority are measurable objectives, not promised outcomes."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 2,
+      "title": "Research findings that change the design",
+      "line": 26,
+      "evidence_ids": [
+        "forecast.published",
+        "model.baselines",
+        "evidence.fetch",
+        "data.registry",
+        "evaluation.selection"
+      ],
+      "review": "Research findings drive optional adapters and separately scoped comparable baselines; source claims are not our measured performance."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 3,
+      "title": "Architecture and language choice",
+      "line": 60,
+      "evidence_ids": [
+        "data.snapshots",
+        "operations.sources",
+        "strategy.mip",
+        "product.workspaces",
+        "operations.install",
+        "operations.release"
+      ],
+      "review": "Locked Python/React/SQL stack, free solver and local Windows deployment. Optional languages/cloud services are not mandatory dependencies."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 4,
+      "title": "Data acquisition: complete core, optional enrichment",
+      "line": 100,
+      "evidence_ids": [
+        "data.registry",
+        "data.labels",
+        "data.identity",
+        "evidence.fetch",
+        "operations.sources",
+        "forecast.published",
+        "managers.top1000"
+      ],
+      "review": "Official core plus source-specific optional enrichment, access/coverage/fallback metadata and bounded incremental requests."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 5,
+      "title": "Data model and temporal correctness",
+      "line": 155,
+      "evidence_ids": [
+        "data.snapshots",
+        "data.identity",
+        "data.deadlines",
+        "evaluation.historical_clock",
+        "state.prices",
+        "model.feature_lineage"
+      ],
+      "review": "Fixture facts and deadline decisions, stable identities, separate clocks, immutable hashes, temporal filtering and missingness."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 6,
+      "title": "Complete feature and statistic coverage",
+      "line": 190,
+      "evidence_ids": [
+        "model.features",
+        "forecast.future_lead",
+        "model.recovery",
+        "model.attack",
+        "model.discipline",
+        "managers.top1000",
+        "strategy.timing"
+      ],
+      "review": "Full available official statistic dictionary and optional enrichment/masks. Features and complexity enter production through measured acceptance, not collection alone."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 7,
+      "title": "Forecasting methodology",
+      "line": 219,
+      "evidence_ids": [
+        "model.baselines",
+        "model.minutes",
+        "model.recovery",
+        "model.rotation",
+        "model.scores",
+        "model.odds",
+        "model.attack",
+        "model.assists",
+        "model.saves",
+        "model.defcon",
+        "model.discipline",
+        "model.bonus",
+        "model.coherence",
+        "model.distributions",
+        "model.uncertainty",
+        "model.temporal",
+        "forecast.future_lead",
+        "forecast.future_availability",
+        "learning.future_acceptance"
+      ],
+      "review": "Independent reference, component/physical models and trained challengers; accepted future expert connected to production. Changed-rule, availability and shared-world semantics are explicit. Rejected challengers remain comparisons."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 8,
+      "title": "Contextual intelligence that can be measured",
+      "line": 304,
+      "evidence_ids": [
+        "evidence.fetch",
+        "evidence.claims",
+        "evidence.use",
+        "evidence.free",
+        "evidence.ablation"
+      ],
+      "review": "Supported structured claims, deduplication, expiry, bounded hypotheses, free eligibility, quota isolation, extraction evaluation and context ablation. Hosted AI never directly changes financial state or authoritative forecasts."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 9,
+      "title": "The exact rules and account-state engine",
+      "line": 353,
+      "evidence_ids": [
+        "state.sync",
+        "state.hidden",
+        "state.ft",
+        "state.prices",
+        "state.hits",
+        "state.squad",
+        "state.lineup",
+        "state.autosubs",
+        "state.freehit",
+        "strategy.restored_freehit"
+      ],
+      "review": "Versioned official rules, exact account transitions and independent ledger replay; includes prior-transfer restoration and ordinary transfer-hit reversal."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 10,
+      "title": "Sequential optimization",
+      "line": 378,
+      "evidence_ids": [
+        "strategy.mip",
+        "strategy.objectives",
+        "strategy.nohit",
+        "strategy.continuation",
+        "strategy.timing",
+        "strategy.scenarios",
+        "strategy.captain",
+        "strategy.bench",
+        "strategy.grandfathered"
+      ],
+      "review": "Full registered market, legal incumbents, shared-world rescoring, explicit objectives, terminal values and nonanticipative observable recourse. Approximate search and actual gaps are disclosed."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 11,
+      "title": "Chip strategy and fixture uncertainty",
+      "line": 428,
+      "evidence_ids": [
+        "strategy.chips",
+        "strategy.chip_calendar",
+        "strategy.restored_freehit",
+        "strategy.scenarios"
+      ],
+      "review": "All four chips jointly optimized; each unused entitlement/date receives a whole-policy counterfactual inside the requested horizon. Windows and unknown fixtures are explicit. Full-season horizon covers remaining windows."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 12,
+      "title": "Elite managers, EO and rivals",
+      "line": 443,
+      "evidence_ids": [
+        "managers.qualified",
+        "managers.top1000",
+        "managers.choices",
+        "managers.rivals",
+        "managers.population"
+      ],
+      "review": "Prior-qualified elite and current-rank cohorts stay separate; actual retrieval counts, feasible policy branches, EO, joint rival outcomes and disclosed population assumptions."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 13,
+      "title": "Evaluation that can support competitive claims",
+      "line": 464,
+      "evidence_ids": [
+        "model.temporal",
+        "evidence.ablation",
+        "evaluation.selection",
+        "evaluation.production_policy",
+        "evaluation.continuity",
+        "evaluation.historical_clock",
+        "evaluation.prospective",
+        "prospective.accounts",
+        "learning.future_acceptance"
+      ],
+      "review": "Chronological purged fitting, independently sealed equal-state legal policy tests, actual returns and source coverage. Future finalized results are necessary for prospective competitiveness; no code change can precompute them."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 14,
+      "title": "Product experience",
+      "line": 518,
+      "evidence_ids": [
+        "product.workspaces",
+        "strategy.chip_calendar",
+        "strategy.scenarios",
+        "operations.release"
+      ],
+      "review": "Squad/market/calendar/chip/captain/research/rival/model/health workspaces, expiring beliefs and structured validated ledger exports."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 15,
+      "title": "Reliability, security, and operation",
+      "line": 550,
+      "evidence_ids": [
+        "operations.sources",
+        "ops.jobs",
+        "data.snapshots",
+        "operations.install",
+        "ops.updater",
+        "prospective.missed_capture",
+        "prospective.clock",
+        "evidence.fetch",
+        "evidence.free"
+      ],
+      "review": "Durable idempotent jobs, last-good artifacts, stale-input safeguards, local secrets, safe retrieval, backups/restoration, deadline freezing and final/revised results."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 16,
+      "title": "Delivery plan and acceptance criteria",
+      "line": 573,
+      "evidence_ids": [
+        "operations.release",
+        "operations.install",
+        "product.workspaces",
+        "evaluation.production_policy",
+        "evaluation.prospective",
+        "strategy.mip"
+      ],
+      "review": "Required source/config/schema/model/report artifacts, CLI/API, original case-family demonstration, clean install and downloaded-package verification. Prospective competitive grade remains determined by future observations."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 17,
+      "title": "High-value failure cases to test",
+      "line": 618,
+      "evidence_ids": [
+        "state.hidden",
+        "state.prices",
+        "state.hits",
+        "state.ft",
+        "state.freehit",
+        "state.autosubs",
+        "model.discipline",
+        "model.bonus",
+        "strategy.grandfathered",
+        "strategy.scenarios",
+        "strategy.nohit",
+        "operations.sources",
+        "ops.jobs",
+        "prospective.missed_capture",
+        "prospective.clock",
+        "strategy.restored_freehit",
+        "strategy.chip_calendar"
+      ],
+      "review": "Failure cases reviewed against the rule, integration, chronological and browser suites; new chip-period and restored-account regressions close gaps found in this review."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 18,
+      "title": "Resource budget and stopping rules",
+      "line": 651,
+      "evidence_ids": [
+        "operations.sources",
+        "evidence.free",
+        "operations.worlds",
+        "strategy.mip",
+        "operations.release"
+      ],
+      "review": "Measured bounded source/solver/research budgets, deterministic seeds, runtime/gaps and common-world comparisons; practical limits are reported rather than invented."
+    },
+    {
+      "document": "research/01_FPL_RESEARCH_AND_SYSTEM_BLUEPRINT.md",
+      "number": 19,
+      "title": "What has been completed in this research package",
+      "line": 684,
+      "evidence_ids": [
+        "data.registry",
+        "operations.release"
+      ],
+      "review": "Historical description of the supplied research package. It is context, not an assertion about implemented or trained software."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 1,
+      "title": "Mission and nonnegotiable requirements",
+      "line": 11,
+      "evidence_ids": [
+        "product.workspaces",
+        "strategy.mip",
+        "state.freehit",
+        "evidence.free",
+        "evaluation.production_policy",
+        "evaluation.prospective"
+      ],
+      "review": "Free local full-season product with exact state, own forecasts, contextual intelligence and evidence-based quality targets."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 2,
+      "title": "Inputs and immediate user context",
+      "line": 29,
+      "evidence_ids": [
+        "state.sync",
+        "state.hidden",
+        "state.prices",
+        "data.registry",
+        "strategy.mip",
+        "managers.rivals"
+      ],
+      "review": "Dated user seed retained; current public deadline reconciled without pretending it reveals hidden later transfers. General season/account support."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 3,
+      "title": "First execution sequence",
+      "line": 48,
+      "evidence_ids": [
+        "data.registry",
+        "data.snapshots",
+        "data.deadlines",
+        "state.squad",
+        "operations.release"
+      ],
+      "review": "Executed source probes, immutable inputs, rules authority, dependency locks and full baseline-to-product vertical slice; retained runtime evidence."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 4,
+      "title": "Selected technical stack",
+      "line": 61,
+      "evidence_ids": [
+        "operations.sources",
+        "data.snapshots",
+        "strategy.mip",
+        "product.workspaces",
+        "operations.release"
+      ],
+      "review": "Locked numerical Python/SQL and React/TypeScript stack, compiled free solver, local durable jobs and tests. Optional technology is selected on evidence."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 5,
+      "title": "Data, identity and provenance",
+      "line": 81,
+      "evidence_ids": [
+        "data.registry",
+        "data.identity",
+        "data.snapshots",
+        "data.deadlines",
+        "evaluation.historical_clock",
+        "forecast.published"
+      ],
+      "review": "Complete official adapters plus extensible source registry, provenance and coverage; source-specific xG, missingness and temporal joins."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 6,
+      "title": "Required feature coverage",
+      "line": 110,
+      "evidence_ids": [
+        "model.features",
+        "forecast.future_lead",
+        "model.recovery",
+        "model.attack",
+        "model.discipline",
+        "strategy.timing",
+        "managers.top1000",
+        "model.feature_lineage"
+      ],
+      "review": "Available core/advanced statistics and source masks feed accepted statistical models; optional covariates/challengers require incremental benefit."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 7,
+      "title": "Independent forecasting engine",
+      "line": 130,
+      "evidence_ids": [
+        "model.baselines",
+        "model.minutes",
+        "model.rotation",
+        "model.scores",
+        "model.odds",
+        "model.attack",
+        "model.assists",
+        "model.saves",
+        "model.defcon",
+        "model.discipline",
+        "model.bonus",
+        "model.coherence",
+        "model.distributions",
+        "model.uncertainty",
+        "forecast.future_lead",
+        "forecast.future_availability",
+        "learning.future_acceptance"
+      ],
+      "review": "Multiple trained forecast paths with shared transformations, coherent football alternatives, versioned distributions and validated future-fixture integration; numerical heads are not hosted-LLM output."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 8,
+      "title": "Hosted contextual intelligence",
+      "line": 186,
+      "evidence_ids": [
+        "evidence.fetch",
+        "evidence.claims",
+        "evidence.use",
+        "evidence.free",
+        "evidence.ablation"
+      ],
+      "review": "Original-source retrieval, identity/support/expiry checks, free-provider eligibility and extraction quality tests with independent failures and deterministic entry fallback."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 9,
+      "title": "Exact game/state engine",
+      "line": 225,
+      "evidence_ids": [
+        "state.squad",
+        "state.lineup",
+        "state.autosubs",
+        "state.ft",
+        "state.prices",
+        "state.hits",
+        "state.freehit",
+        "strategy.restored_freehit",
+        "data.labels"
+      ],
+      "review": "Exact scoring/transitions, chip windows, lot finances, current quotes, FT/hit accounting, restoration, finalized labels and independent export replay."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 10,
+      "title": "Optimizer and policy engine",
+      "line": 247,
+      "evidence_ids": [
+        "strategy.mip",
+        "strategy.objectives",
+        "strategy.nohit",
+        "strategy.captain",
+        "strategy.bench",
+        "strategy.continuation",
+        "strategy.timing",
+        "strategy.scenarios",
+        "strategy.chip_calendar",
+        "strategy.grandfathered"
+      ],
+      "review": "Full-market multiweek legal policy search, all chips/dates, original user architectures, common-world rescoring, explicit solver bounds and observable scenario recourse."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 11,
+      "title": "Elite-manager and rival engine",
+      "line": 292,
+      "evidence_ids": [
+        "managers.qualified",
+        "managers.top1000",
+        "managers.choices",
+        "managers.rivals",
+        "managers.population"
+      ],
+      "review": "Separate qualified/current/active/league samples, actual retrieval disclosure, learned feasible manager policy branches, EO and joint shared-world rival comparisons."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 12,
+      "title": "Scientific validation",
+      "line": 306,
+      "evidence_ids": [
+        "model.temporal",
+        "evaluation.selection",
+        "evidence.ablation",
+        "evaluation.weekly",
+        "evaluation.production_policy",
+        "evaluation.continuity",
+        "evaluation.historical_clock",
+        "evaluation.prospective",
+        "prospective.accounts",
+        "learning.future_acceptance"
+      ],
+      "review": "Purged chronological training, comparable predictions and continuous accounts, historical/prospective separation, proper scorecards and promotion gates; hindsight only measures oracle regret."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 13,
+      "title": "Product interface and report contract",
+      "line": 340,
+      "evidence_ids": [
+        "product.workspaces",
+        "strategy.chip_calendar",
+        "strategy.scenarios",
+        "strategy.captain",
+        "strategy.bench",
+        "operations.release"
+      ],
+      "review": "Complete planner workspaces, all-market inspection, per-week exact ledger, export/deadline calendar and supported contingent recomputation."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 14,
+      "title": "Operations and failure recovery",
+      "line": 374,
+      "evidence_ids": [
+        "operations.sources",
+        "ops.jobs",
+        "data.snapshots",
+        "operations.install",
+        "ops.updater",
+        "evidence.fetch",
+        "evidence.free",
+        "prospective.clock",
+        "prospective.missed_capture"
+      ],
+      "review": "Atomic durable jobs, bounded retry/quota, cached fallback, local refresh/scheduling, stale-input invalidation, secure retrieval and tested backup/restore."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 15,
+      "title": "Required artifacts",
+      "line": 390,
+      "evidence_ids": [
+        "operations.release",
+        "operations.install",
+        "data.registry",
+        "strategy.mip",
+        "evidence.ablation",
+        "evaluation.production_policy",
+        "evaluation.prospective"
+      ],
+      "review": "README/locks/config/schema/data/rules/models/optimizer/research/reports/operations artifacts plus implemented CLI/API and independently verified private download."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 16,
+      "title": "Quality gates",
+      "line": 410,
+      "evidence_ids": [
+        "state.squad",
+        "data.deadlines",
+        "model.temporal",
+        "evidence.ablation",
+        "strategy.mip",
+        "operations.release",
+        "evaluation.prospective",
+        "prospective.accounts"
+      ],
+      "review": "Implementation, model and policy gates have concrete checks. Prospective recording/scoring is implemented; future comparative outcomes are explicitly separate acceptance evidence."
+    },
+    {
+      "document": "research/02_COPY_READY_MASTER_PROMPT.md",
+      "number": 17,
+      "title": "Working discipline and final reporting",
+      "line": 430,
+      "evidence_ids": [
+        "operations.release",
+        "evaluation.production_policy",
+        "evaluation.prospective"
+      ],
+      "review": "Actual tool execution, retained checks and source/runtime verification; final instructions link the built product and report only executed measurements."
+    }
+  ],
+  "review_scope": "Every numbered section and every nonblank body line in both supplied design documents is indexed and mapped to implementation evidence. This is a complete source review, not a claim that section mappings prove every possible behavior or future performance."
+}
