@@ -10,7 +10,11 @@ from fpl_intelligence.readiness import review_specification
 def test_specification_review_rejects_unreviewed_changes_and_missing_sections(tmp_path):
     (tmp_path / "configs").mkdir()
     source = tmp_path / "spec.md"
-    source.write_text("# Specification\n\n## 1. Data\nKeep dated facts.\n\n## 2. State\nUse integer money.\n")
+    source.write_text(
+        "# Specification\n\n## 1. Data\nKeep dated facts.\n\n## 2. State\nUse integer money.\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     manifest = {
         "review_scope": "Test source review",
         "reviewed_documents": [
@@ -29,7 +33,7 @@ def test_specification_review_rejects_unreviewed_changes_and_missing_sections(tm
     assert result["source_clauses"][1]["evidence_ids"] == ["money"]
     source.write_bytes(source.read_bytes().replace(b"\n", b"\r\n"))
     assert review_specification(tmp_path, evidence) == result
-    source.write_text(source.read_text() + "Handle profit sharing.\n")
+    source.write_text(source.read_text() + "Handle profit sharing.\n", encoding="utf-8", newline="\n")
     with pytest.raises(ValueError, match="changed without review"):
         review_specification(tmp_path, evidence)
     manifest["reviewed_documents"][0]["sha256"] = hashlib.sha256(source.read_bytes()).hexdigest()
