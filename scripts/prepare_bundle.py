@@ -46,7 +46,7 @@ def main():
             name
             for name in files
             if (root / name).is_file()
-            and not name.startswith(("data/", "artifacts/runtime/", ".github/"))
+            and not name.startswith(("data/", "artifacts/runtime/", ".github/", "updates/"))
             and not Path(name).name.startswith(".env")
         )
         application_files += [
@@ -60,7 +60,7 @@ def main():
                 path = root / name
                 if (
                     path.is_file()
-                    and not name.startswith(("artifacts/runtime/", "data/"))
+                    and not name.startswith(("artifacts/runtime/", "data/", "updates/"))
                     and path.name != ".env"
                 ):
                     bundle.write(path, "FPL-Intelligence/" + name)

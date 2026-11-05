@@ -24,7 +24,7 @@ def main():
         name
         for name in names
         if (root / name).is_file()
-        and not name.startswith(("data/", "artifacts/runtime/", ".github/"))
+        and not name.startswith(("data/", "artifacts/runtime/", ".github/", "updates/"))
         and not Path(name).name.startswith(".env")
     }
     files.update(p.relative_to(root).as_posix() for p in (root / "apps/web/dist").rglob("*") if p.is_file())
