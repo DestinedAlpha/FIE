@@ -7,6 +7,7 @@ import json
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
+from importlib.metadata import version
 from pathlib import Path
 from typing import Any
 
@@ -96,7 +97,7 @@ def create_app(root=None):
             stop.set()
             thread.join(timeout=1)
 
-    app = FastAPI(title="FPL Intelligence", version="0.9.0", lifespan=lifespan)
+    app = FastAPI(title="FPL Intelligence", version=version("fpl-intelligence"), lifespan=lifespan)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
 
     @app.middleware("http")

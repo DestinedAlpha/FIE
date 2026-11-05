@@ -98,7 +98,10 @@ def test_mip_tiny_knapsack_oracle():
 
 
 def test_api_empty_onboarding_and_invalid_jobs(tmp_path):
+    from importlib.metadata import version
+
     with TestClient(create_app(tmp_path), base_url="http://localhost") as client:
+        assert client.get("/openapi.json").json()["info"]["version"] == version("fpl-intelligence")
         assert client.get("/api/health").json()["integrity"] == "ok"
         assert client.get("/api/dashboard").json()["market"] is None
         assert client.get("/api/jobs/missing").status_code == 404
