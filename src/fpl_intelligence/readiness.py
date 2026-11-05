@@ -23,7 +23,10 @@ def review_specification(root: Path, evidence: list[dict]) -> dict:
     clauses, sections = [], []
     for document in manifest["reviewed_documents"]:
         path = root / document["path"]
-        if hashlib.sha256(path.read_bytes()).hexdigest() != document["sha256"]:
+        # Git's Windows checkout may change LF to CRLF without changing text.
+        # Normalize documentation newlines only; model/input hashes stay binary.
+        source = path.read_text(encoding="utf-8")
+        if hashlib.sha256(source.encode("utf-8")).hexdigest() != document["sha256"]:
             raise ValueError(f"Specification changed without review: {document['path']}")
         declared = [s for s in manifest["sections"] if s["document"] == document["path"]]
         if len({s["number"] for s in declared}) != len(declared):
@@ -31,7 +34,7 @@ def review_specification(root: Path, evidence: list[dict]) -> dict:
         lookup = {s["number"]: s for s in declared}
         observed = set()
         section = None
-        for line, text in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        for line, text in enumerate(source.splitlines(), 1):
             heading = re.match(r"^## (\d+)\. (.+)$", text)
             if heading:
                 number = int(heading[1])

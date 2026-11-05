@@ -27,6 +27,8 @@ def test_specification_review_rejects_unreviewed_changes_and_missing_sections(tm
     result = review_specification(tmp_path, evidence)
     assert result["sections_reviewed"] == 2 and result["body_lines_indexed"] == 2
     assert result["source_clauses"][1]["evidence_ids"] == ["money"]
+    source.write_bytes(source.read_bytes().replace(b"\n", b"\r\n"))
+    assert review_specification(tmp_path, evidence) == result
     source.write_text(source.read_text() + "Handle profit sharing.\n")
     with pytest.raises(ValueError, match="changed without review"):
         review_specification(tmp_path, evidence)
