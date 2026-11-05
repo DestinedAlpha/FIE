@@ -104,3 +104,9 @@ Historical replays freeze the future expert before each evaluation season and re
 Evidence: [full earlier-season future-policy replay](../artifacts/evaluations/future-policy-replay.json), [current diagnostic](../artifacts/evaluations/future-policy-diagnostic.json). Reproduce with `fpl validate-future-policy` and `fpl validate-future-policy --current`; `fpl replay-pipeline` follows the active model family.
 
 The new earlier-season policy pays four hit points and uses TC20, FH21, BB26 and WC33. The current-season diagnostic pays no hits, uses FH3/TC7 and retains BB beyond GW9; the planning window continues to GW19. Its short-interval score therefore does not spend every available chip merely to raise the reported GW9 total.
+
+## Paid-transfer correction · 0.11
+
+The earlier prepared −12 proposal is superseded. Its 1.73 modeled-point full-window advantage was smaller than unresolved no-hit additive-search slack, despite a positive paired Monte Carlo interval. The selector now requires a positive advantage after that separate search allowance before recommending a paid expected-points action. This is a conservative numerical-evidence gate, not a bound on nonlinear autosub value or a calibrated interval for all forecast error. The dashboard exposes weekly net payback and independent source disagreement.
+
+The numerical models were not retrained to make a named player win. Existing historical scorecards describe their frozen earlier selector; no new predictive-accuracy improvement or prospective superiority is claimed from this software correction.

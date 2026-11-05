@@ -176,7 +176,8 @@
         "strategy.scenarios",
         "strategy.captain",
         "strategy.bench",
-        "strategy.grandfathered"
+        "strategy.grandfathered",
+        "strategy.paid_evidence"
       ],
       "review": "Full registered market, legal incumbents, shared-world rescoring, explicit objectives, terminal values and nonanticipative observable recourse. Approximate search and actual gaps are disclosed."
     },
@@ -485,7 +486,8 @@
         "strategy.timing",
         "strategy.scenarios",
         "strategy.chip_calendar",
-        "strategy.grandfathered"
+        "strategy.grandfathered",
+        "strategy.paid_evidence"
       ],
       "review": "Full-market multiweek legal policy search, all chips/dates, original user architectures, common-world rescoring, explicit solver bounds and observable scenario recourse."
     },

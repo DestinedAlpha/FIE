@@ -440,6 +440,21 @@ export type Dashboard = FootballEvidenceData & {
     alternative_immediate_chip: string | null;
     alternative_gap: number | null;
   } | null;
+  policy_selection?: {
+    selection_version?: string;
+    selection: { selected_plan_id: string; reason?: string; actual_ev_sacrifice: number };
+    immediate_hit_evidence?: {
+      candidate_plan_id: string;
+      no_hit_plan_id: string;
+      net_mean_gain: number;
+      no_hit_search_allowance: number | null;
+      hit_supported_beyond_search_error: boolean;
+      paired_mc_interval_95: number[];
+      reason: string;
+      weekly_tradeoff: {event: number; candidate_net: number; alternative_net: number; cumulative_net_advantage: number}[];
+      source_forecast_review?: {player_id:number; name:string; fixtures:string[]; model_points:number; model_minutes:number; model_start_probability:number; official_next_points:number|null; official_status:string; official_availability:number|null; season_starts:number|null; completed_club_fixtures:number}[];
+    } | null;
+  } | null;
   chip_counterfactual?: {
     base_plan_id: string;
     dates_evaluated?: number;

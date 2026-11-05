@@ -602,6 +602,13 @@
       "implementation": "src/fpl_intelligence/optimization.py:optimize",
       "test": "tests/test_chip_calendar.py:test_freehit_after_prior_transfers_restores_bank_and_preserves_tail_constraints",
       "runtime_evidence_kind": "chip_counterfactual"
+    },
+    {
+      "id": "strategy.paid_evidence",
+      "requirement": "Withhold unsupported paid transfers when precise Monte Carlo results are smaller than unresolved full no-hit search error; preserve explicit objectives and identify old receipts",
+      "implementation": "src/fpl_intelligence/objectives.py:paid_transfer_evidence",
+      "test": "tests/test_hit_support.py:test_precise_monte_carlo_cannot_establish_a_paid_hit_with_unfinished_search",
+      "runtime_evidence_kind": "policy_selection"
     }
   ]
 }

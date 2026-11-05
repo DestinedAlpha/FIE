@@ -24,6 +24,7 @@ from .decision import canonical_rows, learned_forecast, paired_bootstrap, score_
 from .decision_training import reprice
 from .discipline import build_discipline
 from .domain import Action, Lot, TeamState
+from .objectives import SELECTION_VERSION
 from .observations import completed_before
 from .optimization import optimize, select_squad
 from .replay import deadline_rows, fit_deadline
@@ -335,6 +336,7 @@ def run_pipeline_replay(
     periods = periods or [(season, list(range(1, last + 1))), ("2025/26", list(range(20, 39)))]
     protocol = {
         "version": "integrated-primary-v1",
+        "policy_selection_version": SELECTION_VERSION,
         "worlds": worlds,
         "seconds": seconds,
         "seed": 11,

@@ -17,7 +17,7 @@ from .decision_training import reprice
 from .discipline import build_discipline
 from .domain import TeamState
 from .future_expert import frozen_spec
-from .objectives import choose_recommendation
+from .objectives import SELECTION_VERSION, choose_recommendation
 from .optimization import optimize
 from .pipeline_replay import (
     attach_availability,
@@ -95,6 +95,7 @@ def run_future_policy(parent, *, season="2025/26", events=None, worlds=4000, sec
         for name in ("state", "market", "decision_model", "forecast", "selected_plan")
     }
     protocol = {
+        "policy_selection_version": SELECTION_VERSION,
         "signature": signature,
         "season": season,
         "events": events,
@@ -122,6 +123,7 @@ def run_future_policy(parent, *, season="2025/26", events=None, worlds=4000, sec
             and previous["protocol"]["refinement_id"] == refinement["id"]
             and previous["protocol"]["worlds"] == worlds
             and previous["protocol"]["seconds"] == seconds
+            and previous["protocol"].get("policy_selection_version") == protocol["policy_selection_version"]
         ):
             from .future_policy_verification import verify_future_policy
 

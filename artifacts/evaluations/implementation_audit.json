@@ -1,9 +1,9 @@
 {
-  "at": "2026-11-05T16:53:57.392556+00:00",
-  "requirements_traced": 86,
+  "at": "2026-11-05T18:07:30.005993+00:00",
+  "requirements_traced": 87,
   "verification_scope": "Implementation symbols, executed mapped regressions and existing runtime evidence; not a proof that all possible behaviours are error-free",
   "scope": "Concrete behavioral regressions and retained runtime evidence, accompanied by a complete section/body-line review of both original design documents in specification_sections.json. Conditional research alternatives require measured benefit; future performance requires future observations.",
-  "checks_at": "2026-11-05T16:51:51.332297+00:00",
+  "checks_at": "2026-11-05T18:07:26.894474+00:00",
   "items": [
     {
       "id": "data.registry",
@@ -83,7 +83,7 @@
       "runtime_evidence_kind": "policy_selection",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "d496f2dcdfa48e9c17d6617405e63611e8796855b73982c59961d55712b0a20e"
+      "runtime_artifact_id": "7fd376a0f461e9005ae80122916423ba43e8bf1f203ce45495d00e6c39d0fb0a"
     },
     {
       "id": "state.prices",
@@ -103,7 +103,7 @@
       "runtime_evidence_kind": "policy_selection",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "d496f2dcdfa48e9c17d6617405e63611e8796855b73982c59961d55712b0a20e"
+      "runtime_artifact_id": "7fd376a0f461e9005ae80122916423ba43e8bf1f203ce45495d00e6c39d0fb0a"
     },
     {
       "id": "state.squad",
@@ -123,7 +123,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "4d324105de53d37ec87e91c72205ff9a5048061b5dc70d82774cdcb300089558"
+      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
     },
     {
       "id": "state.autosubs",
@@ -133,7 +133,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "4d324105de53d37ec87e91c72205ff9a5048061b5dc70d82774cdcb300089558"
+      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
     },
     {
       "id": "state.freehit",
@@ -143,7 +143,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "4d324105de53d37ec87e91c72205ff9a5048061b5dc70d82774cdcb300089558"
+      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
     },
     {
       "id": "model.baselines",
@@ -453,7 +453,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "4d324105de53d37ec87e91c72205ff9a5048061b5dc70d82774cdcb300089558"
+      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
     },
     {
       "id": "strategy.captain",
@@ -463,7 +463,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "4d324105de53d37ec87e91c72205ff9a5048061b5dc70d82774cdcb300089558"
+      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
     },
     {
       "id": "strategy.bench",
@@ -473,7 +473,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "4d324105de53d37ec87e91c72205ff9a5048061b5dc70d82774cdcb300089558"
+      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
     },
     {
       "id": "strategy.objectives",
@@ -483,7 +483,7 @@
       "runtime_evidence_kind": "policy_selection",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "d496f2dcdfa48e9c17d6617405e63611e8796855b73982c59961d55712b0a20e"
+      "runtime_artifact_id": "7fd376a0f461e9005ae80122916423ba43e8bf1f203ce45495d00e6c39d0fb0a"
     },
     {
       "id": "strategy.nohit",
@@ -573,7 +573,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "4d324105de53d37ec87e91c72205ff9a5048061b5dc70d82774cdcb300089558"
+      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
     },
     {
       "id": "operations.sources",
@@ -613,7 +613,7 @@
       "runtime_evidence_kind": "policy_selection",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "d496f2dcdfa48e9c17d6617405e63611e8796855b73982c59961d55712b0a20e"
+      "runtime_artifact_id": "7fd376a0f461e9005ae80122916423ba43e8bf1f203ce45495d00e6c39d0fb0a"
     },
     {
       "id": "ops.jobs",
@@ -623,7 +623,7 @@
       "runtime_evidence_kind": "release_checks",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "11d778ec237c5fe943b505bb8137dc7a6ffff0bce895e7088bd4a206e50259a6"
+      "runtime_artifact_id": "a0745265c0b5bab014a24154d004c7eb41f0c967276fe7bc6e08d0a7d50a4ba7"
     },
     {
       "id": "ops.updater",
@@ -793,7 +793,7 @@
       "runtime_evidence_kind": "release_checks",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "11d778ec237c5fe943b505bb8137dc7a6ffff0bce895e7088bd4a206e50259a6"
+      "runtime_artifact_id": "a0745265c0b5bab014a24154d004c7eb41f0c967276fe7bc6e08d0a7d50a4ba7"
     },
     {
       "id": "prospective.ongoing_finances",
@@ -864,6 +864,16 @@
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
       "runtime_artifact_id": "fe7669b5bb5e6c64bcfc67c679116a8553f1f14be882d5280fea7ce89ea484de"
+    },
+    {
+      "id": "strategy.paid_evidence",
+      "requirement": "Withhold unsupported paid transfers when precise Monte Carlo results are smaller than unresolved full no-hit search error; preserve explicit objectives and identify old receipts",
+      "implementation": "src/fpl_intelligence/objectives.py:paid_transfer_evidence",
+      "test": "tests/test_hit_support.py:test_precise_monte_carlo_cannot_establish_a_paid_hit_with_unfinished_search",
+      "runtime_evidence_kind": "policy_selection",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "7fd376a0f461e9005ae80122916423ba43e8bf1f203ce45495d00e6c39d0fb0a"
     }
   ],
   "specification_review": {
@@ -1046,7 +1056,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ],
         "review": "Full registered market, legal incumbents, shared-world rescoring, explicit objectives, terminal values and nonanticipative observable recourse. Approximate search and actual gaps are disclosed."
       },
@@ -1355,7 +1366,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ],
         "review": "Full-market multiweek legal policy search, all chips/dates, original user architectures, common-world rescoring, explicit solver bounds and observable scenario recourse."
       },
@@ -5020,7 +5032,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5037,7 +5050,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5054,7 +5068,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5071,7 +5086,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5088,7 +5104,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5105,7 +5122,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5122,7 +5140,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5139,7 +5158,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5156,7 +5176,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5173,7 +5194,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5190,7 +5212,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5207,7 +5230,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5224,7 +5248,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5241,7 +5266,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5258,7 +5284,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5275,7 +5302,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5292,7 +5320,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5309,7 +5338,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5326,7 +5356,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5343,7 +5374,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -5360,7 +5392,8 @@
           "strategy.scenarios",
           "strategy.captain",
           "strategy.bench",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10204,7 +10237,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10222,7 +10256,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10240,7 +10275,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10258,7 +10294,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10276,7 +10313,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10294,7 +10332,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10312,7 +10351,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10330,7 +10370,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10348,7 +10389,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10366,7 +10408,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10384,7 +10427,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10402,7 +10446,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10420,7 +10465,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10438,7 +10484,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10456,7 +10503,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10474,7 +10522,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10492,7 +10541,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10510,7 +10560,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10528,7 +10579,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10546,7 +10598,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10564,7 +10617,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10582,7 +10636,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10600,7 +10655,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10618,7 +10674,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -10636,7 +10693,8 @@
           "strategy.timing",
           "strategy.scenarios",
           "strategy.chip_calendar",
-          "strategy.grandfathered"
+          "strategy.grandfathered",
+          "strategy.paid_evidence"
         ]
       },
       {
@@ -12029,5 +12087,5 @@
     "Unavailable optional inputs are recorded as unavailable; no observations are invented.",
     "Prospective competitive advantage and future ranks require future finalized matches."
   ],
-  "id": "f0d1301406876a5dbf0bb81e0d282424b4ea65f22dfbd6c9cb93cd34a2be9642"
+  "id": "c47d88904bf4c3e81544c168fdba860bc4cb3c4ca248298e83311083c553aa08"
 }

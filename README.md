@@ -33,6 +33,16 @@ Open http://127.0.0.1:8000. `reconcile-team` imports the **dated** research seed
 
 `fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. `fpl refresh-current` and the Refresh data button reconcile revealed deadline squads, advance to the next deadline, update finalized labels and recompute the recommendation. Confirm any additional unrevealed transfers in My squad; public endpoints cannot see them.
 
+## What changed in 0.11
+
+[Executed correction checks](artifacts/evaluations/release_0_11.json).
+
+Fixed paid-transfer selection: a tiny long-horizon advantage with a narrow Monte Carlo interval can no longer justify a hit while the full no-hit search remains materially unresolved. The selector exposes the additive solver allowance separately from sampling and forecast error, retains the better-supported no-hit route, and shows each week's net payback. Material paid improvements can still pass; there is no hard transfer/hit cap or player-name rule.
+
+The planner displays the forecasts behind withheld transfers: fixtures, expected minutes/starts, official availability, current-season starts and independent official next-week estimates. Those official estimates are sensitivities, not ground truth or silent model replacements. Persisted expected-points paid recommendations require the current evidence policy after an upgrade. Replay protocols identify the changed selector; older frozen scores remain historical evidence for the earlier policy.
+
+Existing installations can use the small application update: extract it separately and run `Update existing.cmd`. It preserves the account, keys and complete numerical models/data, then rebuilds forecasts and recommendations. The update is verified by actually installing the downloaded archive into an existing test installation and checking the database, keys, model files and backup.
+
 ## What changed in 0.10
 
 Completed the review of all 36 numbered sections in both original design documents. The [specification review](docs/specification-review.md) indexes their body clauses and connects every section to concrete implementation evidence; release verification rejects unreviewed source changes or missing sections. This supersedes the earlier selected-behaviour-only review without claiming exhaustive testing of every input.

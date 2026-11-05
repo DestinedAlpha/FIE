@@ -400,6 +400,15 @@ def create_app(root=None):
                 or (result["forecast"] or {}).get("decision_model_id")
                 != (result["decision_model"] or {}).get("id")
             )
+            if selected_plan["ledger"][0]["hit"] > 0:
+                from .objectives import stale_paid_evidence
+
+                receipt = store.get("policy_selection") if store.list("policy_selection", 1) else {}
+                if stale_paid_evidence(selected_plan, receipt):
+                    selected_plan["stale"] = True
+                    selected_plan["stale_reason"] = (
+                        "Paid-transfer evidence must be recomputed with the current selection policy"
+                    )
             from .availability import moment
 
             plan_deadline = next(

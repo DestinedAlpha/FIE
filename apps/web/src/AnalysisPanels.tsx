@@ -790,7 +790,28 @@ export function HitEvidence({
   act,
   explore,
 }: Props & { plan: Plan | null | undefined; explore: (id: string) => void }) {
-  if (!plan || !plan.ledger[0].hit) return null;
+  if (!plan) return null;
+  const receipt = data.policy_selection?.selection.selected_plan_id === plan.id ? data.policy_selection : null;
+  const evidence = receipt?.immediate_hit_evidence;
+  if (!plan.ledger[0].hit && receipt?.selection_version === "paid-transfer-evidence-v2" && evidence && !evidence.hit_supported_beyond_search_error) {
+    return <section className="panel">
+      <h3>Paid transfer withheld</h3>
+      <p>{evidence.reason}. The raw paid-hit proposal gains only {evidence.net_mean_gain.toFixed(2)} modeled points over the full horizon;
+        {evidence.no_hit_search_allowance == null ? " the no-hit search has no usable global bound." : ` its additive search remains unresolved by ${evidence.no_hit_search_allowance.toFixed(2)} points.`}</p>
+      <p>More simulation draws cannot remove forecast or search error. These are separate from football outcome uncertainty.</p>
+      {!!evidence.source_forecast_review?.length && <details><summary>Inspect the player forecasts behind the paid proposal</summary>
+        <p>Official next-week estimates are an independent sensitivity, not ground truth. Availability and starting probability are different quantities.</p>
+        <div className="table-scroll"><table><thead><tr><th>Player</th><th>Fixture</th><th>Model points</th><th>Official estimate</th><th>Model minutes</th><th>Model start chance</th><th>Season starts</th></tr></thead>
+          <tbody>{evidence.source_forecast_review.map(r => <tr key={r.player_id}><td>{r.name}</td><td>{r.fixtures.join(', ')}</td><td>{r.model_points.toFixed(2)}</td><td>{r.official_next_points?.toFixed(2) ?? 'Unavailable'}</td><td>{r.model_minutes.toFixed(1)}</td><td>{percent(r.model_start_probability)}</td><td>{r.season_starts ?? '?'} / {r.completed_club_fixtures}</td></tr>)}</tbody></table></div>
+      </details>}
+      {!!evidence.weekly_tradeoff?.length && <details><summary>See when the paid hit would repay its cost</summary>
+        <div className="table-scroll"><table><thead><tr><th>GW</th><th>Paid proposal, net</th><th>No-hit policy</th><th>Cumulative advantage</th></tr></thead>
+          <tbody>{evidence.weekly_tradeoff.map(r => <tr key={r.event}><td>{r.event}</td><td>{r.candidate_net.toFixed(2)}</td><td>{r.alternative_net.toFixed(2)}</td><td>{r.cumulative_net_advantage.toFixed(2)}</td></tr>)}</tbody></table></div>
+      </details>}
+      <a className="button secondary" href={`/api/export/${evidence.candidate_plan_id}/json`} download>Download raw paid-hit proposal</a>
+    </section>;
+  }
+  if (!plan.ledger[0].hit) return null;
   const comparison =
     data.hit_comparison?.base_plan_id === plan.id ? data.hit_comparison : null;
   return (

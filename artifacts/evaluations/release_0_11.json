@@ -1,0 +1,245 @@
+{
+  "at": "2026-11-05T18:08:29.239691+00:00",
+  "version": "0.11.0",
+  "change": "Paid-transfer evidence and disclosure correction; numerical models unchanged",
+  "decision_model_id": "28c6f6ef07ed425b38f7e353e757f153b05ca0b7b7cbe57a0dff58ff7dbcc254",
+  "forecast_id": "c091ddcd4495bb715d003fd3211320166f41a23a1d83cecc0ffad4dd97c94491",
+  "selected_plan_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55",
+  "first_hit": 0,
+  "checks": {
+    "at": "2026-11-05T18:07:26.894474+00:00",
+    "passed": true,
+    "backend_tests": 194,
+    "backend_skipped": 0,
+    "frontend_unit_tests": 3,
+    "browser_journeys": 18,
+    "browser_failed": 0,
+    "browser_skipped": 0
+  },
+  "implementation_audit": "c47d88904bf4c3e81544c168fdba860bc4cb3c4ca248298e83311083c553aa08",
+  "selection_id": "7fd376a0f461e9005ae80122916423ba43e8bf1f203ce45495d00e6c39d0fb0a",
+  "paired_hit_evidence": {
+    "candidate_plan_id": "4d324105de53d37ec87e91c72205ff9a5048061b5dc70d82774cdcb300089558",
+    "no_hit_plan_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55",
+    "net_mean_gain": 1.73375,
+    "paired_mc_interval_95": [
+      1.4547898996527382,
+      2.0127101003472614
+    ],
+    "hit_supported_beyond_mc_error": true,
+    "no_hit_search_plan_id": "813495fab30c8e8c2aa227533195f533b110ef94717692466c278314203c2c3c",
+    "no_hit_search_allowance": 9.311643393506074,
+    "hit_supported_beyond_search_error": false,
+    "weekly_tradeoff": [
+      {
+        "event": 10,
+        "candidate_net": 44.334,
+        "alternative_net": 53.342,
+        "cumulative_net_advantage": -9.007999999999996
+      },
+      {
+        "event": 11,
+        "candidate_net": 60.7,
+        "alternative_net": 51.798,
+        "cumulative_net_advantage": -0.10599999999999454
+      },
+      {
+        "event": 12,
+        "candidate_net": 59.016,
+        "alternative_net": 58.791,
+        "cumulative_net_advantage": 0.11900000000000688
+      },
+      {
+        "event": 13,
+        "candidate_net": 64.722,
+        "alternative_net": 64.898,
+        "cumulative_net_advantage": -0.056999999999995055
+      },
+      {
+        "event": 14,
+        "candidate_net": 60.152,
+        "alternative_net": 60.998,
+        "cumulative_net_advantage": -0.9029999999999916
+      },
+      {
+        "event": 15,
+        "candidate_net": 62.038,
+        "alternative_net": 60.415,
+        "cumulative_net_advantage": 0.720000000000006
+      },
+      {
+        "event": 16,
+        "candidate_net": 65.448,
+        "alternative_net": 65.896,
+        "cumulative_net_advantage": 0.27199999999999847
+      },
+      {
+        "event": 17,
+        "candidate_net": 61.696,
+        "alternative_net": 61.44,
+        "cumulative_net_advantage": 0.5279999999999987
+      },
+      {
+        "event": 18,
+        "candidate_net": 61.474,
+        "alternative_net": 61.016,
+        "cumulative_net_advantage": 0.9859999999999971
+      },
+      {
+        "event": 19,
+        "candidate_net": 78.86,
+        "alternative_net": 78.113,
+        "cumulative_net_advantage": 1.732999999999997
+      }
+    ],
+    "scope": "Paired sampling error and unfinished no-hit additive-search allowance are separate. Forecast error remains additional; this is not a statistical confidence interval for the true transfer value.",
+    "reason": "No-new-hit policy retained: paid-transfer advantage is unresolved after the no-hit search allowance",
+    "source_forecast_review": [
+      {
+        "player_id": 8,
+        "name": "Calafiori",
+        "fixtures": [
+          "HUL (H)"
+        ],
+        "model_points": 3.10235,
+        "model_minutes": 58.7466,
+        "model_start_probability": 0.7432950191570882,
+        "official_next_points": 5.5,
+        "official_status": "a",
+        "official_availability": 1.0,
+        "season_starts": 8,
+        "completed_club_fixtures": 9
+      },
+      {
+        "player_id": 60,
+        "name": "Hill",
+        "fixtures": [
+          "IPS (A)"
+        ],
+        "model_points": 4.5691,
+        "model_minutes": 89.1043,
+        "model_start_probability": 0.975609756097561,
+        "official_next_points": 6.5,
+        "official_status": "a",
+        "official_availability": null,
+        "season_starts": 9,
+        "completed_club_fixtures": 9
+      },
+      {
+        "player_id": 212,
+        "name": "Hughes",
+        "fixtures": [
+          "LIV (H)"
+        ],
+        "model_points": 0.57105,
+        "model_minutes": 12.74385,
+        "model_start_probability": 0.08045977011494253,
+        "official_next_points": 0.5,
+        "official_status": "a",
+        "official_availability": null,
+        "season_starts": 0,
+        "completed_club_fixtures": 9
+      },
+      {
+        "player_id": 306,
+        "name": "Greaves",
+        "fixtures": [
+          "BOU (H)"
+        ],
+        "model_points": 1.07255,
+        "model_minutes": 29.70865,
+        "model_start_probability": 0.3867924528301887,
+        "official_next_points": 0.2,
+        "official_status": "a",
+        "official_availability": null,
+        "season_starts": 5,
+        "completed_club_fixtures": 9
+      },
+      {
+        "player_id": 338,
+        "name": "Ampadu",
+        "fixtures": [
+          "TOT (H)"
+        ],
+        "model_points": 4.17685,
+        "model_minutes": 85.5735,
+        "model_start_probability": 0.975609756097561,
+        "official_next_points": 1.8,
+        "official_status": "a",
+        "official_availability": null,
+        "season_starts": 9,
+        "completed_club_fixtures": 9
+      },
+      {
+        "player_id": 356,
+        "name": "Virgil",
+        "fixtures": [
+          "CRY (A)"
+        ],
+        "model_points": 5.166,
+        "model_minutes": 87.7881,
+        "model_start_probability": 1.0,
+        "official_next_points": 3.5,
+        "official_status": "a",
+        "official_availability": null,
+        "season_starts": 9,
+        "completed_club_fixtures": 9
+      },
+      {
+        "player_id": 399,
+        "name": "Cherki",
+        "fixtures": [
+          "NFO (A)"
+        ],
+        "model_points": 2.4323,
+        "model_minutes": 36.17955,
+        "model_start_probability": 0.25833333333333336,
+        "official_next_points": 2.8,
+        "official_status": "a",
+        "official_availability": null,
+        "season_starts": 6,
+        "completed_club_fixtures": 9
+      },
+      {
+        "player_id": 542,
+        "name": "E.Le F\u00e9e",
+        "fixtures": [
+          "CHE (H)"
+        ],
+        "model_points": 4.26905,
+        "model_minutes": 79.4526,
+        "model_start_probability": 0.907563025210084,
+        "official_next_points": 4.2,
+        "official_status": "a",
+        "official_availability": null,
+        "season_starts": 9,
+        "completed_club_fixtures": 9
+      }
+    ]
+  },
+  "frozen_gw10_comparison": {
+    "roll": {
+      "net_points": 51.28965,
+      "hit": 0
+    },
+    "cherki_tavernier": {
+      "net_points": 52.3991,
+      "hit": 0
+    },
+    "gvardiol_virgil": {
+      "net_points": 53.3422,
+      "hit": 0
+    }
+  },
+  "limits": [
+    "The search allowance is a conservative additive-surrogate sensitivity, not a bound on nonlinear autosubs or all forecast error.",
+    "Historical scores belong to frozen earlier policy versions. No new predictive accuracy improvement is claimed.",
+    "Availability does not establish starting certainty. Official next-week points are comparisons, not ground truth."
+  ],
+  "research_sources": [
+    "https://fantasy.premierleague.com/api/bootstrap-static/",
+    "https://fantasy.premierleague.com/api/fixtures/",
+    "https://www.fantasyfootballscout.co.uk/2026/11/02/evanilson-van-hecke-konsa-dcl-buy-keep-or-sell-in-gameweek-10",
+    "https://doi.org/10.1287/mnsc.1050.0451"
+  ]
+}
