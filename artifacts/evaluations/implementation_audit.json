@@ -1,9 +1,9 @@
 {
-  "at": "2026-11-05T18:07:30.005993+00:00",
-  "requirements_traced": 87,
+  "at": "2026-11-06T15:07:17.396796+00:00",
+  "requirements_traced": 94,
   "verification_scope": "Implementation symbols, executed mapped regressions and existing runtime evidence; not a proof that all possible behaviours are error-free",
   "scope": "Concrete behavioral regressions and retained runtime evidence, accompanied by a complete section/body-line review of both original design documents in specification_sections.json. Conditional research alternatives require measured benefit; future performance requires future observations.",
-  "checks_at": "2026-11-05T18:07:26.894474+00:00",
+  "checks_at": "2026-11-06T15:06:33.533740+00:00",
   "items": [
     {
       "id": "data.registry",
@@ -13,7 +13,7 @@
       "runtime_evidence_kind": "market",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "8c782af74e0e3e04b624c8ef9fbc815fe8153d20ed9d9935a96c406c3702ac03"
+      "runtime_artifact_id": "557a7041b6618a9b7996119025814b04c1b9362986845588a31e4034587198c9"
     },
     {
       "id": "data.snapshots",
@@ -23,7 +23,7 @@
       "runtime_evidence_kind": "ingestion",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "45a350dfd8ced79bc089239908dc4d29d8e20b9e49d0564f1fd7da415e66696d"
+      "runtime_artifact_id": "b44d759f59d06cbc87ffca746323a11d972a4e24f9398a56e8614e4064cf9afc"
     },
     {
       "id": "data.identity",
@@ -43,7 +43,7 @@
       "runtime_evidence_kind": "context_archive",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "037daccdb73cd5efd0d02fe48beb831cb2d14020f68d6ec0fd78a38aa8cf9695"
+      "runtime_artifact_id": "0165a57b829113f74f92978483b89108c261de4368b0a441970982199a5b391c"
     },
     {
       "id": "data.labels",
@@ -53,7 +53,7 @@
       "runtime_evidence_kind": "decision_model",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "28c6f6ef07ed425b38f7e353e757f153b05ca0b7b7cbe57a0dff58ff7dbcc254"
+      "runtime_artifact_id": "13612366d8d406fa2c9c528b647d322930a42231865a0263a44a1f3e77dfb842"
     },
     {
       "id": "state.sync",
@@ -83,7 +83,7 @@
       "runtime_evidence_kind": "policy_selection",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "7fd376a0f461e9005ae80122916423ba43e8bf1f203ce45495d00e6c39d0fb0a"
+      "runtime_artifact_id": "e5a9ced59b7d41a2cb7e99274a7b2a3ff1df41929277ec489f525958dded1b27"
     },
     {
       "id": "state.prices",
@@ -93,7 +93,7 @@
       "runtime_evidence_kind": "market",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "8c782af74e0e3e04b624c8ef9fbc815fe8153d20ed9d9935a96c406c3702ac03"
+      "runtime_artifact_id": "557a7041b6618a9b7996119025814b04c1b9362986845588a31e4034587198c9"
     },
     {
       "id": "state.hits",
@@ -103,7 +103,7 @@
       "runtime_evidence_kind": "policy_selection",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "7fd376a0f461e9005ae80122916423ba43e8bf1f203ce45495d00e6c39d0fb0a"
+      "runtime_artifact_id": "e5a9ced59b7d41a2cb7e99274a7b2a3ff1df41929277ec489f525958dded1b27"
     },
     {
       "id": "state.squad",
@@ -113,7 +113,7 @@
       "runtime_evidence_kind": "evolving_dataset",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "2b019ac7d7364b2224aa75c4ae0acd410b3862a932cd3f6f8901a60c62400967"
+      "runtime_artifact_id": "baf750d0cf4bf4bab08dea6b6f761564a182c8bd37bd3c5399adee6407edf56e"
     },
     {
       "id": "state.lineup",
@@ -123,7 +123,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
+      "runtime_artifact_id": "5cdf99e84885c35234ab33634b8002c54625fea4640ebfc11b3b7fa56445053b"
     },
     {
       "id": "state.autosubs",
@@ -133,7 +133,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
+      "runtime_artifact_id": "5cdf99e84885c35234ab33634b8002c54625fea4640ebfc11b3b7fa56445053b"
     },
     {
       "id": "state.freehit",
@@ -143,7 +143,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
+      "runtime_artifact_id": "5cdf99e84885c35234ab33634b8002c54625fea4640ebfc11b3b7fa56445053b"
     },
     {
       "id": "model.baselines",
@@ -153,7 +153,7 @@
       "runtime_evidence_kind": "decision_model",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "28c6f6ef07ed425b38f7e353e757f153b05ca0b7b7cbe57a0dff58ff7dbcc254"
+      "runtime_artifact_id": "13612366d8d406fa2c9c528b647d322930a42231865a0263a44a1f3e77dfb842"
     },
     {
       "id": "model.features",
@@ -163,7 +163,7 @@
       "runtime_evidence_kind": "fusion_model",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "b40734f1d5145f36c1ea37144a316069648f2d74537f5cb201f6a8cfe56e4bef"
+      "runtime_artifact_id": "326006459f8c9344382688d43732e137daec6c3149f2ff1b839e580db7de828d"
     },
     {
       "id": "model.minutes",
@@ -173,7 +173,7 @@
       "runtime_evidence_kind": "decision_model",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "28c6f6ef07ed425b38f7e353e757f153b05ca0b7b7cbe57a0dff58ff7dbcc254"
+      "runtime_artifact_id": "13612366d8d406fa2c9c528b647d322930a42231865a0263a44a1f3e77dfb842"
     },
     {
       "id": "model.recovery",
@@ -233,7 +233,7 @@
       "runtime_evidence_kind": "coherent_comparison",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "011e0cc2c2555bf3fea964fbe2eb4babfac15e76fb8247d8c26a0e7da791a49b"
+      "runtime_artifact_id": "fae59a45a8b717e8564feb910c0c1a4dcb8da20af862c8fd812991bdc984cada"
     },
     {
       "id": "model.saves",
@@ -243,7 +243,7 @@
       "runtime_evidence_kind": "coherent_comparison",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "011e0cc2c2555bf3fea964fbe2eb4babfac15e76fb8247d8c26a0e7da791a49b"
+      "runtime_artifact_id": "fae59a45a8b717e8564feb910c0c1a4dcb8da20af862c8fd812991bdc984cada"
     },
     {
       "id": "model.defcon",
@@ -293,7 +293,7 @@
       "runtime_evidence_kind": "coherent_comparison",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "011e0cc2c2555bf3fea964fbe2eb4babfac15e76fb8247d8c26a0e7da791a49b"
+      "runtime_artifact_id": "fae59a45a8b717e8564feb910c0c1a4dcb8da20af862c8fd812991bdc984cada"
     },
     {
       "id": "model.distributions",
@@ -326,14 +326,14 @@
       "runtime_artifact_id": "025078e5b28ce375c09b3d29c3d3367b2ec8558cc2ba6d0fdafc6ba1d4e083d3"
     },
     {
-      "id": "model.neural",
-      "requirement": "Purpose-built temporal/news/numerical/market/workload/enrichment neural fusion",
+      "id": "model.source_fusion",
+      "requirement": "Dated numerical/news/market/workload/enrichment boosted-tree fusion; locally trained neural components removed under the latest user instruction",
       "implementation": "src/fpl_intelligence/fusion.py:train_fusion",
       "test": "tests/test_fusion.py:test_fusion_promotion_cannot_skip_decision_or_uncertainty_gates",
       "runtime_evidence_kind": "fusion_model",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "b40734f1d5145f36c1ea37144a316069648f2d74537f5cb201f6a8cfe56e4bef"
+      "runtime_artifact_id": "326006459f8c9344382688d43732e137daec6c3149f2ff1b839e580db7de828d"
     },
     {
       "id": "model.horizon",
@@ -353,7 +353,7 @@
       "runtime_evidence_kind": "intelligence_refresh",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "953171a8eb2d29debd979982e681fa70207b3955ec95fd5e6d5e50109c28611a"
+      "runtime_artifact_id": "3e9a7e153cfd246369d883f32dd06090111b2845f42ef93829a76f94dabde5f3"
     },
     {
       "id": "evidence.claims",
@@ -363,7 +363,7 @@
       "runtime_evidence_kind": "intelligence_refresh",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "953171a8eb2d29debd979982e681fa70207b3955ec95fd5e6d5e50109c28611a"
+      "runtime_artifact_id": "3e9a7e153cfd246369d883f32dd06090111b2845f42ef93829a76f94dabde5f3"
     },
     {
       "id": "evidence.use",
@@ -373,7 +373,7 @@
       "runtime_evidence_kind": "evidence_impact",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "d8f4682e0b26c57cb215284cc1a24c2bda86419302f01ee5fe12430bb34e98ca"
+      "runtime_artifact_id": "140d1490e156d0732c7b1c3e3c864002efe9add571fcd9810967b1b7c3f9bc8d"
     },
     {
       "id": "evidence.free",
@@ -423,7 +423,7 @@
       "runtime_evidence_kind": "manager_policy",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "3c1b56aa8251e6569440c555310f18a3c836bf90d33c049488adc3ee2e5e3cd3"
+      "runtime_artifact_id": "99857999a21446eb2071c451c8f51f18a435bb0dc355f51bffee51d96579eb88"
     },
     {
       "id": "managers.rivals",
@@ -433,7 +433,7 @@
       "runtime_evidence_kind": "rival_comparison",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "bfe4641db2139c75f46f0dafb689b442e36eb75281f73f1418774414d29c6644"
+      "runtime_artifact_id": "331a0e790eb1823757e54a4e589902f926a2de2ffafd53ffe62ec1878cef4bee"
     },
     {
       "id": "managers.population",
@@ -443,7 +443,7 @@
       "runtime_evidence_kind": "population_forecast",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "ecd89fca2729c806398441cdd0ffa5c87ac85f08f8e068964e45010ac4277c01"
+      "runtime_artifact_id": "bf424ed0fe2a2e159bd09e5fcc5d888f9c8eea656c6a23ef7929e7ee2d4b659a"
     },
     {
       "id": "strategy.mip",
@@ -453,7 +453,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
+      "runtime_artifact_id": "5cdf99e84885c35234ab33634b8002c54625fea4640ebfc11b3b7fa56445053b"
     },
     {
       "id": "strategy.captain",
@@ -463,7 +463,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
+      "runtime_artifact_id": "5cdf99e84885c35234ab33634b8002c54625fea4640ebfc11b3b7fa56445053b"
     },
     {
       "id": "strategy.bench",
@@ -473,7 +473,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
+      "runtime_artifact_id": "5cdf99e84885c35234ab33634b8002c54625fea4640ebfc11b3b7fa56445053b"
     },
     {
       "id": "strategy.objectives",
@@ -483,7 +483,7 @@
       "runtime_evidence_kind": "policy_selection",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "7fd376a0f461e9005ae80122916423ba43e8bf1f203ce45495d00e6c39d0fb0a"
+      "runtime_artifact_id": "e5a9ced59b7d41a2cb7e99274a7b2a3ff1df41929277ec489f525958dded1b27"
     },
     {
       "id": "strategy.nohit",
@@ -493,7 +493,7 @@
       "runtime_evidence_kind": "hit_comparison",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "817ce1159964e5366bf2742eb621de0c5cfc04e287123f1ceb9723e9c847910a"
+      "runtime_artifact_id": "0c4089de62c1ae86dcb4e8c34db1028cc0f0059172241a867bd5d818aed16117"
     },
     {
       "id": "strategy.episodes",
@@ -503,7 +503,7 @@
       "runtime_evidence_kind": "evolving_dataset",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "2b019ac7d7364b2224aa75c4ae0acd410b3862a932cd3f6f8901a60c62400967"
+      "runtime_artifact_id": "baf750d0cf4bf4bab08dea6b6f761564a182c8bd37bd3c5399adee6407edf56e"
     },
     {
       "id": "strategy.continuation",
@@ -513,7 +513,7 @@
       "runtime_evidence_kind": "state_value_model",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "0280a77c3da055823169e4e2abc7dc0e91a79969a6c01b21116b9db2c29d6ea3"
+      "runtime_artifact_id": "10e225268251b063b77c95696dc6b45c70ac4488d6e11af0cd67e6eb49621350"
     },
     {
       "id": "strategy.timing",
@@ -523,7 +523,7 @@
       "runtime_evidence_kind": "timing_analysis",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "bccf8553a20155d880f97b2464c0f9f47b4c19860bdf351b598bdf1d0953d25f"
+      "runtime_artifact_id": "11eb36e1e65f66c78a01593826b814911cb4e9b816050c341363d8f492e115ac"
     },
     {
       "id": "strategy.scenarios",
@@ -533,7 +533,7 @@
       "runtime_evidence_kind": "scenario_evaluation",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "4ad70e89ed225a5e238bb554ff750a83c8d2777df8a64fe69a053f56f4d2f7c4"
+      "runtime_artifact_id": "440e0fe1bc4a4d5160f063083607f503247d5c756ddb4380a3d3f340922475da"
     },
     {
       "id": "strategy.chips",
@@ -543,7 +543,7 @@
       "runtime_evidence_kind": "chip_counterfactual",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "fe7669b5bb5e6c64bcfc67c679116a8553f1f14be882d5280fea7ce89ea484de"
+      "runtime_artifact_id": "a09c8372b1e25692fc429c80bd60fcad185b924bba5e1d0c394b2f68db243cc8"
     },
     {
       "id": "evaluation.weekly",
@@ -563,7 +563,7 @@
       "runtime_evidence_kind": "prospective_policy",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "34960459a226c1723ff9eb71a9fdbd576ae4614b5687b3e1acbd9430a84350ca"
+      "runtime_artifact_id": "79aac50fd901bd805ab3208789143395068f2b40e2dd091762c01f503dfe72f3"
     },
     {
       "id": "product.workspaces",
@@ -573,7 +573,7 @@
       "runtime_evidence_kind": "plan",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "49d76b40ab9a129b363900097411110d1d9fdb6cddb65daff13e8d5de9535d55"
+      "runtime_artifact_id": "5cdf99e84885c35234ab33634b8002c54625fea4640ebfc11b3b7fa56445053b"
     },
     {
       "id": "operations.sources",
@@ -583,7 +583,7 @@
       "runtime_evidence_kind": "source_request",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "86432b2e0b868b0a7800e1211cdd7c7c84881e7e8289ee3776fef04dafb01852"
+      "runtime_artifact_id": "e6b7026e84b23f804c5d21612dcc5428640ef66f2d3e036b9eb6cc0cc5cec60e"
     },
     {
       "id": "operations.worlds",
@@ -593,7 +593,7 @@
       "runtime_evidence_kind": "forecast",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "c091ddcd4495bb715d003fd3211320166f41a23a1d83cecc0ffad4dd97c94491"
+      "runtime_artifact_id": "7143d9520e47313f44f43efb6f982aea1d0a3bb19ef0994705fed4dc6a5628d9"
     },
     {
       "id": "operations.install",
@@ -603,7 +603,7 @@
       "runtime_evidence_kind": "market",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "8c782af74e0e3e04b624c8ef9fbc815fe8153d20ed9d9935a96c406c3702ac03"
+      "runtime_artifact_id": "557a7041b6618a9b7996119025814b04c1b9362986845588a31e4034587198c9"
     },
     {
       "id": "operations.release",
@@ -613,7 +613,7 @@
       "runtime_evidence_kind": "policy_selection",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "7fd376a0f461e9005ae80122916423ba43e8bf1f203ce45495d00e6c39d0fb0a"
+      "runtime_artifact_id": "e5a9ced59b7d41a2cb7e99274a7b2a3ff1df41929277ec489f525958dded1b27"
     },
     {
       "id": "ops.jobs",
@@ -623,7 +623,7 @@
       "runtime_evidence_kind": "release_checks",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "a0745265c0b5bab014a24154d004c7eb41f0c967276fe7bc6e08d0a7d50a4ba7"
+      "runtime_artifact_id": "9de7d9f0b72c7f51176cb3a001e132037ff3851cad5fa22df060509f2702374c"
     },
     {
       "id": "ops.updater",
@@ -643,7 +643,7 @@
       "runtime_evidence_kind": "fusion_model",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "b40734f1d5145f36c1ea37144a316069648f2d74537f5cb201f6a8cfe56e4bef"
+      "runtime_artifact_id": "326006459f8c9344382688d43732e137daec6c3149f2ff1b839e580db7de828d"
     },
     {
       "id": "strategy.sampler",
@@ -653,7 +653,7 @@
       "runtime_evidence_kind": "evolving_dataset",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "2b019ac7d7364b2224aa75c4ae0acd410b3862a932cd3f6f8901a60c62400967"
+      "runtime_artifact_id": "baf750d0cf4bf4bab08dea6b6f761564a182c8bd37bd3c5399adee6407edf56e"
     },
     {
       "id": "forecast.published",
@@ -763,7 +763,7 @@
       "runtime_evidence_kind": "shadow_cohort",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "1adb41115bef40fc8f5ca1d79cb5f3f1bbe83eabc611ad10b4756034ce6f8e80"
+      "runtime_artifact_id": "351e9a250215cb6d6e40fc4556dd752f989ee2d96b61e52ec6f0f810a9eef50a"
     },
     {
       "id": "prospective.missed_capture",
@@ -773,7 +773,7 @@
       "runtime_evidence_kind": "shadow_cohort",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "1adb41115bef40fc8f5ca1d79cb5f3f1bbe83eabc611ad10b4756034ce6f8e80"
+      "runtime_artifact_id": "351e9a250215cb6d6e40fc4556dd752f989ee2d96b61e52ec6f0f810a9eef50a"
     },
     {
       "id": "prospective.clock",
@@ -783,7 +783,7 @@
       "runtime_evidence_kind": "shadow_cohort",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "1adb41115bef40fc8f5ca1d79cb5f3f1bbe83eabc611ad10b4756034ce6f8e80"
+      "runtime_artifact_id": "351e9a250215cb6d6e40fc4556dd752f989ee2d96b61e52ec6f0f810a9eef50a"
     },
     {
       "id": "operations.portable_database",
@@ -793,7 +793,7 @@
       "runtime_evidence_kind": "release_checks",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "a0745265c0b5bab014a24154d004c7eb41f0c967276fe7bc6e08d0a7d50a4ba7"
+      "runtime_artifact_id": "9de7d9f0b72c7f51176cb3a001e132037ff3851cad5fa22df060509f2702374c"
     },
     {
       "id": "prospective.ongoing_finances",
@@ -803,7 +803,7 @@
       "runtime_evidence_kind": "shadow_cohort",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "1adb41115bef40fc8f5ca1d79cb5f3f1bbe83eabc611ad10b4756034ce6f8e80"
+      "runtime_artifact_id": "351e9a250215cb6d6e40fc4556dd752f989ee2d96b61e52ec6f0f810a9eef50a"
     },
     {
       "id": "forecast.future_lead",
@@ -843,7 +843,7 @@
       "runtime_evidence_kind": "replay_inputs",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "95968552344754b97d461ea65a2d7da42e5f13a1e49ff6ca036ca7bf773c82c1"
+      "runtime_artifact_id": "dc2056e4ff105302c3bf78d4527b5a0c667930a84804f9262fe0de0007f934e9"
     },
     {
       "id": "strategy.chip_calendar",
@@ -853,7 +853,7 @@
       "runtime_evidence_kind": "chip_counterfactual",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "fe7669b5bb5e6c64bcfc67c679116a8553f1f14be882d5280fea7ce89ea484de"
+      "runtime_artifact_id": "a09c8372b1e25692fc429c80bd60fcad185b924bba5e1d0c394b2f68db243cc8"
     },
     {
       "id": "strategy.restored_freehit",
@@ -863,7 +863,7 @@
       "runtime_evidence_kind": "chip_counterfactual",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "fe7669b5bb5e6c64bcfc67c679116a8553f1f14be882d5280fea7ce89ea484de"
+      "runtime_artifact_id": "a09c8372b1e25692fc429c80bd60fcad185b924bba5e1d0c394b2f68db243cc8"
     },
     {
       "id": "strategy.paid_evidence",
@@ -873,7 +873,77 @@
       "runtime_evidence_kind": "policy_selection",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "7fd376a0f461e9005ae80122916423ba43e8bf1f203ce45495d00e6c39d0fb0a"
+      "runtime_artifact_id": "e5a9ced59b7d41a2cb7e99274a7b2a3ff1df41929277ec489f525958dded1b27"
+    },
+    {
+      "id": "model.role_minutes",
+      "requirement": "Chronological role-aware participation; stable-code joins and frozen context",
+      "implementation": "src/fpl_intelligence/role_minutes.py:validate",
+      "test": "tests/test_role_minutes.py:test_role_history_uses_stable_code_and_frozen_context",
+      "runtime_evidence_kind": "role_minutes_validation",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "227dc9130dc3f915c83c6ac5554bc044a7cb78ea73488841119a533bb9e7fd60"
+    },
+    {
+      "id": "data.physical_rest",
+      "requirement": "Unused substitute observations do not count as physical appearances or reset rest",
+      "implementation": "src/fpl_intelligence/workload.py:workload_features",
+      "test": "tests/test_model_maintenance.py:test_unused_midweek_substitute_does_not_reset_physical_rest",
+      "runtime_evidence_kind": "workload",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "b12bc9fc4e554dd6a4abfda7cc11c621dfb05445739df77e62a2ef4087473eff"
+    },
+    {
+      "id": "data.duplicate_matches",
+      "requirement": "Conflicting copies quarantine the entire fixture",
+      "implementation": "src/fpl_intelligence/workload.py:canonical_player_matches",
+      "test": "tests/test_model_maintenance.py:test_conflicting_duplicate_match_excludes_every_copy",
+      "runtime_evidence_kind": "workload",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "b12bc9fc4e554dd6a4abfda7cc11c621dfb05445739df77e62a2ef4087473eff"
+    },
+    {
+      "id": "model.retirement",
+      "requirement": "Retire unsupported local weights without changing account data or tree weights",
+      "implementation": "src/fpl_intelligence/maintenance.py:maintain_models",
+      "test": "tests/test_model_maintenance.py:test_weight_cleanup_preserves_account_tree_and_external_files",
+      "runtime_evidence_kind": "model_maintenance",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "49a03bba560cd7acc66bf430ac02d3c0a9b73e4c2a33886d0d358cbb7afa608b"
+    },
+    {
+      "id": "optimizer.cache_scope",
+      "requirement": "Unrelated plans cannot evict legal continuations; refreshed-market reuse replays prices and constraints",
+      "implementation": "src/fpl_intelligence/decision_runtime.py:conditional_plan",
+      "test": "tests/test_strategy.py:test_equivalent_freehit_actions_reuse_a_validated_continuation",
+      "runtime_evidence_kind": "plan",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "5cdf99e84885c35234ab33634b8002c54625fea4640ebfc11b3b7fa56445053b"
+    },
+    {
+      "id": "optimizer.causal_incumbents",
+      "requirement": "Search incumbents cannot originate in a later-information forecast",
+      "implementation": "src/fpl_intelligence/optimization.py:incumbent_precedes_forecast",
+      "test": "tests/test_model_maintenance.py:test_reused_actions_cannot_come_from_future_forecasts",
+      "runtime_evidence_kind": "plan",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "5cdf99e84885c35234ab33634b8002c54625fea4640ebfc11b3b7fa56445053b"
+    },
+    {
+      "id": "optimizer.chip_evidence",
+      "requirement": "Optional current chip use requires support beyond ordinary-transfer search; preserve committed, pinned and expiring entitlements",
+      "implementation": "src/fpl_intelligence/objectives.py:chip_use_evidence",
+      "test": "tests/test_hit_support.py:test_current_chip_requires_support_beyond_ordinary_transfer_search",
+      "runtime_evidence_kind": "policy_selection",
+      "implementation_symbol_found": true,
+      "mapped_regression_passed": true,
+      "runtime_artifact_id": "e5a9ced59b7d41a2cb7e99274a7b2a3ff1df41929277ec489f525958dded1b27"
     }
   ],
   "specification_review": {
@@ -12087,5 +12157,5 @@
     "Unavailable optional inputs are recorded as unavailable; no observations are invented.",
     "Prospective competitive advantage and future ranks require future finalized matches."
   ],
-  "id": "c47d88904bf4c3e81544c168fdba860bc4cb3c4ca248298e83311083c553aa08"
+  "id": "0c381f866ecb1d39a15f31b1bec661b81c041f5fe357578f2f41c2080db2d394"
 }
