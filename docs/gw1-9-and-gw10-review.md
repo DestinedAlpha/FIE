@@ -44,7 +44,7 @@ Official FPL xG/xA, starts/minutes, points and defensive actions provide the und
 | Gabriel | 1.47 | 0.25 | 810 | 84.0 | 5.30 | 8.2 |
 | Virgil | 0.36 | 0.22 | 810 | 88.6 | 5.21 | 3.5 |
 
-Gabriel has substantially higher season xG than Van Dijk, and the official published estimate favors him much more strongly than our regression does. That disagreement lowers confidence in calling Van Dijk optimal. The four-point cost explains why the pair loses the immediate comparison; the six-week near-tie does not justify certainty either way. Published EP is an independent sensitivity, not ground truth or an automatic model override.
+Gabriel has substantially higher season xG than Van Dijk, and the official published estimate favors him much more strongly than our regression does. That disagreement lowers confidence in calling Van Dijk optimal. The four-point cost explains why the pair loses the immediate comparison; the six-week near-tie does not justify certainty either way. Using those official EP values to select the legal XI/captain gives 69.1 net points for the Gabriel/Tavernier pair versus 65.2 for Van Dijk alone. This is a linear sensitivity without probabilistic autosub scoring. The reversal is material model disagreement. Published EP is an independent sensitivity, not ground truth or an automatic model override.
 
 [Full transfer calculations, paired worlds, continuation diagnostics and component values](../artifacts/evaluations/gw10-user-options.json).
 

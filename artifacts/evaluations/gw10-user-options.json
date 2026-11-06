@@ -441,5 +441,12 @@
       ]
     }
   },
-  "id": "c703318e8e30e8a1a31b5289c3be0a8d2a1de0a42cfb3021801b559f296e601c"
+  "official_ep_team_sensitivity": {
+    "roll": 63.9,
+    "gvardiol_virgil": 65.2,
+    "cherki_tavernier": 67.1,
+    "tavernier_gabriel_hit": 69.1,
+    "scope": "Best legal XI and captain using the same saved official FPL ep_next values, less the actual hit. Linear sensitivity without probabilistic autosub scoring; an independent forecast disagreement, not ground truth."
+  },
+  "id": "172436b73bbb689d11db21ec3c01b497d079c66f99ecbe32cfff2eda0eeb53a0"
 }
