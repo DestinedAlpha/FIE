@@ -2,7 +2,7 @@ import httpx
 import numpy as np
 import pytest
 
-from fpl_intelligence.account_sync import free_transfers_after, reconcile_public
+from fpl_intelligence.account_sync import free_transfers_after, reconcile_public, revealed_pick_events
 from fpl_intelligence.discipline import BanDecision, ban_service, infer_caution_bans
 from fpl_intelligence.domain import Action, Lot
 from fpl_intelligence.objectives import cvar, select_policy
@@ -87,6 +87,17 @@ def test_ft_replay_preserves_saved_transfers_on_both_reset_chips(rules):
         "chips": [{"event": 4, "name": "wildcard"}, {"event": 5, "name": "freehit"}],
     }
     assert free_transfers_after(history, 6, rules) == 4
+
+
+def test_late_joiner_only_requests_entered_deadlines_and_gets_one_ft(rules):
+    history = {"current": [{"event": 9, "event_transfers": 0}], "chips": []}
+    assert revealed_pick_events(history, 9) == [9]
+    assert free_transfers_after(history, 9, rules) == 1
+    history["current"].append({"event": 10, "event_transfers": 1})
+    assert revealed_pick_events(history, 9) == [9]  # later captures cannot supply future picks
+    assert revealed_pick_events(history, 10) == [9, 10]
+    with pytest.raises(ValueError, match="Missing revealed"):
+        revealed_pick_events(history, 11)
 
 
 def test_mixed_order_bundle_pairs_roles_and_charges_only_new_hit(market, rules, state):

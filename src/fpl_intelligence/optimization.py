@@ -229,6 +229,80 @@ def greedy_bundle(state, players, rules, means, max_transfers=2):
     return chosen
 
 
+def feasible_incumbent(model, vector):
+    """Check bounds, every row and integrality before offering a solver seed."""
+    lhs = np.bincount(
+        np.asarray(model.rows, dtype=int),
+        weights=np.asarray(model.values) * vector[np.asarray(model.cols, dtype=int)],
+        minlength=len(model.row_lower),
+    )
+    integer = np.asarray(model.integer, dtype=bool)
+    return bool(
+        np.isfinite(vector).all()
+        and np.all(vector >= np.asarray(model.lower) - 1e-6)
+        and np.all(vector <= np.asarray(model.upper) + 1e-6)
+        and np.all(lhs >= np.asarray(model.row_lower) - 1e-6)
+        and np.all(lhs <= np.asarray(model.row_upper) + 1e-6)
+        and np.all(np.abs(vector[integer] - np.rint(vector[integer])) <= 1e-6)
+    )
+
+
+def relaxed_horizon_bound(players, rules, means, state, events, terminal, continuation, chip_allowed):
+    """Transfer-free continuous squad relaxations bound the additive objective.
+
+    Prices are fixed in this formulation. Original-lot market wealth therefore
+    bounds every future squad, even before transfer/lot integrality is imposed.
+    Free Hit/Wildcard are already relaxed by allowing a fresh squad every week.
+    """
+    ids = sorted(players)
+    wealth = state.bank + sum(players[lot.player_id].price for lot in state.lots)
+    extra = Counter(players[lot.player_id].team for lot in state.lots)
+    totals, gains = [], defaultdict(list)
+    for event in events:
+        values = {}
+        for mode in (None, "bboost", "3xc"):
+            if mode and not chip_allowed.get((event, mode)):
+                continue
+            relaxation = MIP()
+            y, x, c = {}, {}, {}
+            for p in ids:
+                value = means.get((event, p), 0)
+                tail = terminal.get(p, 0) if event == events[-1] else 0
+                y[p] = relaxation.var(("y", p), tail + (value if mode == "bboost" else 0), integer=False)
+                x[p] = relaxation.var(("x", p), 0 if mode == "bboost" else value, integer=False)
+                c[p] = relaxation.var(("c", p), value * (2 if mode == "3xc" else 1), integer=False)
+                relaxation.row({x[p]: 1, y[p]: -1}, upper=0)
+                relaxation.row({c[p]: 1, x[p]: -1}, upper=0)
+            relaxation.equal([(y[p], 1) for p in ids], 15)
+            relaxation.equal([(x[p], 1) for p in ids], 11)
+            relaxation.equal([(c[p], 1) for p in ids], 1)
+            relaxation.row([(y[p], players[p].price) for p in ids], upper=wealth)
+            for pos, count in rules.composition.items():
+                group = [p for p in ids if players[p].position == pos]
+                relaxation.equal([(y[p], 1) for p in group], count)
+                relaxation.row([(x[p], 1) for p in group], rules.minimum[pos], rules.maximum[pos])
+            for club in {players[p].team for p in ids}:
+                relaxation.row(
+                    [(y[p], 1) for p in ids if players[p].team == club],
+                    upper=max(rules.club_limit, extra[club]),
+                )
+            try:
+                _, info = relaxation.solve(1)
+            except ValueError:
+                return None
+            if info["status"] != "Optimal":
+                return None
+            values[mode] = float(info["objective"])
+        totals.append(values[None])
+        for mode in ("bboost", "3xc"):
+            if mode in values:
+                gains[mode, rules.chip_window(mode, event)].append(max(0, values[mode] - values[None]))
+    reward = max(0, continuation["ft"]) * rules.ft_cap
+    reward += max(0, continuation["bank"]) * min(wealth, continuation["bank_max"])
+    reward += sum(max(0, v) for v in continuation["chip_use"].values())
+    return sum(totals) + sum(max(v) for v in gains.values()) + reward
+
+
 def optimize(
     store: Store,
     state_id: str,
@@ -410,7 +484,8 @@ def optimize(
                 lower=int(fixed),
                 upper=int(allowed),
             )
-        bank[t] = mip.var(("bank", t), cost=0, upper=10000, integer=True)
+        # With fixed market prices, selling/rebuying cannot create money.
+        bank[t] = mip.var(("bank", t), cost=0, upper=state.bank + sum(sell_quotes.values()), integer=True)
         ft_next[t] = mip.var(
             ("ft", t), cost=continuation["ft"] if t == end_event else 0, upper=rules.ft_cap, integer=True
         )
@@ -447,6 +522,38 @@ def optimize(
         mip.equal([(z[t, p], 1) for p in ids], 15)
         mip.equal([(xi[t, p], 1) for p in ids], 11)
         mip.equal([(captain[t, p], 1) for p in ids], 1)
+        # Position-only score ceilings are valid even before the joint-chip
+        # root relaxation finishes. They cut fractional/scattered chip rewards
+        # without excluding any legal squad or relying on future outcomes.
+        ranked = {
+            pos: sorted((means.get((t, p), 0) for p in ids if players[p].position == pos), reverse=True)
+            for pos in rules.composition
+        }
+        best_captain = max(means.get((t, p), 0) for p in ids)
+        ordinary_ceiling = max(
+            sum(ranked[1][:1])
+            + sum(ranked[2][:d])
+            + sum(ranked[3][:m])
+            + sum(ranked[4][: 10 - d - m])
+            + best_captain
+            for d in range(rules.minimum[2], rules.maximum[2] + 1)
+            for m in range(rules.minimum[3], rules.maximum[3] + 1)
+            if rules.minimum[4] <= 10 - d - m <= rules.maximum[4]
+        )
+        bench_ceiling = (
+            sum(sum(ranked[pos][:count]) for pos, count in rules.composition.items()) + best_captain
+        )
+        mip.row(
+            [(xi[t, p], means.get((t, p), 0)) for p in ids]
+            + [(captain[t, p], means.get((t, p), 0)) for p in ids]
+            + [(bb_z[t, p], means.get((t, p), 0)) for p in ids]
+            + [(tc[t, p], means.get((t, p), 0)) for p in ids]
+            + [
+                (chip_vars[t, "bboost"], ordinary_ceiling - bench_ceiling),
+                (chip_vars[t, "3xc"], -best_captain),
+            ],
+            upper=ordinary_ceiling,
+        )
         # Tight linking cuts avoid fractional chip copies across hundreds of
         # bench players in the root relaxation.
         mip.equal([(bb_z[t, p], 1) for p in ids] + [(chip_vars[t, "bboost"], -4)])
@@ -740,6 +847,61 @@ def optimize(
     reused_plan = None
     objective_before = float(np.dot(mip.costs, warm))
     warm_value = objective_before
+    exact_seed_count = 0
+    # A time-limited joint-chip search often never improves its first incumbent.
+    # Offer full-market action solves as additional legal seeds. Their complete
+    # trajectories must improve THIS objective before they can replace a seed.
+    from .strategy import solve_action
+
+    seed_schedules = [dict(chips or pin_chips or {})]
+    if warm_chips != seed_schedules[0]:
+        seed_schedules.append(dict(warm_chips))
+    wildcard_dates = [t for t in events if mip.upper[chip_vars[t, "wildcard"]] and t not in warm_chips]
+    if chips is None and automatic_chips and wildcard_dates:
+        seed_schedules.append({**warm_chips, wildcard_dates[0]: "wildcard"})
+    for schedule in seed_schedules:
+        vector = np.zeros(len(mip.costs))
+        trial = state.model_copy(deep=True)
+        survivors = set(old_ids)
+        try:
+            for t in events:
+                seed_kind = schedule.get(t)
+                limit = min(max_transfers, max(2, len((forced_sell or {}).get(t, []))))
+                if t == state.event and first_week_hit_budget is not None and not state.initial:
+                    limit = min(
+                        limit,
+                        max(
+                            0,
+                            trial.free_transfers
+                            - trial.transfers_made
+                            + (first_week_hit_budget + trial.hit_paid) // rules.hit,
+                        ),
+                    )
+                future = {
+                    p: 0.15 * sum(means.get((e, p), 0) for e in range(t + 1, min(t + 3, end_event) + 1))
+                    for p in ids
+                }
+                selected = solve_action(
+                    trial,
+                    players,
+                    rules,
+                    {p: means.get((t, p), 0) for p in ids},
+                    chip=seed_kind,
+                    max_transfers=limit,
+                    seconds=0.3,
+                    squad_value=future,
+                    forced_sell=(forced_sell or {}).get(t, []),
+                )
+                fill_warm(vector, t, trial, selected.action, selected.state, selected.ledger, survivors)
+                trial = selected.state
+            if not feasible_incumbent(mip, vector):
+                continue
+        except ValueError:
+            continue
+        exact_seed_count += 1
+        value = float(np.dot(mip.costs, vector))
+        if value > warm_value + 1e-7:
+            warm, warm_value = vector, value
     candidate_count = 0
     for cached_kind, item in [
         ("plan", item) for item in store.list_matching("plan", {"state_id": state_id}, 100)
@@ -769,33 +931,48 @@ def optimize(
                 following, checked = transition(trial, action, players, rules)
                 fill_warm(vector, t, trial, action, following, checked, survivors)
                 trial = following
-            lhs = np.bincount(
-                np.asarray(mip.rows),
-                weights=np.asarray(mip.values) * vector[np.asarray(mip.cols)],
-                minlength=len(mip.row_lower),
-            )
-            feasible = (
-                np.all(vector >= np.asarray(mip.lower) - 1e-6)
-                and np.all(vector <= np.asarray(mip.upper) + 1e-6)
-                and np.all(lhs >= np.asarray(mip.row_lower) - 1e-6)
-                and np.all(lhs <= np.asarray(mip.row_upper) + 1e-6)
-            )
-            if not feasible:
+            if not feasible_incumbent(mip, vector):
                 continue
         except (ValueError, KeyError):
             continue
         candidate_count += 1
         value = float(np.dot(mip.costs, vector))
-        if value > warm_value + 1e-7:
+        if value >= warm_value - 1e-7:
             warm = vector
             warm_value = value
             reused_plan = item["id"]
+    relaxation_bound = relaxed_horizon_bound(
+        {p: players[p] for p in ids},
+        rules,
+        means,
+        state,
+        events,
+        terminal,
+        continuation,
+        {key: bool(mip.upper[value]) for key, value in chip_vars.items()},
+    )
     solution, diagnostics = mip.solve(time_limit, warm, relative_gap=relative_gap)
+    if relaxation_bound is not None:
+        if relaxation_bound < diagnostics["objective"] - 1e-5:
+            raise ValueError("Independent relaxation bound disagrees with the feasible incumbent")
+        # Numerical tolerances cannot make a valid incumbent exceed its bound.
+        relaxation_bound = max(relaxation_bound, diagnostics["objective"])
+        reported = diagnostics["best_bound"]
+        diagnostics["raw_solver_best_bound"] = reported
+        diagnostics["independent_relaxation_bound"] = relaxation_bound
+        diagnostics["best_bound"] = (
+            min(reported, relaxation_bound) if reported is not None else relaxation_bound
+        )
+        diagnostics["gap"] = max(
+            0, (diagnostics["best_bound"] - diagnostics["objective"]) / max(1, abs(diagnostics["objective"]))
+        )
+        diagnostics["bound_available"] = True
     diagnostics.update(
         initial_warm_objective=objective_before,
         selected_warm_objective=warm_value,
         reused_incumbent_plan_id=reused_plan,
         validated_cached_incumbents=candidate_count,
+        validated_full_market_seeds=exact_seed_count,
     )
     ledger = []
     current = state

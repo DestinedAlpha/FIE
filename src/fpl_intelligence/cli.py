@@ -72,6 +72,31 @@ def doctor():
     show(result)
 
 
+@app.command("audit-scoring")
+def audit_scoring():
+    """Compare form/statistics and online-bias candidates without changing production."""
+    from threadpoolctl import threadpool_limits
+
+    from .immediate_points import validate
+    from .online_calibration import validate as validate_bias
+
+    store = Store()
+    before = store.get("decision_model")["id"]
+    with threadpool_limits(limits=1):
+        points = validate(store)
+        bias = validate_bias(store)
+    assert store.get("decision_model")["id"] == before
+    show({"statistics": points, "online_bias": bias, "production_model_unchanged": True})
+
+
+@app.command("audit-inputs")
+def audit_inputs():
+    """Check the active historical/live feature contract without changing the account."""
+    from .role_minutes import audit_input_contract
+
+    show(audit_input_contract(Store()))
+
+
 @app.command()
 def ingest(entry: int = 9375678, league: int = 1873551, histories: bool = True):
     """Refresh official sources and optional public comparator with raw provenance."""

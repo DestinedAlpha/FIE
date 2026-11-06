@@ -1,4 +1,4 @@
-# Current model card · 0.12 · 6 November 2026
+# Current model card · 0.13 · 6 November 2026
 
 The production system combines LightGBM conditional points, a separately validated role-aware immediate participation classifier, and the accepted future-fixture expert. Exact FPL account transitions and common outcome worlds feed the multiweek HiGHS planner. Locally trained neural components, weights, dependencies and controls have been removed.
 
@@ -17,20 +17,22 @@ The mixture is selected on 2024/25 GW1–19 only. Eight earlier deadlines are re
 | Held-out period | Participation Brier, previous → role | Point MSE, previous → role |
 |---|---:|---:|
 | 2024/25 GW20–38, 14,492 rows | 0.308270 → 0.298704 | 3.340446 → 3.310779 |
-| 2025/26, 29,644 rows | 0.290465 → 0.278451 | 3.602296 → 3.544659 |
+| 2025/26, 29,644 rows | 0.290465 → 0.278439 | 3.602296 → 3.544459 |
 
 Regular-starter point error and all four position cohorts also improve. Both point-error and participation deadline-block intervals exclude zero. [Executed protocol and results](../artifacts/evaluations/role_minutes_validation.json). This is forecast acceptance; it does not establish a particular transfer gain or a new continuous-account score.
 
 ## Decision evidence and limits
 
-The earlier future-expert continuous replay scores 1,202 versus 1,098 over 19 prior-season weeks and 538 versus 536 over current GW1–9. Those frozen historical protocols precede the new participation head and resource safeguards. They are not retroactively relabelled as validation of the complete 0.12 policy. Independent weekly budget teams solve a different problem from a continuous account. See the [performance audit](performance-audit.md).
+The earlier future-expert continuous replay scores 1,202 versus 1,098 over 19 prior-season weeks and 538 versus 536 over current GW1–9. Those frozen historical protocols precede the new participation head and resource safeguards. They are not retroactively relabelled as validation of the complete 0.13 policy. Independent weekly budget teams solve a different problem from a continuous account. See the [performance audit](performance-audit.md).
 
 The legal-action tree critic is refitted after removing the retired forecast input. Its calibration chooses zero influence; the primary optimizer remains active. The separate continuation replacement also lacks its full policy gate. Rejected alternatives are completed experiments, not hidden sources of numerical confidence.
 
 Paid transfers and optional current chips require evidence beyond unresolved counterfactual search. Chip controls preserve later use and the same hit budget; committed, explicitly fixed and expiring entitlements retain their rules. Solver allowances are sensitivities in the additive surrogate, not rigorous nonlinear autosub bounds or football confidence intervals. Future proposed actions require refreshed data and re-optimization.
 
-Prospective accounts freeze models and actions before the deadline and score only after official finalization. No transfer is submitted by this project. Competitive superiority, consistent 550+ returns and globally optimal future decisions are not established. The [release audit](../artifacts/evaluations/release_0_12.json) records actual implementation checks and current artifact connections.
+Prospective accounts freeze models and actions before the deadline and score only after official finalization. No transfer is submitted by this project. Competitive superiority, consistent 550+ returns and globally optimal future decisions are not established. The [release audit](../artifacts/evaluations/release_0_13.json) records actual implementation checks and current artifact connections.
 
 ## Current weekly-team diagnostic
 
-The accepted role configuration scores **569** over GW1–9 in independent weekly £100m teams, with 20,000 worlds and earlier-only fits/calibration. This is a hypothetical Free Hit every week, not a continuous-account return. The [week-by-week results and Gabriel/Tavernier comparison](gw1-9-and-gw10-review.md) identify squads, cutoffs, source statistics, exact hit costs and longer-term sensitivities. The legacy reference scorecard remains separate.
+The accepted role configuration scores **575** over GW1–9 in independent weekly £100m teams, with 20,000 worlds and earlier-only fits/calibration. This is a hypothetical Free Hit every week, not a continuous-account return. The [current data/forecast audit](data-and-forecast-audit.md) identifies squads, cutoffs, source statistics, exact hit costs and longer-term sensitivities. The legacy reference scorecard remains separate.
+
+The role-v3 input contract passes an exact 669-row historical/live parity check. Context repairs and rejected scoring experiments are documented in the [data/forecast audit](data-and-forecast-audit.md). Earlier scorecards retain their original model scope.

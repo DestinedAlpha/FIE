@@ -4,9 +4,11 @@ A private local FPL decision workspace: learned player-point distributions, exac
 
 The six supplied documents remain byte-for-byte unchanged in [`research/`](research/). Design documents are not evidence of competitive performance.
 
-**Current acceptance status:** the validated future-fixture expert scores **1,202 versus 1,098** in a matched earlier-season 19-week continuous replay, and **538 versus 536** over current GW1–GW9. Future prediction and distribution error also improve. Separately, independent weekly £100m teams score 551 for the refitted reference and 586 for a published-signal ensemble; those are different account problems. **Consistent 550+ continuous-account performance and future top-1% strength are not established.** See the [performance audit](docs/performance-audit.md).
+**Current acceptance status:** the role-v3 configuration scores **575** in independent weekly £100m teams. Historical future-expert validation scored **1,202 versus 1,098** in an earlier-season 19-week continuous replay and **538 versus 536** over GW1–9 under its earlier protocol. These different account problems do not certify the complete current policy. **Consistent 550+ continuous-account performance is not established.** See the [data/forecast audit](docs/data-and-forecast-audit.md) and [performance audit](docs/performance-audit.md).
 
 ## Windows
+
+**[Download the 0.13 existing-installation update](https://raw.githubusercontent.com/DestinedAlpha/FIE/v0.13.0/updates/FPL-Intelligence-0.13.0-Update.zip).** This small update requires your existing installation with its data and models.
 
 For an existing installation, extract the new private download into a **separate folder** and run **Update existing.cmd**. Select the existing folder containing Start.cmd. The updater backs up the database/application, preserves your `.env` and account data, updates the application, retrains against current completed data and recomputes the plan. It does not apply any FPL account transfer.
 
@@ -33,9 +35,13 @@ Open http://127.0.0.1:8000. `reconcile-team` imports the **dated** research seed
 
 `fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. `fpl refresh-current` and the Refresh data button reconcile revealed deadline squads, advance to the next deadline, update finalized labels and recompute the recommendation. Confirm any additional unrevealed transfers in My squad; public endpoints cannot see them.
 
+## What changed in 0.13
+
+Reconstructed incomplete local context from actual pre-deadline full snapshots, fixed historical/live precision and context binding, and repaired migration. All 57 inputs match across 669 audited GW9 player-fixtures. The independent weekly diagnostic scores **575**. Captain explanations show vice fallback; source panels identify actual consumers. Planning has full-market starting trajectories and independent relaxation bounds. More complex scoring/bias candidates failed acceptance and remain inactive. [Evidence and limitations](docs/data-and-forecast-audit.md).
+
 ## What changed in 0.12.1
 
-The weekly replay now evaluates the accepted role-aware configuration, refitting strictly before each deadline. Current GW1–9 independent £100m squads score **569**. The dashboard selects matching evaluated configurations and preserves earlier reference benchmarks separately. [Weekly results and GW10 transfer comparison](docs/gw1-9-and-gw10-review.md).
+The weekly replay now evaluates the accepted role-aware configuration, refitting strictly before each deadline. That configuration scored **569** over GW1–9; the current diagnostic is 575. The dashboard selects matching evaluated configurations and preserves earlier reference benchmarks separately. [Weekly results and GW10 transfer comparison](docs/gw1-9-and-gw10-review.md).
 
 ## What changed in 0.12
 

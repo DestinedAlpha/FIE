@@ -1,27 +1,27 @@
 {
-  "at": "2026-11-04T10:33:27.739000+00:00",
-  "decision_model_id": "4d2dd0e9f0291d667c911343558a5e02dfb970775a4058134f5d0b83befd434e",
+  "at": "2026-11-06T14:38:15.568265+00:00",
+  "decision_model_id": "13612366d8d406fa2c9c528b647d322930a42231865a0263a44a1f3e77dfb842",
   "track": "out-of-fold historical decisions",
   "oracle_use": "Diagnostic upper bound only; no hindsight target is added to model features or live fitting",
   "budget": 1000,
   "price_cohorts": {
     "budget": {
-      "n": 6305,
-      "predicted": 2.7754800867577987,
-      "actual": 2.7517842981760507,
-      "bias": 0.023695788581747868
+      "n": 6385,
+      "predicted": 2.748348302608655,
+      "actual": 2.7177760375880973,
+      "bias": 0.030572265020558143
     },
     "midprice": {
-      "n": 2201,
-      "predicted": 3.3055781846267136,
-      "actual": 3.1322126306224445,
-      "bias": 0.17336555400426926
+      "n": 2019,
+      "predicted": 3.5511278236309884,
+      "actual": 3.3952451708766715,
+      "bias": 0.15588265275431695
     },
     "premium": {
-      "n": 199,
-      "predicted": 4.831362961953387,
-      "actual": 4.36180904522613,
-      "bias": 0.46955391672725666
+      "n": 202,
+      "predicted": 4.822038424414818,
+      "actual": 4.410891089108911,
+      "bias": 0.4111473353059077
     }
   },
   "limits": [
@@ -29,16 +29,16 @@
     "Perfect-hindsight teams intentionally overfit realized match variance and are not attainable forecasts"
   ],
   "captain_totals": {
-    "learned_bonus": 325,
-    "price_baseline_bonus": 276,
+    "learned_bonus": 322,
+    "price_baseline_bonus": 282,
     "shrinkage_bonus": 285,
-    "hindsight_best": 805,
+    "hindsight_best": 807,
     "defender_captain_weeks": 1
   },
   "team_totals": {
-    "learned": 1872,
-    "shrinkage": 1722,
+    "learned": 1863,
+    "shrinkage": 1706,
     "oracle": 4768
   },
-  "id": "149157cbda2bfd371a17461d6fdeed3e63e4c8b6ef333d167f478ed56e523373"
+  "id": "9461329aaed95b7ccbbfc3c3158068c564c1f088981ac43f7780e427173dd0a9"
 }

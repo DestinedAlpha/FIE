@@ -732,6 +732,7 @@ def lineup_worlds(lineup, points, minutes, ids, players, rules, chip=None):
 def score_plans(store: Store, plans: list[dict], forecast_: dict) -> list[np.ndarray]:
     """Decode each gameweek once while scoring all candidate/rival policies."""
     from .domain import Lineup
+    from .rules import captain_options
     from .worlds import load_worlds
 
     players, market = load_market(store, forecast_["market_id"])
@@ -758,6 +759,11 @@ def score_plans(store: Store, plans: list[dict], forecast_: dict) -> list[np.nda
                 outcomes[i] += scores - row["hit"]
                 row["simulated_net_mean"] = round(float(scores.mean() - row["hit"]), 3)
                 row["net_quantiles"] = np.quantile(scores - row["hit"], [0.1, 0.5, 0.9]).tolist()
+                if row.get("captain_evidence_forecast_id") != forecast_["id"]:
+                    row["captain_options"] = captain_options(
+                        Lineup.model_validate(row["lineup"]), points, minutes, forecast_["player_ids"]
+                    )
+                    row["captain_evidence_forecast_id"] = forecast_["id"]
     for plan, worlds in zip(plans, outcomes):
         plan["simulation"] = {
             "worlds": len(worlds),

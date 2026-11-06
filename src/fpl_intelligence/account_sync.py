@@ -18,6 +18,14 @@ from .storage import now
 state_lock = RLock()
 
 
+def revealed_pick_events(history: dict, released: int) -> list[int]:
+    """Request only deadlines this account actually entered, including late joiners."""
+    events = sorted({int(r["event"]) for r in history.get("current", []) if r["event"] <= released})
+    if not events or events[-1] != released:
+        raise ValueError(f"Missing revealed account history for GW{released}")
+    return events[-2:]
+
+
 def next_event(market: dict, at: str | None = None) -> int | None:
     instant = datetime.fromisoformat((at or now()).replace("Z", "+00:00"))
     return next(

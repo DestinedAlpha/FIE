@@ -37,17 +37,22 @@ async def discover(store: Store, league_id: int, own_entry: int) -> dict:
                 break
         for member in members:
             identity = member["entry"]
-            await asyncio.gather(
-                adapter.fetch(client, f"entry/{identity}/transfers/", f"transfers_{identity}"),
-                adapter.fetch(
-                    client,
-                    f"entry/{identity}/event/{max(1, current - 1)}/picks/",
-                    f"picks_{identity}_{max(1, current - 1)}",
-                ),
-                adapter.fetch(
-                    client, f"entry/{identity}/event/{current}/picks/", f"picks_{identity}_{current}"
-                ),
+            history, _ = await asyncio.gather(
                 adapter.fetch(client, f"entry/{identity}/history/", f"entry_history_{identity}"),
+                adapter.fetch(client, f"entry/{identity}/transfers/", f"transfers_{identity}"),
+            )
+            from .account_sync import revealed_pick_events
+
+            try:
+                events = revealed_pick_events(history or {}, current)
+            except ValueError as error:
+                adapter.errors.append({"entry": identity, "error": str(error)})
+                continue
+            await asyncio.gather(
+                *(
+                    adapter.fetch(client, f"entry/{identity}/event/{g}/picks/", f"picks_{identity}_{g}")
+                    for g in events
+                )
             )
     result = {
         "league_id": league_id,

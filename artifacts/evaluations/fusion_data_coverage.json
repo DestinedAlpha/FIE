@@ -1,6 +1,7 @@
 {
-  "at": "2026-11-04T09:10:14.580042+00:00",
-  "version": "fusion-inputs-v2",
+  "at": "2026-11-06T14:08:29.687571+00:00",
+  "version": "fusion-inputs-v3",
+  "workload_transform": "positive-exposure-v2",
   "enrichment_features": [
     "open_play_xg90",
     "open_play_goals90",
@@ -138,23 +139,23 @@
     "verified_prior_managers": 100,
     "manager_gameweeks": 900
   },
-  "inputs_path": "data/features/fusion-767599b8e3331f08e1f922ed.npz",
+  "inputs_path": "data/features/fusion-eeda5d98f79c8a360bdf7eac.npz",
   "metadata_path": "data/features/fusion-2b1494a0779a14fe90ae39ff.parquet",
-  "hash": "767599b8e3331f08e1f922ed9b3ce69a8f39c6a55791dfe0eb0048cd0f45b791",
+  "hash": "eeda5d98f79c8a360bdf7eac11d55ecd18901d70e134c9c9ba77f945f01ba0af",
   "metadata_hash": "2b1494a0779a14fe90ae39ffdfa386a016f16e99bd31f7b9f4cfbfe34a121d13",
   "lineage": {
     "shot_archive": "9f3717f5a189cef2a2828eacbcee64f3fd18b64f0bda4897dc22f9c71042c3e0",
-    "temporal_model": "2c669ff60459daf3eaf3c703988db939d07ca9ec1c573abdd5d46189d311ba5b",
-    "context_archive": "1df4590e82229a8533d5637fd86f4dddb2859d3665e254821ce9fee4ca58bca1",
-    "elite_cohort": "dd71094b0d6d0aaaf900b1d7c9b0566bdebd70e04e2982f04abf43ff57350248",
-    "workload": "b50cb8e70b36242105e423e3f64ee4c9b6f4637ce1117f257d2020d8c36a63a1"
+    "temporal_model": "025078e5b28ce375c09b3d29c3d3367b2ec8558cc2ba6d0fdafc6ba1d4e083d3",
+    "context_archive": "1d89529fbbcfc4dff1624469db48a46d15fd8212245ccd75ae328489b5fc23cf",
+    "elite_cohort": "982c841b479de7258566580fc9fcf7e510fde035d9e7c47a4c9fc0544dc2456e",
+    "workload": "b12bc9fc4e554dd6a4abfda7cc11c621dfb05445739df77e62a2ef4087473eff"
   },
   "coverage": {
     "news": 1.0,
     "expert_lag": 0.04431698367846147,
-    "workload": 0.16334190964698792
+    "workload": 0.16332504153251648
   },
   "rules": "Archived news has pre-deadline capture proof; expert choices lag one deadline; workload uses retrospective match facts and a four-hour completion cutoff, not original publication proof",
   "missing_policy": "Explicit masks; unavailable workload and expert history are never treated as observed zero",
-  "id": "5ae94d834d3c29a1f94461f3ef22904190ab112a16e2efc97c7628edcf800b4a"
+  "id": "f5eb8eb039676ab18c5874cd4f4133765e0a7bb7ed71f3d0873c7b7532b5e246"
 }

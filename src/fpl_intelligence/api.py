@@ -285,6 +285,9 @@ def create_app(root=None):
             "decision_model",
             "role_minutes_validation",
             "role_minutes_model",
+            "immediate_points_validation",
+            "online_calibration_validation",
+            "role_contract_audit",
             "decision_audit",
             "decision_policy",
             "provider_setup",
@@ -312,8 +315,22 @@ def create_app(root=None):
         ):
             try:
                 artifact = store.get(kind)
+                if kind in ("role_minutes_model", "role_minutes_validation"):
+                    role_id = (result.get("decision_model") or {}).get("role_minutes_model_id")
+                    if not role_id:
+                        continue
+                    bound_role = store.get("role_minutes_model", role_id)
+                    artifact = (
+                        bound_role
+                        if kind == "role_minutes_model"
+                        else store.get(kind, bound_role["validation_id"])
+                    )
                 if kind == "role_minutes_model":
                     artifact = {k: v for k, v in artifact.items() if k not in ("path", "curves")}
+                if kind == "role_contract_audit" and artifact.get("role_minutes_model_id") != (
+                    result.get("decision_model") or {}
+                ).get("role_minutes_model_id"):
+                    continue
                 if kind in (
                     "decision_audit",
                     "decision_policy",
@@ -395,6 +412,9 @@ def create_app(root=None):
                 result[kind] = artifact
             except ValueError:
                 pass
+        from .model_usage import model_input_usage
+
+        result["model_input_usage"] = model_input_usage(store)
         try:
             selected = store.get("selected_plan")
             selected_plan = store.get("plan", selected["plan_id"])

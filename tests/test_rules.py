@@ -62,6 +62,25 @@ def test_bonus_ties():
     assert bonus_awards({1: 30, 2: 30, 3: 30, 4: 30}) == {1: 3, 2: 3, 3: 3, 4: 3}
 
 
+def test_captain_evidence_distinguishes_absence_fallback_from_a_cameo():
+    import numpy as np
+
+    from fpl_intelligence.domain import Lineup
+    from fpl_intelligence.rules import captain_options, optimize_captain
+
+    lineup = Lineup(xi=[1, 2], bench=[], captain=2, vice=1)
+    points = np.array([[10, 6], [0, 6]])
+    minutes = np.array([[90, 90], [0, 90]])
+    rows = captain_options(lineup, points, minutes, [1, 2])
+    assert rows[0]["captain"] == 1 and rows[0]["vice"] == 2
+    assert rows[0]["player_mean"] == 5 and rows[0]["expected_captain_bonus"] == 8
+    assert rows[0]["points_if_appears"] == 10 and rows[0]["p_appearance"] == 0.5
+    assert optimize_captain(lineup, points, minutes, [1, 2]).captain == 1
+    points[1, 0] = 1
+    minutes[1, 0] = 1
+    assert optimize_captain(lineup, points, minutes, [1, 2]).captain == 2
+
+
 @given(ft=st.integers(0, 5), count=st.integers(0, 5))
 @settings(suppress_health_check=[HealthCheck.function_scoped_fixture])
 def test_rollover(ft, count, market, rules, state):

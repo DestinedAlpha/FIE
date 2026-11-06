@@ -85,6 +85,12 @@ if ($NeedsInitialisation) {
     if ($LASTEXITCODE -ne 0) { throw "Chronological decision training failed." }
     & $UvPath run fpl refresh-current
     if ($LASTEXITCODE -ne 0) { Write-Warning "Current planning could not finish. The app will open so you can inspect data health, correct account details and retry refresh." }
+} else {
+    & $UvPath run python -c "from fpl_intelligence.storage import Store; s=Store(); raise SystemExit(0 if s.get('forecast').get('decision_model_id') == s.get('decision_model')['id'] else 1)"
+    if ($LASTEXITCODE -ne 0) {
+        & $UvPath run fpl refresh-current
+        if ($LASTEXITCODE -ne 0) { Write-Warning "The model migration completed, but forecasts need a refresh. Open the app to inspect data health and retry." }
+    }
 }
 
 $Port = 8000

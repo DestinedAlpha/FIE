@@ -732,18 +732,21 @@ export function CaptainEvidence({
   if (!row || !data.forecast) return null;
   const candidates = data.forecast.players
     .filter(
-      (p) => p.event === row.event && row.playing_squad.includes(p.player_id),
+      (p) => p.event === row.event && row.lineup.xi.includes(p.player_id),
     )
-    .sort((a, b) => b.mean - a.mean)
+    .sort((a, b) => {
+      const score=(id:number, fallback:number)=>row.captain_options?.find(r=>r.captain===id)?.expected_captain_bonus ?? fallback;
+      return score(b.player_id,b.mean)-score(a.player_id,a.mean);
+    })
     .slice(0, 5);
   if (!candidates.length) return null;
   return (
     <section className="panel">
       <h3>Why this captain?</h3>
       <p>
-        The highest projected return in the planned squad, with appearances and
-        captain fallback considered. Player reputation and ownership do not
-        force the choice.
+        Captaincy compares the extra points from captain and vice together.
+        If the captain does not appear, the vice receives the multiplier.
+        A lower individual forecast can therefore have the higher captain bonus.
       </p>
       <div className="table-scroll">
         <table>
@@ -751,6 +754,8 @@ export function CaptainEvidence({
             <tr>
               <th>Candidate</th>
               <th>Projected points</th>
+              <th>Captain bonus including backup</th>
+              <th>Best backup</th>
               <th>Chance of 60+ minutes</th>
               <th>10–90% outcome</th>
             </tr>
@@ -766,6 +771,8 @@ export function CaptainEvidence({
                   {p.player_id === row.lineup.captain ? " · captain" : ""}
                 </td>
                 <td>{p.mean.toFixed(2)}</td>
+                <td>{row.captain_options?.find(r=>r.captain===p.player_id)?.expected_captain_bonus.toFixed(2) ?? 'Recalculate plan'}</td>
+                <td>{data.market?.players.find(v=>v.id===row.captain_options?.find(r=>r.captain===p.player_id)?.vice)?.web_name ?? '—'}</td>
                 <td>{percent(p.p_60)}</td>
                 <td>
                   {p.point_quantiles[0].toFixed(1)}–
@@ -924,6 +931,18 @@ export function SourceCoverage({ data, busy, act }: Props) {
         </div>
       </div>
       <button className="button secondary" disabled={busy||!data.plan||data.plan.stale} onClick={()=>act('/evidence/analyze')}>Test report impact on this plan</button>
+      {!!data.model_input_usage?.length && <details open><summary>What the active forecasts actually use</summary>
+        <div className="table-scroll"><table><thead><tr><th>Component</th><th>Use</th><th>Inputs</th></tr></thead><tbody>
+          {data.model_input_usage.map(row=><tr key={row.component}><td>{row.component}{row.feature_count !== null ? ` · ${row.feature_count} features` : ''}</td><td>{row.status}</td><td>{row.explanation}</td></tr>)}
+        </tbody></table></div>
+      </details>}
+      {data.role_contract_audit && <p>Historical / live input check: {data.role_contract_audit.passed ? 'passed' : 'requires review'} across {data.role_contract_audit.rows} player-fixtures. Largest input difference: {Math.max(data.role_contract_audit.maximum_core_delta,data.role_contract_audit.maximum_role_source_delta).toFixed(6)}.</p>}
+      {data.immediate_points_validation && <details><summary>Immediate scoring experiment · {data.immediate_points_validation.passed ? 'gates passed · comparison only' : 'reference retained'}</summary>
+        <p>{data.immediate_points_validation.protocol}</p>
+        <div className="table-scroll"><table><thead><tr><th>Period</th><th>Point RMSE · previous / candidate</th><th>Regular-starter RMSE</th><th>Captain points</th></tr></thead><tbody>
+          {Object.entries(data.immediate_points_validation.metrics).map(([period,row])=><tr key={period}><td>{period}</td><td>{row.reference.rmse.toFixed(3)} / {row.candidate.rmse.toFixed(3)}</td><td>{row.reference.regular_rmse.toFixed(3)} / {row.candidate.regular_rmse.toFixed(3)}</td><td>{row.reference.captain_points} / {row.candidate.captain_points}</td></tr>)}
+        </tbody></table></div>
+      </details>}
       {data.evidence_impact && <p>{data.evidence_impact.links.length} report links reviewed; {data.evidence_impact.branches.length} numerical sensitivity branches. {data.evidence_impact.scope}</p>}
       <p>
         Manager choices lag one gameweek. Reddit posts supply leads to original

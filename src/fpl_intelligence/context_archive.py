@@ -11,7 +11,7 @@ from pathlib import Path
 
 import httpx
 
-from .storage import Store, now
+from .storage import Store, digest, now
 
 MANIFEST = Path(__file__).resolve().parents[2] / "configs" / "context_archive_manifest.json"
 FIELDS = (
@@ -35,8 +35,64 @@ FIELDS = (
     "form",
     "starts",
     "minutes",
+    "can_select",
+    "removed",
+    "total_points",
+    "goals_scored",
+    "assists",
+    "clean_sheets",
+    "goals_conceded",
+    "own_goals",
+    "penalties_saved",
+    "penalties_missed",
+    "yellow_cards",
+    "red_cards",
+    "saves",
+    "bonus",
+    "bps",
+    "influence",
+    "creativity",
+    "threat",
+    "ict_index",
+    "expected_goals",
+    "expected_assists",
+    "expected_goal_involvements",
+    "expected_goals_conceded",
+    "expected_goals_per_90",
+    "expected_assists_per_90",
+    "expected_goal_involvements_per_90",
+    "expected_goals_conceded_per_90",
+    "clearances_blocks_interceptions",
+    "tackles",
+    "recoveries",
+    "defensive_contribution",
 )
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
+
+
+def verified_cached_bootstrap(record, proof):
+    """Reuse complete pinned inputs when widening the reduced context schema."""
+    if record is None:
+        return None
+    original_proof = record.get("bootstrap_proof", {})
+    if any(
+        original_proof.get(key) != proof.get(key)
+        for key in (
+            "season",
+            "event",
+            "deadline",
+            "sha256",
+            "url",
+            "commit",
+            "source_captured_at",
+            "git_committed_at",
+        )
+    ):
+        return None
+    body = record["bootstrap"]
+    if digest(body) != record.get("bootstrap_hash"):
+        raise ValueError("Cached deadline registry checksum mismatch")
+    return body
 
 
 def check_proof(row):
@@ -56,6 +112,10 @@ async def import_context(store: Store):
     semaphore = asyncio.Semaphore(4)
     entries = []
     errors = []
+    cached = {}
+    for item in reversed(store.list("replay_inputs", 1000)):
+        record = store.get("replay_inputs", item["id"])
+        cached[record["season"], record["event"]] = record
     async with httpx.AsyncClient(timeout=35, follow_redirects=False) as client:
 
         async def one(row):
@@ -76,18 +136,20 @@ async def import_context(store: Store):
             except ValueError:
                 pass
             async with semaphore:
-                response = await client.get(row["url"])
-                response.raise_for_status()
-                if (
-                    len(response.content) > 2_000_000
-                    or hashlib.sha256(response.content).hexdigest() != row["sha256"]
-                ):
-                    raise ValueError("Context archive checksum/size verification failed")
-                decoder = lzma.LZMADecompressor()
-                raw = decoder.decompress(response.content, max_length=16_000_000)
-                if not decoder.eof:
-                    raise ValueError("Context archive decompression exceeds budget")
-                original = json.loads(raw)
+                original = verified_cached_bootstrap(cached.get((row["season"], row["event"])), row)
+                if original is None:
+                    response = await client.get(row["url"])
+                    response.raise_for_status()
+                    if (
+                        len(response.content) > 2_000_000
+                        or hashlib.sha256(response.content).hexdigest() != row["sha256"]
+                    ):
+                        raise ValueError("Context archive checksum/size verification failed")
+                    decoder = lzma.LZMADecompressor()
+                    raw = decoder.decompress(response.content, max_length=16_000_000)
+                    if not decoder.eof:
+                        raise ValueError("Context archive decompression exceeds budget")
+                    original = json.loads(raw)
                 actual = next(e for e in original["events"] if e["id"] == row["event"])
                 if actual["deadline_time"] != row["deadline"]:
                     raise ValueError("Archived and final deadline disagree; context needs a separate audit")
@@ -181,15 +243,60 @@ def add_local_context(store, entries):
         # including if the current installation has already moved to next GW.
         body, meta = store.latest(row["source"], cutoff=latest["deadline"])
         if time_before(meta["captured_at"], body["deadline"]) and key not in indexed:
+            source = row["source"]
+            captured = meta["captured_at"]
+            if body.get("schema_version") != SCHEMA_VERSION:
+                # Old local news packets dropped fields which their original
+                # full bootstrap still contains. Reconstruct from an ACTUALLY
+                # captured earlier source; never borrow today's later season
+                # totals or pretend the derived packet was captured then.
+                try:
+                    bootstrap, original = store.latest("bootstrap", cutoff=body["deadline"])
+                    from .ingestion import season_of
+
+                    target: dict = next((e for e in bootstrap["events"] if e.get("is_next")), {})
+                    if (
+                        season_of(bootstrap) == key[0]
+                        and target.get("id") == key[1]
+                        and time_before(original["captured_at"], body["deadline"])
+                    ):
+                        source = f"context_reconstructed_{key[0].replace('/', '-')}_{key[1]}"
+                        try:
+                            reconstructed, derived = store.latest(source)
+                        except ValueError:
+                            reconstructed, derived = {}, {}
+                        if (
+                            reconstructed.get("schema_version") != SCHEMA_VERSION
+                            or reconstructed.get("origin_bootstrap_hash") != original["hash"]
+                        ):
+                            reconstructed = {
+                                "schema_version": SCHEMA_VERSION,
+                                "season": key[0],
+                                "event": key[1],
+                                "deadline": body["deadline"],
+                                "elements": [
+                                    {field: p.get(field) for field in FIELDS} for p in bootstrap["elements"]
+                                ],
+                                "origin_bootstrap_hash": original["hash"],
+                                "source_captured_at": original["captured_at"],
+                                "derived_at": now(),
+                                "temporal_track": "Later transformation of an immutable locally captured pre-deadline bootstrap",
+                            }
+                            derived = store.snapshot(
+                                source, original["url"], reconstructed, original["captured_at"]
+                            )
+                        body, meta, captured = reconstructed, derived, original["captured_at"]
+                except (ValueError, KeyError):
+                    pass
             indexed[key] = {
                 "season": body["season"],
                 "event": body["event"],
                 "deadline": body["deadline"],
-                "source": row["source"],
+                "source": source,
                 "hash": meta["hash"],
-                "source_captured_at": meta["captured_at"],
+                "source_captured_at": captured,
                 "players": len(body["elements"]),
-                "temporal_track": "Locally observed pre-deadline context",
+                "temporal_track": body.get("temporal_track", "Locally observed pre-deadline context"),
             }
     return sorted(indexed.values(), key=lambda r: (r["season"], r["event"]))
 

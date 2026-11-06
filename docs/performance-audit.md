@@ -2,6 +2,8 @@
 
 Consistent 550+ continuous-account performance is not established. Fresh weekly teams and a persistent account measure different problems. Neither guarantees future scores or ranks.
 
+The current role-v3 configuration scores **575** in independent GW1–9 weekly £100m teams. Its repaired input contract, exact parity check and earlier-season forecast validation are in the [current audit](data-and-forecast-audit.md). The tables below retain their older benchmark families and protocols.
+
 ## Independent weekly £100m teams, no chips
 
 | GW | Refitted reference | Ensemble | Ensemble's frozen reference | Ownership |

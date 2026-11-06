@@ -437,13 +437,20 @@ def optimize_bench(lineup: Lineup, points, minutes, ids: list[int], players: dic
 
 def optimize_captain(lineup, points, minutes, ids):
     """Exact expected captain/vice fallback among this XI in the same worlds."""
+    selected = captain_options(lineup, points, minutes, ids)[0]
+    return lineup.model_copy(update={"captain": selected["captain"], "vice": selected["vice"]})
+
+
+def captain_options(lineup, points, minutes, ids):
+    """Expose each candidate's extra captain points INCLUDING its best backup."""
     import numpy as np
 
     index = {p: i for i, p in enumerate(ids)}
     values = points[:, [index[p] for p in lineup.xi]]
     appeared = minutes[:, [index[p] for p in lineup.xi]] > 0
-    pairs = []
+    candidates = []
     for i, captain in enumerate(lineup.xi):
+        pairs = []
         for j, vice in enumerate(lineup.xi):
             if i == j:
                 continue
@@ -459,5 +466,20 @@ def optimize_captain(lineup, points, minutes, ids):
                     vice,
                 )
             )
-    *_, captain, vice = max(pairs)
-    return lineup.model_copy(update={"captain": captain, "vice": vice})
+        best = max(pairs)
+        mean = float(values[:, i].mean())
+        chance = float(appeared[:, i].mean())
+        candidates.append(
+            (
+                best,
+                {
+                    "captain": captain,
+                    "vice": best[-1],
+                    "player_mean": mean,
+                    "p_appearance": chance,
+                    "points_if_appears": mean / chance if chance else None,
+                    "expected_captain_bonus": best[0],
+                },
+            )
+        )
+    return [row for _, row in sorted(candidates, key=lambda item: item[0], reverse=True)]

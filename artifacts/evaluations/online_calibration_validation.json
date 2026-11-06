@@ -1,0 +1,70 @@
+{
+  "at": "2026-11-06T13:54:11.532700+00:00",
+  "version": "online-points-bias-v1",
+  "feature_id": "5ae94d834d3c29a1f94461f3ef22904190ab112a16e2efc97c7628edcf800b4a",
+  "context_id": "1d89529fbbcfc4dff1624469db48a46d15fd8212245ccd75ae328489b5fc23cf",
+  "selected": "bias_0.8_32",
+  "selection_losses": {
+    "bias_0.8_4": 13.531085567350184,
+    "bias_0.8_12": 13.364880368653797,
+    "bias_0.8_32": 13.346091436027317,
+    "bias_0.95_4": 13.581017951146082,
+    "bias_0.95_12": 13.388402780194886,
+    "bias_0.95_32": 13.347155256444418
+  },
+  "metrics": {
+    "acceptance_2024": {
+      "rows": 14492,
+      "reference": {
+        "rmse": 1.8195544867644955,
+        "regular_rmse": 2.9104704931375482,
+        "premium_rmse": 4.158203208159298,
+        "bias": 0.027029168703689075,
+        "captain_points": 129.0
+      },
+      "candidate": {
+        "rmse": 1.8198712737599116,
+        "regular_rmse": 2.9115027429098683,
+        "premium_rmse": 4.119930916908089,
+        "bias": 0.027860963483912725,
+        "captain_points": 130.0
+      },
+      "mse_delta_95ci": [
+        -0.0051955191600741866,
+        0.006647244245067157
+      ]
+    },
+    "replication_2025": {
+      "rows": 29644,
+      "reference": {
+        "rmse": 1.8827264468843474,
+        "regular_rmse": 2.9551067411605003,
+        "premium_rmse": 3.987914434515969,
+        "bias": 0.024086844191206304,
+        "captain_points": 262.0
+      },
+      "candidate": {
+        "rmse": 1.8836350229154126,
+        "regular_rmse": 2.9564705146793226,
+        "premium_rmse": 3.9687391851120446,
+        "bias": 0.022568788937760282,
+        "captain_points": 243.0
+      },
+      "mse_delta_95ci": [
+        -0.00045415404738027415,
+        0.007225119325136841
+      ]
+    }
+  },
+  "forecast_passed": false,
+  "captain_passed": false,
+  "passed": false,
+  "prediction_path": "data/models/online-calibration-dd0dcb7f1ae88b4e679f97a5/predictions.parquet",
+  "prediction_hash": "61dd8b835d8508fe8ceaa734c35e18cfffb6843c232416e6bdd679a6b2d8a796",
+  "protocol": "Player bias from earlier out-of-fold conditional-points errors after match completion; clip at eight points/90, center by position and shrink to zero. Decay and shrinkage selected on 2024/25 GW1-19 only. Acceptance GW20-38; separate 2025/26 replication. Current-season results are diagnostic only.",
+  "reference_role_version": "role-minutes-v2",
+  "reference_decision_model_id": "7522bd7a2de3e1d53c2dc600d669b0dc0a9287f85a501df9c947a3e13a303a95",
+  "production_active": false,
+  "reference_scope": "Historical comparison against the role-v2 reference; not relabelled as evaluation of the later role-v3 context-contract repair.",
+  "id": "bfd47dcfe152d5df3f5ad07cb7ace7243bfb0e8a1fdbabd3c8e7174f79616aaa"
+}

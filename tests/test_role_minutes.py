@@ -74,6 +74,35 @@ def test_role_vector_keeps_missing_season_data_distinct_from_observed_zero():
     assert unknown[:7] == zero[:7] and unknown[-2:] == [0, 0] and zero[-2:] == [1, 1]
 
 
+def test_role_sequence_precision_is_identical_for_stored_and_live_starts():
+    seq = np.zeros((12, 32), dtype=np.float32)
+    seq[-5:, 1] = [1, 1, 1, 1, 0]
+    mask = np.ones(12, dtype=bool)
+    assert role_vector({}, seq, mask, 9) == role_vector({}, seq.astype(np.float16), mask, 9)
+
+
+def test_role_migration_unpacks_feature_builder_and_retrains_missing_context(tmp_path, monkeypatch):
+    import fpl_intelligence.role_minutes as module
+    from fpl_intelligence.storage import Store
+
+    store = Store(tmp_path)
+    store.put("role_minutes_model", {"version": module.VERSION, "completed_labels_through": "2026/27-GW09"})
+    store.put("role_minutes_validation", {"version": module.VERSION, "passed": True})
+
+    async def context(_):
+        return {}
+
+    seen = []
+    monkeypatch.setattr("fpl_intelligence.context_archive.import_context", context)
+    monkeypatch.setattr(
+        "fpl_intelligence.fusion_data.build_fusion_data", lambda _: ({}, [], {"id": "rebuilt"})
+    )
+    monkeypatch.setattr(module, "train", lambda _, feature: seen.append(feature))
+    monkeypatch.setattr(module, "attach", lambda _, model: model)
+    model = {"promoted": True, "predictions": [{"season": "2026/27", "event": 9}]}
+    assert module.ensure(store, model) == model and seen == ["rebuilt"]
+
+
 def test_participation_head_normalizes_and_enforces_published_absence():
     class Head:
         def predict_proba(self, x):

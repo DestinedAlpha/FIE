@@ -1,24 +1,24 @@
 {
-  "at": "2026-11-06T10:30:54.984728+00:00",
+  "at": "2026-11-06T14:57:15.114310+00:00",
   "fusion_model_id": "326006459f8c9344382688d43732e137daec6c3149f2ff1b839e580db7de828d",
-  "decision_model_id": "7522bd7a2de3e1d53c2dc600d669b0dc0a9287f85a501df9c947a3e13a303a95",
+  "decision_model_id": "13612366d8d406fa2c9c528b647d322930a42231865a0263a44a1f3e77dfb842",
   "event": 10,
   "source_sensitivity": {
     "tree": {
       "news": {
-        "mean_absolute_prediction_change": 1.2447002621756578,
+        "mean_absolute_prediction_change": 1.2477201333779029,
         "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
       },
       "market": {
-        "mean_absolute_prediction_change": 0.26070890944754577,
+        "mean_absolute_prediction_change": 0.2654764376283961,
         "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
       },
       "workload": {
-        "mean_absolute_prediction_change": 0.01661184674440231,
+        "mean_absolute_prediction_change": 0.015483402337109403,
         "interpretation": "Inference masking sensitivity, not an independently retrained source ablation or causal benefit"
       }
     }
   },
   "decision": "Candidate predictions do not overwrite the production forecast before promotion",
-  "id": "286b68b825ec41d1786faf37e158eed96d8e6c0b56ebaf2bf8a33eebb03988cc"
+  "id": "ed82cc38d5c3656c4e623db68ace1e8af6b7ca089939753726e329b9a634ff78"
 }

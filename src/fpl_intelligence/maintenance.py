@@ -38,6 +38,36 @@ def maintain_models(store):
             body.update(at=now(), retired_companion_from=original["id"])
             store.put("decision_model", body)
     refits = []
+    input_audit = None
+    if all(
+        store.list(kind, 1)
+        for kind in ("decision_model", "market", "decision_features", "fusion_features", "context_archive")
+    ):
+        from .role_minutes import VERSION, ensure
+
+        active = store.get("decision_model")
+        if active.get("promoted") and not active.get("fusion_model_id"):
+            identity = active.get("role_minutes_model_id")
+            role = store.get("role_minutes_model", identity) if identity else {}
+            if role.get("version") != VERSION or not role.get("context_archive_id"):
+                updated = ensure(store, active)
+                if updated["id"] != active["id"]:
+                    refits.append("role_minutes_contract")
+                    if store.list("replay_inputs", 1):
+                        from .role_minutes import audit_input_contract
+
+                        try:
+                            proof = audit_input_contract(store)
+                            input_audit = {
+                                "id": proof["id"],
+                                "passed": proof["passed"],
+                                "rows": proof["rows"],
+                            }
+                        except ValueError as error:
+                            input_audit = {
+                                "status": "Historical parity check unavailable",
+                                "reason": str(error),
+                            }
     if store.list("manager_policy", 1) and list(
         store.get("manager_policy").get("player_features", [])
     ) != list(PLAYER_FEATURES):
@@ -53,6 +83,7 @@ def maintain_models(store):
         "removed_weights": removed,
         "refitted_companions": refits,
         "account_state_changed": False,
+        "role_input_audit": input_audit,
     }
     if removed or refits:
         store.put("model_maintenance", result)

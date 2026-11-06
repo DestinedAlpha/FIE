@@ -45,6 +45,10 @@ def event_market(rows, season):
 
 def evaluate_choices(store: Store, seconds=1.0):
     spec = store.get("decision_model")
+    if spec.get("role_minutes_model_id") and not spec.get("fusion_model_id"):
+        from .role_minutes import reference_predictions
+
+        spec = spec | {"predictions": reference_predictions(store, spec)}
     groups = defaultdict(list)
     for row in spec["predictions"]:
         groups[row["deadline_group"]].append(row)
@@ -159,6 +163,10 @@ def replay_policy(
     reference_transfers=False,
 ):
     spec = spec or store.get("decision_model")
+    if spec.get("role_minutes_model_id") and not spec.get("fusion_model_id"):
+        from .role_minutes import reference_predictions
+
+        spec = spec | {"predictions": reference_predictions(store, spec)}
     groups = defaultdict(list)
     for row in spec["predictions"]:
         if row["season"] == season:

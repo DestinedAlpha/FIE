@@ -1,8 +1,8 @@
 {
-  "at": "2026-11-06T09:35:36.630532+00:00",
-  "version": "role-minutes-v2",
-  "feature_id": "5ae94d834d3c29a1f94461f3ef22904190ab112a16e2efc97c7628edcf800b4a",
-  "context_archive_id": "303b2f2a6dc8009e931e05f94ab3f0c8cddcc4e6b300e996571717f7f7f98d3a",
+  "at": "2026-11-06T14:11:39.468590+00:00",
+  "version": "role-minutes-v3",
+  "feature_id": "f5eb8eb039676ab18c5874cd4f4133765e0a7bb7ed71f3d0873c7b7532b5e246",
+  "context_archive_id": "1d89529fbbcfc4dff1624469db48a46d15fd8212245ccd75ae328489b5fc23cf",
   "workload_transform": "positive-exposure-v2",
   "weight": 1,
   "passed": true,
@@ -64,38 +64,38 @@
         "regular_points_squared": 8.807560535607099
       },
       "candidate": {
-        "brier": 0.27845117344079134,
-        "points_squared": 3.54465887149193,
-        "any_brier": 0.0688774549020519,
-        "sixty_brier": 0.07476346845289833,
-        "regular_points_squared": 8.732655826792298
+        "brier": 0.2784391935457252,
+        "points_squared": 3.5444591383021,
+        "any_brier": 0.0688757928967216,
+        "sixty_brier": 0.07477469159948022,
+        "regular_points_squared": 8.732937363750269
       },
       "delta_95ci": {
         "brier": [
-          -0.014269491058891757,
-          -0.010120739573925511
+          -0.014327867415005252,
+          -0.010126210974281222
         ],
         "points_squared": [
-          -0.08171384194839028,
-          -0.04015080227647121
+          -0.08161361682816529,
+          -0.04068716872015933
         ]
       },
       "positions": {
         "1": {
           "reference": 1.9765962912654784,
-          "candidate": 1.9289184749335389
+          "candidate": 1.9310942597612404
         },
         "2": {
           "reference": 4.333136026181706,
-          "candidate": 4.251557187671642
+          "candidate": 4.250979536100896
         },
         "3": {
           "reference": 3.348603463986077,
-          "candidate": 3.302459088876043
+          "candidate": 3.3018829690937435
         },
         "4": {
           "reference": 4.159860731331745,
-          "candidate": 4.116321913511506
+          "candidate": 4.116288177282877
         }
       }
     }
@@ -248,9 +248,10 @@
       "test_rows": 5076
     }
   ],
-  "prediction_path": "data/features/role-minutes-0c9fa92c19497a1a1912bb5e.parquet",
-  "prediction_hash": "bf5d5c0ccc652e55b847f000607517e9ff2ef5dae9a1ad61f731ce105a5fb7ab",
+  "prediction_path": "data/features/role-minutes-2d2cfb64faea021119e2dd2b.parquet",
+  "prediction_hash": "ed295644256a04d3ea5aa567f8b32d898b80bf35f59a3e06e88c0ba5d03c8da6",
   "protocol": "Expanding eight-deadline blocks; eight earlier calibration deadlines excluded from fits. Mixture selected on 2024/25 GW1\u201319 only; acceptance GW20\u201338; independent full 2025/26 replication. Confidence intervals resample whole deadlines. No current-season results select the model.",
   "scope": "Immediate participation probabilities. Conditional scoring and future horizon are unchanged; this forecast test does not certify transfer-policy improvement.",
-  "id": "f026b713714576b96fb5c2f7c8548c910ec44eef75e3e8f3698e91af3213a31e"
+  "feature_contract": "Float32 role aggregation; explicitly pinned full deadline context and positive-exposure workload. Live and historical role vectors share the same transform.",
+  "id": "227dc9130dc3f915c83c6ac5554bc044a7cb78ea73488841119a533bb9e7fd60"
 }

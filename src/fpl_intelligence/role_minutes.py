@@ -20,7 +20,7 @@ from .models import curve_apply, curve_fit
 from .storage import atomic_json, digest, now
 from .workload import WORKLOAD_TRANSFORM, workload_features
 
-VERSION = "role-minutes-v2"
+VERSION = "role-minutes-v3"
 PARAMS = PARAMETERS | {"n_estimators": 220, "num_leaves": 16, "min_child_samples": 100, "reg_lambda": 20}
 ROLE_NAMES = (
     "starts_per_elapsed_gameweek",
@@ -38,7 +38,9 @@ ROLE_NAMES = (
 def role_vector(packet, sequence, mask, event):
     packet = packet or {}
     games = max(1, event - 1)
-    recent = sequence[mask]
+    # Stored sequences use float16, while live inputs use float32. Aggregate in
+    # one precision so a five-start rate cannot cross a tree split at serving.
+    recent = np.asarray(sequence[mask], dtype=np.float32)
     starts = float(packet.get("starts") or 0)
     minutes = float(packet.get("minutes") or 0)
     return [
@@ -59,7 +61,7 @@ def matrix(tab, roles, news, workload, quality):
 def historical_inputs(store, arrays, metadata, features, context_id=None):
     from .context_archive import load_context
 
-    packets = load_context(store, context_id)
+    packets = load_context(store, context_id or features.get("lineage", {}).get("context_archive"))
     workload = store.get("workload", features["lineage"]["workload"])["records"]
     by_code = defaultdict(list)
     for row in workload:
@@ -105,6 +107,8 @@ def validate(store):
 
     arrays, metadata, features = load_data(store)
     context_id = store.get("context_archive")["id"]
+    if features.get("workload_transform") != WORKLOAD_TRANSFORM:
+        raise ValueError("Rebuild source features before validating the current role contract")
     x = historical_inputs(store, arrays, metadata, features, context_id)
     groups = np.array([r["deadline_group"] for r in metadata])
     seasons = np.array([r["season"] for r in metadata])
@@ -221,6 +225,7 @@ def validate(store):
         "prediction_hash": hashlib.sha256(path.read_bytes()).hexdigest(),
         "protocol": "Expanding eight-deadline blocks; eight earlier calibration deadlines excluded from fits. Mixture selected on 2024/25 GW1–19 only; acceptance GW20–38; independent full 2025/26 replication. Confidence intervals resample whole deadlines. No current-season results select the model.",
         "scope": "Immediate participation probabilities. Conditional scoring and future horizon are unchanged; this forecast test does not certify transfer-policy improvement.",
+        "feature_contract": "Float32 role aggregation; explicitly pinned full deadline context and positive-exposure workload. Live and historical role vectors share the same transform.",
     }
     result["id"] = store.put("role_minutes_validation", result)
     atomic_json(Path("artifacts/evaluations/role_minutes_validation.json"), result)
@@ -279,7 +284,7 @@ def apply(store, model_id, rows, market, players, probabilities, start_event):
     from .fusion_data import live_inputs
 
     spec = store.get("role_minutes_model", model_id)
-    if not spec["promoted"] or spec["version"] != VERSION:
+    if not spec["promoted"] or spec["version"] not in (VERSION, "role-minutes-v2"):
         raise ValueError("Unsupported role minutes model")
     selected = [
         i
@@ -348,6 +353,114 @@ def attach(store, model):
     return body
 
 
+def audit_input_contract(store, event=None):
+    """Compare stored historical tensors with the production input builder."""
+    import tempfile
+
+    from .consensus import replay_packets
+    from .decision import canonical_rows, future_inputs
+    from .fusion import load_data
+    from .fusion_data import live_inputs
+    from .observations import completed_before
+    from .pipeline_replay import attach_market, attach_observations
+    from .storage import Store
+
+    active = store.get("decision_model")
+    spec = store.get("role_minutes_model", active["role_minutes_model_id"])
+    if not spec.get("context_archive_id"):
+        raise ValueError("Role weights have no pinned context; migrate before auditing")
+    arrays, meta, features = load_data(store, spec["feature_id"])
+    historical = historical_inputs(store, arrays, meta, features, spec["context_archive_id"])
+    season = store.get("market")["season"]
+    event = event or max(r["event"] for r in meta if r["season"] == season)
+    packet = replay_packets(store)[season, event]
+    originals, _, _ = canonical_rows(store)
+    past = completed_before(originals, packet["deadline"], f"{season}-GW{event:02d}")
+    with tempfile.TemporaryDirectory(prefix="fie-role-contract-") as temporary:
+        root = Path(temporary)
+        path = root / "features/history.parquet"
+        path.parent.mkdir()
+        pl.DataFrame(past, infer_schema_length=None, strict=False).write_parquet(path)
+        staged = Store(root / "data")
+        attach_observations(
+            staged, {"path": path, "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}, packet
+        )
+        players, market = attach_market(staged, packet, originals)
+        for kind in ("shot_archive", "temporal_model", "elite_cohort", "workload"):
+            identity = features.get("lineage", {}).get(kind)
+            if store.list(kind, 1):
+                body = store.get(kind, identity)
+                staged.put(kind, {k: v for k, v in body.items() if k != "id"})
+        staged.put("fusion_features", {k: v for k, v in features.items() if k != "id"})
+        rows, _ = future_inputs(staged, market, players, event, event)
+        inputs = live_inputs(staged, rows, market, players, features["id"])
+        roles, loads = [], []
+        work = defaultdict(list)
+        for row in staged.get("workload")["records"]:
+            work[row["player_code"]].append(row)
+        for j, row in enumerate(rows):
+            player = players[row["player_id"]]
+            roles.append(role_vector(player.raw, inputs["sequence"][j], inputs["sequence_mask"][j], event))
+            loads.append(workload_features(work[player.code], player.code, packet["deadline"]))
+        served = matrix(inputs["tab"], roles, inputs["news"], loads, inputs["quality"])
+        lookup = {
+            (r["player_id"], r["fixture_id"]): i
+            for i, r in enumerate(meta)
+            if r["season"] == season and r["event"] == event
+        }
+        differences = []
+        mismatches = []
+        labels = (
+            list(NAMES)
+            + list(ROLE_NAMES)
+            + [f"news_{i}" for i in range(13)]
+            + [f"load_{i}" for i in range(7)]
+            + ["news_known", "workload_known"]
+        )
+        for j, row in enumerate(rows):
+            old = lookup.get((row["player_id"], row["fixture_id"]))
+            if old is not None:
+                difference = np.abs(historical[old] - served[j])
+                differences.append(difference)
+                if difference.max() > 1e-4:
+                    mismatches.append(
+                        {
+                            "player_id": row["player_id"],
+                            "name": players[row["player_id"]].web_name,
+                            "fields": {
+                                labels[k]: [float(historical[old, k]), float(served[j, k])]
+                                for k in np.flatnonzero(difference > 1e-4)
+                            },
+                        }
+                    )
+        delta = np.asarray(differences)
+        maxima = delta.max(axis=0)
+        # Short-core rest scheduling for a newly registered player can carry
+        # additional fixture information; the role/news/workload contract must
+        # remain identical when fed the same archived observations.
+        exact = bool(np.all(maxima <= 1e-4))
+        report = {
+            "at": now(),
+            "version": VERSION,
+            "event": event,
+            "season": season,
+            "role_minutes_model_id": spec["id"],
+            "feature_id": features["id"],
+            "context_id": spec["context_archive_id"],
+            "rows": len(delta),
+            "maximum_core_delta": float(maxima[: len(NAMES)].max()),
+            "maximum_role_source_delta": float(maxima[len(NAMES) :].max()),
+            "core_differences": {name: float(maxima[i]) for i, name in enumerate(NAMES) if maxima[i] > 1e-4},
+            "mismatch_count": len(mismatches),
+            "mismatches": mismatches[:20],
+            "passed": exact,
+            "temporary_inputs_removed": True,
+        }
+    report["id"] = store.put("role_contract_audit", report)
+    atomic_json(Path("artifacts/evaluations/role_contract_audit.json"), report)
+    return report
+
+
 def reference_predictions(store, model, feature_id=None):
     """Reconstruct the composed primary for challenger/manager training.
 
@@ -362,7 +475,7 @@ def reference_predictions(store, model, feature_id=None):
     if spec["version"] != VERSION or not spec["promoted"]:
         raise ValueError("Unsupported role reference contract")
     arrays, meta, features = load_data(store, feature_id)
-    context_id = store.get("context_archive")["id"]
+    context_id = spec.get("context_archive_id") or features.get("lineage", {}).get("context_archive")
     key = digest(
         {
             "feature": features["id"],
@@ -462,9 +575,13 @@ def ensure(store, model):
         default="",
     )
     spec = store.get("role_minutes_model") if store.list("role_minutes_model", 1) else {}
-    if spec.get("version") != VERSION or spec.get("completed_labels_through", "") < latest:
+    if (
+        spec.get("version") != VERSION
+        or not spec.get("context_archive_id")
+        or spec.get("completed_labels_through", "") < latest
+    ):
         asyncio.run(import_context(store))
-        features = build_fusion_data(store)
+        _, _, features = build_fusion_data(store)
         validation = store.get("role_minutes_validation") if store.list("role_minutes_validation", 1) else {}
         if validation.get("version") != VERSION:
             validation = validate(store)

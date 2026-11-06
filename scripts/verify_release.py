@@ -135,6 +135,11 @@ def main():
         path = store.artifact_path(role["path"])
         assert hashlib.sha256(path.read_bytes()).hexdigest() == role["hash"]
         assert lgb.Booster(model_file=str(path)).num_feature() == role["width"] == 57
+        if role["version"] == "role-minutes-v3":
+            assert role.get("context_archive_id")
+            audit = store.get("role_contract_audit")
+            assert audit["passed"] and audit["role_minutes_model_id"] == role_id
+            assert audit["maximum_core_delta"] == audit["maximum_role_source_delta"] == 0
         predictions = store.artifact_path(validation["prediction_path"])
         assert hashlib.sha256(predictions.read_bytes()).hexdigest() == validation["prediction_hash"]
         assert importlib.util.find_spec("torch") is None

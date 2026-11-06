@@ -16,6 +16,10 @@ from .storage import Store, atomic_json, now
 async def benchmark_managers(store: Store) -> dict:
     cohort = store.get("cohort")
     spec = store.get("decision_model")
+    if spec.get("role_minutes_model_id") and not spec.get("fusion_model_id"):
+        from .role_minutes import reference_predictions
+
+        spec = spec | {"predictions": reference_predictions(store, spec)}
     players, market = load_market(store)
     event = cohort["event"]
     forecast: dict[int, float] = {}

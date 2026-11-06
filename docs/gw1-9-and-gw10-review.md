@@ -1,6 +1,6 @@
 # Current role model: GW1–9 and GW10 transfer comparison
 
-Evaluated 6 November 2026. These are independent £100m squads each week, equivalent to a hypothetical Free Hit every week. Normal captaincy and exact autosubs apply; no Triple Captain or Bench Boost. The accepted role configuration is fixed, while conditional points and minutes are refitted before each deadline with eight earlier calibration deadlines. Final fitted current-season weights never score their own past training weeks.
+Historical role-v2 review from release 0.12.1, evaluated 6 November 2026. The current role-v3 score is 575; see [the current audit](data-and-forecast-audit.md). These are independent £100m squads each week, equivalent to a hypothetical Free Hit every week. Normal captaincy and exact autosubs apply; no Triple Captain or Bench Boost. The accepted role configuration is fixed, while conditional points and minutes are refitted before each deadline with eight earlier calibration deadlines. Final fitted current-season weights never score their own past training weeks.
 
 | GW | Actual points | Captain |
 |---|---:|---|
@@ -15,7 +15,7 @@ Evaluated 6 November 2026. These are independent £100m squads each week, equiva
 | 9 | 82 | Haaland |
 | **Total** | **569** | |
 
-Each week uses 20,000 outcome worlds. All nine additive XI/captain squad solves report gap zero. This is a reconstructed historical experiment, with retrospectively imported completed-match facts; it does not establish consistent future returns or a continuous-account score. The [complete scorecard](../artifacts/evaluations/gw1-gw9-role-replay.json) includes every squad, lineup, frozen decision, fitting/calibration cutoff and model checksum.
+Each week uses 20,000 outcome worlds. All nine additive XI/captain squad solves report gap zero. This is a reconstructed historical experiment, with retrospectively imported completed-match facts; it does not establish consistent future returns or a continuous-account score. The [complete scorecard](https://github.com/DestinedAlpha/FIE/blob/v0.12.1/artifacts/evaluations/gw1-gw9-role-replay.json) includes every squad, lineup, frozen decision, fitting/calibration cutoff and model checksum.
 
 ## The proposed Gabriel/Tavernier hit
 

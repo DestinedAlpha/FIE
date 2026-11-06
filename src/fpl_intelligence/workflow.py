@@ -41,7 +41,10 @@ def full_training(store: Store, samples=24, refresh=False):
         asyncio.run(refresh_sources(store))
     record("context", asyncio.run(import_context(store)))
     record("football_models", football_training(store, refresh))
-    record("reference", train_decisions(store))
+    reference = train_decisions(store)
+    from .role_minutes import ensure
+
+    record("reference", ensure(store, reference))
     record("source_fusion", train_fusion(store))
     record("fusion_review", review_fusion(store))
     compare_live(store)
@@ -54,8 +57,6 @@ def full_training(store: Store, samples=24, refresh=False):
     from .future_training import train_future_component
 
     record("future_fixture_learning", train_future_component(store))
-    from .role_minutes import ensure
-
     record("role_minutes", ensure(store, store.get("decision_model")))
     record("horizon", train_horizon(store))
     from .policy_learning import train_policy

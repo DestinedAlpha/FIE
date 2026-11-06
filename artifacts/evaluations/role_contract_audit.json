@@ -1,0 +1,18 @@
+{
+  "at": "2026-11-06T14:21:13.598898+00:00",
+  "version": "role-minutes-v3",
+  "event": 9,
+  "season": "2026/27",
+  "role_minutes_model_id": "2365d72a46fb40060cdb077e6931cd570c5f922eac743566f34196315a5f5262",
+  "feature_id": "f5eb8eb039676ab18c5874cd4f4133765e0a7bb7ed71f3d0873c7b7532b5e246",
+  "context_id": "0165a57b829113f74f92978483b89108c261de4368b0a441970982199a5b391c",
+  "rows": 669,
+  "maximum_core_delta": 0.0,
+  "maximum_role_source_delta": 0.0,
+  "core_differences": {},
+  "mismatch_count": 0,
+  "mismatches": [],
+  "passed": true,
+  "temporary_inputs_removed": true,
+  "id": "9680f882ca1e12adc0792a34c62e25eb4f933e9205beeb5bd02cfab8045ea8c4"
+}

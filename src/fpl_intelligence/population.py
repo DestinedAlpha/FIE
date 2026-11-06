@@ -9,6 +9,7 @@ import httpx
 import numpy as np
 from threadpoolctl import threadpool_limits
 
+from .account_sync import revealed_pick_events
 from .ingestion import Official, load_market
 from .rivals import rival_policy
 from .simulation import score_plan
@@ -77,13 +78,20 @@ async def collect_population(store, per_stratum=16):
                     pass
                 return await official.fetch(client, path, source)
 
-            values = await asyncio.gather(
+            history, transfers = await asyncio.gather(
                 fetch(f"entry/{entry}/history/", f"entry_history_{entry}"),
                 fetch(f"entry/{entry}/transfers/", f"transfers_{entry}"),
-                *(
-                    fetch(f"entry/{entry}/event/{g}/picks/", f"picks_{entry}_{g}")
-                    for g in range(max(1, event - 1), event + 1)
-                ),
+            )
+            if history is None or transfers is None:
+                misses.append({"entry": entry, "reason": "Incomplete history/transfers"})
+                return
+            try:
+                events = revealed_pick_events(history, event)
+            except ValueError as error:
+                misses.append({"entry": entry, "reason": str(error)})
+                return
+            values = await asyncio.gather(
+                *(fetch(f"entry/{entry}/event/{g}/picks/", f"picks_{entry}_{g}") for g in events)
             )
             if any(v is None for v in values):
                 misses.append({"entry": entry, "reason": "Incomplete history/transfers/picks"})
