@@ -33,6 +33,10 @@ Open http://127.0.0.1:8000. `reconcile-team` imports the **dated** research seed
 
 `fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. `fpl refresh-current` and the Refresh data button reconcile revealed deadline squads, advance to the next deadline, update finalized labels and recompute the recommendation. Confirm any additional unrevealed transfers in My squad; public endpoints cannot see them.
 
+## What changed in 0.12.1
+
+The weekly replay now evaluates the accepted role-aware configuration, refitting strictly before each deadline. Current GW1–9 independent £100m squads score **569**. The dashboard selects matching evaluated configurations and preserves earlier reference benchmarks separately. [Weekly results and GW10 transfer comparison](docs/gw1-9-and-gw10-review.md).
+
 ## What changed in 0.12
 
 Removed local neural training/inference, weights, dependencies and controls. Existing-installation migration preserves the account, keys, accepted tree models and legal training outcomes, and refits companion tree models after removing the retired forecast input.

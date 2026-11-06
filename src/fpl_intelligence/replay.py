@@ -58,6 +58,53 @@ def archive_integer(value):
         raise ValueError("Invalid archive identifier") from error
 
 
+def current_weekly_results(store, baseline=False):
+    """Do not label a legacy scorecard as evaluation of a newer participation head."""
+    active = store.get("decision_model") if store.list("decision_model", 1) else {}
+    if active.get("fusion_model_id") and not baseline:
+        raise ValueError(
+            "This weekly scorecard evaluates the reference/role family; use the promoted source model's separate policy evaluation"
+        )
+    if active.get("role_minutes_model_id") and not baseline:
+        try:
+            report = store.get("role_weekly_replay")
+        except ValueError:
+            path = Path(__file__).resolve().parents[2] / "artifacts/evaluations/gw1-gw9-role-replay.json"
+            if not path.is_file():
+                raise
+            report = json.loads(path.read_text())
+        compatible = report.get("participation_configuration_id") == active["role_minutes_model_id"]
+        if not compatible and report.get("configuration_hash"):
+            role = store.get("role_minutes_model", active["role_minutes_model_id"])
+            compatible = report["configuration_hash"] == replay_configuration_hash(role)
+        if store.list("market", 1) and report.get("season") != store.get("market")["season"]:
+            compatible = False
+        if not compatible:
+            raise ValueError(
+                "Replay the current participation configuration before quoting its weekly scores"
+            )
+        return report
+    return store.get("weekly_replay")
+
+
+def replay_configuration_hash(role):
+    """Historical folds evaluate a fixed architecture, not later refitted weights."""
+    from .decision import NAMES, PARAMETERS
+    from .role_minutes import PARAMS
+
+    return digest(
+        {
+            "protocol": "weekly-role-refit-v2",
+            "role_version": role["version"],
+            "weight": role["weight"],
+            "workload_transform": role["workload_transform"],
+            "role_parameters": PARAMS,
+            "point_parameters": PARAMETERS,
+            "numerical_features": NAMES,
+        }
+    )
+
+
 async def capture_replay_inputs(store, season, events):
     """Fetch immutable pre-deadline Git versions; never use today's prices."""
     manifest = json.loads(MANIFEST.read_text())
@@ -277,6 +324,7 @@ def deadline_rows(originals, bootstrap, schedule, season, event, deadline):
                     "dc_probability": dc_probability(player.position, profile, BAND_MINUTES),
                     "availability": availability,
                     "kickoff_time": fixture.get("kickoff_time"),
+                    "recent_history": past[-12:],
                 }
             )
     return players, output
@@ -343,7 +391,9 @@ def fit_deadline(store, frame, deadline, group, directory):
     )
 
 
-def weekly_worlds(rows, fitted, pools, dependence, minute_pools, players, worlds, seed):
+def weekly_worlds(
+    rows, fitted, pools, dependence, minute_pools, players, worlds, seed, role_probability=None, role_weight=0
+):
     ids = sorted(players)
     index = {p: i for i, p in enumerate(ids)}
     points = np.zeros((worlds, len(ids)), dtype=np.int16)
@@ -361,6 +411,10 @@ def weekly_worlds(rows, fitted, pools, dependence, minute_pools, players, worlds
         p = probabilities[i].copy()
         p[1:] *= row["availability"]
         p[0] = 1 - p[1:].sum()
+        if role_probability is not None:
+            p = (1 - role_weight) * p + role_weight * role_probability[i]
+            if row["availability"] == 0:
+                p = np.array([1.0, 0.0, 0.0, 0.0])
         u = ndtr(0.3 * shared[:, column] + np.sqrt(0.91) * rng.normal(size=worlds))
         role = "defence" if position <= 2 else "attack"
         key = (row["fixture_id"], row["team"], role)
@@ -385,19 +439,38 @@ def weekly_worlds(rows, fitted, pools, dependence, minute_pools, players, worlds
     return ids, points, minutes
 
 
-def run_replay(store, events=None, worlds=4000, seconds=60, publish=True):
+def run_replay(store, events=None, worlds=4000, seconds=60, publish=True, participation_model_id=None):
     """Independent £100m squads each week, not eight weeks of free account transfers."""
     import asyncio
 
     events = events or list(range(1, 10))
-    season = store.get("market")["season"]
+    market = store.get("market")
+    season = market["season"]
     if not events or any(g not in range(1, 39) for g in events) or not 100 <= worlds <= 20000:
         raise ValueError("Invalid replay request")
+    finalized = {e["id"] for e in market["events"] if e.get("data_checked")}
+    if not set(events) <= finalized:
+        raise ValueError("Weekly scoring requires finalized target gameweeks")
     source_state = store.get("state")["id"]
     inputs = asyncio.run(capture_replay_inputs(store, season, events))
     feature = store.get("decision_features")
     frame = pl.read_parquet(store.artifact_path(feature["path"]))
     originals, _, _ = canonical_rows(store)
+    role = None
+    if participation_model_id:
+        from .fusion import load_data
+        from .role_minutes import VERSION, historical_inputs
+
+        role = store.get("role_minutes_model", participation_model_id)
+        if not role["promoted"] or role["version"] != VERSION:
+            raise ValueError("Weekly replay requires an accepted participation configuration")
+        role_arrays, role_meta, role_features = load_data(store, role["feature_id"])
+        role_context_id = (
+            role.get("context_archive_id")
+            or store.get("role_minutes_validation", role["validation_id"])["context_archive_id"]
+        )
+        role_x = historical_inputs(store, role_arrays, role_meta, role_features, role_context_id)
+        role_workload = store.get("workload", role_features["lineage"]["workload"])["records"]
     directory = (
         store.root
         / "models"
@@ -409,7 +482,8 @@ def run_replay(store, events=None, worlds=4000, seconds=60, publish=True):
                     "features": feature["hash"],
                     "worlds": worlds,
                     "seconds": seconds,
-                    "protocol": "weekly-refit-v1",
+                    "protocol": "weekly-role-refit-v2" if role else "weekly-refit-v1",
+                    **({"participation_model_id": participation_model_id} if role else {}),
                 }
             )[:20]
         )
@@ -430,8 +504,80 @@ def run_replay(store, events=None, worlds=4000, seconds=60, publish=True):
         fitted, pools, dependence, minute_pools, training = fit_deadline(
             store, frame, item["deadline"], group, directory / f"gw{event}"
         )
+        role_probability = None
+        if role:
+            from .fusion_data import sequence, source_features
+            from .role_minutes import fit_head, matrix, predict, role_vector
+
+            completed = {
+                (r["season"], int(r["fixture"]))
+                for r in originals
+                if r.get("kickoff_time")
+                and moment(r["kickoff_time"]) + timedelta(hours=4) < moment(item["deadline"])
+            }
+            eligible = np.array(
+                [
+                    (r["season"], r["fixture_id"]) in completed and r["deadline_group"] < group
+                    for r in role_meta
+                ]
+            )
+            groups = np.array([r["deadline_group"] for r in role_meta])
+            cut = sorted(set(groups[eligible]))[-8]
+            train = np.flatnonzero(eligible & (groups < cut))
+            cal = np.flatnonzero(eligible & (groups >= cut))
+            head, curves = fit_head(role_x, role_arrays["minutes"], train, cal)
+            path = directory / f"gw{event}" / "role-minutes.txt"
+            head.booster_.save_model(str(path))
+            training["models"]["role_minutes"] = {
+                "path": str(path),
+                "hash": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+            training["role_minutes"] = {
+                "configuration_id": participation_model_id,
+                "validation_id": role["validation_id"],
+                "feature_id": role_features["id"],
+                "context_id": role_context_id,
+                "weight": role["weight"],
+                "curves": curves,
+                "fit_max_group": str(max(groups[train])),
+                "calibration_max_group": str(max(groups[cal])),
+                "training_rows": len(train),
+                "calibration_rows": len(cal),
+                "final_fitted_weights_reused": False,
+            }
+            assert max(groups[train]) < min(groups[cal]) <= max(groups[cal]) < group
+            roles, news, loads, qualities = [], [], [], []
+            by_code = defaultdict(list)
+            for record in role_workload:
+                by_code[record["player_code"]].append(record)
+            for row in rows:
+                player = players[row["player_id"]]
+                seq, mask = sequence(row["recent_history"])
+                roles.append(role_vector(player.raw, seq, mask, event))
+                _, n, _, load, quality = source_features(
+                    player.raw,
+                    {},
+                    by_code[player.code],
+                    player.code,
+                    item["deadline"],
+                    role["workload_transform"],
+                )
+                news.append(n)
+                loads.append(load)
+                qualities.append(quality)
+            x = matrix([r["x"] for r in rows], roles, news, loads, np.asarray(qualities))
+            role_probability = predict(head, curves, x, np.asarray(news))
         ids, points, minutes = weekly_worlds(
-            rows, fitted, pools, dependence, minute_pools, players, worlds, 11
+            rows,
+            fitted,
+            pools,
+            dependence,
+            minute_pools,
+            players,
+            worlds,
+            11,
+            role_probability,
+            role["weight"] if role else 0,
         )
         means = {p: float(points[:, i].mean()) for i, p in enumerate(ids)}
         diagnostics: dict = {}
@@ -482,6 +628,14 @@ def run_replay(store, events=None, worlds=4000, seconds=60, publish=True):
             "forecast_mean": float(distribution.mean()),
             "forecast_10_90": np.quantile(distribution, [0.1, 0.9]).tolist(),
             "protocol": "Full pre-deadline registered market and £100m; XI/captain additive MIP with exact autosub/bench rescoring; no chips",
+            **(
+                {
+                    "participation_configuration_id": participation_model_id,
+                    "hypothetical_free_hit_each_week": True,
+                }
+                if role
+                else {}
+            ),
         }
         decision_id = store.put("weekly_replay_decision", frozen)
         # Only after freezing the decision do target outcomes enter scoring.
@@ -535,6 +689,14 @@ def run_replay(store, events=None, worlds=4000, seconds=60, publish=True):
         "weeks": weeks,
         "total_points": sum(r["actual_points"] for r in weeks),
         "feature_id": feature["id"],
+        **(
+            {
+                "participation_configuration_id": participation_model_id,
+                "model_scope": "Current immediate conditional-points and accepted role-aware minutes family; refitted before each deadline. Distant-fixture expert has no lead-zero contribution. Independent £100m squads model hypothetical Free Hit every week.",
+            }
+            if role
+            else {}
+        ),
         "worlds": worlds,
         "account_state_unchanged": store.get("state")["id"] == source_state,
         "learning": "Each week refits on completed earlier matches, updates player history and reserves eight earlier deadlines for calibration. Target-week points are read only after its team is frozen.",
@@ -545,8 +707,18 @@ def run_replay(store, events=None, worlds=4000, seconds=60, publish=True):
             "Observed minus forecast points includes football randomness, model error and omitted information; it is not identified as pure luck.",
         ],
     }
-    report["id"] = store.put("weekly_replay" if publish else "weekly_replay_segment", report)
-    atomic_json(Path(f"artifacts/evaluations/gw{min(events)}-gw{max(events)}-replay.json"), report)
+    if role:
+        report["configuration_hash"] = replay_configuration_hash(role)
+    kind = (
+        ("role_weekly_replay" if publish else "role_weekly_replay_segment")
+        if role
+        else "weekly_replay"
+        if publish
+        else "weekly_replay_segment"
+    )
+    report["id"] = store.put(kind, report)
+    suffix = "-role" if role else ""
+    atomic_json(Path(f"artifacts/evaluations/gw{min(events)}-gw{max(events)}{suffix}-replay.json"), report)
     return report
 
 

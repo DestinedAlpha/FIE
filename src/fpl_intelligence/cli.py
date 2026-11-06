@@ -709,13 +709,27 @@ def population_analysis(per_stratum: int = 16):
 
 
 @app.command("replay-weekly")
-def replay_weekly(worlds: int = 4000, seconds: float = 60, end_event: int = 9):
+def replay_weekly(worlds: int = 4000, seconds: float = 60, end_event: int = 9, current_model: bool = True):
     """Build independent squads through end-event using deadline-pinned inputs."""
     from .replay import run_replay
 
     if not 1 <= end_event <= 38:
         raise typer.BadParameter("end-event must be between 1 and 38")
-    show(run_replay(Store(), events=list(range(1, end_event + 1)), worlds=worlds, seconds=seconds))
+    store = Store()
+    active = store.get("decision_model") if current_model else {}
+    if current_model and active.get("fusion_model_id"):
+        raise ValueError(
+            "This replay supports the current reference/role family; use its separate fusion policy evaluation for a promoted source family"
+        )
+    show(
+        run_replay(
+            store,
+            events=list(range(1, end_event + 1)),
+            worlds=worlds,
+            seconds=seconds,
+            participation_model_id=active.get("role_minutes_model_id"),
+        )
+    )
 
 
 @app.command("refresh-current")

@@ -657,7 +657,9 @@ def promote_fusion(store: Store):
     b = np.array([r["baseline"] for r in predictions])
     p = np.array([r["predicted"] for r in predictions])
     regular = np.array([r["prior_start"] >= 0.6 for r in predictions])
-    body = {k: v for k, v in old.items() if k not in ("id", "future_horizon_model_id")}
+    body = {
+        k: v for k, v in old.items() if k not in ("id", "future_horizon_model_id", "role_minutes_model_id")
+    }
     from .models import reliability
 
     body.update(

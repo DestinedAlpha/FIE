@@ -1,0 +1,445 @@
+{
+  "at": "2026-11-06T11:46:55.918984+00:00",
+  "state_id": "7b62e815bffd50f908e4e8b63d43f93670e1625e5ad59805ed3572925e08de83",
+  "forecast_id": "4d5bee2182252110735e8e9a87aa19ce1a3429c188072ed8011a533ad8ec86ff",
+  "forecast_cutoff": "2026-11-06T09:39:54.037724+00:00",
+  "cases": {
+    "roll": {
+      "plan_id": "0c964a63ae8c19d0e5c0e7647c6edc9258c01eac8277cd608244c84f08d518f1",
+      "net": 52.013,
+      "gross": 52.013,
+      "hit": 0,
+      "bank": 16,
+      "lineup": {
+        "xi": [
+          "Raya",
+          "Calafiori",
+          "Bogle",
+          "De Cuyper",
+          "Gvardiol",
+          "Palmer",
+          "Rogers",
+          "Gro\u00df",
+          "Haaland",
+          "Evanilson",
+          "Calvert-Lewin"
+        ],
+        "bench": [
+          "Dubravka",
+          "Cherki",
+          "Greaves",
+          "Hughes"
+        ],
+        "captain": "Haaland",
+        "vice": "Rogers"
+      },
+      "delta_vs_virgil": -1.89665,
+      "simulation_mean_95ci": [
+        -1.958131317881163,
+        -1.8351686821188369
+      ],
+      "probability_beating_virgil": 0.26245
+    },
+    "gvardiol_virgil": {
+      "plan_id": "c97890edab09b2a6359dc9c7ebc4e424eb2e292c768dd5279cff5fb1fd47a2d7",
+      "net": 53.90965,
+      "gross": 53.90965,
+      "hit": 0,
+      "bank": 9,
+      "lineup": {
+        "xi": [
+          "Raya",
+          "Virgil",
+          "Calafiori",
+          "Bogle",
+          "De Cuyper",
+          "Palmer",
+          "Rogers",
+          "Gro\u00df",
+          "Haaland",
+          "Evanilson",
+          "Calvert-Lewin"
+        ],
+        "bench": [
+          "Dubravka",
+          "Cherki",
+          "Greaves",
+          "Hughes"
+        ],
+        "captain": "Haaland",
+        "vice": "Rogers"
+      },
+      "delta_vs_virgil": 0.0,
+      "simulation_mean_95ci": [
+        0.0,
+        0.0
+      ],
+      "probability_beating_virgil": 0.0
+    },
+    "cherki_tavernier": {
+      "plan_id": "296b6b61d03b8acb94cfd3e1a9bc75af80c2ad30f1109bf5fac907293cf42e49",
+      "net": 52.5269,
+      "gross": 52.5269,
+      "hit": 0,
+      "bank": 28,
+      "lineup": {
+        "xi": [
+          "Raya",
+          "Calafiori",
+          "Bogle",
+          "De Cuyper",
+          "Gvardiol",
+          "Palmer",
+          "Rogers",
+          "Tavernier",
+          "Gro\u00df",
+          "Haaland",
+          "Evanilson"
+        ],
+        "bench": [
+          "Dubravka",
+          "Calvert-Lewin",
+          "Greaves",
+          "Hughes"
+        ],
+        "captain": "Haaland",
+        "vice": "Rogers"
+      },
+      "delta_vs_virgil": -1.38275,
+      "simulation_mean_95ci": [
+        -1.46484687230959,
+        -1.3006531276904099
+      ],
+      "probability_beating_virgil": 0.3674
+    },
+    "gvardiol_gabriel": {
+      "feasible": false,
+      "reason": "Transfer bundle is unaffordable"
+    },
+    "tavernier_gabriel_hit": {
+      "plan_id": "cb01c433a0f46150e0d6cbdb5db17b5b7535b67e2b7de29a2a97692c9c8331bd",
+      "net": 50.5158,
+      "gross": 54.5158,
+      "hit": 4,
+      "bank": 5,
+      "lineup": {
+        "xi": [
+          "Raya",
+          "Gabriel",
+          "Calafiori",
+          "Bogle",
+          "De Cuyper",
+          "Palmer",
+          "Rogers",
+          "Tavernier",
+          "Gro\u00df",
+          "Haaland",
+          "Evanilson"
+        ],
+        "bench": [
+          "Dubravka",
+          "Calvert-Lewin",
+          "Greaves",
+          "Hughes"
+        ],
+        "captain": "Haaland",
+        "vice": "Rogers"
+      },
+      "delta_vs_virgil": -3.39385,
+      "simulation_mean_95ci": [
+        -3.4780866629171836,
+        -3.3096133370828165
+      ],
+      "probability_beating_virgil": 0.24785
+    }
+  },
+  "players": [
+    {
+      "name": "Cherki",
+      "price": 79,
+      "points": 2.8915,
+      "minutes": 40.96575,
+      "p60": 0.3637,
+      "components": {
+        "appearance": 1.3058,
+        "defcon": 0.0046,
+        "other_learned_points": 1.5811
+      },
+      "official_ep": "2.8",
+      "xg": "1.76",
+      "xa": "1.81",
+      "minutes_so_far": 472,
+      "starts": 6
+    },
+    {
+      "name": "Tavernier",
+      "price": 66,
+      "points": 4.0734,
+      "minutes": 75.471,
+      "p60": 0.89735,
+      "components": {
+        "appearance": 1.8834,
+        "defcon": 0.1478,
+        "other_learned_points": 2.0423
+      },
+      "official_ep": "6.0",
+      "xg": "3.71",
+      "xa": "1.36",
+      "minutes_so_far": 750,
+      "starts": 9
+    },
+    {
+      "name": "Gvardiol",
+      "price": 57,
+      "points": 3.186,
+      "minutes": 71.3319,
+      "p60": 0.7838,
+      "components": {
+        "appearance": 1.7234,
+        "defcon": 0.2392,
+        "other_learned_points": 1.2234
+      },
+      "official_ep": "1.8",
+      "xg": "0.80",
+      "xa": "0.99",
+      "minutes_so_far": 655,
+      "starts": 7
+    },
+    {
+      "name": "Gabriel",
+      "price": 80,
+      "points": 5.3006,
+      "minutes": 84.01,
+      "p60": 0.92205,
+      "components": {
+        "appearance": 1.9067,
+        "defcon": 0.7936,
+        "other_learned_points": 2.6003
+      },
+      "official_ep": "8.2",
+      "xg": "1.47",
+      "xa": "0.25",
+      "minutes_so_far": 810,
+      "starts": 9
+    },
+    {
+      "name": "Virgil",
+      "price": 64,
+      "points": 5.2113,
+      "minutes": 88.56335,
+      "p60": 0.9852,
+      "components": {
+        "appearance": 1.9852,
+        "defcon": 0.7963,
+        "other_learned_points": 2.4298
+      },
+      "official_ep": "3.5",
+      "xg": "0.36",
+      "xa": "0.22",
+      "minutes_so_far": 810,
+      "starts": 9
+    }
+  ],
+  "hold_squads_gw10_15": {
+    "roll": {
+      "net": 312.7675,
+      "delta_vs_virgil": -11.53405,
+      "simulation_mean_95ci": [
+        -11.696954624237,
+        -11.371145375763001
+      ],
+      "weekly_net": [
+        52.013,
+        53.464,
+        50.401,
+        52.955,
+        52.054,
+        51.881
+      ]
+    },
+    "gvardiol_virgil": {
+      "net": 324.30155,
+      "delta_vs_virgil": 0.0,
+      "simulation_mean_95ci": [
+        0.0,
+        0.0
+      ],
+      "weekly_net": [
+        53.91,
+        54.978,
+        52.783,
+        54.948,
+        53.981,
+        53.702
+      ]
+    },
+    "cherki_tavernier": {
+      "net": 317.7252,
+      "delta_vs_virgil": -6.57635,
+      "simulation_mean_95ci": [
+        -6.789451621652186,
+        -6.363248378347813
+      ],
+      "weekly_net": [
+        52.527,
+        54.204,
+        51.809,
+        53.693,
+        53.672,
+        51.821
+      ]
+    },
+    "tavernier_gabriel_hit": {
+      "net": 324.5772,
+      "delta_vs_virgil": 0.27565,
+      "simulation_mean_95ci": [
+        0.057786710497404276,
+        0.49351328950259576
+      ],
+      "weekly_net": [
+        50.516,
+        55.433,
+        54.025,
+        54.909,
+        55.836,
+        53.858
+      ]
+    }
+  },
+  "hold_scope": "Fixed permanent squads after the first move, weekly best lineup/captain and exact autosubs; no later transfers or chips. A payback sensitivity, not the full transfer policy.",
+  "reoptimized_gw10_13": {
+    "roll": {
+      "plan_id": "54b21b3a4b8557090fc9b9dfbdbc685724f353a9ffdd3336dfe7a27bad1d5174",
+      "net": 226.1798,
+      "solver": {
+        "status": "Optimal",
+        "objective": 191.83265000000515,
+        "best_bound": 191.9833660890309,
+        "gap": 0.0007856644269146033,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 15654,
+        "constraints": 14017,
+        "initial_warm_objective": 190.807095,
+        "selected_warm_objective": 190.807095,
+        "reused_incumbent_plan_id": null,
+        "validated_cached_incumbents": 0,
+        "runtime_seconds": 3.479,
+        "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+        "market_players": 564,
+        "screened_players": 0,
+        "terminal_value": "Declared fixed terminal sensitivity",
+        "state_value_model_id": null,
+        "scope": "MIP bound/gap applies to the continuation conditional on the independently selected first action",
+        "first_action_source": "User-suggested four-week transfer comparison; identical frozen forecasts and budget",
+        "continuation_plan_id": "cc847391cb82187e93504e57dd67a8a9312564636fd5ca5436849881a6e97fc3"
+      },
+      "weekly_net": [
+        52.013,
+        55.213,
+        57.286,
+        61.667
+      ]
+    },
+    "gvardiol_virgil": {
+      "plan_id": "968d2459815a65d58cc05e0ec0fb2287423f75df4067b413fcdada73e64ae532",
+      "net": 228.07645,
+      "solver": {
+        "status": "Optimal",
+        "objective": 191.83265,
+        "best_bound": 192.01061117897294,
+        "gap": 0.0009276897283801055,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 15654,
+        "constraints": 14017,
+        "initial_warm_objective": 191.13712500000003,
+        "selected_warm_objective": 191.13712500000003,
+        "reused_incumbent_plan_id": null,
+        "validated_cached_incumbents": 0,
+        "runtime_seconds": 3.094,
+        "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+        "market_players": 564,
+        "screened_players": 0,
+        "terminal_value": "Declared fixed terminal sensitivity",
+        "state_value_model_id": null,
+        "scope": "MIP bound/gap applies to the continuation conditional on the independently selected first action",
+        "first_action_source": "User-suggested four-week transfer comparison; identical frozen forecasts and budget",
+        "continuation_plan_id": "045d56985b93366f61dafcb8539591c925317752c55352f847886457499d20f2"
+      },
+      "weekly_net": [
+        53.91,
+        55.213,
+        57.286,
+        61.667
+      ]
+    },
+    "cherki_tavernier": {
+      "plan_id": "0b51e51aa5319dc3dd950527ffb08fcf7f33988e9babb31fcc330e2f1f863119",
+      "net": 225.89405,
+      "solver": {
+        "status": "Optimal",
+        "objective": 190.79248,
+        "best_bound": 190.8443028947368,
+        "gap": 0.00027161916830685133,
+        "bound_available": true,
+        "nodes": 1,
+        "variables": 15654,
+        "constraints": 14017,
+        "initial_warm_objective": 190.53844500000002,
+        "selected_warm_objective": 190.53844500000002,
+        "reused_incumbent_plan_id": null,
+        "validated_cached_incumbents": 1,
+        "runtime_seconds": 3.171,
+        "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+        "market_players": 564,
+        "screened_players": 0,
+        "terminal_value": "Declared fixed terminal sensitivity",
+        "state_value_model_id": null,
+        "scope": "MIP bound/gap applies to the continuation conditional on the independently selected first action",
+        "first_action_source": "User-suggested four-week transfer comparison; identical frozen forecasts and budget",
+        "continuation_plan_id": "767fba88f7dd9935b407e30e4ed222b433042d58bbe98016063e2d56e4221fad"
+      },
+      "weekly_net": [
+        52.527,
+        54.868,
+        56.676,
+        61.824
+      ]
+    },
+    "tavernier_gabriel_hit": {
+      "plan_id": "363413dd068cf214db4742b1ad6be87bff1a4141f07267b211db833838e6cde4",
+      "net": 225.95705,
+      "solver": {
+        "status": "Optimal",
+        "objective": 192.3528450000002,
+        "best_bound": 192.52907675,
+        "gap": 0.0009161899840878378,
+        "bound_available": true,
+        "nodes": 3,
+        "variables": 15654,
+        "constraints": 14017,
+        "initial_warm_objective": 192.352845,
+        "selected_warm_objective": 192.352845,
+        "reused_incumbent_plan_id": null,
+        "validated_cached_incumbents": 0,
+        "runtime_seconds": 7.501,
+        "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+        "market_players": 564,
+        "screened_players": 0,
+        "terminal_value": "Declared fixed terminal sensitivity",
+        "state_value_model_id": null,
+        "scope": "MIP bound/gap applies to the continuation conditional on the independently selected first action",
+        "first_action_source": "User-suggested four-week transfer comparison; identical frozen forecasts and budget",
+        "continuation_plan_id": "eb9d6a63e58b50c203d5a21330954ae24eb083a0a00a6119b693b1fe5f5fde17"
+      },
+      "weekly_net": [
+        50.516,
+        57.775,
+        56.726,
+        60.941
+      ]
+    }
+  },
+  "id": "c703318e8e30e8a1a31b5289c3be0a8d2a1de0a42cfb3021801b559f296e601c"
+}

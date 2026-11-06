@@ -219,6 +219,19 @@ def main():
                 {"gw": r["event"], "points": r["net_points"]} for r in diagnostic["weeks"]
             ]
     identity = store.get("decision_model").get("future_horizon_model_id")
+    role_weekly = None
+    if store.list("role_weekly_replay", 1):
+        role_weekly = store.get("role_weekly_replay")
+        for week in role_weekly["weeks"]:
+            group = f"{week['season']}-GW{week['event']:02d}"
+            frozen = store.get("weekly_replay_decision", week["decision_id"])
+            assert "actual_points" not in frozen
+            assert week["training"]["role_minutes"]["calibration_max_group"] < group
+            for item in week["training"]["models"].values():
+                assert (
+                    hashlib.sha256(store.artifact_path(item["path"]).read_bytes()).hexdigest() == item["hash"]
+                )
+        assert role_weekly["total_points"] == sum(w["actual_points"] for w in role_weekly["weeks"])
     if identity:
         from fpl_intelligence.future_expert import load_expert
 
@@ -276,6 +289,12 @@ def main():
             {"gw": w["event"], "actual_points": w["actual_points"], "hindsight_points": w["hindsight_points"]}
             for w in replay["weeks"]
         ],
+        "role_weekly_scores": [
+            {"gw": w["event"], "actual_points": w["actual_points"]} for w in role_weekly["weeks"]
+        ]
+        if role_weekly
+        else None,
+        "role_weekly_total": role_weekly["total_points"] if role_weekly else None,
         "consensus_weekly_totals": consensus["current_totals"],
         "consensus_weekly_acceptance": consensus["acceptance"],
         "consensus_continuous_totals": artifacts["consensus_policy_validation"]["current_totals"],

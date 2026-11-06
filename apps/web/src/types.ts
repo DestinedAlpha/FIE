@@ -615,5 +615,5 @@ export type FootballEvidenceData = {
   shot_archive?: {matched:number;unresolved:number;errors:unknown[];coverage:{current_players:number};temporal_track:string} | null;
   discipline_report?: {records:{player_id:number;cautions:number;cautions_range:number[];fixture_ids:number[];red_reason_required:boolean}[]} | null;
   account_sync?: {status:string;revealed_event:number;planning_event:number;limitation:string;at:string} | null;
-  weekly_replay?: {id:string;total_points:number;learning:string;limits:string[];weeks:{event:number;actual_points:number;forecast_mean:number;hindsight_points:number;solver:{gap:number|null};training:{calibration_max_group:string}}[]} | null;
+  weekly_replay?: {id:string;model_scope?:string;total_points:number;learning:string;limits:string[];weeks:{event:number;actual_points:number;forecast_mean:number;hindsight_points:number;solver:{gap:number|null};training:{calibration_max_group:string}}[]} | null;
 };

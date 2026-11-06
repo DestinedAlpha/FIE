@@ -30,3 +30,7 @@ The legal-action tree critic is refitted after removing the retired forecast inp
 Paid transfers and optional current chips require evidence beyond unresolved counterfactual search. Chip controls preserve later use and the same hit budget; committed, explicitly fixed and expiring entitlements retain their rules. Solver allowances are sensitivities in the additive surrogate, not rigorous nonlinear autosub bounds or football confidence intervals. Future proposed actions require refreshed data and re-optimization.
 
 Prospective accounts freeze models and actions before the deadline and score only after official finalization. No transfer is submitted by this project. Competitive superiority, consistent 550+ returns and globally optimal future decisions are not established. The [release audit](../artifacts/evaluations/release_0_12.json) records actual implementation checks and current artifact connections.
+
+## Current weekly-team diagnostic
+
+The accepted role configuration scores **569** over GW1–9 in independent weekly £100m teams, with 20,000 worlds and earlier-only fits/calibration. This is a hypothetical Free Hit every week, not a continuous-account return. The [week-by-week results and Gabriel/Tavernier comparison](gw1-9-and-gw10-review.md) identify squads, cutoffs, source statistics, exact hit costs and longer-term sensitivities. The legacy reference scorecard remains separate.

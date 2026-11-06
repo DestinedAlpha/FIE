@@ -1,6 +1,6 @@
 {
-  "at": "2026-11-06T10:57:35.218831+00:00",
-  "version": "0.12.0",
+  "at": "2026-11-06T12:13:30.190010+00:00",
+  "version": "0.12.1",
   "account_state_id": "7b62e815bffd50f908e4e8b63d43f93670e1625e5ad59805ed3572925e08de83",
   "market_id": "4fde33741fac4a0602e376f492f2d8de9c29d1bb4dde846436870dade8f61b70",
   "forecast_id": "4d5bee2182252110735e8e9a87aa19ce1a3429c188072ed8011a533ad8ec86ff",
@@ -196,6 +196,45 @@
       "hindsight_points": 130
     }
   ],
+  "role_weekly_scores": [
+    {
+      "gw": 1,
+      "actual_points": 48
+    },
+    {
+      "gw": 2,
+      "actual_points": 91
+    },
+    {
+      "gw": 3,
+      "actual_points": 54
+    },
+    {
+      "gw": 4,
+      "actual_points": 63
+    },
+    {
+      "gw": 5,
+      "actual_points": 65
+    },
+    {
+      "gw": 6,
+      "actual_points": 44
+    },
+    {
+      "gw": 7,
+      "actual_points": 61
+    },
+    {
+      "gw": 8,
+      "actual_points": 61
+    },
+    {
+      "gw": 9,
+      "actual_points": 82
+    }
+  ],
+  "role_weekly_total": 569,
   "consensus_weekly_totals": {
     "mix_0": 562.0,
     "mix_0.25": 562.0,
@@ -382,9 +421,9 @@
     ]
   },
   "checks": {
-    "at": "2026-11-06T10:55:16.822554+00:00",
+    "at": "2026-11-06T12:09:15.373565+00:00",
     "passed": true,
-    "backend_tests": 208,
+    "backend_tests": 212,
     "backend_skipped": 0,
     "frontend_unit_tests": 3,
     "browser_journeys": 18,

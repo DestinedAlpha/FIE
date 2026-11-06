@@ -478,7 +478,16 @@ def create_app(root=None):
             "shot_archive",
         ):
             try:
-                artifact = store.get(kind)
+                if kind == "weekly_replay":
+                    from .replay import current_weekly_results
+
+                    artifact = current_weekly_results(store)
+                else:
+                    artifact = store.get(kind)
+                if kind == "weekly_baseline_comparison" and (result.get("weekly_replay") or {}).get(
+                    "participation_configuration_id"
+                ):
+                    continue
                 if (
                     kind in ("shadow_registry", "shadow_cohort")
                     and artifact.get("season") != market["season"]
@@ -722,8 +731,10 @@ def create_app(root=None):
         return launch("weekly-replay", {}, lambda: extend_replay(store))
 
     @app.get("/api/replay/weekly")
-    def replay_weekly_results():
-        return store.get("weekly_replay")
+    def replay_weekly_results(baseline: bool = False):
+        from .replay import current_weekly_results
+
+        return current_weekly_results(store, baseline)
 
     @app.get("/api/consensus/model")
     def consensus_model():

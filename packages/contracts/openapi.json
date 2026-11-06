@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "FPL Intelligence",
-    "version": "0.12.0"
+    "version": "0.12.1"
   },
   "paths": {
     "/api/health": {
@@ -330,9 +330,9 @@
       }
     },
     "/api/replay/weekly": {
-      "get": {
-        "summary": "Replay Weekly Results",
-        "operationId": "replay_weekly_results_api_replay_weekly_get",
+      "post": {
+        "summary": "Replay Weekly",
+        "operationId": "replay_weekly_api_replay_weekly_post",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -344,15 +344,37 @@
           }
         }
       },
-      "post": {
-        "summary": "Replay Weekly",
-        "operationId": "replay_weekly_api_replay_weekly_post",
+      "get": {
+        "summary": "Replay Weekly Results",
+        "operationId": "replay_weekly_results_api_replay_weekly_get",
+        "parameters": [
+          {
+            "name": "baseline",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Baseline"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }

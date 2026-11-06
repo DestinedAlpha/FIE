@@ -1647,6 +1647,7 @@ export function FootballEvidence({data,busy,act}:Props) {
       <div className="section-title"><div><h3>Historical weekly teams · refitted reference</h3><p>Independent £100m teams. Each week refits using earlier completed results.</p></div>
         <button className="button secondary" disabled={busy} onClick={()=>act('/replay/weekly')}>Run weekly replay</button></div>
       {data.weekly_replay ? <>
+        {data.weekly_replay.model_scope && <p>{data.weekly_replay.model_scope}</p>}
         <p>{data.weekly_replay.learning}</p>
         <div className="table-scroll"><table><thead><tr><th>GW</th><th>Forecast</th><th>Actual points</th><th>Hindsight diagnostic</th><th>Squad solve gap</th></tr></thead><tbody>
           {data.weekly_replay.weeks.map(w=><tr key={w.event}><td>{w.event}</td><td>{w.forecast_mean.toFixed(1)}</td><td>{w.actual_points}</td><td>{w.hindsight_points}</td><td>{w.solver.gap===null?'Bound unavailable':percent(w.solver.gap)}</td></tr>)}
