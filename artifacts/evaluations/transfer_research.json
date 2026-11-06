@@ -1,104 +1,151 @@
 {
-  "at": "2026-11-06T10:28:48.627485+00:00",
+  "at": "2026-11-06T15:03:18.341050+00:00",
   "state_id": "7b62e815bffd50f908e4e8b63d43f93670e1625e5ad59805ed3572925e08de83",
-  "forecast_id": "4d5bee2182252110735e8e9a87aa19ce1a3429c188072ed8011a533ad8ec86ff",
+  "forecast_id": "7143d9520e47313f44f43efb6f982aea1d0a3bb19ef0994705fed4dc6a5628d9",
   "candidates": {
     "roll": {
-      "immediate_plan_id": "2e24d149191427519c6305dfc03c73d97e0cf90e419cdbdf25ac6429d9393664",
-      "full_plan_id": "33691063bfe8d18b43e1e1606956f67161117ac8fe040717a039b510cb4f3a25",
-      "gw10_net": 52.013,
-      "horizon_net": 600.95715,
+      "full_plan_id": "2a9b36d10bb97d00564ee690c80780b5b86cc9c3e78d73fb3985d0f434d5a578",
+      "gw10_net": 51.859,
+      "horizon_net": 601.0207,
       "bank": 16,
       "hit": 0,
       "solver": {
         "status": "Time limit reached",
-        "objective": 551.87133,
-        "best_bound": 578.224441503664,
-        "gap": 0.04775227497986548,
+        "objective": 552.156545,
+        "best_bound": 600.4275863033849,
+        "gap": 0.08742274585078927,
         "bound_available": true,
         "nodes": 0,
         "variables": 47046,
-        "constraints": 57355,
-        "initial_warm_objective": 551.87133,
-        "selected_warm_objective": 551.87133,
-        "reused_incumbent_plan_id": null,
-        "validated_cached_incumbents": 5,
-        "runtime_seconds": 46.081,
+        "constraints": 57364,
+        "raw_solver_best_bound": 17250.343595,
+        "independent_relaxation_bound": 600.4275863033849,
+        "initial_warm_objective": 552.156545,
+        "selected_warm_objective": 552.156545,
+        "reused_incumbent_plan_id": "7dc9eeede715260f6dcd6d251e6cc7783bb542bc120b70188004b328ed1b5451",
+        "validated_cached_incumbents": 7,
+        "validated_full_market_seeds": 2,
+        "runtime_seconds": 56.507,
         "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
         "market_players": 564,
         "screened_players": 0,
         "terminal_value": "Declared fixed terminal sensitivity",
         "state_value_model_id": null,
         "scope": "MIP bound/gap applies to the continuation conditional on the independently selected first action",
-        "first_action_source": "Fresh counterfactual with revalidated earlier-market continuation",
-        "continuation_plan_id": "21d50c8ff5b7765fa2eb9d6d79817a61498c73472015233996a5b48436d8fe35"
+        "first_action_source": {
+          "comparison": "roll"
+        },
+        "continuation_plan_id": "75ce0032c403773647a491a596610fee3d70960348d60ab6df9f38980146202b"
       }
     },
     "cherki_tavernier": {
-      "immediate_plan_id": "7ae0de93f4df61852b760c6359801fcdbfef831b872216a813c90f92dfb99d2e",
-      "full_plan_id": "e2b84b21caed09cc6a233c2a69b4246481d45e285c4e7197192c083922cd22cd",
-      "gw10_net": 52.5269,
-      "horizon_net": 603.938,
+      "full_plan_id": "f5919de5a8b4f9c1eafcf1bc4aad4846b5ba52ed6c2f85d2235cd249fa40fb1e",
+      "gw10_net": 52.438,
+      "horizon_net": 603.992,
       "bank": 28,
       "hit": 0,
       "solver": {
         "status": "Time limit reached",
-        "objective": 554.24218,
-        "best_bound": 576.0837911738575,
-        "gap": 0.03940806377071047,
+        "objective": 554.526245,
+        "best_bound": 600.370467690294,
+        "gap": 0.08267277356781198,
         "bound_available": true,
         "nodes": 0,
         "variables": 47046,
-        "constraints": 57355,
-        "initial_warm_objective": 554.24218,
-        "selected_warm_objective": 554.24218,
-        "reused_incumbent_plan_id": null,
-        "validated_cached_incumbents": 4,
-        "runtime_seconds": 46.406,
+        "constraints": 57364,
+        "raw_solver_best_bound": 17246.124845,
+        "independent_relaxation_bound": 600.370467690294,
+        "initial_warm_objective": 554.38154,
+        "selected_warm_objective": 554.526245,
+        "reused_incumbent_plan_id": "b783c40ca66cd9d008db6ca832a0afd946b9996a15a29ffd3c47c36693a55ee9",
+        "validated_cached_incumbents": 6,
+        "validated_full_market_seeds": 2,
+        "runtime_seconds": 36.002,
         "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
         "market_players": 564,
         "screened_players": 0,
         "terminal_value": "Declared fixed terminal sensitivity",
         "state_value_model_id": null,
         "scope": "MIP bound/gap applies to the continuation conditional on the independently selected first action",
-        "first_action_source": "Fresh counterfactual with revalidated earlier-market continuation",
-        "continuation_plan_id": "4c6cd024af7bd4d60248ff846b60076b630f4b3f489053670b4ef65bf5916a01"
+        "first_action_source": {
+          "comparison": "cherki_tavernier"
+        },
+        "continuation_plan_id": "f86c36803331dc4e04a16d32f6a0a0413d50dd254ac35b692d3a6f64b786ca18"
       }
     },
     "gvardiol_virgil": {
-      "immediate_plan_id": "882f02f1832c75aa9638294ace6e9261b3b9c846d3a052c2a3af6e0722629ac8",
-      "full_plan_id": "69bc58b332c92a550b99b5625cddd8f801983f30b47579f496051b5ce07cd25a",
-      "gw10_net": 53.90965,
-      "horizon_net": 605.2335,
+      "full_plan_id": "eadc9ca567aaa4faacfaff701dd08826b5804683a074cbb3d262d99492e43f35",
+      "gw10_net": 53.755,
+      "horizon_net": 615.55785,
       "bank": 9,
       "hit": 0,
       "solver": {
         "status": "Time limit reached",
-        "objective": 553.805535,
-        "best_bound": 578.268952417443,
-        "gap": 0.044173298877272865,
+        "objective": 567.31666,
+        "best_bound": 600.4275863033849,
+        "gap": 0.05836410004843677,
         "bound_available": true,
         "nodes": 0,
         "variables": 47046,
-        "constraints": 57355,
-        "initial_warm_objective": 553.805535,
-        "selected_warm_objective": 553.805535,
-        "reused_incumbent_plan_id": null,
-        "validated_cached_incumbents": 4,
-        "runtime_seconds": 45.582,
+        "constraints": 57364,
+        "raw_solver_best_bound": 17246.124845,
+        "independent_relaxation_bound": 600.4275863033849,
+        "initial_warm_objective": 553.46815,
+        "selected_warm_objective": 567.31666,
+        "reused_incumbent_plan_id": "6d13c8b368c8a03acfb8cde50c06e958575b7bbd748d7863f8d1f92f41f4e6e4",
+        "validated_cached_incumbents": 6,
+        "validated_full_market_seeds": 2,
+        "runtime_seconds": 32.938,
         "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
         "market_players": 564,
         "screened_players": 0,
         "terminal_value": "Declared fixed terminal sensitivity",
         "state_value_model_id": null,
         "scope": "MIP bound/gap applies to the continuation conditional on the independently selected first action",
-        "first_action_source": "Fresh counterfactual with revalidated earlier-market continuation",
-        "continuation_plan_id": "6248ba44c47bd2d456a7d4f73dd3c38379a5883f4704458a0d38536a435bed63"
+        "first_action_source": {
+          "comparison": "gvardiol_virgil"
+        },
+        "continuation_plan_id": "b4f198f67587f18db91b400f383a6cee5e7a122e0325e2eaa7cf6588515ed922"
+      }
+    },
+    "cherki_tavernier_gvardiol_gabriel": {
+      "full_plan_id": "83a9f34b4b29dfcf751029699a07cef96c20929d87bebfbb22fa037b0a174ce2",
+      "gw10_net": 50.608,
+      "horizon_net": 603.07305,
+      "bank": 5,
+      "hit": 4,
+      "solver": {
+        "status": "Time limit reached",
+        "objective": 556.480675,
+        "best_bound": 600.370467690294,
+        "gap": 0.07887029085114955,
+        "bound_available": true,
+        "nodes": 0,
+        "variables": 47046,
+        "constraints": 57364,
+        "raw_solver_best_bound": 17246.124845,
+        "independent_relaxation_bound": 600.370467690294,
+        "initial_warm_objective": 553.498915,
+        "selected_warm_objective": 556.480675,
+        "reused_incumbent_plan_id": null,
+        "validated_cached_incumbents": 0,
+        "validated_full_market_seeds": 2,
+        "runtime_seconds": 29.635,
+        "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+        "market_players": 564,
+        "screened_players": 0,
+        "terminal_value": "Declared fixed terminal sensitivity",
+        "state_value_model_id": null,
+        "scope": "MIP bound/gap applies to the continuation conditional on the independently selected first action",
+        "first_action_source": {
+          "comparison": "cherki_tavernier_gvardiol_gabriel"
+        },
+        "continuation_plan_id": "038d3b84aba0d0fb221050f25df5d8c09c0328988c3a85d0750048eaebae8a57"
       }
     }
   },
-  "selected_plan_id": "7e53e13bd5a184e194e7713aac76dec4d5fab8309de001a8d1209fd245f39298",
-  "selection_receipt_id": "50a7671783caaed9a23c096b2d8a3e07bc90c2da5c71059f4e47bd33dd267f51",
+  "selected_plan_id": "5cdf99e84885c35234ab33634b8002c54625fea4640ebfc11b3b7fa56445053b",
+  "selection_receipt_id": "e5a9ced59b7d41a2cb7e99274a7b2a3ff1df41929277ec489f525958dded1b27",
   "ledger": [
     {
       "event": 10,
@@ -192,17 +239,108 @@
         "captain": 411,
         "vice": 40
       },
-      "expected_additive_net": 52.577749999999995,
+      "expected_additive_net": 52.421150000000004,
       "assumptions": [
         "Constant market prices; refresh sell quotes before execution",
         "Future transfers conditional on refreshed minutes, availability and fixtures"
       ],
-      "simulated_net_mean": 53.91,
+      "simulated_net_mean": 53.755,
       "net_quantiles": [
         39.0,
         53.0,
         70.0
-      ]
+      ],
+      "captain_options": [
+        {
+          "captain": 411,
+          "vice": 40,
+          "player_mean": 5.7768,
+          "p_appearance": 0.98515,
+          "points_if_appears": 5.863878597167944,
+          "expected_captain_bonus": 5.8599
+        },
+        {
+          "captain": 154,
+          "vice": 411,
+          "player_mean": 5.3012,
+          "p_appearance": 0.98655,
+          "points_if_appears": 5.373473214738229,
+          "expected_captain_bonus": 5.3767
+        },
+        {
+          "captain": 40,
+          "vice": 411,
+          "player_mean": 5.2266,
+          "p_appearance": 0.98525,
+          "points_if_appears": 5.304846485663537,
+          "expected_captain_bonus": 5.315
+        },
+        {
+          "captain": 356,
+          "vice": 40,
+          "player_mean": 5.20385,
+          "p_appearance": 1.0,
+          "points_if_appears": 5.20385,
+          "expected_captain_bonus": 5.20385
+        },
+        {
+          "captain": 346,
+          "vice": 411,
+          "player_mean": 3.01755,
+          "p_appearance": 0.73235,
+          "points_if_appears": 4.12036594524476,
+          "expected_captain_bonus": 4.5894
+        },
+        {
+          "captain": 79,
+          "vice": 411,
+          "player_mean": 4.3843,
+          "p_appearance": 0.97425,
+          "points_if_appears": 4.5001796253528354,
+          "expected_captain_bonus": 4.53705
+        },
+        {
+          "captain": 8,
+          "vice": 411,
+          "player_mean": 3.68905,
+          "p_appearance": 0.938,
+          "points_if_appears": 3.9328891257995737,
+          "expected_captain_bonus": 4.0424
+        },
+        {
+          "captain": 1,
+          "vice": 411,
+          "player_mean": 3.6278,
+          "p_appearance": 0.97655,
+          "points_if_appears": 3.714914750908812,
+          "expected_captain_bonus": 3.762
+        },
+        {
+          "captain": 124,
+          "vice": 411,
+          "player_mean": 3.6805,
+          "p_appearance": 0.98665,
+          "points_if_appears": 3.730299498302336,
+          "expected_captain_bonus": 3.7549
+        },
+        {
+          "captain": 330,
+          "vice": 411,
+          "player_mean": 3.4973,
+          "p_appearance": 0.97555,
+          "points_if_appears": 3.584952078314797,
+          "expected_captain_bonus": 3.63315
+        },
+        {
+          "captain": 115,
+          "vice": 411,
+          "player_mean": 3.2394,
+          "p_appearance": 0.94495,
+          "points_if_appears": 3.428117889835441,
+          "expected_captain_bonus": 3.5544
+        }
+      ],
+      "captain_evidence_forecast_id": "7143d9520e47313f44f43efb6f982aea1d0a3bb19ef0994705fed4dc6a5628d9"
     },
     {
       "event": 11,
@@ -312,17 +450,108 @@
         "captain": 411,
         "vice": 60
       },
-      "expected_additive_net": 52.809450000000005,
+      "expected_additive_net": 52.929550000000006,
       "assumptions": [
         "Constant market prices; refresh sell quotes before execution",
         "Future transfers conditional on refreshed minutes, availability and fixtures"
       ],
-      "simulated_net_mean": 54.868,
+      "simulated_net_mean": 54.964,
       "net_quantiles": [
         40.0,
         54.0,
         71.0
-      ]
+      ],
+      "captain_options": [
+        {
+          "captain": 411,
+          "vice": 60,
+          "player_mean": 6.5166,
+          "p_appearance": 0.9717,
+          "points_if_appears": 6.706390861376969,
+          "expected_captain_bonus": 6.68305
+        },
+        {
+          "captain": 356,
+          "vice": 411,
+          "player_mean": 5.5028,
+          "p_appearance": 0.97185,
+          "points_if_appears": 5.662190667284046,
+          "expected_captain_bonus": 5.6877
+        },
+        {
+          "captain": 60,
+          "vice": 411,
+          "player_mean": 5.5617,
+          "p_appearance": 0.98335,
+          "points_if_appears": 5.6558702394874665,
+          "expected_captain_bonus": 5.66995
+        },
+        {
+          "captain": 154,
+          "vice": 411,
+          "player_mean": 4.7771,
+          "p_appearance": 0.9351,
+          "points_if_appears": 5.108651481125013,
+          "expected_captain_bonus": 5.20685
+        },
+        {
+          "captain": 334,
+          "vice": 411,
+          "player_mean": 4.9057,
+          "p_appearance": 0.96085,
+          "points_if_appears": 5.105583597856065,
+          "expected_captain_bonus": 5.1617
+        },
+        {
+          "captain": 40,
+          "vice": 411,
+          "player_mean": 4.6137,
+          "p_appearance": 0.93455,
+          "points_if_appears": 4.9368145096570535,
+          "expected_captain_bonus": 5.0376
+        },
+        {
+          "captain": 399,
+          "vice": 411,
+          "player_mean": 3.60535,
+          "p_appearance": 0.78745,
+          "points_if_appears": 4.578512921455331,
+          "expected_captain_bonus": 4.9991
+        },
+        {
+          "captain": 79,
+          "vice": 411,
+          "player_mean": 4.13695,
+          "p_appearance": 0.92365,
+          "points_if_appears": 4.478915173496454,
+          "expected_captain_bonus": 4.63335
+        },
+        {
+          "captain": 346,
+          "vice": 411,
+          "player_mean": 3.541,
+          "p_appearance": 0.9042,
+          "points_if_appears": 3.9161689891616898,
+          "expected_captain_bonus": 4.16415
+        },
+        {
+          "captain": 124,
+          "vice": 411,
+          "player_mean": 3.59375,
+          "p_appearance": 0.92275,
+          "points_if_appears": 3.894608507179626,
+          "expected_captain_bonus": 4.09555
+        },
+        {
+          "captain": 1,
+          "vice": 411,
+          "player_mean": 3.6583,
+          "p_appearance": 0.9549,
+          "points_if_appears": 3.8310817886689708,
+          "expected_captain_bonus": 3.952
+        }
+      ],
+      "captain_evidence_forecast_id": "7143d9520e47313f44f43efb6f982aea1d0a3bb19ef0994705fed4dc6a5628d9"
     },
     {
       "event": 12,
@@ -416,17 +645,108 @@
         "captain": 411,
         "vice": 60
       },
-      "expected_additive_net": 55.317299999999996,
+      "expected_additive_net": 55.31885,
       "assumptions": [
         "Constant market prices; refresh sell quotes before execution",
         "Future transfers conditional on refreshed minutes, availability and fixtures"
       ],
-      "simulated_net_mean": 57.415,
+      "simulated_net_mean": 57.435,
       "net_quantiles": [
-        42.0,
+        43.0,
         57.0,
         74.0
-      ]
+      ],
+      "captain_options": [
+        {
+          "captain": 411,
+          "vice": 60,
+          "player_mean": 5.373,
+          "p_appearance": 0.9628,
+          "points_if_appears": 5.580598255089323,
+          "expected_captain_bonus": 5.5711
+        },
+        {
+          "captain": 60,
+          "vice": 411,
+          "player_mean": 5.30275,
+          "p_appearance": 0.9825,
+          "points_if_appears": 5.397201017811704,
+          "expected_captain_bonus": 5.3978
+        },
+        {
+          "captain": 356,
+          "vice": 411,
+          "player_mean": 5.293,
+          "p_appearance": 0.98265,
+          "points_if_appears": 5.386454994148476,
+          "expected_captain_bonus": 5.3833
+        },
+        {
+          "captain": 334,
+          "vice": 60,
+          "player_mean": 4.99735,
+          "p_appearance": 0.94145,
+          "points_if_appears": 5.308141696319507,
+          "expected_captain_bonus": 5.3194
+        },
+        {
+          "captain": 338,
+          "vice": 411,
+          "player_mean": 4.70375,
+          "p_appearance": 0.92155,
+          "points_if_appears": 5.104172318376649,
+          "expected_captain_bonus": 5.12835
+        },
+        {
+          "captain": 124,
+          "vice": 411,
+          "player_mean": 4.37775,
+          "p_appearance": 0.93485,
+          "points_if_appears": 4.682836818740975,
+          "expected_captain_bonus": 4.72795
+        },
+        {
+          "captain": 346,
+          "vice": 411,
+          "player_mean": 4.28535,
+          "p_appearance": 0.92205,
+          "points_if_appears": 4.64763299170327,
+          "expected_captain_bonus": 4.71725
+        },
+        {
+          "captain": 154,
+          "vice": 411,
+          "player_mean": 4.19915,
+          "p_appearance": 0.9208,
+          "points_if_appears": 4.560327975673328,
+          "expected_captain_bonus": 4.6264
+        },
+        {
+          "captain": 40,
+          "vice": 60,
+          "player_mean": 4.17345,
+          "p_appearance": 0.9356,
+          "points_if_appears": 4.460720393330483,
+          "expected_captain_bonus": 4.52495
+        },
+        {
+          "captain": 79,
+          "vice": 411,
+          "player_mean": 3.7777,
+          "p_appearance": 0.91735,
+          "points_if_appears": 4.118057448084155,
+          "expected_captain_bonus": 4.21945
+        },
+        {
+          "captain": 1,
+          "vice": 356,
+          "player_mean": 3.4626,
+          "p_appearance": 0.94255,
+          "points_if_appears": 3.673651265184871,
+          "expected_captain_bonus": 3.775
+        }
+      ],
+      "captain_evidence_forecast_id": "7143d9520e47313f44f43efb6f982aea1d0a3bb19ef0994705fed4dc6a5628d9"
     },
     {
       "event": 13,
@@ -616,17 +936,108 @@
         "captain": 411,
         "vice": 356
       },
-      "expected_additive_net": 62.629749999999994,
+      "expected_additive_net": 62.72085,
       "assumptions": [
         "Constant market prices; refresh sell quotes before execution",
         "Future transfers conditional on refreshed minutes, availability and fixtures"
       ],
-      "simulated_net_mean": 64.532,
+      "simulated_net_mean": 64.573,
       "net_quantiles": [
         49.0,
         64.0,
         81.0
-      ]
+      ],
+      "captain_options": [
+        {
+          "captain": 411,
+          "vice": 356,
+          "player_mean": 6.57635,
+          "p_appearance": 0.95915,
+          "points_if_appears": 6.856435385497576,
+          "expected_captain_bonus": 6.8061
+        },
+        {
+          "captain": 40,
+          "vice": 411,
+          "player_mean": 5.5359,
+          "p_appearance": 0.93065,
+          "points_if_appears": 5.9484231451136305,
+          "expected_captain_bonus": 5.9871
+        },
+        {
+          "captain": 154,
+          "vice": 411,
+          "player_mean": 5.4508,
+          "p_appearance": 0.9241,
+          "points_if_appears": 5.898495833784223,
+          "expected_captain_bonus": 5.95505
+        },
+        {
+          "captain": 356,
+          "vice": 411,
+          "player_mean": 5.7953,
+          "p_appearance": 0.9833,
+          "points_if_appears": 5.893725211024103,
+          "expected_captain_bonus": 5.9013
+        },
+        {
+          "captain": 481,
+          "vice": 411,
+          "player_mean": 4.84375,
+          "p_appearance": 0.90945,
+          "points_if_appears": 5.326021221617461,
+          "expected_captain_bonus": 5.43185
+        },
+        {
+          "captain": 4,
+          "vice": 411,
+          "player_mean": 4.9882,
+          "p_appearance": 0.9425,
+          "points_if_appears": 5.292519893899204,
+          "expected_captain_bonus": 5.36905
+        },
+        {
+          "captain": 362,
+          "vice": 411,
+          "player_mean": 4.86395,
+          "p_appearance": 0.93025,
+          "points_if_appears": 5.228648212846009,
+          "expected_captain_bonus": 5.3224
+        },
+        {
+          "captain": 60,
+          "vice": 411,
+          "player_mean": 5.14405,
+          "p_appearance": 0.9819,
+          "points_if_appears": 5.238873612384153,
+          "expected_captain_bonus": 5.2619
+        },
+        {
+          "captain": 166,
+          "vice": 411,
+          "player_mean": 4.47,
+          "p_appearance": 0.9259,
+          "points_if_appears": 4.8277351765849446,
+          "expected_captain_bonus": 4.957
+        },
+        {
+          "captain": 384,
+          "vice": 411,
+          "player_mean": 4.34135,
+          "p_appearance": 0.942,
+          "points_if_appears": 4.608651804670913,
+          "expected_captain_bonus": 4.72775
+        },
+        {
+          "captain": 183,
+          "vice": 411,
+          "player_mean": 4.13485,
+          "p_appearance": 0.94275,
+          "points_if_appears": 4.385945372580218,
+          "expected_captain_bonus": 4.51435
+        }
+      ],
+      "captain_evidence_forecast_id": "7143d9520e47313f44f43efb6f982aea1d0a3bb19ef0994705fed4dc6a5628d9"
     },
     {
       "event": 14,
@@ -718,19 +1129,110 @@
           212
         ],
         "captain": 411,
-        "vice": 4
+        "vice": 60
       },
-      "expected_additive_net": 58.9296,
+      "expected_additive_net": 59.00085,
       "assumptions": [
         "Constant market prices; refresh sell quotes before execution",
         "Future transfers conditional on refreshed minutes, availability and fixtures"
       ],
-      "simulated_net_mean": 61.101,
+      "simulated_net_mean": 61.141,
       "net_quantiles": [
         46.0,
         60.0,
         78.0
-      ]
+      ],
+      "captain_options": [
+        {
+          "captain": 411,
+          "vice": 60,
+          "player_mean": 5.8249,
+          "p_appearance": 0.96035,
+          "points_if_appears": 6.065392825532358,
+          "expected_captain_bonus": 6.0482
+        },
+        {
+          "captain": 60,
+          "vice": 411,
+          "player_mean": 5.57975,
+          "p_appearance": 0.98445,
+          "points_if_appears": 5.667885621412971,
+          "expected_captain_bonus": 5.6723
+        },
+        {
+          "captain": 154,
+          "vice": 411,
+          "player_mean": 5.1312,
+          "p_appearance": 0.9218,
+          "points_if_appears": 5.566500325450206,
+          "expected_captain_bonus": 5.58545
+        },
+        {
+          "captain": 4,
+          "vice": 411,
+          "player_mean": 5.1783,
+          "p_appearance": 0.9432,
+          "points_if_appears": 5.490139949109414,
+          "expected_captain_bonus": 5.51875
+        },
+        {
+          "captain": 334,
+          "vice": 411,
+          "player_mean": 4.9488,
+          "p_appearance": 0.9457,
+          "points_if_appears": 5.232949138204505,
+          "expected_captain_bonus": 5.2665
+        },
+        {
+          "captain": 40,
+          "vice": 411,
+          "player_mean": 4.80785,
+          "p_appearance": 0.92705,
+          "points_if_appears": 5.18618197508225,
+          "expected_captain_bonus": 5.23455
+        },
+        {
+          "captain": 338,
+          "vice": 411,
+          "player_mean": 4.69465,
+          "p_appearance": 0.9235,
+          "points_if_appears": 5.083540877097997,
+          "expected_captain_bonus": 5.1354
+        },
+        {
+          "captain": 356,
+          "vice": 411,
+          "player_mean": 5.0131,
+          "p_appearance": 0.98365,
+          "points_if_appears": 5.096426574492959,
+          "expected_captain_bonus": 5.1067
+        },
+        {
+          "captain": 346,
+          "vice": 411,
+          "player_mean": 4.4646,
+          "p_appearance": 0.9218,
+          "points_if_appears": 4.843349967454979,
+          "expected_captain_bonus": 4.9233
+        },
+        {
+          "captain": 79,
+          "vice": 411,
+          "player_mean": 4.11265,
+          "p_appearance": 0.91915,
+          "points_if_appears": 4.474405700919328,
+          "expected_captain_bonus": 4.58845
+        },
+        {
+          "captain": 1,
+          "vice": 411,
+          "player_mean": 3.42015,
+          "p_appearance": 0.93975,
+          "points_if_appears": 3.639425379090184,
+          "expected_captain_bonus": 3.77025
+        }
+      ],
+      "captain_evidence_forecast_id": "7143d9520e47313f44f43efb6f982aea1d0a3bb19ef0994705fed4dc6a5628d9"
     },
     {
       "event": 15,
@@ -824,17 +1326,108 @@
         "captain": 411,
         "vice": 4
       },
-      "expected_additive_net": 56.8427,
+      "expected_additive_net": 56.8542,
       "assumptions": [
         "Constant market prices; refresh sell quotes before execution",
         "Future transfers conditional on refreshed minutes, availability and fixtures"
       ],
-      "simulated_net_mean": 59.038,
+      "simulated_net_mean": 59.051,
       "net_quantiles": [
         44.0,
         58.0,
         76.0
-      ]
+      ],
+      "captain_options": [
+        {
+          "captain": 411,
+          "vice": 4,
+          "player_mean": 6.32335,
+          "p_appearance": 0.94195,
+          "points_if_appears": 6.71304209352938,
+          "expected_captain_bonus": 6.64385
+        },
+        {
+          "captain": 4,
+          "vice": 411,
+          "player_mean": 5.52635,
+          "p_appearance": 0.93885,
+          "points_if_appears": 5.886297065558929,
+          "expected_captain_bonus": 5.91635
+        },
+        {
+          "captain": 356,
+          "vice": 411,
+          "player_mean": 5.3312,
+          "p_appearance": 0.95895,
+          "points_if_appears": 5.5594139423327595,
+          "expected_captain_bonus": 5.58865
+        },
+        {
+          "captain": 542,
+          "vice": 411,
+          "player_mean": 4.6176,
+          "p_appearance": 0.9338,
+          "points_if_appears": 4.944956093381881,
+          "expected_captain_bonus": 5.031
+        },
+        {
+          "captain": 124,
+          "vice": 411,
+          "player_mean": 4.4166,
+          "p_appearance": 0.92615,
+          "points_if_appears": 4.768773956702478,
+          "expected_captain_bonus": 4.88845
+        },
+        {
+          "captain": 60,
+          "vice": 411,
+          "player_mean": 4.61495,
+          "p_appearance": 0.9708,
+          "points_if_appears": 4.753759785743717,
+          "expected_captain_bonus": 4.80125
+        },
+        {
+          "captain": 334,
+          "vice": 411,
+          "player_mean": 4.3505,
+          "p_appearance": 0.9374,
+          "points_if_appears": 4.641028376360145,
+          "expected_captain_bonus": 4.7434
+        },
+        {
+          "captain": 154,
+          "vice": 411,
+          "player_mean": 4.0113,
+          "p_appearance": 0.9119,
+          "points_if_appears": 4.398837591841211,
+          "expected_captain_bonus": 4.5794
+        },
+        {
+          "captain": 338,
+          "vice": 411,
+          "player_mean": 4.04555,
+          "p_appearance": 0.91755,
+          "points_if_appears": 4.4090785243310995,
+          "expected_captain_bonus": 4.5723
+        },
+        {
+          "captain": 1,
+          "vice": 411,
+          "player_mean": 3.7898,
+          "p_appearance": 0.9344,
+          "points_if_appears": 4.055864726027397,
+          "expected_captain_bonus": 4.19805
+        },
+        {
+          "captain": 346,
+          "vice": 411,
+          "player_mean": 3.50365,
+          "p_appearance": 0.9245,
+          "points_if_appears": 3.7897782585181177,
+          "expected_captain_bonus": 3.9918
+        }
+      ],
+      "captain_evidence_forecast_id": "7143d9520e47313f44f43efb6f982aea1d0a3bb19ef0994705fed4dc6a5628d9"
     },
     {
       "event": 16,
@@ -928,17 +1521,108 @@
         "captain": 411,
         "vice": 60
       },
-      "expected_additive_net": 61.8715,
+      "expected_additive_net": 61.888149999999996,
       "assumptions": [
         "Constant market prices; refresh sell quotes before execution",
         "Future transfers conditional on refreshed minutes, availability and fixtures"
       ],
-      "simulated_net_mean": 64.99,
+      "simulated_net_mean": 65.006,
       "net_quantiles": [
         50.0,
         64.0,
         82.0
-      ]
+      ],
+      "captain_options": [
+        {
+          "captain": 411,
+          "vice": 60,
+          "player_mean": 6.3965,
+          "p_appearance": 0.94245,
+          "points_if_appears": 6.787097458751127,
+          "expected_captain_bonus": 6.72225
+        },
+        {
+          "captain": 4,
+          "vice": 411,
+          "player_mean": 5.63325,
+          "p_appearance": 0.9383,
+          "points_if_appears": 6.003676862410743,
+          "expected_captain_bonus": 6.0322
+        },
+        {
+          "captain": 60,
+          "vice": 411,
+          "player_mean": 5.61185,
+          "p_appearance": 0.9695,
+          "points_if_appears": 5.7883960804538415,
+          "expected_captain_bonus": 5.8043
+        },
+        {
+          "captain": 356,
+          "vice": 411,
+          "player_mean": 5.48145,
+          "p_appearance": 0.95815,
+          "points_if_appears": 5.7208683400302665,
+          "expected_captain_bonus": 5.75665
+        },
+        {
+          "captain": 542,
+          "vice": 411,
+          "player_mean": 5.24015,
+          "p_appearance": 0.93215,
+          "points_if_appears": 5.621573781043823,
+          "expected_captain_bonus": 5.67775
+        },
+        {
+          "captain": 154,
+          "vice": 411,
+          "player_mean": 4.91825,
+          "p_appearance": 0.9132,
+          "points_if_appears": 5.3857314936487075,
+          "expected_captain_bonus": 5.48975
+        },
+        {
+          "captain": 334,
+          "vice": 411,
+          "player_mean": 4.8277,
+          "p_appearance": 0.93775,
+          "points_if_appears": 5.148173820314583,
+          "expected_captain_bonus": 5.21475
+        },
+        {
+          "captain": 338,
+          "vice": 411,
+          "player_mean": 4.54795,
+          "p_appearance": 0.91675,
+          "points_if_appears": 4.960949004635943,
+          "expected_captain_bonus": 5.085
+        },
+        {
+          "captain": 124,
+          "vice": 411,
+          "player_mean": 4.46265,
+          "p_appearance": 0.92635,
+          "points_if_appears": 4.817455605332758,
+          "expected_captain_bonus": 4.93225
+        },
+        {
+          "captain": 79,
+          "vice": 411,
+          "player_mean": 4.37845,
+          "p_appearance": 0.91565,
+          "points_if_appears": 4.781794353737782,
+          "expected_captain_bonus": 4.9215
+        },
+        {
+          "captain": 1,
+          "vice": 411,
+          "player_mean": 3.99345,
+          "p_appearance": 0.93415,
+          "points_if_appears": 4.274955842209495,
+          "expected_captain_bonus": 4.4119
+        }
+      ],
+      "captain_evidence_forecast_id": "7143d9520e47313f44f43efb6f982aea1d0a3bb19ef0994705fed4dc6a5628d9"
     },
     {
       "event": 17,
@@ -1032,17 +1716,108 @@
         "captain": 4,
         "vice": 411
       },
-      "expected_additive_net": 57.61855,
+      "expected_additive_net": 57.64775,
       "assumptions": [
         "Constant market prices; refresh sell quotes before execution",
         "Future transfers conditional on refreshed minutes, availability and fixtures"
       ],
-      "simulated_net_mean": 60.734,
+      "simulated_net_mean": 60.766,
       "net_quantiles": [
         45.0,
         60.0,
         78.0
-      ]
+      ],
+      "captain_options": [
+        {
+          "captain": 4,
+          "vice": 411,
+          "player_mean": 5.85775,
+          "p_appearance": 0.93435,
+          "points_if_appears": 6.269331620912935,
+          "expected_captain_bonus": 6.22165
+        },
+        {
+          "captain": 411,
+          "vice": 4,
+          "player_mean": 5.4568,
+          "p_appearance": 0.93395,
+          "points_if_appears": 5.842711065902886,
+          "expected_captain_bonus": 5.8559
+        },
+        {
+          "captain": 154,
+          "vice": 4,
+          "player_mean": 5.01605,
+          "p_appearance": 0.90905,
+          "points_if_appears": 5.517903305648754,
+          "expected_captain_bonus": 5.55145
+        },
+        {
+          "captain": 60,
+          "vice": 4,
+          "player_mean": 5.09525,
+          "p_appearance": 0.9547,
+          "points_if_appears": 5.337016863936316,
+          "expected_captain_bonus": 5.3556
+        },
+        {
+          "captain": 356,
+          "vice": 4,
+          "player_mean": 4.9498,
+          "p_appearance": 0.94425,
+          "points_if_appears": 5.242043950225046,
+          "expected_captain_bonus": 5.2749
+        },
+        {
+          "captain": 566,
+          "vice": 4,
+          "player_mean": 4.5332,
+          "p_appearance": 0.9259,
+          "points_if_appears": 4.895993087806459,
+          "expected_captain_bonus": 4.9668
+        },
+        {
+          "captain": 334,
+          "vice": 4,
+          "player_mean": 4.576,
+          "p_appearance": 0.9354,
+          "points_if_appears": 4.892024802223647,
+          "expected_captain_bonus": 4.9634
+        },
+        {
+          "captain": 338,
+          "vice": 4,
+          "player_mean": 4.2656,
+          "p_appearance": 0.91385,
+          "points_if_appears": 4.667724462439131,
+          "expected_captain_bonus": 4.7626
+        },
+        {
+          "captain": 542,
+          "vice": 4,
+          "player_mean": 4.20465,
+          "p_appearance": 0.9254,
+          "points_if_appears": 4.543602766371299,
+          "expected_captain_bonus": 4.6409
+        },
+        {
+          "captain": 1,
+          "vice": 4,
+          "player_mean": 4.02865,
+          "p_appearance": 0.9353,
+          "points_if_appears": 4.307334545065754,
+          "expected_captain_bonus": 4.3981
+        },
+        {
+          "captain": 124,
+          "vice": 4,
+          "player_mean": 3.80625,
+          "p_appearance": 0.90165,
+          "points_if_appears": 4.221427383130926,
+          "expected_captain_bonus": 4.37865
+        }
+      ],
+      "captain_evidence_forecast_id": "7143d9520e47313f44f43efb6f982aea1d0a3bb19ef0994705fed4dc6a5628d9"
     },
     {
       "event": 18,
@@ -1136,17 +1911,108 @@
         "captain": 60,
         "vice": 411
       },
-      "expected_additive_net": 58.12370000000001,
+      "expected_additive_net": 58.13985,
       "assumptions": [
         "Constant market prices; refresh sell quotes before execution",
         "Future transfers conditional on refreshed minutes, availability and fixtures"
       ],
-      "simulated_net_mean": 61.433,
+      "simulated_net_mean": 61.449,
       "net_quantiles": [
         46.0,
         60.0,
         78.0
-      ]
+      ],
+      "captain_options": [
+        {
+          "captain": 60,
+          "vice": 411,
+          "player_mean": 5.7533,
+          "p_appearance": 0.95615,
+          "points_if_appears": 6.017152120483188,
+          "expected_captain_bonus": 5.99265
+        },
+        {
+          "captain": 411,
+          "vice": 60,
+          "player_mean": 5.3843,
+          "p_appearance": 0.93495,
+          "points_if_appears": 5.7589175891758915,
+          "expected_captain_bonus": 5.75855
+        },
+        {
+          "captain": 566,
+          "vice": 60,
+          "player_mean": 5.19785,
+          "p_appearance": 0.9271,
+          "points_if_appears": 5.606568870671987,
+          "expected_captain_bonus": 5.6157
+        },
+        {
+          "captain": 4,
+          "vice": 60,
+          "player_mean": 5.1105,
+          "p_appearance": 0.9267,
+          "points_if_appears": 5.514729685982519,
+          "expected_captain_bonus": 5.5317
+        },
+        {
+          "captain": 154,
+          "vice": 60,
+          "player_mean": 4.93265,
+          "p_appearance": 0.90795,
+          "points_if_appears": 5.432733080015419,
+          "expected_captain_bonus": 5.45095
+        },
+        {
+          "captain": 79,
+          "vice": 60,
+          "player_mean": 4.65355,
+          "p_appearance": 0.8849,
+          "points_if_appears": 5.258842807096847,
+          "expected_captain_bonus": 5.3168
+        },
+        {
+          "captain": 356,
+          "vice": 60,
+          "player_mean": 4.97125,
+          "p_appearance": 0.9538,
+          "points_if_appears": 5.212046550639547,
+          "expected_captain_bonus": 5.239
+        },
+        {
+          "captain": 334,
+          "vice": 60,
+          "player_mean": 4.494,
+          "p_appearance": 0.93385,
+          "points_if_appears": 4.812336028270065,
+          "expected_captain_bonus": 4.8718
+        },
+        {
+          "captain": 338,
+          "vice": 60,
+          "player_mean": 4.15735,
+          "p_appearance": 0.9122,
+          "points_if_appears": 4.557498355623767,
+          "expected_captain_bonus": 4.65525
+        },
+        {
+          "captain": 542,
+          "vice": 60,
+          "player_mean": 4.0871,
+          "p_appearance": 0.9273,
+          "points_if_appears": 4.407527229591287,
+          "expected_captain_bonus": 4.50245
+        },
+        {
+          "captain": 109,
+          "vice": 60,
+          "player_mean": 3.6447,
+          "p_appearance": 0.9538,
+          "points_if_appears": 3.821241350387922,
+          "expected_captain_bonus": 3.9139
+        }
+      ],
+      "captain_evidence_forecast_id": "7143d9520e47313f44f43efb6f982aea1d0a3bb19ef0994705fed4dc6a5628d9"
     },
     {
       "event": 19,
@@ -1220,11 +2086,11 @@
       "lineup": {
         "xi": [
           4,
-          79,
-          124,
-          127,
+          60,
           154,
+          334,
           338,
+          346,
           356,
           384,
           411,
@@ -1233,123 +2099,221 @@
         ],
         "bench": [
           109,
-          60,
-          334,
-          346
+          124,
+          127,
+          79
         ],
         "captain": 411,
         "vice": 4
       },
-      "expected_additive_net": 77.0076,
+      "expected_additive_net": 77.02985,
       "assumptions": [
         "Constant market prices; refresh sell quotes before execution",
         "Future transfers conditional on refreshed minutes, availability and fixtures"
       ],
-      "simulated_net_mean": 77.394,
+      "simulated_net_mean": 77.418,
       "net_quantiles": [
         59.0,
         77.0,
         96.0
-      ]
+      ],
+      "captain_options": [
+        {
+          "captain": 411,
+          "vice": 4,
+          "player_mean": 6.0778,
+          "p_appearance": 0.93025,
+          "points_if_appears": 6.533512496640688,
+          "expected_captain_bonus": 6.4657
+        },
+        {
+          "captain": 4,
+          "vice": 411,
+          "player_mean": 5.4814,
+          "p_appearance": 0.92845,
+          "points_if_appears": 5.9038181916096715,
+          "expected_captain_bonus": 5.91365
+        },
+        {
+          "captain": 356,
+          "vice": 411,
+          "player_mean": 5.46025,
+          "p_appearance": 0.9557,
+          "points_if_appears": 5.713351470126609,
+          "expected_captain_bonus": 5.72965
+        },
+        {
+          "captain": 60,
+          "vice": 411,
+          "player_mean": 5.2745,
+          "p_appearance": 0.9543,
+          "points_if_appears": 5.527087917845541,
+          "expected_captain_bonus": 5.54875
+        },
+        {
+          "captain": 154,
+          "vice": 411,
+          "player_mean": 4.9011,
+          "p_appearance": 0.9124,
+          "points_if_appears": 5.371657167908811,
+          "expected_captain_bonus": 5.4302
+        },
+        {
+          "captain": 334,
+          "vice": 411,
+          "player_mean": 4.99605,
+          "p_appearance": 0.9352,
+          "points_if_appears": 5.34222626176219,
+          "expected_captain_bonus": 5.3763
+        },
+        {
+          "captain": 542,
+          "vice": 411,
+          "player_mean": 4.8297,
+          "p_appearance": 0.92845,
+          "points_if_appears": 5.2018956325057895,
+          "expected_captain_bonus": 5.25985
+        },
+        {
+          "captain": 338,
+          "vice": 411,
+          "player_mean": 4.6909,
+          "p_appearance": 0.91195,
+          "points_if_appears": 5.1438127090301,
+          "expected_captain_bonus": 5.218
+        },
+        {
+          "captain": 566,
+          "vice": 411,
+          "player_mean": 4.59335,
+          "p_appearance": 0.92475,
+          "points_if_appears": 4.967126250337929,
+          "expected_captain_bonus": 5.05905
+        },
+        {
+          "captain": 346,
+          "vice": 411,
+          "player_mean": 4.3836,
+          "p_appearance": 0.91265,
+          "points_if_appears": 4.8031556456472915,
+          "expected_captain_bonus": 4.91505
+        },
+        {
+          "captain": 384,
+          "vice": 411,
+          "player_mean": 3.9818,
+          "p_appearance": 0.9285,
+          "points_if_appears": 4.288422186322024,
+          "expected_captain_bonus": 4.4167
+        }
+      ],
+      "captain_evidence_forecast_id": "7143d9520e47313f44f43efb6f982aea1d0a3bb19ef0994705fed4dc6a5628d9"
     }
   ],
-  "mean": 615.4149,
+  "mean": 615.55785,
   "immediate_paired_vs_roll": {
     "roll": {
       "mean": 0.0,
-      "simulation_mean_95ci": [
+      "paired_mc_interval_95": [
         0.0,
         0.0
       ]
     },
     "cherki_tavernier": {
-      "mean": 0.5139,
-      "simulation_mean_95ci": [
-        0.4581742405324377,
-        0.5696257594675623
+      "mean": 0.5791,
+      "paired_mc_interval_95": [
+        0.5236546113956166,
+        0.6345453886043833
       ]
     },
     "gvardiol_virgil": {
-      "mean": 1.89665,
-      "simulation_mean_95ci": [
-        1.8351686821188369,
-        1.958131317881163
+      "mean": 1.8957,
+      "paired_mc_interval_95": [
+        1.8340868931120349,
+        1.957313106887965
+      ]
+    },
+    "cherki_tavernier_gvardiol_gabriel": {
+      "mean": -1.2509,
+      "paired_mc_interval_95": [
+        -1.3345395067104615,
+        -1.1672604932895383
       ]
     }
   },
   "resource_evidence": {
     "hit": {
-      "candidate_plan_id": "5a04acbec495331d5385a32ee95536b34ae53f6aa5799560c51d383bb32c05cd",
-      "no_hit_plan_id": "71672e702252c5657e651d7b3b208b2665785ebbf5b120de4965b5698886b17d",
-      "net_mean_gain": 3.15635,
+      "candidate_plan_id": "f45be93628583c4c550dec7d0e66307b003b09b1d7e9949c9ea8e9fb076391f7",
+      "no_hit_plan_id": "ddcc09829504d8a6de6b190c05803f518add9ee70981269392dd6e78e88d4cee",
+      "net_mean_gain": 2.81675,
       "paired_mc_interval_95": [
-        2.844587368321058,
-        3.4681126316789426
+        2.505942319245042,
+        3.1275576807549577
       ],
       "hit_supported_beyond_mc_error": true,
-      "no_hit_search_plan_id": "5d9782642e46fe04865a27aafd5c09e006b116448a6459980898c92b8775e929",
-      "no_hit_search_allowance": 9.862442387399255,
+      "no_hit_search_plan_id": "dbc99fa09c85fc1beab346229db0fe9ec18de33352a597f4e9d0a6bcd86b9dc5",
+      "no_hit_search_allowance": 9.598009634990262,
       "hit_supported_beyond_search_error": false,
       "weekly_tradeoff": [
         {
           "event": 10,
-          "candidate_net": 44.321,
-          "alternative_net": 60.37,
-          "cumulative_net_advantage": -16.049
+          "candidate_net": 44.238,
+          "alternative_net": 60.512,
+          "cumulative_net_advantage": -16.274
         },
         {
           "event": 11,
-          "candidate_net": 60.879,
-          "alternative_net": 47.097,
-          "cumulative_net_advantage": -2.267000000000003
+          "candidate_net": 60.935,
+          "alternative_net": 47.178,
+          "cumulative_net_advantage": -2.516999999999996
         },
         {
           "event": 12,
-          "candidate_net": 59.128,
-          "alternative_net": 58.804,
-          "cumulative_net_advantage": -1.943000000000005
+          "candidate_net": 59.131,
+          "alternative_net": 58.837,
+          "cumulative_net_advantage": -2.222999999999999
         },
         {
           "event": 13,
-          "candidate_net": 64.792,
-          "alternative_net": 60.679,
-          "cumulative_net_advantage": 2.1699999999999946
+          "candidate_net": 64.863,
+          "alternative_net": 60.746,
+          "cumulative_net_advantage": 1.8939999999999984
         },
         {
           "event": 14,
-          "candidate_net": 60.246,
-          "alternative_net": 61.658,
-          "cumulative_net_advantage": 0.7579999999999956
+          "candidate_net": 60.287,
+          "alternative_net": 61.703,
+          "cumulative_net_advantage": 0.47799999999999443
         },
         {
           "event": 15,
-          "candidate_net": 62.134,
-          "alternative_net": 60.542,
-          "cumulative_net_advantage": 2.3499999999999943
+          "candidate_net": 62.147,
+          "alternative_net": 60.556,
+          "cumulative_net_advantage": 2.0689999999999955
         },
         {
           "event": 16,
-          "candidate_net": 65.627,
-          "alternative_net": 65.901,
-          "cumulative_net_advantage": 2.0759999999999934
+          "candidate_net": 65.637,
+          "alternative_net": 65.926,
+          "cumulative_net_advantage": 1.779999999999994
         },
         {
           "event": 17,
-          "candidate_net": 61.886,
-          "alternative_net": 61.526,
-          "cumulative_net_advantage": 2.435999999999993
+          "candidate_net": 61.911,
+          "alternative_net": 61.593,
+          "cumulative_net_advantage": 2.097999999999992
         },
         {
           "event": 18,
-          "candidate_net": 61.726,
-          "alternative_net": 60.235,
-          "cumulative_net_advantage": 3.9269999999999925
+          "candidate_net": 61.731,
+          "alternative_net": 60.242,
+          "cumulative_net_advantage": 3.586999999999996
         },
         {
           "event": 19,
-          "candidate_net": 79.024,
-          "alternative_net": 79.794,
-          "cumulative_net_advantage": 3.1569999999999965
+          "candidate_net": 79.047,
+          "alternative_net": 79.817,
+          "cumulative_net_advantage": 2.817
         }
       ],
       "scope": "Paired sampling error and unfinished no-hit additive-search allowance are separate. Forecast error remains additional; this is not a statistical confidence interval for the true transfer value.",
@@ -1361,8 +2325,8 @@
           "fixtures": [
             "HUL (H)"
           ],
-          "model_points": 3.65395,
-          "model_minutes": 69.39765,
+          "model_points": 3.68905,
+          "model_minutes": 70.7339,
           "model_start_probability": 0.7432950191570882,
           "official_next_points": 5.5,
           "official_status": "a",
@@ -1376,8 +2340,8 @@
           "fixtures": [
             "IPS (A)"
           ],
-          "model_points": 4.5237,
-          "model_minutes": 88.21665,
+          "model_points": 4.54965,
+          "model_minutes": 88.6809,
           "model_start_probability": 0.975609756097561,
           "official_next_points": 6.5,
           "official_status": "a",
@@ -1391,8 +2355,8 @@
           "fixtures": [
             "LIV (H)"
           ],
-          "model_points": 0.46255,
-          "model_minutes": 10.5626,
+          "model_points": 0.4738,
+          "model_minutes": 10.4335,
           "model_start_probability": 0.08045977011494253,
           "official_next_points": 0.5,
           "official_status": "a",
@@ -1406,9 +2370,9 @@
           "fixtures": [
             "BOU (H)"
           ],
-          "model_points": 0.9019,
-          "model_minutes": 24.54015,
-          "model_start_probability": 0.35019543118029683,
+          "model_points": 0.8197,
+          "model_minutes": 22.52995,
+          "model_start_probability": 0.33000589443529094,
           "official_next_points": 0.2,
           "official_status": "a",
           "official_availability": null,
@@ -1421,8 +2385,8 @@
           "fixtures": [
             "TOT (H)"
           ],
-          "model_points": 4.22665,
-          "model_minutes": 86.49495,
+          "model_points": 4.23925,
+          "model_minutes": 86.89785,
           "model_start_probability": 0.975609756097561,
           "official_next_points": 1.8,
           "official_status": "a",
@@ -1436,8 +2400,8 @@
           "fixtures": [
             "CRY (A)"
           ],
-          "model_points": 5.2113,
-          "model_minutes": 88.56335,
+          "model_points": 5.20385,
+          "model_minutes": 88.4846,
           "model_start_probability": 1.0,
           "official_next_points": 3.5,
           "official_status": "a",
@@ -1451,8 +2415,8 @@
           "fixtures": [
             "NFO (A)"
           ],
-          "model_points": 2.8915,
-          "model_minutes": 40.96575,
+          "model_points": 2.75205,
+          "model_minutes": 38.3074,
           "model_start_probability": 0.25833333333333336,
           "official_next_points": 2.8,
           "official_status": "a",
@@ -1466,8 +2430,8 @@
           "fixtures": [
             "CHE (H)"
           ],
-          "model_points": 4.35265,
-          "model_minutes": 81.4748,
+          "model_points": 4.35545,
+          "model_minutes": 81.38365,
           "model_start_probability": 0.907563025210084,
           "official_next_points": 4.2,
           "official_status": "a",
@@ -1479,20 +2443,20 @@
     },
     "chip": {
       "chip": "freehit",
-      "candidate_plan_id": "71672e702252c5657e651d7b3b208b2665785ebbf5b120de4965b5698886b17d",
-      "alternative_plan_id": "7e53e13bd5a184e194e7713aac76dec4d5fab8309de001a8d1209fd245f39298",
-      "net_mean_gain": 1.1908,
+      "candidate_plan_id": "ddcc09829504d8a6de6b190c05803f518add9ee70981269392dd6e78e88d4cee",
+      "alternative_plan_id": "5cdf99e84885c35234ab33634b8002c54625fea4640ebfc11b3b7fa56445053b",
+      "net_mean_gain": 1.55335,
       "paired_mc_interval_95": [
-        0.842295682345656,
-        1.5393043176543442
+        1.2053051871710065,
+        1.9013948128289935
       ],
-      "search_allowance": 11.715647959231546,
-      "control_plan_id": "7e53e13bd5a184e194e7713aac76dec4d5fab8309de001a8d1209fd245f39298",
+      "search_allowance": 41.290602619174365,
+      "control_plan_id": "6b1619063b33efc0d2dd8d55a121c4f8bae1046e53286a10242e2913732cc040",
       "supported_beyond_search_error": false,
       "reason": "Chip retained: its modeled advantage is unresolved against ordinary transfers and later chip use",
       "scope": "Same frozen horizon and outcome worlds; future chip use remains available. Additive search sensitivity excludes forecast error and is not an exact nonlinear bound."
     }
   },
-  "ordinary_control_plan_id": "7e53e13bd5a184e194e7713aac76dec4d5fab8309de001a8d1209fd245f39298",
-  "id": "d228cc5f4ca91b36984ec0439eb9045f940233eea349997b5ce524658c538224"
+  "scope": "Fresh legal first-action counterfactuals and conditional continuations; finite additive search and Monte Carlo error do not prove the best football decision.",
+  "id": "428a845d5a4098a2cf40b1b505caf5e931b3123a327d2775092193761ca77b12"
 }

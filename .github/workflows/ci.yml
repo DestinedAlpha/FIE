@@ -40,7 +40,7 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType File -Path .env -Force | Out-Null
-          uv run python -c "from fpl_intelligence.storage import Store; s=Store(); [s.put(kind,{}) for kind in ('market','state','selected_plan')]; model=s.put('decision_model',{'promoted':False}); s.put('forecast',{'model_version':'learned-points-v1','decision_model_id':model}); import gzip; from pathlib import Path; p=Path('data/state.sqlite'); Path('data/state.sqlite.gz').write_bytes(gzip.compress(p.read_bytes())); p.unlink()"
+          uv run python -c "from fpl_intelligence.storage import Store; s=Store(); [s.put(kind,{}) for kind in ('state','selected_plan')]; s.put('market',{'events':[]}); model=s.put('decision_model',{'promoted':False}); s.put('forecast',{'model_version':'learned-points-v1','decision_model_id':model}); import gzip; from pathlib import Path; p=Path('data/state.sqlite'); Path('data/state.sqlite.gz').write_bytes(gzip.compress(p.read_bytes())); p.unlink()"
           $launcher = Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File','scripts/start.ps1','-NoBrowser' -PassThru -RedirectStandardOutput launcher.out -RedirectStandardError launcher.err
           try {
             $healthy = $false

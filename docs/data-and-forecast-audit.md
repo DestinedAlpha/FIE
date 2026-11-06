@@ -48,6 +48,8 @@ The updated weekly £100m diagnostic scores **575**: **48, 93, 54, 63, 65, 44, 6
 
 ## Transfer and captain explanations
 
+The actual pre-GW9 archive records Fernandes's FPL form at **0.7**, confirming poor recent returns. Its season xG/xA is **2.66/1.50**, versus Palmer's **1.50/1.09**. Recent realized points and underlying chances therefore disagree. The core points head already includes recent five-match returns and historical expected involvement; increasing a short-form penalty is a tested model choice rather than a justified manual override from the subsequent result.
+
 Pedro → Palmer cannot be a direct transfer: a forward cannot replace a midfielder. Legal bundles preserve squad composition and finance every purchase. The official GW9 snapshot marked Pedro injured with zero availability. A Palmer route needs a midfielder sale or a complete two-position bundle.
 
 The earlier GW6 forecast projected Tavernier at 3.83 and Anderson at 4.61. Expected defensive-contribution points were approximately 0.20 and 1.02 respectively. An attacking-stat advantage is therefore not the entire FPL comparison; whether that expectation is accurate remains a forecasting question.
@@ -59,3 +61,16 @@ The captain panel now ranks XI candidates by expected **extra captain points inc
 Full-market ordinary, chip-calendar and wildcard action solves supply additional starting trajectories. Each must satisfy every constraint and improve the same complete additive objective before replacing an incumbent. Cash bounds follow fixed-price account wealth. Transfer-free continuous squad relaxations provide a separate valid additive upper bound, including independent chip windows across GW19/GW20. Unfinished joint-search box bounds no longer have to be the only reported ceiling.
 
 Bounds remain for the additive surrogate, not exact nonlinear autosubs. Paid-transfer and optional-chip evidence safeguards remain active. No named player is forced into recommendations. Account data and keys are preserved; the application submits no FPL transfer.
+
+## Current GW10 counterfactuals
+
+The refreshed actual-account comparison uses the same 20,000 frozen worlds and independently continues each legal first action through GW19. GW10 expected scores below include the hit and exact autosubs/captain fallback.
+
+| First action | GW10 expected net points | Hit |
+|---|---:|---:|
+| Roll | 51.859 | 0 |
+| Cherki → Tavernier | 52.438 | 0 |
+| Gvardiol → Van Dijk | 53.755 | 0 |
+| Cherki → Tavernier, Gvardiol → Gabriel | 50.608 | 4 |
+
+The selected no-hit Van Dijk route remains a model preference, not proof of the best actual football outcome. Each continuation retains its finite-search diagnostics. [Frozen comparison and full ledgers](../artifacts/evaluations/transfer_research.json).
