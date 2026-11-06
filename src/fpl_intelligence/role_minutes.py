@@ -348,6 +348,106 @@ def attach(store, model):
     return body
 
 
+def reference_predictions(store, model, feature_id=None):
+    """Reconstruct the composed primary for challenger/manager training.
+
+    Frozen final weights must never score their own earlier training weeks.
+    The accepted mixture is fixed; every forecast uses earlier fit/calibration.
+    """
+    import inspect
+
+    from .fusion import load_data, published_availability
+
+    spec = store.get("role_minutes_model", model["role_minutes_model_id"])
+    if spec["version"] != VERSION or not spec["promoted"]:
+        raise ValueError("Unsupported role reference contract")
+    arrays, meta, features = load_data(store, feature_id)
+    context_id = store.get("context_archive")["id"]
+    key = digest(
+        {
+            "feature": features["id"],
+            "context": context_id,
+            "version": VERSION,
+            "weight": spec["weight"],
+            "parameters": PARAMS,
+            "implementation": [
+                inspect.getsource(f)
+                for f in (
+                    reference_predictions,
+                    fit_head,
+                    predict,
+                    role_vector,
+                    historical_inputs,
+                    fit_components,
+                    predict_models,
+                )
+            ],
+        }
+    )
+    for item in store.list("role_minutes_reference", 30):
+        cached = store.get("role_minutes_reference", item["id"])
+        if cached["key"] == key:
+            path = store.artifact_path(cached["path"])
+            if hashlib.sha256(path.read_bytes()).hexdigest() != cached["hash"]:
+                raise ValueError("Role reference checksum mismatch")
+            return pl.read_parquet(path).to_dicts()
+    x = historical_inputs(store, arrays, meta, features, context_id)
+    groups = np.array([r["deadline_group"] for r in meta])
+    unique = sorted(set(groups))
+    testing = [g for g in unique if g >= "2025/26-GW01"]
+    frame = pl.DataFrame(arrays["tab"], schema=NAMES).with_columns(
+        pl.Series("minutes_target", arrays["minutes"]),
+        pl.Series(
+            "start_target",
+            [float(v) if known else None for v, known in zip(arrays["start"], arrays["start_mask"])],
+        ),
+        pl.Series("base_target", arrays["base_target"]),
+    )
+    rows: list[dict[str, Any]] = []
+    for first in range(0, len(testing), 8):
+        block = testing[first : first + 8]
+        cut = [g for g in unique if g < block[0]][-8]
+        train = np.flatnonzero(groups < cut)
+        cal = np.flatnonzero((groups >= cut) & (groups < block[0]))
+        test = np.flatnonzero(np.isin(groups, block))
+        reference = fit_components(frame[train], frame[cal])
+        _, rp, conditional = predict_models(reference, arrays["tab"][test], arrays["dc_prior"][test])
+        rp[:, 1:] *= np.array([published_availability(r) for r in arrays["news"][test]])[:, None]
+        rp[:, 0] = 1 - rp[:, 1:].sum(1)
+        head, curves = fit_head(x, arrays["minutes"], train, cal)
+        probability = (1 - spec["weight"]) * rp + spec["weight"] * predict(
+            head, curves, x[test], arrays["news"][test]
+        )
+        mean = (probability * (conditional + 2 * arrays["dc_prior"][test])).sum(1)
+        rows.extend(
+            meta[i]
+            | {
+                "predicted": float(mean[j]),
+                "actual": float(arrays["target"][i]),
+                "minutes": float(arrays["minutes"][i]),
+                "availability_included": True,
+            }
+            for j, i in enumerate(test)
+        )
+        print("Composed role reference", block[0], "through", block[-1], flush=True)
+    path = store.root / "features" / ("role-reference-" + key[:24] + ".parquet")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    pl.DataFrame(rows, infer_schema_length=None).write_parquet(path)
+    store.put(
+        "role_minutes_reference",
+        {
+            "at": now(),
+            "key": key,
+            "path": str(path),
+            "hash": hashlib.sha256(path.read_bytes()).hexdigest(),
+            "feature_id": features["id"],
+            "role_minutes_model_id": spec["id"],
+            "scope": "Composed primary out-of-fold reference; fixed accepted mixture, eight earlier calibration deadlines; no final weights reused on historical labels",
+        },
+    )
+    return rows
+
+
 def ensure(store, model):
     """Ordinary retraining retains the accepted head and learns newly finalized labels."""
     if not model.get("promoted") or model.get("fusion_model_id"):

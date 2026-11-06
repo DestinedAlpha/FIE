@@ -135,7 +135,7 @@ def train_fusion(store: Store):
         "social": "No raw Reddit training; specialist statements remain source evidence until prospectively validated",
         "selection": "Choose one architecture by validation; no post-test optimized ensemble",
     }
-    old, reference, oldrows = reference_forecasts(store, meta)
+    old, reference, oldrows = reference_forecasts(store, meta, features["id"])
     import inspect
     import json
 
@@ -145,6 +145,12 @@ def train_fusion(store: Store):
             "metadata": features.get("metadata_hash"),
             "protocol": protocol,
             "reference": reference["id"],
+            "reference_predictions": digest(
+                [
+                    [*key, value["predicted"], value.get("availability_included", False)]
+                    for key, value in sorted(oldrows.items())
+                ]
+            ),
             "implementation": [
                 inspect.getsource(f) for f in (fit_tree, calibrate, corrected, published_availability)
             ],
@@ -185,7 +191,12 @@ def train_fusion(store: Store):
                 | {
                     "actual": float(arrays["target"][index]),
                     "minutes": float(arrays["minutes"][index]),
-                    "baseline": prior["predicted"] * published_availability(arrays["news"][index]),
+                    "baseline": prior["predicted"]
+                    * (
+                        1
+                        if prior.get("availability_included")
+                        else published_availability(arrays["news"][index])
+                    ),
                     "tree": float(tmean[j]),
                     "tree_p_any": float(1 - tp[j, 0]),
                     "tree_p60": float(tp[j, 2:].sum()),
@@ -783,7 +794,7 @@ def review_fusion(store: Store):
     return result
 
 
-def reference_forecasts(store, metadata):
+def reference_forecasts(store, metadata, feature_id=None):
     """Keep a fixed validated baseline architecture when re-fitting an active fusion model."""
     from .decision import NAMES, fit_components, predict_models
 
@@ -791,6 +802,11 @@ def reference_forecasts(store, metadata):
     reference = active
     while reference.get("fusion_model_id"):
         reference = store.get("decision_model", reference["previous_decision_model_id"])
+    if reference.get("role_minutes_model_id"):
+        from .role_minutes import reference_predictions
+
+        rows = reference_predictions(store, reference, feature_id)
+        return active, reference, {(r["season"], r["player_id"], r["fixture_id"]): r for r in rows}
     output = {(r["season"], r["player_id"], r["fixture_id"]): r for r in reference["predictions"]}
     missing = {
         (r["season"], r["player_id"], r["fixture_id"])

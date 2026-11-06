@@ -16,6 +16,7 @@ from fpl_intelligence.database_archive import unpack_database
 RESEARCH_KINDS = {
     "role_minutes_validation",
     "role_minutes_model",
+    "role_minutes_reference",
     "model_maintenance",
     "transfer_research",
     "decision_critic",

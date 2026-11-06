@@ -239,11 +239,13 @@ test("withheld paid hits show search uncertainty, weekly payback and forecast di
   await page.route('**/api/dashboard*',async route=>{
     const response=await route.fetch(),body=await response.json();
     body.plan.ledger[0].hit=0;
-    body.policy_selection={selection_version:'paid-transfer-evidence-v2',selection:{selected_plan_id:body.plan.id,actual_ev_sacrifice:1.73},immediate_hit_evidence:{candidate_plan_id:'raw-paid',no_hit_plan_id:body.plan.id,net_mean_gain:1.73,no_hit_search_allowance:9.31,hit_supported_beyond_search_error:false,paired_mc_interval_95:[1.45,2.01],reason:'Paid-transfer advantage is unresolved after the no-hit search allowance',weekly_tradeoff:[{event:10,candidate_net:44.33,alternative_net:53.34,cumulative_net_advantage:-9.01}],source_forecast_review:[{player_id:8,name:'Calafiori',fixtures:['HUL (H)'],model_points:3.10,model_minutes:58.7,model_start_probability:0.74,official_next_points:5.5,official_status:'a',official_availability:1,season_starts:8,completed_club_fixtures:9}]}};
+    body.policy_selection={selection_version:'resource-evidence-v3',selection:{selected_plan_id:body.plan.id,actual_ev_sacrifice:1.73},immediate_hit_evidence:{candidate_plan_id:'raw-paid',no_hit_plan_id:body.plan.id,net_mean_gain:1.73,no_hit_search_allowance:9.31,hit_supported_beyond_search_error:false,paired_mc_interval_95:[1.45,2.01],reason:'Paid-transfer advantage is unresolved after the no-hit search allowance',weekly_tradeoff:[{event:10,candidate_net:44.33,alternative_net:53.34,cumulative_net_advantage:-9.01}],source_forecast_review:[{player_id:8,name:'Calafiori',fixtures:['HUL (H)'],model_points:3.10,model_minutes:58.7,model_start_probability:0.74,official_next_points:5.5,official_status:'a',official_availability:1,season_starts:8,completed_club_fixtures:9}]}};
+    body.policy_selection.immediate_chip_evidence={chip:'freehit',candidate_plan_id:'raw-chip',alternative_plan_id:body.plan.id,net_mean_gain:1.19,search_allowance:11.72,supported_beyond_search_error:false,reason:'Chip retained while ordinary-transfer search remains unresolved'};
     await route.fulfill({response,json:body});
   });
   await openWorkspace(page);
   await navigate(page, 'Season planner');
+  await expect(page.getByRole('heading',{name:'Free Hit retained'})).toBeVisible();
   const panel=page.locator('section').filter({has:page.getByRole('heading',{name:'Paid transfer withheld'})});
   await expect(panel).toContainText('9.31');
   await panel.getByText('See when the paid hit would repay its cost').click();

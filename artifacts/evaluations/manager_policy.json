@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-04T10:12:40.399940+00:00",
+  "at": "2026-11-06T09:31:41.680683+00:00",
   "ordinary_transfer_tail": [
     3,
     3,
@@ -366,15 +366,15 @@
     3
   ],
   "population_id": "97b87a4d7fa0ae78be4d3d77c33e4018f96ed30dcfe378f9994e940e091d505c",
-  "fusion_model_id": "b40734f1d5145f36c1ea37144a316069648f2d74537f5cb201f6a8cfe56e4bef",
+  "fusion_model_id": "326006459f8c9344382688d43732e137daec6c3149f2ff1b839e580db7de828d",
   "models": {
     "buy": {
       "path": "data/models/manager-policy-97b87a4d7fa0ae78be4d/buy.txt",
-      "hash": "9e94b9a10c0e0dee3d5a9fb6af015a6955ccc461b22d27b04bbe2168a7078d25"
+      "hash": "5144eb06392d3bfb6648c31b2e3f57a4ee7b07852cf2ac76903ba9f3b400a6ef"
     },
     "sell": {
       "path": "data/models/manager-policy-97b87a4d7fa0ae78be4d/sell.txt",
-      "hash": "b48eaf4dcb68779c1bde56065a426c6717cfbb356f6a8a84488e1e406ba13b1b"
+      "hash": "d2e5cdeced55ab4d20246df75fdddd319c7535c5c9d7469097947ee54317f371"
     },
     "chip": {
       "path": "data/models/manager-policy-97b87a4d7fa0ae78be4d/chip.txt",
@@ -392,7 +392,6 @@
     "injury",
     "reference_points",
     "tree_points",
-    "network_points",
     "club_owned",
     "owned",
     "previous_captain",
@@ -407,17 +406,17 @@
     "buy": {
       "temperature": 1.0,
       "test_decisions": 1647,
-      "conditional_log_loss": 3.419333981021213,
+      "conditional_log_loss": 3.3859176291990676,
       "baseline_log_loss": 4.645133263663355,
-      "top5_recall": 0.5585896313914581,
+      "top5_recall": 0.5677628312097656,
       "promoted": true
     },
     "sell": {
-      "temperature": 1.0,
+      "temperature": 0.5,
       "test_decisions": 1647,
-      "conditional_log_loss": 1.8985651146303053,
+      "conditional_log_loss": 2.021181130720818,
       "baseline_log_loss": 3.2824102464262412,
-      "top5_recall": 0.8203405934280252,
+      "top5_recall": 0.824846709318476,
       "promoted": true
     },
     "chip": {
@@ -457,5 +456,5 @@
     "Conditional choice ranks are not knowledge of hidden moves; resulting branches must pass exact portfolio/FT/chip constraints",
     "Negative sampling uses inverse sampling weights; identity, current rank and later team choices are not predictors"
   ],
-  "id": "3c1b56aa8251e6569440c555310f18a3c836bf90d33c049488adc3ee2e5e3cd3"
+  "id": "99857999a21446eb2071c451c8f51f18a435bb0dc355f51bffee51d96579eb88"
 }

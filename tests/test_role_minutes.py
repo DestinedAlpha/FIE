@@ -5,6 +5,37 @@ import numpy as np
 from fpl_intelligence.role_minutes import historical_inputs, predict, role_vector
 
 
+def test_challenger_reference_uses_composed_out_of_fold_points(tmp_path, monkeypatch):
+    from fpl_intelligence.fusion import reference_forecasts
+    from fpl_intelligence.storage import Store
+
+    store = Store(tmp_path / "data")
+    store.put(
+        "decision_model",
+        {
+            "role_minutes_model_id": "accepted-role",
+            "predictions": [{"season": "2026/27", "player_id": 7, "fixture_id": 91, "predicted": 100}],
+        },
+    )
+    causal = {
+        "season": "2026/27",
+        "player_id": 7,
+        "fixture_id": 91,
+        "predicted": 3.7,
+        "availability_included": True,
+    }
+    seen = []
+
+    def composed(saved, model, feature_id):
+        seen.append((model["role_minutes_model_id"], feature_id))
+        return [causal]
+
+    monkeypatch.setattr("fpl_intelligence.role_minutes.reference_predictions", composed)
+    _, _, rows = reference_forecasts(store, [], "frozen-challenger-inputs")
+    assert seen == [("accepted-role", "frozen-challenger-inputs")]
+    assert rows["2026/27", 7, 91] == causal
+
+
 def test_role_history_uses_stable_code_and_frozen_context(monkeypatch):
     packet = {"starts": 7, "minutes": 630}
     seen = []

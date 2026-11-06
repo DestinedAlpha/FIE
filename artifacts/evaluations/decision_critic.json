@@ -1,11 +1,10 @@
 {
-  "at": "2026-11-04T14:05:52.117797+00:00",
-  "dataset_id": "2b019ac7d7364b2224aa75c4ae0acd410b3862a932cd3f6f8901a60c62400967",
-  "version": "evolving-decisions-v3",
+  "at": "2026-11-06T09:31:45.593985+00:00",
+  "dataset_id": "baf750d0cf4bf4bab08dea6b6f761564a182c8bd37bd3c5399adee6407edf56e",
+  "version": "evolving-decisions-v4",
   "features": [
     "reference_points",
     "tree_points",
-    "network_points",
     "fourweek_points",
     "hit",
     "purchases",
@@ -28,28 +27,9 @@
     "tree": {
       "calibration_gain_by_weight": {
         "0": 0.0,
-        "0.25": -3.375,
-        "0.5": -3.9916666666666667,
-        "1": -8.058333333333334
-      },
-      "weight": 0,
-      "accounts": 312,
-      "mean_gain": 0.0,
-      "block_gain_95ci": [
-        0.0,
-        0.0
-      ],
-      "mean_points": 223.93589743589743,
-      "reference_points": 223.93589743589743,
-      "best_searched_points": 248.42948717948718,
-      "promoted": false
-    },
-    "network": {
-      "calibration_gain_by_weight": {
-        "0": 0.0,
-        "0.25": -1.5416666666666667,
-        "0.5": -1.6833333333333333,
-        "1": -2.033333333333333
+        "0.25": -2.841666666666667,
+        "0.5": -3.9583333333333335,
+        "1": -7.775
       },
       "weight": 0,
       "accounts": 312,
@@ -66,54 +46,10 @@
   },
   "selected": null,
   "architecture_selected_on_calibration": "tree",
-  "neural": {
-    "epochs": 31,
-    "mean": [
-      56.36967849731445,
-      56.6737174987793,
-      54.96077346801758,
-      192.24270629882812,
-      0.0665031373500824,
-      4.8828020095825195,
-      2.2248027324676514,
-      2.1509947776794434,
-      0.13927499949932098,
-      0.1599891036748886,
-      0.16216953098773956,
-      0.17388933897018433,
-      140.77862548828125,
-      0.06770643591880798,
-      0.07195421308279037,
-      4.3146562576293945
-    ],
-    "scale": [
-      5.730590343475342,
-      5.833314895629883,
-      5.655189514160156,
-      12.739276885986328,
-      0.5114472508430481,
-      5.180588245391846,
-      1.8729947805404663,
-      1.4500141143798828,
-      0.34623658657073975,
-      0.3665986955165863,
-      0.3686131238937378,
-      0.37901821732521057,
-      11.061524391174316,
-      0.06746995449066162,
-      0.26568877696990967,
-      2.31689190864563
-    ],
-    "parameters": 3329
-  },
   "models": {
     "tree": {
-      "path": "data/models/decision-critic-2b019ac7d7364b2224aa/tree.txt",
-      "hash": "1c3baa31403269c824f8fc2caa39229be36b36e2e0b18094e9f80ea323f10ee5"
-    },
-    "network": {
-      "path": "data/models/decision-critic-2b019ac7d7364b2224aa/network.pt",
-      "hash": "232ef0bb89b4804c6a68c737b224dc45bd7b129fe3cb09a18ab2d2d3f457a1d4"
+      "path": "data/models/decision-critic-baf750d0cf4bf4bab08d/tree.txt",
+      "hash": "47ff945240bc493f3b7a135efc6b1bd8a144c9544642e0852298104a2b5272cd"
     }
   },
   "invalid_actions": 0,
@@ -124,5 +60,5 @@
     "Historical news and price archive limitations remain; model selection is frozen before later test outcomes",
     "The final critic retains the earlier calibrated fit rather than silently retraining on its own test data"
   ],
-  "id": "99fc0b5cccd3c1bf03ac328200319fe0872cea993ff21464e74de55454cf66b0"
+  "id": "1a2faabb3288199a8ec9545a819b09c135d54308a818af630ef23a847c89778c"
 }

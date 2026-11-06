@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-04T09:55:14.999423+00:00",
+  "at": "2026-11-06T09:30:21.245592+00:00",
   "version": "fusion-v1",
   "feature_id": "5ae94d834d3c29a1f94461f3ef22904190ab112a16e2efc97c7628edcf800b4a",
   "enrichment_width": 31,
@@ -175,25 +175,6 @@
         "bias": 0.03607273137069567
       },
       "passed": true
-    },
-    "network": {
-      "metrics": {
-        "n": 35497,
-        "rmse": 1.9177442247287344,
-        "mae": 0.9622199753329708,
-        "bias": -0.018049040307990497
-      },
-      "paired_vs_production_95ci": [
-        -0.020493323331335057,
-        -0.00735589220301976
-      ],
-      "regular_starters": {
-        "n": 8606,
-        "rmse": 2.950429787290712,
-        "mae": 2.1368942638161976,
-        "bias": -0.0063898629298824025
-      },
-      "passed": true
     }
   },
   "selected": "tree",
@@ -214,5 +195,6 @@
   "production_training_rows": 115884,
   "production_calibration_rows": 2671,
   "prediction_path": "data/models/fusion-038941068eda952f8330fea6/heldout.parquet",
-  "id": "b40734f1d5145f36c1ea37144a316069648f2d74537f5cb201f6a8cfe56e4bef"
+  "retired_companion_from": "b40734f1d5145f36c1ea37144a316069648f2d74537f5cb201f6a8cfe56e4bef",
+  "id": "326006459f8c9344382688d43732e137daec6c3149f2ff1b839e580db7de828d"
 }

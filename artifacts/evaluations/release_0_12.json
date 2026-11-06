@@ -1,0 +1,397 @@
+{
+  "at": "2026-11-06T10:57:35.218831+00:00",
+  "version": "0.12.0",
+  "account_state_id": "7b62e815bffd50f908e4e8b63d43f93670e1625e5ad59805ed3572925e08de83",
+  "market_id": "4fde33741fac4a0602e376f492f2d8de9c29d1bb4dde846436870dade8f61b70",
+  "forecast_id": "4d5bee2182252110735e8e9a87aa19ce1a3429c188072ed8011a533ad8ec86ff",
+  "plan_id": "7e53e13bd5a184e194e7713aac76dec4d5fab8309de001a8d1209fd245f39298",
+  "replayed_events": 10,
+  "chip_dates_verified": 20,
+  "source_artifacts": {
+    "fusion_model": "326006459f8c9344382688d43732e137daec6c3149f2ff1b839e580db7de828d",
+    "horizon_model": "176714bfdc2a9dc7a7c9324d5da38e7a96904ff40916e9199e6afa2ad3f09e75",
+    "transfer_policy_model": "37a6b8448dc4edf8e121a5eeffdb09bd1fb7490e4ea128bed7d30ed2447b0c24",
+    "personalized_policy_analysis": "f2d7c7602c15dba25e53a68a1e7d3e6463ffbae9957d1c181b21a500b706a029",
+    "manager_behavior": "9b25500da79d4c22654191a2969b0d520d7f2b4d4477d1047ce34b620bb83ac3",
+    "manager_policy": "99857999a21446eb2071c451c8f51f18a435bb0dc355f51bffee51d96579eb88",
+    "market_model": "661b8c3bb8cd450ab2a3f745d6701cba188445d48eee8d15b9bd4af8b8246a29",
+    "coherent_model": "5f58c360b8e12cb5e7b423eb816c6a273b1a02b31922eb9682e341d25e0ef51c",
+    "context_ablation": "c5182da4c6bef53552d9a88b2f8f759e58a19dcd1eb4cc6b6fd8bc09e592bad7",
+    "evolving_dataset": "baf750d0cf4bf4bab08dea6b6f761564a182c8bd37bd3c5399adee6407edf56e",
+    "decision_critic": "1a2faabb3288199a8ec9545a819b09c135d54308a818af630ef23a847c89778c",
+    "state_value_model": "10e225268251b063b77c95696dc6b45c70ac4488d6e11af0cd67e6eb49621350",
+    "decision_analysis": "e517c58114070d7a4bad98a3b53a1a8363f6b7c4bb4f50f0aeaf032e0efb649a",
+    "timing_analysis": "1affeecdef3adc72a3ec124dd3a463724c1ea7036125b299a57c20cf18c26913",
+    "price_bridge": "c8ecc7dfc53ed7ccb498e38e924d1d1d172732ed9e846a96eaed3e4c85351e94",
+    "population_forecast": "bf424ed0fe2a2e159bd09e5fcc5d888f9c8eea656c6a23ef7929e7ee2d4b659a",
+    "coherent_comparison": "8e1bc9f01bc7d34deb9b670b96c5275a23a63941784036b7442afe14aefcd5ff",
+    "horizon_consistency": "a47400885697aa246b22dacb602c530ab75b93a42d711c4daa2e81010ce61525",
+    "scenario_evaluation": "440e0fe1bc4a4d5160f063083607f503247d5c756ddb4380a3d3f340922475da",
+    "case_comparison": "92ae3e54eda9e9d320828bd0a62c31593c7e4f9a66e21ccc4cc092123d48c193",
+    "availability_model": "7fe8826da49664cea21da68aa55ebb28d47a1149f9281cce55832a229e7a448d",
+    "attack_model": "20c5f538eb21c29ba5a2852b0e1b6f3c30743368aee2744b3bcdc89966e4fa2c",
+    "score_process_model": "4ad4b11ec8aaf33b4dc3fbe4e9a33336b86cb6c4210701eef4d8c5b710517bfd",
+    "temporal_model": "025078e5b28ce375c09b3d29c3d3367b2ec8558cc2ba6d0fdafc6ba1d4e083d3",
+    "discipline_report": "c62b2117d640bfd88301446b8e7e6fe015546ca2d1a93808b6f0ff20f0b4d914",
+    "odds_refresh": "9832de3e8955ca0cc50a8abaf9ba2fd4e15dc5fc46a6952bec2c56fb0c022866",
+    "odds_model": "23ab87db97af1349d76f836ca39125bf62964f14a2181f4d40a2de23e8e0a746",
+    "evidence_impact": "140d1490e156d0732c7b1c3e3c864002efe9add571fcd9810967b1b7c3f9bc8d",
+    "policy_selection": "50a7671783caaed9a23c096b2d8a3e07bc90c2da5c71059f4e47bd33dd267f51",
+    "weekly_replay": "7cfeaaf4480f565ae7cf7ca243466594ad53823b1e6185e12c5f906e93640493",
+    "weekly_baseline_comparison": "22b983f07d69e7d7ecf48300dbfe8e54554567279d8ea7098f7de4e4075cab50",
+    "consensus_model": "29d535cc367d3c6c706851e052f8058d717c506a28d5645da3e6c95a430d4014",
+    "consensus_comparison": "fc099bc363a15191d6dd79fa4147496d1ac93a1ddecb81aaa3062a8ead783d60",
+    "consensus_policy_validation": "2694185e2b89a84d95829539f57c1f214f786bd5b55006d9967ffce7bdd1e80c",
+    "pipeline_replay": "6e0cb9303d4fec42c7fb76a53b810117666ed0a18b3639e05ee3881a6c69caf7",
+    "shadow_cohort": "67d38b1f74be5125ac62a0e700726932b918dccde16b7538b6a475ff9708f878",
+    "shadow_evaluation": "7918c0fd02584faec8d9b083e613185aed86ed62b5075dbf34b7a99d3a600877",
+    "chip_counterfactual": "feefaf6931d7e865b918fb3164108cb13731129e7de44b3c7403682eb205e467"
+  },
+  "evolving_accounts": 936,
+  "evolving_actions": 9706,
+  "critic_selected": null,
+  "critic_test": {
+    "tree": {
+      "calibration_gain_by_weight": {
+        "0": 0.0,
+        "0.25": -2.841666666666667,
+        "0.5": -3.9583333333333335,
+        "1": -7.775
+      },
+      "weight": 0,
+      "accounts": 312,
+      "mean_gain": 0.0,
+      "block_gain_95ci": [
+        0.0,
+        0.0
+      ],
+      "mean_points": 223.93589743589743,
+      "reference_points": 223.93589743589743,
+      "best_searched_points": 248.42948717948718,
+      "promoted": false
+    }
+  },
+  "continuation_promoted": false,
+  "continuation_test": {
+    "accounts": 312,
+    "mean_gain": 0.5705128205128205,
+    "block_gain_95ci": [
+      -1.484134615384616,
+      2.692788461538459
+    ],
+    "passed": false
+  },
+  "captain": "Haaland",
+  "vice": "Rogers",
+  "first_hit": 0,
+  "simulation": {
+    "worlds": 20000,
+    "seed": 11,
+    "mean": 615.4149,
+    "sd": 40.69136343242875,
+    "quantiles": [
+      564.0,
+      614.0,
+      668.0
+    ],
+    "method": "common match worlds with autosubs and captain fallback"
+  },
+  "solver": {
+    "status": "Time limit reached",
+    "objective": 619.5069000000003,
+    "best_bound": 631.2225479592319,
+    "gap": 0.018911246927566974,
+    "bound_available": true,
+    "nodes": 2,
+    "variables": 52194,
+    "constraints": 62040,
+    "initial_warm_objective": 604.39873,
+    "selected_warm_objective": 606.3832850000001,
+    "reused_incumbent_plan_id": "69bc58b332c92a550b99b5625cddd8f801983f30b47579f496051b5ce07cd25a",
+    "validated_cached_incumbents": 22,
+    "runtime_seconds": 328.096,
+    "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+    "market_players": 564,
+    "screened_players": 0,
+    "terminal_value": "Declared fixed terminal sensitivity",
+    "state_value_model_id": null
+  },
+  "role_minutes": {
+    "model_id": "78d9c1b5a38824d226f80e4fa39d552a7efdadc866fdb5a70596bd0d2adb238e",
+    "validation_id": "f026b713714576b96fb5c2f7c8548c910ec44eef75e3e8f3698e91af3213a31e",
+    "width": 57,
+    "completed_labels_through": "2026/27-GW09",
+    "weights_and_prediction_hashes": "verified",
+    "local_tensor_runtime": "removed"
+  },
+  "resource_selection": {
+    "selected_plan_id": "7e53e13bd5a184e194e7713aac76dec4d5fab8309de001a8d1209fd245f39298",
+    "objective": "expected_points",
+    "objective_value": 615.4149,
+    "sacrifice_budget": 0,
+    "actual_ev_sacrifice": 4.347150000000056,
+    "eligible_policies": 42,
+    "tail_fraction": null,
+    "reason": "Chip retained: its modeled advantage is unresolved against ordinary transfers and later chip use"
+  },
+  "current_chip_evidence": {
+    "chip": "freehit",
+    "candidate_plan_id": "71672e702252c5657e651d7b3b208b2665785ebbf5b120de4965b5698886b17d",
+    "alternative_plan_id": "7e53e13bd5a184e194e7713aac76dec4d5fab8309de001a8d1209fd245f39298",
+    "net_mean_gain": 1.1908,
+    "paired_mc_interval_95": [
+      0.842295682345656,
+      1.5393043176543442
+    ],
+    "search_allowance": 11.715647959231546,
+    "control_plan_id": "7e53e13bd5a184e194e7713aac76dec4d5fab8309de001a8d1209fd245f39298",
+    "supported_beyond_search_error": false,
+    "reason": "Chip retained: its modeled advantage is unresolved against ordinary transfers and later chip use",
+    "scope": "Same frozen horizon and outcome worlds; future chip use remains available. Additive search sensitivity excludes forecast error and is not an exact nonlinear bound."
+  },
+  "weekly_scores": [
+    {
+      "gw": 1,
+      "actual_points": 47,
+      "hindsight_points": 165
+    },
+    {
+      "gw": 2,
+      "actual_points": 89,
+      "hindsight_points": 166
+    },
+    {
+      "gw": 3,
+      "actual_points": 39,
+      "hindsight_points": 142
+    },
+    {
+      "gw": 4,
+      "actual_points": 64,
+      "hindsight_points": 163
+    },
+    {
+      "gw": 5,
+      "actual_points": 65,
+      "hindsight_points": 167
+    },
+    {
+      "gw": 6,
+      "actual_points": 43,
+      "hindsight_points": 150
+    },
+    {
+      "gw": 7,
+      "actual_points": 61,
+      "hindsight_points": 142
+    },
+    {
+      "gw": 8,
+      "actual_points": 64,
+      "hindsight_points": 145
+    },
+    {
+      "gw": 9,
+      "actual_points": 79,
+      "hindsight_points": 130
+    }
+  ],
+  "consensus_weekly_totals": {
+    "mix_0": 562.0,
+    "mix_0.25": 562.0,
+    "mix_0.5": 586.0,
+    "mix_0.75": 545.0,
+    "mix_1": 569.0,
+    "official_expected": 474.0,
+    "points_per_game": 433.0,
+    "ownership": 563.0
+  },
+  "consensus_weekly_acceptance": {
+    "weekly_return_delta_95ci": [
+      0.21052631578947367,
+      9.105263157894736
+    ],
+    "deadline_mse_delta_95ci": [
+      -0.10246479073838254,
+      -0.04990747698216932
+    ],
+    "return_delta": 87.0,
+    "passed": true
+  },
+  "consensus_continuous_totals": {
+    "mix_0.5": 481.0,
+    "mix_0": 503.0,
+    "ownership_no_hits": 561.0,
+    "official_expected": 404.0
+  },
+  "consensus_continuous_acceptance": {
+    "ordinary_return_delta_95ci": [
+      -2.736842105263158,
+      7.315789473684211
+    ],
+    "passed": false
+  },
+  "consensus_promoted": false,
+  "integrated_policy_summaries": {
+    "2026/27": {
+      "primary_multiweek": {
+        "net_points": 536.0,
+        "hit_points": 0,
+        "chips": [
+          {
+            "event": 1,
+            "chip": "bboost"
+          },
+          {
+            "event": 3,
+            "chip": "freehit"
+          },
+          {
+            "event": 7,
+            "chip": "3xc"
+          }
+        ]
+      },
+      "reference_one_week": {
+        "net_points": 516.0,
+        "hit_points": 0,
+        "chips": []
+      },
+      "ownership_no_hits": {
+        "net_points": 561.0,
+        "hit_points": 0,
+        "chips": []
+      },
+      "paired_primary_minus_ownership_95ci": [
+        -14.113888888888887,
+        9.336111111111121
+      ]
+    },
+    "2025/26": {
+      "primary_multiweek": {
+        "net_points": 1098.0,
+        "hit_points": 4,
+        "chips": [
+          {
+            "event": 20,
+            "chip": "3xc"
+          },
+          {
+            "event": 21,
+            "chip": "freehit"
+          },
+          {
+            "event": 30,
+            "chip": "bboost"
+          },
+          {
+            "event": 31,
+            "chip": "wildcard"
+          }
+        ]
+      },
+      "reference_one_week": {
+        "net_points": 1154.0,
+        "hit_points": 12,
+        "chips": []
+      },
+      "ownership_no_hits": {
+        "net_points": 1022.0,
+        "hit_points": 0,
+        "chips": []
+      },
+      "paired_primary_minus_ownership_95ci": [
+        -1.8421052631578947,
+        10.159210526315793
+      ]
+    }
+  },
+  "integrated_policy_verification": {
+    "sealed_deadlines": 28,
+    "validated_actions": 84,
+    "models": "checksums passed",
+    "ledger_and_actual_scoring": "passed",
+    "continuous_actions": 84,
+    "sealed_actions": "matched",
+    "account_continuity": "passed",
+    "availability_checksums": "passed"
+  },
+  "future_fixture_validation": {
+    "earlier_policy": {
+      "sealed_deadlines": 19,
+      "training_cutoffs_and_model_checksums": "passed",
+      "current_week_world_identity": "passed",
+      "continuous_accounts_and_actual_scores": "passed"
+    },
+    "earlier_points": 1202.0,
+    "earlier_reference": 1098.0,
+    "policy_gate_passed": true,
+    "current_policy": {
+      "sealed_deadlines": 9,
+      "training_cutoffs_and_model_checksums": "passed",
+      "current_week_world_identity": "passed",
+      "continuous_accounts_and_actual_scores": "passed"
+    },
+    "current_points": 538.0,
+    "current_weekly_points": [
+      {
+        "gw": 1,
+        "points": 47.0
+      },
+      {
+        "gw": 2,
+        "points": 103.0
+      },
+      {
+        "gw": 3,
+        "points": 35.0
+      },
+      {
+        "gw": 4,
+        "points": 59.0
+      },
+      {
+        "gw": 5,
+        "points": 38.0
+      },
+      {
+        "gw": 6,
+        "points": 57.0
+      },
+      {
+        "gw": 7,
+        "points": 86.0
+      },
+      {
+        "gw": 8,
+        "points": 56.0
+      },
+      {
+        "gw": 9,
+        "points": 57.0
+      }
+    ],
+    "active_expert_id": "861dc4c54df2cbcd978df07c2a9ab92202716ec8d354c0820ed1b85782d970b5",
+    "distribution_validation_id": "5a4a777831fd3f29b40b1a7295cdd0696b37155f26d31c0d4b1d3c534231cc69"
+  },
+  "prospective_account_cohort_id": "67d38b1f74be5125ac62a0e700726932b918dccde16b7538b6a475ff9708f878",
+  "prospective_outcomes": {
+    "finalized_deadlines": 0,
+    "pending_deadlines": [
+      10
+    ]
+  },
+  "checks": {
+    "at": "2026-11-06T10:55:16.822554+00:00",
+    "passed": true,
+    "backend_tests": 208,
+    "backend_skipped": 0,
+    "frontend_unit_tests": 3,
+    "browser_journeys": 18,
+    "browser_failed": 0,
+    "browser_skipped": 0,
+    "ledger_replay": "passed",
+    "connected_model_checksums": "passed"
+  },
+  "scope": "Executed implementation checks and historical gates; future football outcomes and global optimality are not certified"
+}

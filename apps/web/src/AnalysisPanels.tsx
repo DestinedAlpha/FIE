@@ -795,16 +795,14 @@ export function HitEvidence({
   const receipt = data.policy_selection?.selection.selected_plan_id === plan.id ? data.policy_selection : null;
   const evidence = receipt?.immediate_hit_evidence;
   const chipEvidence = receipt?.immediate_chip_evidence;
-  if (chipEvidence && !chipEvidence.supported_beyond_search_error) {
-    return <section className="panel">
+  const chipNotice = chipEvidence && !chipEvidence.supported_beyond_search_error ? <section className="panel">
       <h3>{chipNames[chipEvidence.chip] ?? chipEvidence.chip} retained</h3>
       <p>{chipEvidence.reason}. Its modeled full-horizon gain is {chipEvidence.net_mean_gain.toFixed(2)} points; the ordinary-transfer search allowance is {chipEvidence.search_allowance?.toFixed(2) ?? "unavailable"}.</p>
       <p>Later chip use remains available in the comparison. Sampling precision does not settle forecast or search uncertainty.</p>
       <button className="button secondary" onClick={() => explore(chipEvidence.candidate_plan_id)}>Inspect chip alternative</button>
-    </section>;
-  }
+    </section> : null;
   if (!plan.ledger[0].hit && receipt?.selection_version === "resource-evidence-v3" && evidence && !evidence.hit_supported_beyond_search_error) {
-    return <section className="panel">
+    return <>{chipNotice}<section className="panel">
       <h3>Paid transfer withheld</h3>
       <p>{evidence.reason}. The raw paid-hit proposal gains only {evidence.net_mean_gain.toFixed(2)} modeled points over the full horizon;
         {evidence.no_hit_search_allowance == null ? " the no-hit search has no usable global bound." : ` its additive search remains unresolved by ${evidence.no_hit_search_allowance.toFixed(2)} points.`}</p>
@@ -819,13 +817,13 @@ export function HitEvidence({
           <tbody>{evidence.weekly_tradeoff.map(r => <tr key={r.event}><td>{r.event}</td><td>{r.candidate_net.toFixed(2)}</td><td>{r.alternative_net.toFixed(2)}</td><td>{r.cumulative_net_advantage.toFixed(2)}</td></tr>)}</tbody></table></div>
       </details>}
       <a className="button secondary" href={`/api/export/${evidence.candidate_plan_id}/json`} download>Download raw paid-hit proposal</a>
-    </section>;
+    </section></>;
   }
-  if (!plan.ledger[0].hit) return null;
+  if (!plan.ledger[0].hit) return chipNotice;
   const comparison =
     data.hit_comparison?.base_plan_id === plan.id ? data.hit_comparison : null;
   return (
-    <section className="panel">
+    <>{chipNotice}<section className="panel">
       <h3>Is the immediate hit worth it?</h3>
       <p>
         This plan costs {plan.ledger[0].hit} points now. Compare it with a
@@ -870,7 +868,7 @@ export function HitEvidence({
       >
         Recheck hit tradeoff
       </button>
-    </section>
+    </section></>
   );
 }
 

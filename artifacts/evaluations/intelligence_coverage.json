@@ -1,6 +1,6 @@
 {
-  "at": "2026-11-04T13:37:16.653136+00:00",
-  "market_id": "170668223cf726bc1816292633c333b1f1d41c86fa1d1cb57ed2a15151f22dcd",
+  "at": "2026-11-06T09:49:45.639600+00:00",
+  "market_id": "4fde33741fac4a0602e376f492f2d8de9c29d1bb4dde846436870dade8f61b70",
   "source_health": [
     {
       "source": "scout",
@@ -26,30 +26,37 @@
   ],
   "specialist_sources": [
     {
-      "url": "https://www.fantasyfootballscout.co.uk/2026/11/04/ffs-mini-leagues-and-community-competitions-gameweek-9-3",
-      "source_id": "55b36f255c44371e2ad2d12c5711abb0df74e315c4d32b1cd786c30799e4598f",
+      "url": "https://www.fantasyfootballscout.co.uk/2026/11/06/big-at-the-back-what-is-the-best-five-man-fpl-defence-we-ask-our-pundits",
+      "source_id": "c94868f25f304de67850623cb5361486750a2fff15855675fe95dd68d7aeea24",
       "status": "extracted",
       "source_tier": "specialist",
       "claim_ids": [
-        "1cc2291338b50db968317f6b92c5849f07eab38b6a0c28caf892866e11c418b3"
+        "f9501f5fea42cac19c1151118563d16942540e3e525eafd537e541ffac2ad2e9",
+        "f87de70835ac7f12dcbdf86a821156560cf06b5445e10c1988adb0343ee7952d"
       ],
       "provider": "gemini",
       "model": "gemini-3.5-flash-lite",
       "fallback_failures": []
     },
     {
-      "url": "https://www.fantasyfootballscout.co.uk/2026/11/04/fpl-notes-cunha-mbeumo-swap-baleba-injury-manzambis-mins",
-      "status": "unavailable",
-      "reason": "Verified free providers unavailable; source queued and numerical planner remains available"
+      "url": "https://www.fantasyfootballscout.co.uk/2026/11/06/who-is-the-best-captain-for-fpl-gameweek-10-5",
+      "source_id": "0e6644ae52dabd316a69562d80a67c44f39f9f4bc4f547bc116133a5cba0c174",
+      "status": "extracted",
+      "source_tier": "specialist",
+      "claim_ids": [
+        "3efa2b2d58d1a83d2fce2c03f53b4cf96ad2b6170128b0995d68738a2977894f"
+      ],
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "fallback_failures": []
     },
     {
-      "url": "https://www.fantasyfootballscout.co.uk/2026/11/04/how-the-great-and-the-good-did-in-fpl-gameweek-9",
-      "status": "unavailable",
-      "reason": "Verified free providers unavailable; source queued and numerical planner remains available"
+      "url": "https://www.fantasyfootballscout.co.uk/2026/11/06/the-scout-squad-our-top-picks-for-fpl-gameweek-10-3",
+      "status": "no_resolved_players"
     }
   ],
   "community_leads": 15,
-  "claims": 1,
+  "claims": 3,
   "influence_policy": "Community is a lead; supported specialist facts become timestamped context; speculative recommendations are not hard-coded point uplifts",
-  "id": "953171a8eb2d29debd979982e681fa70207b3955ec95fd5e6d5e50109c28611a"
+  "id": "3e9a7e153cfd246369d883f32dd06090111b2845f42ef93829a76f94dabde5f3"
 }

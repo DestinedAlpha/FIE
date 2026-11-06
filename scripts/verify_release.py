@@ -123,6 +123,22 @@ def main():
     from fpl_intelligence.decision import load_bundle
 
     load_bundle(store, store.get("decision_model"))
+    role_id = store.get("decision_model").get("role_minutes_model_id")
+    if role_id:
+        import importlib.util
+
+        import lightgbm as lgb
+
+        role = store.get("role_minutes_model", role_id)
+        validation = store.get("role_minutes_validation", role["validation_id"])
+        assert forecast["role_minutes_model_id"] == role_id and role["promoted"] and validation["passed"]
+        path = store.artifact_path(role["path"])
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == role["hash"]
+        assert lgb.Booster(model_file=str(path)).num_feature() == role["width"] == 57
+        predictions = store.artifact_path(validation["prediction_path"])
+        assert hashlib.sha256(predictions.read_bytes()).hexdigest() == validation["prediction_hash"]
+        assert importlib.util.find_spec("torch") is None
+        assert not list((store.root / "models").rglob("*.pt"))
     fusion = artifacts["fusion_model"]
     directory = store.root / "models" / fusion["directory"]
     for name, expected in fusion["tree_spec"]["hashes"].items():
@@ -244,6 +260,18 @@ def main():
         "first_hit": plan["ledger"][0]["hit"],
         "simulation": plan["simulation"],
         "solver": plan["solver"],
+        "role_minutes": {
+            "model_id": role_id,
+            "validation_id": role["validation_id"],
+            "width": role["width"],
+            "completed_labels_through": role["completed_labels_through"],
+            "weights_and_prediction_hashes": "verified",
+            "local_tensor_runtime": "removed",
+        }
+        if role_id
+        else None,
+        "resource_selection": artifacts["policy_selection"].get("selection"),
+        "current_chip_evidence": artifacts["policy_selection"].get("immediate_chip_evidence"),
         "weekly_scores": [
             {"gw": w["event"], "actual_points": w["actual_points"], "hindsight_points": w["hindsight_points"]}
             for w in replay["weeks"]

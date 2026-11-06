@@ -1,0 +1,1498 @@
+{
+  "at": "2026-11-06T10:28:48.627485+00:00",
+  "state_id": "7b62e815bffd50f908e4e8b63d43f93670e1625e5ad59805ed3572925e08de83",
+  "forecast_id": "4d5bee2182252110735e8e9a87aa19ce1a3429c188072ed8011a533ad8ec86ff",
+  "candidates": {
+    "roll": {
+      "immediate_plan_id": "2e24d149191427519c6305dfc03c73d97e0cf90e419cdbdf25ac6429d9393664",
+      "full_plan_id": "33691063bfe8d18b43e1e1606956f67161117ac8fe040717a039b510cb4f3a25",
+      "gw10_net": 52.013,
+      "horizon_net": 600.95715,
+      "bank": 16,
+      "hit": 0,
+      "solver": {
+        "status": "Time limit reached",
+        "objective": 551.87133,
+        "best_bound": 578.224441503664,
+        "gap": 0.04775227497986548,
+        "bound_available": true,
+        "nodes": 0,
+        "variables": 47046,
+        "constraints": 57355,
+        "initial_warm_objective": 551.87133,
+        "selected_warm_objective": 551.87133,
+        "reused_incumbent_plan_id": null,
+        "validated_cached_incumbents": 5,
+        "runtime_seconds": 46.081,
+        "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+        "market_players": 564,
+        "screened_players": 0,
+        "terminal_value": "Declared fixed terminal sensitivity",
+        "state_value_model_id": null,
+        "scope": "MIP bound/gap applies to the continuation conditional on the independently selected first action",
+        "first_action_source": "Fresh counterfactual with revalidated earlier-market continuation",
+        "continuation_plan_id": "21d50c8ff5b7765fa2eb9d6d79817a61498c73472015233996a5b48436d8fe35"
+      }
+    },
+    "cherki_tavernier": {
+      "immediate_plan_id": "7ae0de93f4df61852b760c6359801fcdbfef831b872216a813c90f92dfb99d2e",
+      "full_plan_id": "e2b84b21caed09cc6a233c2a69b4246481d45e285c4e7197192c083922cd22cd",
+      "gw10_net": 52.5269,
+      "horizon_net": 603.938,
+      "bank": 28,
+      "hit": 0,
+      "solver": {
+        "status": "Time limit reached",
+        "objective": 554.24218,
+        "best_bound": 576.0837911738575,
+        "gap": 0.03940806377071047,
+        "bound_available": true,
+        "nodes": 0,
+        "variables": 47046,
+        "constraints": 57355,
+        "initial_warm_objective": 554.24218,
+        "selected_warm_objective": 554.24218,
+        "reused_incumbent_plan_id": null,
+        "validated_cached_incumbents": 4,
+        "runtime_seconds": 46.406,
+        "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+        "market_players": 564,
+        "screened_players": 0,
+        "terminal_value": "Declared fixed terminal sensitivity",
+        "state_value_model_id": null,
+        "scope": "MIP bound/gap applies to the continuation conditional on the independently selected first action",
+        "first_action_source": "Fresh counterfactual with revalidated earlier-market continuation",
+        "continuation_plan_id": "4c6cd024af7bd4d60248ff846b60076b630f4b3f489053670b4ef65bf5916a01"
+      }
+    },
+    "gvardiol_virgil": {
+      "immediate_plan_id": "882f02f1832c75aa9638294ace6e9261b3b9c846d3a052c2a3af6e0722629ac8",
+      "full_plan_id": "69bc58b332c92a550b99b5625cddd8f801983f30b47579f496051b5ce07cd25a",
+      "gw10_net": 53.90965,
+      "horizon_net": 605.2335,
+      "bank": 9,
+      "hit": 0,
+      "solver": {
+        "status": "Time limit reached",
+        "objective": 553.805535,
+        "best_bound": 578.268952417443,
+        "gap": 0.044173298877272865,
+        "bound_available": true,
+        "nodes": 0,
+        "variables": 47046,
+        "constraints": 57355,
+        "initial_warm_objective": 553.805535,
+        "selected_warm_objective": 553.805535,
+        "reused_incumbent_plan_id": null,
+        "validated_cached_incumbents": 4,
+        "runtime_seconds": 45.582,
+        "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+        "market_players": 564,
+        "screened_players": 0,
+        "terminal_value": "Declared fixed terminal sensitivity",
+        "state_value_model_id": null,
+        "scope": "MIP bound/gap applies to the continuation conditional on the independently selected first action",
+        "first_action_source": "Fresh counterfactual with revalidated earlier-market continuation",
+        "continuation_plan_id": "6248ba44c47bd2d456a7d4f73dd3c38379a5883f4704458a0d38536a435bed63"
+      }
+    }
+  },
+  "selected_plan_id": "7e53e13bd5a184e194e7713aac76dec4d5fab8309de001a8d1209fd245f39298",
+  "selection_receipt_id": "50a7671783caaed9a23c096b2d8a3e07bc90c2da5c71059f4e47bd33dd267f51",
+  "ledger": [
+    {
+      "event": 10,
+      "sell": [
+        {
+          "player_id": 391,
+          "units": 57
+        }
+      ],
+      "buy": [
+        {
+          "player_id": 356,
+          "units": 64
+        }
+      ],
+      "bank_before": 16,
+      "bank_after": 9,
+      "settlement_bank_before": 16,
+      "settlement_sales": [
+        {
+          "player_id": 391,
+          "units": 57
+        }
+      ],
+      "settlement_purchases": [
+        {
+          "player_id": 356,
+          "units": 64
+        }
+      ],
+      "restored_bank": null,
+      "free_transfers_before": 1,
+      "free_transfers_after": 1,
+      "hit": 0,
+      "event_total_hit": 0,
+      "chip": null,
+      "playing_squad": [
+        1,
+        115,
+        330,
+        124,
+        40,
+        399,
+        154,
+        411,
+        79,
+        346,
+        497,
+        8,
+        306,
+        212,
+        356
+      ],
+      "permanent_squad": [
+        1,
+        115,
+        330,
+        124,
+        40,
+        399,
+        154,
+        411,
+        79,
+        346,
+        497,
+        8,
+        306,
+        212,
+        356
+      ],
+      "lineup": {
+        "xi": [
+          1,
+          8,
+          40,
+          79,
+          115,
+          124,
+          154,
+          330,
+          346,
+          356,
+          411
+        ],
+        "bench": [
+          497,
+          399,
+          306,
+          212
+        ],
+        "captain": 411,
+        "vice": 40
+      },
+      "expected_additive_net": 52.577749999999995,
+      "assumptions": [
+        "Constant market prices; refresh sell quotes before execution",
+        "Future transfers conditional on refreshed minutes, availability and fixtures"
+      ],
+      "simulated_net_mean": 53.91,
+      "net_quantiles": [
+        39.0,
+        53.0,
+        70.0
+      ]
+    },
+    {
+      "event": 11,
+      "sell": [
+        {
+          "player_id": 8,
+          "units": 58
+        },
+        {
+          "player_id": 330,
+          "units": 47
+        }
+      ],
+      "buy": [
+        {
+          "player_id": 60,
+          "units": 56
+        },
+        {
+          "player_id": 334,
+          "units": 51
+        }
+      ],
+      "bank_before": 9,
+      "bank_after": 7,
+      "settlement_bank_before": 9,
+      "settlement_sales": [
+        {
+          "player_id": 8,
+          "units": 58
+        },
+        {
+          "player_id": 330,
+          "units": 47
+        }
+      ],
+      "settlement_purchases": [
+        {
+          "player_id": 60,
+          "units": 56
+        },
+        {
+          "player_id": 334,
+          "units": 51
+        }
+      ],
+      "restored_bank": null,
+      "free_transfers_before": 1,
+      "free_transfers_after": 1,
+      "hit": 4,
+      "event_total_hit": 4,
+      "chip": null,
+      "playing_squad": [
+        1,
+        115,
+        124,
+        40,
+        399,
+        154,
+        411,
+        79,
+        346,
+        497,
+        306,
+        212,
+        356,
+        60,
+        334
+      ],
+      "permanent_squad": [
+        1,
+        115,
+        124,
+        40,
+        399,
+        154,
+        411,
+        79,
+        346,
+        497,
+        306,
+        212,
+        356,
+        60,
+        334
+      ],
+      "lineup": {
+        "xi": [
+          1,
+          40,
+          60,
+          79,
+          124,
+          154,
+          334,
+          346,
+          356,
+          399,
+          411
+        ],
+        "bench": [
+          497,
+          115,
+          306,
+          212
+        ],
+        "captain": 411,
+        "vice": 60
+      },
+      "expected_additive_net": 52.809450000000005,
+      "assumptions": [
+        "Constant market prices; refresh sell quotes before execution",
+        "Future transfers conditional on refreshed minutes, availability and fixtures"
+      ],
+      "simulated_net_mean": 54.868,
+      "net_quantiles": [
+        40.0,
+        54.0,
+        71.0
+      ]
+    },
+    {
+      "event": 12,
+      "sell": [
+        {
+          "player_id": 399,
+          "units": 78
+        }
+      ],
+      "buy": [
+        {
+          "player_id": 338,
+          "units": 53
+        }
+      ],
+      "bank_before": 7,
+      "bank_after": 32,
+      "settlement_bank_before": 7,
+      "settlement_sales": [
+        {
+          "player_id": 399,
+          "units": 78
+        }
+      ],
+      "settlement_purchases": [
+        {
+          "player_id": 338,
+          "units": 53
+        }
+      ],
+      "restored_bank": null,
+      "free_transfers_before": 1,
+      "free_transfers_after": 1,
+      "hit": 0,
+      "event_total_hit": 0,
+      "chip": null,
+      "playing_squad": [
+        1,
+        115,
+        124,
+        40,
+        154,
+        411,
+        79,
+        346,
+        497,
+        306,
+        212,
+        356,
+        60,
+        334,
+        338
+      ],
+      "permanent_squad": [
+        1,
+        115,
+        124,
+        40,
+        154,
+        411,
+        79,
+        346,
+        497,
+        306,
+        212,
+        356,
+        60,
+        334,
+        338
+      ],
+      "lineup": {
+        "xi": [
+          1,
+          40,
+          60,
+          79,
+          124,
+          154,
+          334,
+          338,
+          346,
+          356,
+          411
+        ],
+        "bench": [
+          497,
+          115,
+          306,
+          212
+        ],
+        "captain": 411,
+        "vice": 60
+      },
+      "expected_additive_net": 55.317299999999996,
+      "assumptions": [
+        "Constant market prices; refresh sell quotes before execution",
+        "Future transfers conditional on refreshed minutes, availability and fixtures"
+      ],
+      "simulated_net_mean": 57.415,
+      "net_quantiles": [
+        42.0,
+        57.0,
+        74.0
+      ]
+    },
+    {
+      "event": 13,
+      "sell": [
+        {
+          "player_id": 1,
+          "units": 61
+        },
+        {
+          "player_id": 115,
+          "units": 52
+        },
+        {
+          "player_id": 306,
+          "units": 39
+        },
+        {
+          "player_id": 334,
+          "units": 51
+        },
+        {
+          "player_id": 124,
+          "units": 59
+        },
+        {
+          "player_id": 338,
+          "units": 53
+        },
+        {
+          "player_id": 79,
+          "units": 63
+        }
+      ],
+      "buy": [
+        {
+          "player_id": 384,
+          "units": 55
+        },
+        {
+          "player_id": 4,
+          "units": 80
+        },
+        {
+          "player_id": 362,
+          "units": 51
+        },
+        {
+          "player_id": 508,
+          "units": 39
+        },
+        {
+          "player_id": 183,
+          "units": 49
+        },
+        {
+          "player_id": 481,
+          "units": 63
+        },
+        {
+          "player_id": 166,
+          "units": 70
+        }
+      ],
+      "bank_before": 32,
+      "bank_after": 3,
+      "settlement_bank_before": 32,
+      "settlement_sales": [
+        {
+          "player_id": 1,
+          "units": 61
+        },
+        {
+          "player_id": 115,
+          "units": 52
+        },
+        {
+          "player_id": 306,
+          "units": 39
+        },
+        {
+          "player_id": 334,
+          "units": 51
+        },
+        {
+          "player_id": 124,
+          "units": 59
+        },
+        {
+          "player_id": 338,
+          "units": 53
+        },
+        {
+          "player_id": 79,
+          "units": 63
+        }
+      ],
+      "settlement_purchases": [
+        {
+          "player_id": 384,
+          "units": 55
+        },
+        {
+          "player_id": 4,
+          "units": 80
+        },
+        {
+          "player_id": 362,
+          "units": 51
+        },
+        {
+          "player_id": 508,
+          "units": 39
+        },
+        {
+          "player_id": 183,
+          "units": 49
+        },
+        {
+          "player_id": 481,
+          "units": 63
+        },
+        {
+          "player_id": 166,
+          "units": 70
+        }
+      ],
+      "restored_bank": 32,
+      "free_transfers_before": 1,
+      "free_transfers_after": 1,
+      "hit": 0,
+      "event_total_hit": 0,
+      "chip": "freehit",
+      "playing_squad": [
+        40,
+        154,
+        411,
+        346,
+        497,
+        212,
+        356,
+        60,
+        4,
+        166,
+        183,
+        362,
+        384,
+        481,
+        508
+      ],
+      "permanent_squad": [
+        1,
+        115,
+        124,
+        40,
+        154,
+        411,
+        79,
+        346,
+        497,
+        306,
+        212,
+        356,
+        60,
+        334,
+        338
+      ],
+      "lineup": {
+        "xi": [
+          4,
+          40,
+          60,
+          154,
+          166,
+          183,
+          356,
+          362,
+          384,
+          411,
+          481
+        ],
+        "bench": [
+          497,
+          346,
+          508,
+          212
+        ],
+        "captain": 411,
+        "vice": 356
+      },
+      "expected_additive_net": 62.629749999999994,
+      "assumptions": [
+        "Constant market prices; refresh sell quotes before execution",
+        "Future transfers conditional on refreshed minutes, availability and fixtures"
+      ],
+      "simulated_net_mean": 64.532,
+      "net_quantiles": [
+        49.0,
+        64.0,
+        81.0
+      ]
+    },
+    {
+      "event": 14,
+      "sell": [
+        {
+          "player_id": 115,
+          "units": 52
+        }
+      ],
+      "buy": [
+        {
+          "player_id": 4,
+          "units": 80
+        }
+      ],
+      "bank_before": 32,
+      "bank_after": 4,
+      "settlement_bank_before": 32,
+      "settlement_sales": [
+        {
+          "player_id": 115,
+          "units": 52
+        }
+      ],
+      "settlement_purchases": [
+        {
+          "player_id": 4,
+          "units": 80
+        }
+      ],
+      "restored_bank": null,
+      "free_transfers_before": 1,
+      "free_transfers_after": 1,
+      "hit": 0,
+      "event_total_hit": 0,
+      "chip": null,
+      "playing_squad": [
+        1,
+        124,
+        40,
+        154,
+        411,
+        79,
+        346,
+        497,
+        306,
+        212,
+        356,
+        60,
+        334,
+        338,
+        4
+      ],
+      "permanent_squad": [
+        1,
+        124,
+        40,
+        154,
+        411,
+        79,
+        346,
+        497,
+        306,
+        212,
+        356,
+        60,
+        334,
+        338,
+        4
+      ],
+      "lineup": {
+        "xi": [
+          1,
+          4,
+          40,
+          60,
+          79,
+          154,
+          334,
+          338,
+          346,
+          356,
+          411
+        ],
+        "bench": [
+          497,
+          124,
+          306,
+          212
+        ],
+        "captain": 411,
+        "vice": 4
+      },
+      "expected_additive_net": 58.9296,
+      "assumptions": [
+        "Constant market prices; refresh sell quotes before execution",
+        "Future transfers conditional on refreshed minutes, availability and fixtures"
+      ],
+      "simulated_net_mean": 61.101,
+      "net_quantiles": [
+        46.0,
+        60.0,
+        78.0
+      ]
+    },
+    {
+      "event": 15,
+      "sell": [
+        {
+          "player_id": 40,
+          "units": 79
+        }
+      ],
+      "buy": [
+        {
+          "player_id": 542,
+          "units": 57
+        }
+      ],
+      "bank_before": 4,
+      "bank_after": 26,
+      "settlement_bank_before": 4,
+      "settlement_sales": [
+        {
+          "player_id": 40,
+          "units": 79
+        }
+      ],
+      "settlement_purchases": [
+        {
+          "player_id": 542,
+          "units": 57
+        }
+      ],
+      "restored_bank": null,
+      "free_transfers_before": 1,
+      "free_transfers_after": 1,
+      "hit": 0,
+      "event_total_hit": 0,
+      "chip": null,
+      "playing_squad": [
+        1,
+        124,
+        154,
+        411,
+        79,
+        346,
+        497,
+        306,
+        212,
+        356,
+        60,
+        334,
+        338,
+        4,
+        542
+      ],
+      "permanent_squad": [
+        1,
+        124,
+        154,
+        411,
+        79,
+        346,
+        497,
+        306,
+        212,
+        356,
+        60,
+        334,
+        338,
+        4,
+        542
+      ],
+      "lineup": {
+        "xi": [
+          1,
+          4,
+          60,
+          124,
+          154,
+          334,
+          338,
+          346,
+          356,
+          411,
+          542
+        ],
+        "bench": [
+          497,
+          79,
+          306,
+          212
+        ],
+        "captain": 411,
+        "vice": 4
+      },
+      "expected_additive_net": 56.8427,
+      "assumptions": [
+        "Constant market prices; refresh sell quotes before execution",
+        "Future transfers conditional on refreshed minutes, availability and fixtures"
+      ],
+      "simulated_net_mean": 59.038,
+      "net_quantiles": [
+        44.0,
+        58.0,
+        76.0
+      ]
+    },
+    {
+      "event": 16,
+      "sell": [
+        {
+          "player_id": 212,
+          "units": 43
+        }
+      ],
+      "buy": [
+        {
+          "player_id": 127,
+          "units": 50
+        }
+      ],
+      "bank_before": 26,
+      "bank_after": 19,
+      "settlement_bank_before": 26,
+      "settlement_sales": [
+        {
+          "player_id": 212,
+          "units": 43
+        }
+      ],
+      "settlement_purchases": [
+        {
+          "player_id": 127,
+          "units": 50
+        }
+      ],
+      "restored_bank": null,
+      "free_transfers_before": 1,
+      "free_transfers_after": 1,
+      "hit": 0,
+      "event_total_hit": 0,
+      "chip": null,
+      "playing_squad": [
+        1,
+        124,
+        154,
+        411,
+        79,
+        346,
+        497,
+        306,
+        356,
+        60,
+        334,
+        338,
+        4,
+        542,
+        127
+      ],
+      "permanent_squad": [
+        1,
+        124,
+        154,
+        411,
+        79,
+        346,
+        497,
+        306,
+        356,
+        60,
+        334,
+        338,
+        4,
+        542,
+        127
+      ],
+      "lineup": {
+        "xi": [
+          1,
+          4,
+          60,
+          79,
+          124,
+          154,
+          334,
+          338,
+          356,
+          411,
+          542
+        ],
+        "bench": [
+          497,
+          346,
+          127,
+          306
+        ],
+        "captain": 411,
+        "vice": 60
+      },
+      "expected_additive_net": 61.8715,
+      "assumptions": [
+        "Constant market prices; refresh sell quotes before execution",
+        "Future transfers conditional on refreshed minutes, availability and fixtures"
+      ],
+      "simulated_net_mean": 64.99,
+      "net_quantiles": [
+        50.0,
+        64.0,
+        82.0
+      ]
+    },
+    {
+      "event": 17,
+      "sell": [
+        {
+          "player_id": 306,
+          "units": 39
+        }
+      ],
+      "buy": [
+        {
+          "player_id": 566,
+          "units": 51
+        }
+      ],
+      "bank_before": 19,
+      "bank_after": 7,
+      "settlement_bank_before": 19,
+      "settlement_sales": [
+        {
+          "player_id": 306,
+          "units": 39
+        }
+      ],
+      "settlement_purchases": [
+        {
+          "player_id": 566,
+          "units": 51
+        }
+      ],
+      "restored_bank": null,
+      "free_transfers_before": 1,
+      "free_transfers_after": 1,
+      "hit": 0,
+      "event_total_hit": 0,
+      "chip": null,
+      "playing_squad": [
+        1,
+        124,
+        154,
+        411,
+        79,
+        346,
+        497,
+        356,
+        60,
+        334,
+        338,
+        4,
+        542,
+        127,
+        566
+      ],
+      "permanent_squad": [
+        1,
+        124,
+        154,
+        411,
+        79,
+        346,
+        497,
+        356,
+        60,
+        334,
+        338,
+        4,
+        542,
+        127,
+        566
+      ],
+      "lineup": {
+        "xi": [
+          1,
+          4,
+          60,
+          124,
+          154,
+          334,
+          338,
+          356,
+          411,
+          542,
+          566
+        ],
+        "bench": [
+          497,
+          79,
+          346,
+          127
+        ],
+        "captain": 4,
+        "vice": 411
+      },
+      "expected_additive_net": 57.61855,
+      "assumptions": [
+        "Constant market prices; refresh sell quotes before execution",
+        "Future transfers conditional on refreshed minutes, availability and fixtures"
+      ],
+      "simulated_net_mean": 60.734,
+      "net_quantiles": [
+        45.0,
+        60.0,
+        78.0
+      ]
+    },
+    {
+      "event": 18,
+      "sell": [
+        {
+          "player_id": 497,
+          "units": 40
+        }
+      ],
+      "buy": [
+        {
+          "player_id": 109,
+          "units": 46
+        }
+      ],
+      "bank_before": 7,
+      "bank_after": 1,
+      "settlement_bank_before": 7,
+      "settlement_sales": [
+        {
+          "player_id": 497,
+          "units": 40
+        }
+      ],
+      "settlement_purchases": [
+        {
+          "player_id": 109,
+          "units": 46
+        }
+      ],
+      "restored_bank": null,
+      "free_transfers_before": 1,
+      "free_transfers_after": 1,
+      "hit": 0,
+      "event_total_hit": 0,
+      "chip": null,
+      "playing_squad": [
+        1,
+        124,
+        154,
+        411,
+        79,
+        346,
+        356,
+        60,
+        334,
+        338,
+        4,
+        542,
+        127,
+        566,
+        109
+      ],
+      "permanent_squad": [
+        1,
+        124,
+        154,
+        411,
+        79,
+        346,
+        356,
+        60,
+        334,
+        338,
+        4,
+        542,
+        127,
+        566,
+        109
+      ],
+      "lineup": {
+        "xi": [
+          4,
+          60,
+          79,
+          109,
+          154,
+          334,
+          338,
+          356,
+          411,
+          542,
+          566
+        ],
+        "bench": [
+          1,
+          124,
+          346,
+          127
+        ],
+        "captain": 60,
+        "vice": 411
+      },
+      "expected_additive_net": 58.12370000000001,
+      "assumptions": [
+        "Constant market prices; refresh sell quotes before execution",
+        "Future transfers conditional on refreshed minutes, availability and fixtures"
+      ],
+      "simulated_net_mean": 61.433,
+      "net_quantiles": [
+        46.0,
+        60.0,
+        78.0
+      ]
+    },
+    {
+      "event": 19,
+      "sell": [
+        {
+          "player_id": 1,
+          "units": 61
+        }
+      ],
+      "buy": [
+        {
+          "player_id": 384,
+          "units": 55
+        }
+      ],
+      "bank_before": 1,
+      "bank_after": 7,
+      "settlement_bank_before": 1,
+      "settlement_sales": [
+        {
+          "player_id": 1,
+          "units": 61
+        }
+      ],
+      "settlement_purchases": [
+        {
+          "player_id": 384,
+          "units": 55
+        }
+      ],
+      "restored_bank": null,
+      "free_transfers_before": 1,
+      "free_transfers_after": 1,
+      "hit": 0,
+      "event_total_hit": 0,
+      "chip": "bboost",
+      "playing_squad": [
+        124,
+        154,
+        411,
+        79,
+        346,
+        356,
+        60,
+        334,
+        338,
+        4,
+        542,
+        127,
+        566,
+        109,
+        384
+      ],
+      "permanent_squad": [
+        124,
+        154,
+        411,
+        79,
+        346,
+        356,
+        60,
+        334,
+        338,
+        4,
+        542,
+        127,
+        566,
+        109,
+        384
+      ],
+      "lineup": {
+        "xi": [
+          4,
+          79,
+          124,
+          127,
+          154,
+          338,
+          356,
+          384,
+          411,
+          542,
+          566
+        ],
+        "bench": [
+          109,
+          60,
+          334,
+          346
+        ],
+        "captain": 411,
+        "vice": 4
+      },
+      "expected_additive_net": 77.0076,
+      "assumptions": [
+        "Constant market prices; refresh sell quotes before execution",
+        "Future transfers conditional on refreshed minutes, availability and fixtures"
+      ],
+      "simulated_net_mean": 77.394,
+      "net_quantiles": [
+        59.0,
+        77.0,
+        96.0
+      ]
+    }
+  ],
+  "mean": 615.4149,
+  "immediate_paired_vs_roll": {
+    "roll": {
+      "mean": 0.0,
+      "simulation_mean_95ci": [
+        0.0,
+        0.0
+      ]
+    },
+    "cherki_tavernier": {
+      "mean": 0.5139,
+      "simulation_mean_95ci": [
+        0.4581742405324377,
+        0.5696257594675623
+      ]
+    },
+    "gvardiol_virgil": {
+      "mean": 1.89665,
+      "simulation_mean_95ci": [
+        1.8351686821188369,
+        1.958131317881163
+      ]
+    }
+  },
+  "resource_evidence": {
+    "hit": {
+      "candidate_plan_id": "5a04acbec495331d5385a32ee95536b34ae53f6aa5799560c51d383bb32c05cd",
+      "no_hit_plan_id": "71672e702252c5657e651d7b3b208b2665785ebbf5b120de4965b5698886b17d",
+      "net_mean_gain": 3.15635,
+      "paired_mc_interval_95": [
+        2.844587368321058,
+        3.4681126316789426
+      ],
+      "hit_supported_beyond_mc_error": true,
+      "no_hit_search_plan_id": "5d9782642e46fe04865a27aafd5c09e006b116448a6459980898c92b8775e929",
+      "no_hit_search_allowance": 9.862442387399255,
+      "hit_supported_beyond_search_error": false,
+      "weekly_tradeoff": [
+        {
+          "event": 10,
+          "candidate_net": 44.321,
+          "alternative_net": 60.37,
+          "cumulative_net_advantage": -16.049
+        },
+        {
+          "event": 11,
+          "candidate_net": 60.879,
+          "alternative_net": 47.097,
+          "cumulative_net_advantage": -2.267000000000003
+        },
+        {
+          "event": 12,
+          "candidate_net": 59.128,
+          "alternative_net": 58.804,
+          "cumulative_net_advantage": -1.943000000000005
+        },
+        {
+          "event": 13,
+          "candidate_net": 64.792,
+          "alternative_net": 60.679,
+          "cumulative_net_advantage": 2.1699999999999946
+        },
+        {
+          "event": 14,
+          "candidate_net": 60.246,
+          "alternative_net": 61.658,
+          "cumulative_net_advantage": 0.7579999999999956
+        },
+        {
+          "event": 15,
+          "candidate_net": 62.134,
+          "alternative_net": 60.542,
+          "cumulative_net_advantage": 2.3499999999999943
+        },
+        {
+          "event": 16,
+          "candidate_net": 65.627,
+          "alternative_net": 65.901,
+          "cumulative_net_advantage": 2.0759999999999934
+        },
+        {
+          "event": 17,
+          "candidate_net": 61.886,
+          "alternative_net": 61.526,
+          "cumulative_net_advantage": 2.435999999999993
+        },
+        {
+          "event": 18,
+          "candidate_net": 61.726,
+          "alternative_net": 60.235,
+          "cumulative_net_advantage": 3.9269999999999925
+        },
+        {
+          "event": 19,
+          "candidate_net": 79.024,
+          "alternative_net": 79.794,
+          "cumulative_net_advantage": 3.1569999999999965
+        }
+      ],
+      "scope": "Paired sampling error and unfinished no-hit additive-search allowance are separate. Forecast error remains additional; this is not a statistical confidence interval for the true transfer value.",
+      "reason": "No-new-hit policy retained: paid-transfer advantage is unresolved after the no-hit search allowance",
+      "source_forecast_review": [
+        {
+          "player_id": 8,
+          "name": "Calafiori",
+          "fixtures": [
+            "HUL (H)"
+          ],
+          "model_points": 3.65395,
+          "model_minutes": 69.39765,
+          "model_start_probability": 0.7432950191570882,
+          "official_next_points": 5.5,
+          "official_status": "a",
+          "official_availability": 1.0,
+          "season_starts": 8,
+          "completed_club_fixtures": 9
+        },
+        {
+          "player_id": 60,
+          "name": "Hill",
+          "fixtures": [
+            "IPS (A)"
+          ],
+          "model_points": 4.5237,
+          "model_minutes": 88.21665,
+          "model_start_probability": 0.975609756097561,
+          "official_next_points": 6.5,
+          "official_status": "a",
+          "official_availability": null,
+          "season_starts": 9,
+          "completed_club_fixtures": 9
+        },
+        {
+          "player_id": 212,
+          "name": "Hughes",
+          "fixtures": [
+            "LIV (H)"
+          ],
+          "model_points": 0.46255,
+          "model_minutes": 10.5626,
+          "model_start_probability": 0.08045977011494253,
+          "official_next_points": 0.5,
+          "official_status": "a",
+          "official_availability": null,
+          "season_starts": 0,
+          "completed_club_fixtures": 9
+        },
+        {
+          "player_id": 306,
+          "name": "Greaves",
+          "fixtures": [
+            "BOU (H)"
+          ],
+          "model_points": 0.9019,
+          "model_minutes": 24.54015,
+          "model_start_probability": 0.35019543118029683,
+          "official_next_points": 0.2,
+          "official_status": "a",
+          "official_availability": null,
+          "season_starts": 5,
+          "completed_club_fixtures": 9
+        },
+        {
+          "player_id": 338,
+          "name": "Ampadu",
+          "fixtures": [
+            "TOT (H)"
+          ],
+          "model_points": 4.22665,
+          "model_minutes": 86.49495,
+          "model_start_probability": 0.975609756097561,
+          "official_next_points": 1.8,
+          "official_status": "a",
+          "official_availability": null,
+          "season_starts": 9,
+          "completed_club_fixtures": 9
+        },
+        {
+          "player_id": 356,
+          "name": "Virgil",
+          "fixtures": [
+            "CRY (A)"
+          ],
+          "model_points": 5.2113,
+          "model_minutes": 88.56335,
+          "model_start_probability": 1.0,
+          "official_next_points": 3.5,
+          "official_status": "a",
+          "official_availability": null,
+          "season_starts": 9,
+          "completed_club_fixtures": 9
+        },
+        {
+          "player_id": 399,
+          "name": "Cherki",
+          "fixtures": [
+            "NFO (A)"
+          ],
+          "model_points": 2.8915,
+          "model_minutes": 40.96575,
+          "model_start_probability": 0.25833333333333336,
+          "official_next_points": 2.8,
+          "official_status": "a",
+          "official_availability": null,
+          "season_starts": 6,
+          "completed_club_fixtures": 9
+        },
+        {
+          "player_id": 542,
+          "name": "E.Le F\u00e9e",
+          "fixtures": [
+            "CHE (H)"
+          ],
+          "model_points": 4.35265,
+          "model_minutes": 81.4748,
+          "model_start_probability": 0.907563025210084,
+          "official_next_points": 4.2,
+          "official_status": "a",
+          "official_availability": null,
+          "season_starts": 9,
+          "completed_club_fixtures": 9
+        }
+      ]
+    },
+    "chip": {
+      "chip": "freehit",
+      "candidate_plan_id": "71672e702252c5657e651d7b3b208b2665785ebbf5b120de4965b5698886b17d",
+      "alternative_plan_id": "7e53e13bd5a184e194e7713aac76dec4d5fab8309de001a8d1209fd245f39298",
+      "net_mean_gain": 1.1908,
+      "paired_mc_interval_95": [
+        0.842295682345656,
+        1.5393043176543442
+      ],
+      "search_allowance": 11.715647959231546,
+      "control_plan_id": "7e53e13bd5a184e194e7713aac76dec4d5fab8309de001a8d1209fd245f39298",
+      "supported_beyond_search_error": false,
+      "reason": "Chip retained: its modeled advantage is unresolved against ordinary transfers and later chip use",
+      "scope": "Same frozen horizon and outcome worlds; future chip use remains available. Additive search sensitivity excludes forecast error and is not an exact nonlinear bound."
+    }
+  },
+  "ordinary_control_plan_id": "7e53e13bd5a184e194e7713aac76dec4d5fab8309de001a8d1209fd245f39298",
+  "id": "d228cc5f4ca91b36984ec0439eb9045f940233eea349997b5ce524658c538224"
+}
