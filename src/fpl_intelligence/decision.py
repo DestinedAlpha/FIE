@@ -15,9 +15,6 @@ import numpy as np
 import polars as pl
 from scipy.special import ndtr
 from scipy.stats import nbinom
-from sklearn.neural_network import MLPRegressor
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
 
 from .features import FEATURE_NAMES, histories, number, profile, vector
 from .history import archived_rows
@@ -62,14 +59,16 @@ def minute_band(minutes):
 def context_vector(position, home, past, kickoff, team, opponent, week):
     """One shared train/serve transformation; the current outcome is never an input."""
     p = profile(position, past)
-    exp = sum(number(r, "minutes") / 90 for r in past[-24:])
+    exp = sum((number(r, "minutes") / 90 for r in past[-24:]))
     extras = {
         "price_lag": number(past[-1], "value", {1: 45, 2: 45, 3: 60, 4: 65}[position])
         if past
         else {1: 45, 2: 45, 3: 60, 4: 65}[position],
-        "goals_actual90": (sum(number(r, "goals_scored") for r in past[-24:]) + 5 * p["goals90"]) / (exp + 5),
-        "assists_actual90": (sum(number(r, "assists") for r in past[-24:]) + 5 * p["assists90"]) / (exp + 5),
-        "bonus90": (sum(number(r, "bonus") for r in past[-24:]) + 2) / (exp + 5),
+        "goals_actual90": (sum((number(r, "goals_scored") for r in past[-24:])) + 5 * p["goals90"])
+        / (exp + 5),
+        "assists_actual90": (sum((number(r, "assists") for r in past[-24:])) + 5 * p["assists90"])
+        / (exp + 5),
+        "bonus90": (sum((number(r, "bonus") for r in past[-24:])) + 2) / (exp + 5),
         "last3_minutes": np.mean([number(r, "minutes") for r in past[-3:]]) if past else 0.0,
         "last5_points": np.mean([number(r, "total_points") for r in past[-5:]]) if past else 2.0,
         "long_probability": p["p_long_start"],
@@ -80,14 +79,14 @@ def context_vector(position, home, past, kickoff, team, opponent, week):
         "season_week": week,
         "history_missing": float(not past),
     }
-    return vector(position, home, p, kickoff) + [float(extras[k]) for k in EXTRA], p
+    return (vector(position, home, p, kickoff) + [float(extras[k]) for k in EXTRA], p)
 
 
 def strength(rows):
     rows = rows[-16:]
     return (
-        (sum(r[0] for r in rows) + 8 * 1.4) / (len(rows) + 8),
-        (sum(r[1] for r in rows) + 8 * 1.4) / (len(rows) + 8),
+        (sum((r[0] for r in rows)) + 8 * 1.4) / (len(rows) + 8),
+        (sum((r[1] for r in rows)) + 8 * 1.4) / (len(rows) + 8),
     )
 
 
@@ -124,7 +123,7 @@ def canonical_rows(store: Store):
     for key, group in by_fixture.items():
         sides = {}
         for home in (True, False):
-            names = Counter(str(r["team"]) for r in group if bool(r["was_home"]) == home)
+            names = Counter((str(r["team"]) for r in group if bool(r["was_home"]) == home))
             if not names:
                 raise ValueError(f"Historical fixture {key} lacks a team side")
             sides[home] = names.most_common(1)[0][0]
@@ -136,9 +135,7 @@ def canonical_rows(store: Store):
             "away_goals": number(exemplar, "team_a_score"),
             "event": int(exemplar["round"]),
         }
-        # Early 2022 data has starts filled with zero for entire fixtures. Those
-        # are missing labels, not 22 observed substitute appearances.
-        missing_starts = sum(number(r, "starts") for r in group) == 0
+        missing_starts = sum((number(r, "starts") for r in group)) == 0
         for r in group:
             r["team"] = sides[bool(r["was_home"])]
             r["opponent_name"] = sides[not bool(r["was_home"])]
@@ -156,7 +153,7 @@ def canonical_rows(store: Store):
         )
     )
     unique = {(r["season"], int(r["element"]), int(r["fixture"])): r for r in rows}
-    return list(unique.values()), metadata, {"unknown_start_labels": unknown_starts}
+    return (list(unique.values()), metadata, {"unknown_start_labels": unknown_starts})
 
 
 def player_key(row):
@@ -194,7 +191,6 @@ def build_dataset(store: Store):
                 else 0
             )
             target = number(row, "total_points")
-            # Goalkeepers' goals rose from six to ten in the 2025 rules.
             base_target = (
                 target
                 - dc
@@ -223,7 +219,6 @@ def build_dataset(store: Store):
                     "price_observed": bool(past and past[-1].get("value") is not None),
                 }
             )
-        # Update only after ALL fixtures of this deadline, including doubles.
         for row in current:
             player_history[player_key(row)].append(row)
             player_history[player_key(row)] = player_history[player_key(row)][-24:]
@@ -252,7 +247,7 @@ def build_dataset(store: Store):
         ],
     }
     report["id"] = store.put("decision_features", report)
-    return report, frame
+    return (report, frame)
 
 
 def dc_probability(position, p, minutes):
@@ -260,11 +255,11 @@ def dc_probability(position, p, minutes):
         return [0.0] * len(minutes)
     mean = np.array(minutes) / 90 * p["actions90"]
     shape = p.get("action_shape", 20)
-    result = nbinom.sf((10 if position == 2 else 12) - 1, shape, shape / (shape + np.maximum(mean, 1e-9)))
+    result = nbinom.sf((10 if position == 2 else 12) - 1, shape, shape / (shape + np.maximum(mean, 1e-09)))
     return np.where(np.array(minutes) >= 1, result, 0).tolist()
 
 
-def fit_components(training, calibration, neural=False):
+def fit_components(training, calibration):
     x = training.select(NAMES).to_numpy()
     xc = calibration.select(NAMES).to_numpy()
     yband = minute_band(training["minutes_target"].to_numpy())
@@ -288,38 +283,23 @@ def fit_components(training, calibration, neural=False):
     curves["start"] = curve_fit(
         np.asarray(starter.predict_proba(cs.select(NAMES).to_numpy()))[:, 1], cs["start_target"].to_numpy()
     )
-    network = None
-    if neural:
-        network = make_pipeline(
-            StandardScaler(),
-            MLPRegressor(
-                hidden_layer_sizes=(32, 16),
-                alpha=10,
-                learning_rate_init=0.001,
-                max_iter=100,
-                early_stopping=True,
-                validation_fraction=0.12,
-                random_state=47,
-            ),
-        )
-        network.fit(xp, target)
-    return {"minutes": minutes, "starter": starter, "points": points, "curves": curves, "network": network}
+    return {"minutes": minutes, "starter": starter, "points": points, "curves": curves}
 
 
-def predict_models(bundle, matrix, dc, neural=False):
+def predict_models(bundle, matrix, dc):
     raw = (
         np.asarray(bundle["minutes"].predict_proba(matrix))
         if hasattr(bundle["minutes"], "predict_proba")
         else np.asarray(bundle["minutes"].predict(matrix, num_threads=1))
     )
     probabilities = np.column_stack([curve_apply(raw[:, k], bundle["curves"][str(k)]) for k in range(4)])
-    probabilities /= np.maximum(probabilities.sum(axis=1, keepdims=True), 1e-9)
+    probabilities /= np.maximum(probabilities.sum(axis=1, keepdims=True), 1e-09)
     conditional = np.zeros((len(matrix), 4))
-    model = bundle["network"] if neural else bundle["points"]
+    model = bundle["points"]
     for k in range(1, 4):
         conditional[:, k] = model.predict(np.column_stack([matrix, np.full(len(matrix), k)]))
     means = (probabilities * (conditional + 2 * np.asarray(dc))).sum(axis=1)
-    return means, probabilities, conditional
+    return (means, probabilities, conditional)
 
 
 def score_metrics(actual, predicted):
@@ -336,9 +316,9 @@ def paired_bootstrap(rows, field, baseline="baseline"):
     summaries = np.array(
         [
             [
-                sum((r[field] - r["actual"]) ** 2 for r in rows if r["deadline_group"] == g),
-                sum((r[baseline] - r["actual"]) ** 2 for r in rows if r["deadline_group"] == g),
-                sum(r["deadline_group"] == g for r in rows),
+                sum(((r[field] - r["actual"]) ** 2 for r in rows if r["deadline_group"] == g)),
+                sum(((r[baseline] - r["actual"]) ** 2 for r in rows if r["deadline_group"] == g)),
+                sum((r["deadline_group"] == g for r in rows)),
             ]
             for g in groups
         ]
@@ -365,7 +345,7 @@ def ensure_history(store: Store):
             import_season(store, season)
 
 
-def train_decisions(store: Store, neural=True):
+def train_decisions(store: Store):
     active_future = None
     if store.list("decision_model", 1):
         active_future = store.get("decision_model").get("future_horizon_model_id")
@@ -376,7 +356,6 @@ def train_decisions(store: Store, neural=True):
         "test": "2025/26 and current completed season, expanding four-deadline test blocks",
         "calibration": "eight earlier deadlines excluded from base fitting in every fold",
         "targets": "Observed points conditional on minutes band; band is marginalized, never taken from test actuals",
-        "neural": "Standardized MLP (32,16), alpha=10, 100 iterations, trained only inside earlier folds",
         "promotion": "Upper deadline-bootstrap RMSE delta < 0 vs lag shrinkage, plus regular-starter RMSE improvement",
         "hindsight": "Oracle teams and best actual captain are diagnostic upper bounds, never training inputs",
     }
@@ -396,10 +375,9 @@ def train_decisions(store: Store, neural=True):
         train = frame.filter(pl.col("deadline_group") < cut)
         cal = frame.filter((pl.col("deadline_group") >= cut) & (pl.col("deadline_group") < block[0]))
         test = frame.filter(pl.col("deadline_group").is_in(block))
-        fitted = fit_components(train, cal, neural)
+        fitted = fit_components(train, cal)
         x = test.select(NAMES).to_numpy()
         mean, probabilities, _ = predict_models(fitted, x, test["dc_probability"].to_list())
-        network = predict_models(fitted, x, test["dc_probability"].to_list(), True)[0] if neural else None
         for i, row in enumerate(test.to_dicts()):
             predictions.append(
                 {
@@ -421,7 +399,6 @@ def train_decisions(store: Store, neural=True):
                     "minutes": row["minutes_target"],
                     "baseline": row["baseline"],
                     "predicted": float(mean[i]),
-                    "network": float(network[i]) if network is not None else None,
                     "prior_start": row["p_start"],
                     "p_any": float(1 - probabilities[i, 0]),
                     "p60": float(probabilities[i, 2:].sum()),
@@ -471,19 +448,10 @@ def train_decisions(store: Store, neural=True):
         "production_target": "The exact same calibrated mixture is consumed by forecast worlds and optimizer",
         "limits": feature["limits"],
     }
-    if neural:
-        n = np.array([r["network"] for r in predictions])
-        summary["neural"] = {
-            "metrics": score_metrics(y, n),
-            "paired_vs_gbm_95ci": paired_bootstrap(predictions, "network", "predicted"),
-            "promotion": "An independently versioned production path is required before any neural replacement",
-        }
-    # Honest final production fit: base fitting excludes the most recent eight
-    # calibration deadlines, so labels never leak into their own calibration.
     cut = groups[-8]
     train = frame.filter(pl.col("deadline_group") < cut)
     cal = frame.filter(pl.col("deadline_group") >= cut)
-    fitted = fit_components(train, cal, False)
+    fitted = fit_components(train, cal)
     directory = store.root / "models" / digest({"protocol": protocol, "feature": feature["hash"]})[:16]
     directory.mkdir(parents=True, exist_ok=True)
     hashes = {}
@@ -511,8 +479,6 @@ def train_decisions(store: Store, neural=True):
         production_fit_before=cut,
         training_serve_transform="context_vector, stable player code, last 24 earlier fixtures",
     )
-    # A failed weekly refit is a candidate, not a replacement for the last
-    # accepted production model. Keep the usable path available.
     kind = "decision_model" if summary["promoted"] else "decision_candidate"
     acceptance_id = None
     if kind == "decision_model" and active_future:
@@ -527,8 +493,8 @@ def train_decisions(store: Store, neural=True):
         if (
             accepted["policy_gate_passed"]
             and distribution["passed"]
-            and distribution["protocol"]["refinement_id"] == accepted["protocol"]["refinement_id"]
-            and distribution["protocol"]["baseline_id"] == accepted["protocol"]["baseline_id"]
+            and (distribution["protocol"]["refinement_id"] == accepted["protocol"]["refinement_id"])
+            and (distribution["protocol"]["baseline_id"] == accepted["protocol"]["baseline_id"])
         ):
             from .future_policy_verification import verify_future_policy
 
@@ -559,8 +525,6 @@ def residual_contract(fitted, cal):
             values = residual[selected]
             if len(values) < 30:
                 values = residual[band == k]
-            # Centering preserves the tested conditional expectation. Empirical
-            # residuals retain discrete-outcome skew and heavy upper tails.
             pools[f"{position}:{k}"] = np.quantile(values - values.mean(), np.linspace(0, 1, 201)).tolist()
     groups = defaultdict(list)
     for row, res in zip(rows, residual):
@@ -585,7 +549,7 @@ def residual_contract(fitted, cal):
             numerator += a.sum() ** 2 - np.dot(a, a)
             denominator += len(a) * (len(a) - 1) * variance
         dependence[role] = float(np.clip(numerator / max(denominator, 1), 0, 0.6))
-    return pools, dependence
+    return (pools, dependence)
 
 
 def load_bundle(store, spec):
@@ -597,7 +561,7 @@ def load_bundle(store, spec):
         if hashlib.sha256(path.read_bytes()).hexdigest() != spec["model_hashes"][key]:
             raise ValueError("Decision model integrity verification failed")
         models[key] = lgb.Booster(model_file=str(path))
-    return models | {"curves": spec["curves"], "network": None}
+    return models | {"curves": spec["curves"]}
 
 
 def future_inputs(store, market, players, start, end, scenario=None, beliefs=()):
@@ -635,7 +599,7 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
             future_ids = {
                 f["id"]
                 for f in scheduled
-                if not f.get("finished") and f.get("event") is not None and f["event"] >= start
+                if not f.get("finished") and f.get("event") is not None and (f["event"] >= start)
             }
             suspended = {r["player_id"]: set(r["fixture_ids"]) & future_ids for r in discipline["records"]}
     first_kickoff = {
@@ -645,8 +609,8 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
                 for f in scheduled
                 if not f.get("finished")
                 and f.get("event")
-                and start <= f["event"] <= end
-                and club in (f["team_h"], f["team_a"])
+                and (start <= f["event"] <= end)
+                and (club in (f["team_h"], f["team_a"]))
                 and f.get("kickoff_time")
             ),
             default=None,
@@ -655,13 +619,13 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
     }
     for f in scheduled:
         event = f.get("event")
-        if f.get("finished") or event is None or not start <= event <= end:
+        if f.get("finished") or event is None or (not start <= event <= end):
             continue
         for player in players.values():
             if player.team not in (f["team_h"], f["team_a"]):
                 continue
             home = player.team == f["team_h"]
-            history = past[("code", player.code)]
+            history = past["code", player.code]
             x, p = context_vector(
                 player.position,
                 home,
@@ -681,7 +645,7 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
                     for other in scheduled
                     if other.get("kickoff_time")
                     and player.team in (other["team_h"], other["team_a"])
-                    and other["kickoff_time"] < f["kickoff_time"]
+                    and (other["kickoff_time"] < f["kickoff_time"])
                 ]
                 if previous:
                     values["rest_days"] = min(
@@ -689,7 +653,7 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
                     )
             cap = 90
             availability = (
-                player.chance if player.chance is not None else (1.0 if player.status == "a" else 0.5)
+                player.chance if player.chance is not None else 1.0 if player.status == "a" else 0.5
             )
             availability = 1 - (1 - availability) * np.exp(-(event - start) / 5)
             if recovery and f.get("kickoff_time") and first_kickoff[player.team]:
@@ -705,9 +669,6 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
             if f["id"] in suspended.get(player.id, set()):
                 availability = 0
             elif player.status == "s" and suspended.get(player.id):
-                # A known served sanction is not an injury with a gradual
-                # medical recovery curve. Separate concurrent injury news can
-                # still be supplied as an explicit scenario.
                 availability = 1
                 suspension_served = True
             base_availability = availability
@@ -743,7 +704,7 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
                     "dc_probability": dc_probability(player.position, p, BAND_MINUTES),
                 }
             )
-    return records, scheduled
+    return (records, scheduled)
 
 
 def sample_bands(probabilities, uniform):
@@ -776,7 +737,7 @@ def sample_point_outcomes(
     base = np.floor(outcomes) + (rng.random(count) < outcomes - np.floor(outcomes))
     base[band == 0] = 0
     dc = (rng.random(count) < np.asarray(dc_probabilities)[band]) & (band > 0)
-    return (base + 2 * dc).astype(np.int16), band, dc
+    return ((base + 2 * dc).astype(np.int16), band, dc)
 
 
 def learned_forecast(
@@ -832,6 +793,15 @@ def learned_forecast(
             start,
             information_time(store),
         )
+    if spec.get("role_minutes_model_id") and start == next(
+        (e["id"] for e in market["events"] if e.get("is_next")), None
+    ):
+        from .role_minutes import apply
+
+        probabilities, role_availability = apply(
+            store, spec["role_minutes_model_id"], rows, market, players, probabilities, start
+        )
+        availability_included |= role_availability
     ids = sorted(players)
     index = {p: i for i, p in enumerate(ids)}
     arrays: dict[str, Any] = {}
@@ -849,8 +819,6 @@ def learned_forecast(
 
         availability_models = load_availability(store)
     for event in range(start, end_event + 1):
-        # The joint acceptance test covers fixtures sharing one FPL deadline.
-        # Do not extrapolate that adjustment across ordinary gameweeks.
         previous_simulated: dict[int, dict[str, Any]] = {}
         points = np.zeros((worlds, len(ids)), dtype=np.int16)
         minutes = np.zeros_like(points)
@@ -906,8 +874,6 @@ def learned_forecast(
             if row.get("kickoff_time"):
                 previous_simulated[pid] = {"kickoff_time": row["kickoff_time"], "minutes": sampled_minutes}
             role = "defence" if player.position <= 2 else "attack"
-            # The same factor is reused for teammates in this fixture. These are
-            # calibrated statistical worlds, not claimed event-level football XIs.
             factor_key = (row["fixture_id"], row["team"], role)
             if factor_key not in team_factors:
                 team_factors[factor_key] = np.random.default_rng(
@@ -968,7 +934,7 @@ def learned_forecast(
                 }
             )
         for col, pid in enumerate(ids):
-            p, m = points[:, col], minutes[:, col]
+            p, m = (points[:, col], minutes[:, col])
             records.append(
                 {
                     "player_id": pid,
@@ -1045,6 +1011,7 @@ def learned_forecast(
         "belief_scenario": [b["id"] for b in beliefs],
         "scenario": scenario,
         "minutes_model_id": spec["id"],
+        "role_minutes_model_id": spec.get("role_minutes_model_id"),
         "team_strength_model_id": None,
         "unassigned_fixtures": [f["id"] for f in scheduled if f.get("event") is None],
         "assumptions": [
@@ -1082,7 +1049,7 @@ def validate_uncertainty(store: Store, worlds=512):
         train = frame.filter(pl.col("deadline_group") < cut)
         cal = frame.filter((pl.col("deadline_group") >= cut) & (pl.col("deadline_group") < block[0]))
         test = frame.filter(pl.col("deadline_group").is_in(block))
-        fitted = fit_components(train, cal, False)
+        fitted = fit_components(train, cal)
         pools, _ = residual_contract(fitted, cal)
         mean, probability, conditional = predict_models(
             fitted, test.select(NAMES).to_numpy(), test["dc_probability"].to_list()
@@ -1102,9 +1069,10 @@ def validate_uncertainty(store: Store, worlds=512):
             quantile = np.quantile(points, [0.05, 0.1, 0.9, 0.95])
             actual = row["target"]
             ordered = np.sort(points)
-            crps = np.abs(points - actual).mean() - np.dot(
-                2 * np.arange(1, worlds + 1) - worlds - 1, ordered
-            ) / (worlds**2)
+            crps = (
+                np.abs(points - actual).mean()
+                - np.dot(2 * np.arange(1, worlds + 1) - worlds - 1, ordered) / worlds**2
+            )
             records.append(
                 {
                     "regular": row["p_start"] >= 0.6,

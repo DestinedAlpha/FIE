@@ -294,8 +294,9 @@ def test_training_replay_counts_future_bench_boost_and_triple_captain(market, ru
     assert expected == [24, 32, 26]
 
 
+@pytest.mark.parametrize("previous_market", ["market", "earlier-market"])
 def test_equivalent_freehit_actions_reuse_a_validated_continuation(
-    tmp_path, monkeypatch, market, rules, state
+    tmp_path, monkeypatch, market, rules, state, previous_market
 ):
     import fpl_intelligence.ingestion as ingestion
     import fpl_intelligence.optimization as optimization
@@ -311,7 +312,9 @@ def test_equivalent_freehit_actions_reuse_a_validated_continuation(
     following, first_row = transition(state, first, market, rules)
     later = Action(lineup=best_lineup(list(range(1, 16)), means, market, rules))
     final, later_row = transition(following, later, market, rules)
-    store.put("plan", {"state_id": sid, "market_id": "market", "ledger": [first_row, later_row]})
+    store.put("plan", {"state_id": sid, "market_id": previous_market, "ledger": [first_row, later_row]})
+    for i in range(105):
+        store.put("plan", {"state_id": "unrelated-account", "iteration": i})
     path = tmp_path / "scenarios" / "worlds.npz"
     path.parent.mkdir()
     np.savez(path, points_9=np.ones((4, 45)), minutes_9=np.ones((4, 45)) * 90)

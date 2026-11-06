@@ -4,7 +4,7 @@ Both original design documents have been reviewed in full. The source index reta
 
 The review found and closed two implementation gaps: the report omitted Wildcard/Triple Captain and forced-date chip comparisons, and prior confirmed transfers incorrectly disabled later Free Hits. Current Free Hit restoration now also retains continuation constraints and first-action solver diagnostics.
 
-There are no identified unimplemented mandatory product features in this reviewed scope. Conditional technology choices are experiments: failed neural/physical replacements are retained as labelled comparisons, and accepted models alone influence production. Optional inaccessible feeds use documented official-data/prior fallbacks. This does not promise unknown future sources, zero possible bugs, global optimization proofs or future competitive results.
+There are no identified unimplemented mandatory product features in this reviewed scope. Conditional technology choices are experiments: failed physical replacements remain labelled comparisons; locally trained neural components were explicitly removed by the user’s 6 November request, and accepted models alone influence production. Optional inaccessible feeds use documented official-data/prior fallbacks. This does not promise unknown future sources, zero possible bugs, global optimization proofs or future competitive results.
 
 Prospective capture, continuous finances, final/revised scoring and retraining are implemented. Prospective competitiveness is a measurement gate that needs future finalized matches. Consistent 550+ GW1–9 performance is not established; retrospective scores are not rewritten.
 

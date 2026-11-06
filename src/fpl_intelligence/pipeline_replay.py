@@ -757,7 +757,7 @@ def run_pipeline_replay(
         "live_pointers_unchanged": all(parent.get(k)["id"] == v for k, v in live_before.items()),
         "limits": [
             "Later reconstruction of corrected match facts; not prospective performance or guaranteed future scores.",
-            "Runs the deployed primary expected-points engine. Rejected neural/critic models and optional research sensitivities are not injected as if accepted.",
+            "Runs the deployed primary expected-points engine. Rejected source/critic models and optional research sensitivities are not injected as if accepted.",
             "No hindsight future prices, fixtures, rival choices or news. Missing original cup/discipline statements remain explicit coverage gaps.",
             "Full-window additive MIP candidates are independently transitioned and rescored in shared worlds. Actual solver gaps and time limits remain visible.",
             "Current-season outcomes are already inspected; they do not select architecture, thresholds or hyperparameters here.",

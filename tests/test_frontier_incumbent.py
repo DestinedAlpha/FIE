@@ -14,7 +14,7 @@ def test_frontier_keeps_a_stronger_existing_policy(tmp_path, state, monkeypatch)
         "id": "analysis",
         "selected_candidate": 0,
         "promotion_gate_passed": False,
-        "candidates": [{"action": {}, "reference_plus_continuation": 1, "tree": 1, "network": 1}],
+        "candidates": [{"action": {}, "reference_plus_continuation": 1, "tree": 1}],
     }
     monkeypatch.setattr("fpl_intelligence.decision_runtime.analyze_decisions", lambda *_: analysis)
     monkeypatch.setattr("fpl_intelligence.optimization.optimize", lambda *a, **kw: {**base, "quality": 90})

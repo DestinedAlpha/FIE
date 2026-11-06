@@ -22,6 +22,23 @@ from .simulation import score_plan
 from .storage import Store, now
 
 
+def incumbent_precedes_forecast(store, candidate, forecast):
+    """A historical search cannot borrow an action generated with later inputs."""
+    if (
+        not forecast.get("cutoff")
+        or not candidate.get("forecast_id")
+        or candidate["forecast_id"] == forecast.get("id")
+    ):
+        return True
+    from .availability import moment
+
+    try:
+        previous = store.get("forecast", candidate["forecast_id"])
+    except ValueError:
+        return False
+    return bool(previous.get("cutoff") and moment(previous["cutoff"]) <= moment(forecast["cutoff"]))
+
+
 class MIP:
     def __init__(self):
         self.keys = {}
@@ -724,10 +741,12 @@ def optimize(
     objective_before = float(np.dot(mip.costs, warm))
     warm_value = objective_before
     candidate_count = 0
-    for cached_kind, item in [("plan", item) for item in store.list("plan", 100)] + [
-        ("warm_start", item) for item in store.list("warm_start", 30)
-    ]:
+    for cached_kind, item in [
+        ("plan", item) for item in store.list_matching("plan", {"state_id": state_id}, 100)
+    ] + [("warm_start", item) for item in store.list_matching("warm_start", {"state_id": state_id}, 30)]:
         cached = store.get(cached_kind, item["id"])
+        if not incumbent_precedes_forecast(store, cached, forecast):
+            continue
         prior = cached.get("ledger", [])
         if (
             cached.get("state_id") != state_id

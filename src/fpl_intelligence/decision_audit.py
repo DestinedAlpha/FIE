@@ -19,11 +19,7 @@ def event_market(rows, season):
     players = {}
     actual: dict[int, int] = defaultdict(int)
     minutes: dict[int, int] = defaultdict(int)
-    means: dict[str, dict[int, float]] = {
-        "learned": defaultdict(float),
-        "shrinkage": defaultdict(float),
-        "neural": defaultdict(float),
-    }
+    means: dict[str, dict[int, float]] = {"learned": defaultdict(float), "shrinkage": defaultdict(float)}
     for row in rows:
         identity = row["player_id"]
         players[identity] = Player(
@@ -44,8 +40,7 @@ def event_market(rows, season):
         minutes[identity] += int(row["minutes"])
         means["learned"][identity] += row["predicted"]
         means["shrinkage"][identity] += row["baseline"]
-        means["neural"][identity] += row["network"] if row.get("network") is not None else row["predicted"]
-    return players, dict(actual), dict(minutes), means
+    return (players, dict(actual), dict(minutes), means)
 
 
 def evaluate_choices(store: Store, seconds=1.0):
@@ -70,12 +65,11 @@ def evaluate_choices(store: Store, seconds=1.0):
     for group, rows in sorted(groups.items()):
         season = rows[0]["season"]
         players, actual, minutes, means = event_market(rows, season)
-        # Consistent club IDs within this event; single-week budget comparison.
         rules = Rules(season=season)
         eligible = {
             p: player
             for p, player in players.items()
-            if any(r["player_id"] == p and r["price_observed"] for r in rows)
+            if any((r["player_id"] == p and r["price_observed"] for r in rows))
         }
         candidates = sorted(eligible, key=lambda p: (-means["learned"][p], p))
         if len(candidates) < 15:
@@ -95,11 +89,9 @@ def evaluate_choices(store: Store, seconds=1.0):
                 "learned_bonus": bonus(top2),
                 "price_baseline_bonus": bonus(premium),
                 "shrinkage_bonus": bonus(shrunk),
-                "hindsight_best": max(actual[p] for p in eligible),
+                "hindsight_best": max((actual[p] for p in eligible)),
             }
         )
-        # Burn in nine weeks before a budgeted team audit; the captain diagnostic
-        # above also covers opening weeks with known returning-player prices.
         if rows[0]["event"] < 9:
             continue
         result = {"deadline_group": group}
@@ -123,7 +115,7 @@ def evaluate_choices(store: Store, seconds=1.0):
             lineup = best_lineup(chosen, target, eligible, rules)
             result[name] = {
                 "realized_points": score_gameweek(actual, minutes, lineup, eligible, rules),
-                "cost": sum(eligible[p].price for p in chosen),
+                "cost": sum((eligible[p].price for p in chosen)),
                 "solver": diagnostics,
                 "squad": chosen,
                 "lineup": lineup.model_dump(),
@@ -134,12 +126,12 @@ def evaluate_choices(store: Store, seconds=1.0):
         report["weeks"].append(result)
     captains = report["captains"]
     report["captain_totals"] = {
-        k: sum(r[k] for r in captains)
+        k: sum((r[k] for r in captains))
         for k in ["learned_bonus", "price_baseline_bonus", "shrinkage_bonus", "hindsight_best"]
     }
-    report["captain_totals"]["defender_captain_weeks"] = sum(r["learned_position"] == 2 for r in captains)
+    report["captain_totals"]["defender_captain_weeks"] = sum((r["learned_position"] == 2 for r in captains))
     report["team_totals"] = {
-        k: sum(r[k]["realized_points"] for r in report["weeks"]) for k in ("learned", "shrinkage", "oracle")
+        k: sum((r[k]["realized_points"] for r in report["weeks"])) for k in ("learned", "shrinkage", "oracle")
     }
     for label, low, high in [("budget", 0, 60), ("midprice", 60, 90), ("premium", 90, 1000)]:
         cohort = [r for r in spec["predictions"] if low <= r["price_lag"] < high and r["prior_start"] >= 0.6]
@@ -171,7 +163,6 @@ def replay_policy(
     for row in spec["predictions"]:
         if row["season"] == season:
             groups[row["event"]].append(row)
-    # Stable club IDs for the entire evolving account.
     club_ids = {
         name: i + 1 for i, name in enumerate(sorted({r["team"] for rows in groups.values() for r in rows}))
     }
@@ -195,7 +186,7 @@ def replay_policy(
             shared = TeamState(
                 season=season,
                 event=event,
-                bank=1000 - sum(known[p].price for p in chosen),
+                bank=1000 - sum((known[p].price for p in chosen)),
                 free_transfers=1,
                 lots=[
                     Lot(
@@ -226,7 +217,7 @@ def replay_policy(
                     ]
                 }
             )
-            counts = Counter(known[lot.player_id].team for lot in state.lots)
+            counts = Counter((known[lot.player_id].team for lot in state.lots))
             state.grandfathered_clubs = [club for club, count in counts.items() if count > 3]
             forecast = means["learned" if name.endswith("learned") else "shrinkage"]
             transfer_target = means["shrinkage"] if reference_transfers else forecast
@@ -253,9 +244,9 @@ def replay_policy(
         "track": "out-of-fold evolving-account replay; no test outcome used in decisions",
         "policies": {
             name: {
-                "realized_net_points": sum(r["realized_net_points"] for r in rows),
-                "hits": sum(r["hit"] for r in rows),
-                "transfers": sum(len(r["buy"]) for r in rows),
+                "realized_net_points": sum((r["realized_net_points"] for r in rows)),
+                "hits": sum((r["hit"] for r in rows)),
+                "transfers": sum((len(r["buy"]) for r in rows)),
                 "final_bank": states[name].bank,
                 "ledger": rows,
             }

@@ -127,9 +127,6 @@ def main():
     directory = store.root / "models" / fusion["directory"]
     for name, expected in fusion["tree_spec"]["hashes"].items():
         assert hashlib.sha256((directory / (name + ".txt")).read_bytes()).hexdigest() == expected
-    assert (
-        hashlib.sha256((directory / "network.pt").read_bytes()).hexdigest() == fusion["network_spec"]["hash"]
-    )
     horizon = artifacts["horizon_model"]
     assert artifacts["transfer_policy_model"]["horizon_model_id"] == horizon["id"]
     personalized = artifacts["personalized_policy_analysis"]

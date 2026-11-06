@@ -16,6 +16,47 @@ from .storage import Store, atomic_json, now
 REPO = "olbauday/FPL-Core-Insights"
 
 
+def canonical_player_matches(records):
+    """Deduplicate identical exports; quarantine every conflicting copy."""
+    from collections import defaultdict
+
+    groups = defaultdict(list)
+    fixtures = defaultdict(set)
+    for row in records:
+        groups[row["season"], row["player_code"], row["match_id"]].append(row)
+        if row.get("fixture_signature"):
+            fixtures[row["season"], row["match_id"]].add(row["fixture_signature"])
+    accepted, rejected = [], []
+    for copies in groups.values():
+        signatures = {
+            tuple(
+                row.get(k)
+                for k in (
+                    "competition",
+                    "kickoff",
+                    "minutes",
+                    "extra_time",
+                    "goals",
+                    "xg",
+                    "xa",
+                    "fixture_signature",
+                )
+            )
+            for row in copies
+        }
+        if len(signatures) > 1 or len(fixtures[copies[0]["season"], copies[0]["match_id"]]) > 1:
+            rejected.append(
+                {
+                    "match": copies[0]["match_id"],
+                    "player_code": copies[0]["player_code"],
+                    "reason": "conflicting duplicate player-match or fixture",
+                }
+            )
+        else:
+            accepted.append(copies[0])
+    return accepted, rejected
+
+
 def time_value(value):
     dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
     return dt.replace(tzinfo=timezone.utc) if dt.tzinfo is None else dt
@@ -131,13 +172,21 @@ async def import_workload(store: Store, seasons=("2025-2026", "2026-2027")):
                 "xg": row.get("xg"),
                 "xa": row.get("xa"),
                 "source_commit": commit,
+                "fixture_signature": __import__("hashlib")
+                .sha256(
+                    str(
+                        sorted((k, str(v)) for k, v in match.items() if k not in ("event", "gameweek", "gw"))
+                    ).encode()
+                )
+                .hexdigest(),
                 "temporal_track": "retrospective completed match facts; conservative four-hour completion cutoff",
             }
             if str(match.get("finished", "")).lower() == "true":
                 accepted.append(record)
             else:
                 future.append(record)
-    accepted = list({(r["season"], r["player_code"], r["match_id"]): r for r in accepted}.values())
+    accepted, conflicts = canonical_player_matches(accepted)
+    rejected.extend(conflicts)
     result = {
         "at": now(),
         "source": REPO,
@@ -149,6 +198,7 @@ async def import_workload(store: Store, seasons=("2025-2026", "2026-2027")):
         "accepted_player_matches": len(accepted),
         "rejected_player_matches": len(rejected),
         "rejections": rejected,
+        "conflicting_duplicates": len(conflicts),
         "errors": errors,
         "zero_minutes_policy": "Explicit minutes_played=0 is a bench nonappearance; never derived from start/finish timestamps",
         "limits": [
@@ -165,14 +215,27 @@ async def import_workload(store: Store, seasons=("2025-2026", "2026-2027")):
     return result
 
 
-def workload_features(records, code, cutoff):
+WORKLOAD_TRANSFORM = "positive-exposure-v2"
+
+
+def workload_features(records, code, cutoff, transform_version=WORKLOAD_TRANSFORM):
     cutoff = time_value(cutoff)
     eligible = [r for r in records if r["player_code"] == code and time_value(r["known_after"]) < cutoff]
     recent = [r for r in eligible if cutoff - time_value(r["kickoff"]) <= timedelta(days=14)]
     if not eligible:
         return [0.0] * 6 + [0.0]
+    if transform_version == WORKLOAD_TRANSFORM:
+        # A named but unused substitute supplies coverage, not physical exposure.
+        eligible = [r for r in eligible if r["minutes"] > 0]
+        recent = [r for r in recent if r["minutes"] > 0]
+    elif transform_version != "legacy-v1":
+        raise ValueError("Unknown workload transform")
     seven = [r for r in recent if cutoff - time_value(r["kickoff"]) <= timedelta(days=7)]
-    rest = min(21, (cutoff - max(time_value(r["kickoff"]) for r in eligible)).total_seconds() / 86400)
+    rest = (
+        min(21, (cutoff - max(time_value(r["kickoff"]) for r in eligible)).total_seconds() / 86400)
+        if eligible
+        else 21
+    )
     return [
         sum(r["minutes"] for r in seven) / 240,
         sum(r["minutes"] for r in recent) / 480,

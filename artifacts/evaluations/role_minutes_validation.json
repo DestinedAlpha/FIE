@@ -1,0 +1,256 @@
+{
+  "at": "2026-11-06T09:35:36.630532+00:00",
+  "version": "role-minutes-v2",
+  "feature_id": "5ae94d834d3c29a1f94461f3ef22904190ab112a16e2efc97c7628edcf800b4a",
+  "context_archive_id": "303b2f2a6dc8009e931e05f94ab3f0c8cddcc4e6b300e996571717f7f7f98d3a",
+  "workload_transform": "positive-exposure-v2",
+  "weight": 1,
+  "passed": true,
+  "metrics": {
+    "acceptance_2024": {
+      "rows": 14492,
+      "deadlines": 19,
+      "reference": {
+        "brier": 0.30826968945397326,
+        "points_squared": 3.3404459112147804,
+        "any_brier": 0.08093053596036436,
+        "sixty_brier": 0.0806184792453095,
+        "regular_points_squared": 8.495067360111719
+      },
+      "candidate": {
+        "brier": 0.2987041690893578,
+        "points_squared": 3.3107785336246347,
+        "any_brier": 0.07525670600097865,
+        "sixty_brier": 0.0777613331482664,
+        "regular_points_squared": 8.470838511138009
+      },
+      "delta_95ci": {
+        "brier": [
+          -0.011358226683684833,
+          -0.007730226722577517
+        ],
+        "points_squared": [
+          -0.043626990113076164,
+          -0.014235694734703918
+        ]
+      },
+      "positions": {
+        "1": {
+          "reference": 2.540538944969941,
+          "candidate": 2.4886773110878604
+        },
+        "2": {
+          "reference": 3.148543359817204,
+          "candidate": 3.1277139242180243
+        },
+        "3": {
+          "reference": 3.530226044598161,
+          "candidate": 3.5017927316361983
+        },
+        "4": {
+          "reference": 3.9266342770597578,
+          "candidate": 3.8859932505928265
+        }
+      }
+    },
+    "replication_2025": {
+      "rows": 29644,
+      "deadlines": 38,
+      "reference": {
+        "brier": 0.2904645462551663,
+        "points_squared": 3.602295899947408,
+        "any_brier": 0.07539013302614271,
+        "sixty_brier": 0.0794085216098085,
+        "regular_points_squared": 8.807560535607099
+      },
+      "candidate": {
+        "brier": 0.27845117344079134,
+        "points_squared": 3.54465887149193,
+        "any_brier": 0.0688774549020519,
+        "sixty_brier": 0.07476346845289833,
+        "regular_points_squared": 8.732655826792298
+      },
+      "delta_95ci": {
+        "brier": [
+          -0.014269491058891757,
+          -0.010120739573925511
+        ],
+        "points_squared": [
+          -0.08171384194839028,
+          -0.04015080227647121
+        ]
+      },
+      "positions": {
+        "1": {
+          "reference": 1.9765962912654784,
+          "candidate": 1.9289184749335389
+        },
+        "2": {
+          "reference": 4.333136026181706,
+          "candidate": 4.251557187671642
+        },
+        "3": {
+          "reference": 3.348603463986077,
+          "candidate": 3.302459088876043
+        },
+        "4": {
+          "reference": 4.159860731331745,
+          "candidate": 4.116321913511506
+        }
+      }
+    }
+  },
+  "folds": [
+    {
+      "test": [
+        "2024/25-GW01",
+        "2024/25-GW02",
+        "2024/25-GW03",
+        "2024/25-GW04",
+        "2024/25-GW05",
+        "2024/25-GW06",
+        "2024/25-GW07",
+        "2024/25-GW08"
+      ],
+      "train_rows": 48471,
+      "calibration_rows": 7425,
+      "test_rows": 5177
+    },
+    {
+      "test": [
+        "2024/25-GW09",
+        "2024/25-GW10",
+        "2024/25-GW11",
+        "2024/25-GW12",
+        "2024/25-GW13",
+        "2024/25-GW14",
+        "2024/25-GW15",
+        "2024/25-GW16"
+      ],
+      "train_rows": 55896,
+      "calibration_rows": 5177,
+      "test_rows": 5386
+    },
+    {
+      "test": [
+        "2024/25-GW17",
+        "2024/25-GW18",
+        "2024/25-GW19",
+        "2024/25-GW20",
+        "2024/25-GW21",
+        "2024/25-GW22",
+        "2024/25-GW23",
+        "2024/25-GW24"
+      ],
+      "train_rows": 61073,
+      "calibration_rows": 5386,
+      "test_rows": 5798
+    },
+    {
+      "test": [
+        "2024/25-GW25",
+        "2024/25-GW26",
+        "2024/25-GW27",
+        "2024/25-GW28",
+        "2024/25-GW29",
+        "2024/25-GW30",
+        "2024/25-GW31",
+        "2024/25-GW32"
+      ],
+      "train_rows": 66459,
+      "calibration_rows": 5798,
+      "test_rows": 6121
+    },
+    {
+      "test": [
+        "2024/25-GW33",
+        "2024/25-GW34",
+        "2024/25-GW35",
+        "2024/25-GW36",
+        "2024/25-GW37",
+        "2024/25-GW38"
+      ],
+      "train_rows": 72257,
+      "calibration_rows": 6121,
+      "test_rows": 4680
+    },
+    {
+      "test": [
+        "2025/26-GW01",
+        "2025/26-GW02",
+        "2025/26-GW03",
+        "2025/26-GW04",
+        "2025/26-GW05",
+        "2025/26-GW06",
+        "2025/26-GW07",
+        "2025/26-GW08"
+      ],
+      "train_rows": 76766,
+      "calibration_rows": 6292,
+      "test_rows": 5796
+    },
+    {
+      "test": [
+        "2025/26-GW09",
+        "2025/26-GW10",
+        "2025/26-GW11",
+        "2025/26-GW12",
+        "2025/26-GW13",
+        "2025/26-GW14",
+        "2025/26-GW15",
+        "2025/26-GW16"
+      ],
+      "train_rows": 83058,
+      "calibration_rows": 5796,
+      "test_rows": 6018
+    },
+    {
+      "test": [
+        "2025/26-GW17",
+        "2025/26-GW18",
+        "2025/26-GW19",
+        "2025/26-GW20",
+        "2025/26-GW21",
+        "2025/26-GW22",
+        "2025/26-GW23",
+        "2025/26-GW24"
+      ],
+      "train_rows": 88854,
+      "calibration_rows": 6018,
+      "test_rows": 6281
+    },
+    {
+      "test": [
+        "2025/26-GW25",
+        "2025/26-GW26",
+        "2025/26-GW27",
+        "2025/26-GW28",
+        "2025/26-GW29",
+        "2025/26-GW30",
+        "2025/26-GW31",
+        "2025/26-GW32"
+      ],
+      "train_rows": 94872,
+      "calibration_rows": 6281,
+      "test_rows": 6473
+    },
+    {
+      "test": [
+        "2025/26-GW33",
+        "2025/26-GW34",
+        "2025/26-GW35",
+        "2025/26-GW36",
+        "2025/26-GW37",
+        "2025/26-GW38"
+      ],
+      "train_rows": 101153,
+      "calibration_rows": 6473,
+      "test_rows": 5076
+    }
+  ],
+  "prediction_path": "data/features/role-minutes-0c9fa92c19497a1a1912bb5e.parquet",
+  "prediction_hash": "bf5d5c0ccc652e55b847f000607517e9ff2ef5dae9a1ad61f731ce105a5fb7ab",
+  "protocol": "Expanding eight-deadline blocks; eight earlier calibration deadlines excluded from fits. Mixture selected on 2024/25 GW1\u201319 only; acceptance GW20\u201338; independent full 2025/26 replication. Confidence intervals resample whole deadlines. No current-season results select the model.",
+  "scope": "Immediate participation probabilities. Conditional scoring and future horizon are unchanged; this forecast test does not certify transfer-policy improvement.",
+  "id": "f026b713714576b96fb5c2f7c8548c910ec44eef75e3e8f3698e91af3213a31e"
+}

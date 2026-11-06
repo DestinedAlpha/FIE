@@ -513,8 +513,8 @@ export function DecisionEvidence({ data, busy, act }: Props) {
           <div>
             <h3>The model that makes these decisions</h3>
             <p>
-              The points model tested here supplies the forecast worlds and the
-              transfer planner.
+              The conditional points model and separately validated participation
+              model supply the forecast worlds and transfer planner.
             </p>
           </div>
           <span className="pill green">
@@ -531,7 +531,7 @@ export function DecisionEvidence({ data, busy, act }: Props) {
             <b>{model.candidate.n.toLocaleString()}</b>
           </div>
           <div>
-            <span>Points RMSE · lower is better</span>
+            <span>Base model points RMSE · lower is better</span>
             <b>
               {model.baseline.rmse.toFixed(3)} →{" "}
               {model.candidate.rmse.toFixed(3)}
@@ -557,19 +557,20 @@ export function DecisionEvidence({ data, busy, act }: Props) {
           Every test block uses earlier training and calibration deadlines.
           Current-week outcomes and hindsight winners never enter its features.
         </p>
-        {model.neural && !data.fusion_model && (
-          <p>
-            Neural challenger RMSE {model.neural.metrics.rmse.toFixed(3)}. Its
-            paired difference interval [
-            {model.neural.paired_vs_gbm_95ci
-              .map((x) => x.toFixed(4))
-              .join(", ")}
-            ]{" "}
-            {model.neural.paired_vs_gbm_95ci[0] <= 0 &&
-            model.neural.paired_vs_gbm_95ci[1] >= 0
-              ? "includes zero; this run does not establish an advantage over the tree model."
-              : "must be reviewed together with decision returns before a production replacement."}
-          </p>
+        {model.role_minutes_model_id && data.role_minutes_validation && (
+          <>
+            <h4>Role-aware minutes</h4>
+            <p>Recent starts, archived availability and observed workload inform immediate participation. Future fixtures use their separate accepted expert. Completed labels: {data.role_minutes_model?.completed_labels_through}.</p>
+            <div className="data-details">
+              {Object.entries(data.role_minutes_validation.metrics).map(([period, result]) => (
+                <div key={period}>
+                  <span>{period === "acceptance_2024" ? "2024/25 GW20–38 acceptance" : "2025/26 replication"}</span>
+                  <b>Minutes Brier {result.reference.brier.toFixed(4)} → {result.candidate.brier.toFixed(4)}; points RMSE {Math.sqrt(result.reference.points_squared).toFixed(3)} → {Math.sqrt(result.candidate.points_squared).toFixed(3)}</b>
+                </div>
+              ))}
+            </div>
+            <p>{data.role_minutes_validation.scope}</p>
+          </>
         )}
         <button
           className="button secondary"
@@ -871,7 +872,7 @@ export function SourceCoverage({ data, busy, act }: Props) {
     <section className="panel">
       <div className="section-title">
         <div>
-          <h3>Sources and neural validation</h3>
+          <h3>Sources and model validation</h3>
           <p>
             Retrieved evidence, numerical influence and missing history are
             shown separately.
@@ -932,11 +933,9 @@ export function SourceCoverage({ data, busy, act }: Props) {
       {f ? (
         <>
           <p>
-            <b>Purpose-built temporal fusion network</b>: match-history
-            attention, official-news branch, manager/market and workload
-            branches, masked source attention, and minutes/points/component
-            training heads. {f.folds[0]?.neural.parameters.toLocaleString()}{" "}
-            trainable parameters.
+            <b>Multi-source boosted trees</b>: lagged match history, timestamped
+            news, manager and market signals, workload and advanced statistics.
+            Missing inputs retain explicit coverage indicators.
           </p>
           <p>
             {f.baseline.n.toLocaleString()} matched held-out observations.
@@ -953,12 +952,10 @@ export function SourceCoverage({ data, busy, act }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {Object.entries(f.candidates).map(([key, row]) => (
+                {Object.entries(f.candidates).filter(([key]) => key === "tree").map(([key, row]) => (
                   <tr key={key}>
                     <td>
-                      {key === "network"
-                        ? "Temporal neural fusion"
-                        : "Same-source boosted trees"}
+                      Same-source boosted trees
                     </td>
                     <td>{row.metrics.rmse.toFixed(3)}</td>
                     <td>
@@ -993,13 +990,11 @@ export function SourceCoverage({ data, busy, act }: Props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.entries(f.decision_validation.policies).map(
+                  {Object.entries(f.decision_validation.policies).filter(([key]) => key === "tree").map(
                     ([kind, policy]) => (
                       <tr key={kind}>
                         <td>
-                          {kind === "network"
-                            ? "Neural fusion"
-                            : "Same-source trees"}
+                          Same-source trees
                         </td>
                         <td>
                           {policy["transfer-learned"].realized_net_points} vs{" "}
@@ -1050,7 +1045,6 @@ export function SourceCoverage({ data, busy, act }: Props) {
                   <th>Player</th>
                   <th>Production xPts</th>
                   <th>Tree candidate</th>
-                  <th>Neural candidate</th>
                 </tr>
               </thead>
               <tbody>
@@ -1059,7 +1053,6 @@ export function SourceCoverage({ data, busy, act }: Props) {
                     <td>{row.name}</td>
                     <td>{row.production.toFixed(2)}</td>
                     <td>{row.tree.toFixed(2)}</td>
-                    <td>{row.network.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -1308,12 +1301,10 @@ export function StrategyLab({ data, busy, act }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {Object.entries(critic.candidates).map(([name, m]) => (
+                {Object.entries(critic.candidates).filter(([key]) => key === "tree").map(([name, m]) => (
                   <tr key={name}>
                     <td>
-                      {name === "network"
-                        ? "Neural decision critic"
-                        : "Tree decision critic"}
+                      Tree decision critic
                     </td>
                     <td>{m.mean_gain.toFixed(2)}</td>
                     <td>
@@ -1361,7 +1352,7 @@ export function StrategyLab({ data, busy, act }: Props) {
                   <th>Hit</th>
                   <th>Bank</th>
                   <th>Reference xPts</th>
-                  <th>Neural xPts</th>
+                  <th>Tree xPts</th>
                 </tr>
               </thead>
               <tbody>
@@ -1381,7 +1372,7 @@ export function StrategyLab({ data, busy, act }: Props) {
                     <td>{r.ledger.hit}</td>
                     <td>{money(r.ledger.bank_after)}</td>
                     <td>{r.reference.toFixed(2)}</td>
-                    <td>{r.network.toFixed(2)}</td>
+                    <td>{r.tree.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>

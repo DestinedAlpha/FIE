@@ -24,6 +24,26 @@ def show(value):
 
 
 @app.command()
+def maintain_models():
+    """Remove retired weights and refit companions against supported feature contracts."""
+    from .maintenance import maintain_models as run
+
+    show(run(Store()))
+
+
+@app.command()
+def train_role_minutes():
+    """Validate and fit the non-neural immediate participation expert."""
+    from .role_minutes import attach, train, validate
+
+    store = Store()
+    show(validate(store))
+    show(train(store))
+    if store.list("decision_model", 1):
+        show({"decision_model_id": attach(store, store.get("decision_model"))["id"]})
+
+
+@app.command()
 def doctor():
     """Check local state integrity, source freshness, installed versions and free-cost policy."""
     import importlib.metadata
@@ -116,7 +136,7 @@ def build_features():
 
 
 @app.command()
-def train(legacy: bool = False, neural: bool = True):
+def train(legacy: bool = False):
     """Train the actual decision forecaster; --legacy reproduces the old shadow benchmark."""
     if legacy:
         from .evaluation import train_evaluate
@@ -137,7 +157,10 @@ def train(legacy: bool = False, neural: bool = True):
                 asyncio.run(import_context(store))
                 result = refit_active_fusion(store)
             else:
-                result = train_decisions(store, neural)
+                result = train_decisions(store)
+            from .role_minutes import ensure
+
+            result = ensure(store, result)
     show({k: v for k, v in result.items() if k not in ("predictions", "residuals", "curves")})
 
 
@@ -240,35 +263,29 @@ def sources_refresh():
 
 
 @app.command("train-fusion")
-def train_fusion(epochs: int = 20):
-    """Evaluate the multi-source temporal neural model against the same-input tree model."""
+def train_fusion():
+    """Evaluate multi-source boosted trees on chronological held-out deadlines."""
     from .context_archive import import_context
     from .fusion import compare_live, review_fusion
     from .fusion import train_fusion as run
 
-    if not 1 <= epochs <= 100:
-        raise typer.BadParameter("Epoch budget must be 1–100")
-    try:
-        __import__("torch")
-    except ImportError:
-        raise typer.BadParameter("Install CPU neural dependencies: uv sync --extra neural") from None
     store = Store()
     asyncio.run(import_context(store))
-    result = run(store, epochs)
+    result = run(store)
     review_fusion(store)
     compare_live(store)
-    show({k: v for k, v in result.items() if k not in ("tree_spec", "network_spec")})
+    show({k: v for k, v in result.items() if k != "tree_spec"})
 
 
 @app.command("train-decisions")
-def train_decisions(neural: bool = True):
+def train_decisions():
     """Train, calibrate and evaluate the points model that drives recommendations."""
     from threadpoolctl import threadpool_limits
 
     from .decision import train_decisions as run
 
     with threadpool_limits(limits=1):
-        result = run(Store(), neural)
+        result = run(Store())
     show({k: v for k, v in result.items() if k not in ("predictions", "residuals", "curves")})
 
 
@@ -641,13 +658,13 @@ def analyze_transfers():
 
 
 @app.command("train-complete")
-def train_complete(samples: int = 24, epochs: int = 20, refresh: bool = False):
+def train_complete(samples: int = 24, refresh: bool = False):
     """Run the complete source, learning, planning and validation workflow."""
     from .workflow import full_training
 
-    if not 4 <= samples <= 128 or not 1 <= epochs <= 100:
-        raise typer.BadParameter("Samples 4–128; epochs 1–100")
-    show(full_training(Store(), samples, epochs, refresh))
+    if not 4 <= samples <= 128:
+        raise typer.BadParameter("Samples 4–128")
+    show(full_training(Store(), samples, refresh))
 
 
 @app.command("train-strategy")

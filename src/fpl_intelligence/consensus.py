@@ -105,6 +105,7 @@ class DeadlineInputs:
 
         self.originals, _, _ = canonical_rows(store)
         feature = store.get("fusion_features", feature_id)
+        self.workload_version = feature.get("workload_transform", "legacy-v1")
         self.enrichment = EnrichmentIndex(
             store, self.originals, feature.get("lineage", {}).get("temporal_model")
         )
@@ -136,7 +137,7 @@ class DeadlineInputs:
             expert = self.experts.get((season, event, player.id), {"sample": sample} if sample else {})
             workload = [r for r in self.workload[player.code] if moment(r["known_after"]) < moment(deadline)]
             text, news, market, load, quality = source_features(
-                player.raw, expert, workload, player.code, deadline
+                player.raw, expert, workload, player.code, deadline, self.workload_version
             )
             enrichment = self.enrichment.vector(player.code, player.position, deadline, season, player.raw)
             quality = np.append(quality, float(enrichment[-2] > 0 or enrichment[-1] > 0))

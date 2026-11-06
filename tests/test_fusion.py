@@ -37,7 +37,9 @@ def test_workload_completion_boundary_and_explicit_bench_zero():
     assert workload_features([row], 7, row["known_after"]) == [0] * 7
     after = (time_value(row["known_after"]) + timedelta(seconds=1)).isoformat()
     values = workload_features([row], 7, after)
-    assert values[0] == 0 and values[2] > 0 and values[-1] == 1
+    assert values[:5] == [0] * 5 and values[5:] == [1, 1]
+    legacy = workload_features([row], 7, after, "legacy-v1")
+    assert legacy[2] > 0 and legacy[5] < 1
     assert workload_features([row], 8, after) == [0] * 7
     assert not valid_fixture({"match_id": "cup-2026-10-28", "kickoff_time": "2026-09-05T20:00Z"})[0]
     assert valid_fixture({"match_id": "opaque-competition-id", "kickoff_time": "2025-11-26T20:00+00:00"})[0]
@@ -103,40 +105,6 @@ def test_prior_qualified_cohort_is_lagged_and_ignores_realized_multipliers(tmp_p
     assert rows["2026/27", 9, 7]["ownership"] == 1
     assert rows["2026/27", 9, 7]["intended_xi"] == 0.5
     assert rows["2026/27", 9, 7]["captain"] == 0.5
-
-
-def test_neural_missing_sources_are_finite_and_weights_load_safely(tmp_path):
-    torch = pytest.importorskip("torch")
-    from fpl_intelligence.fusion import architecture, neural_predict, standardized
-
-    torch.set_num_threads(1)
-    torch.manual_seed(47)
-    n = 3
-    arrays = {
-        "tab": np.zeros((n, 26), dtype=np.float32),
-        "sequence": np.zeros((n, 12, 32), dtype=np.float32),
-        "sequence_mask": np.zeros((n, 12), dtype=bool),
-        "text": np.zeros((n, 40), dtype=np.int64),
-        "news": np.zeros((n, 13), dtype=np.float32),
-        "market": np.zeros((n, 9), dtype=np.float32),
-        "workload": np.zeros((n, 7), dtype=np.float32),
-        "quality": np.zeros((n, 4), dtype=np.float32),
-    }
-    x, stats = standardized(arrays, np.arange(n))
-    model = architecture()
-    a, b, c = neural_predict(model, x)
-    assert a.shape == (n, 4) and b.shape == (n, 3) and np.isfinite(a).all()
-    path = tmp_path / "weights.pt"
-    torch.save(model.state_dict(), path)
-    loaded = architecture()
-    loaded.load_state_dict(torch.load(path, weights_only=True, map_location="cpu"))
-    for actual, expected in zip(neural_predict(loaded, x), (a, b, c)):
-        np.testing.assert_allclose(actual, expected, atol=1e-7)
-    changed = {k: v.copy() for k, v in arrays.items()}
-    changed["tab"][2] = 10000
-    # Earlier fit statistics are explicitly reused, never re-fitted on inference.
-    _, after = standardized(changed, np.arange(n), stats)
-    assert after == stats
 
 
 def test_claim_identity_rejects_valid_wrong_ids_and_ambiguous_subjects(tmp_path, market, monkeypatch):

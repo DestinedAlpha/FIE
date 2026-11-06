@@ -28,7 +28,7 @@ The real refresh workflow ingests newly finalized labels, reconciles the public 
 
 ## How decisions learn
 
-The direct models learn actual fixture points and participation. Shared source tensors add dated news, ownership/expert signals, workload, advanced statistics and 12-match sequences with observation masks. Tree and temporal neural challengers use those tensors in training and serving. A collected field can inform a tested challenger without being forced into the primary policy after a failed replacement gate.
+The direct models learn actual fixture points and participation. Shared source tensors add dated news, ownership/expert signals, workload, advanced statistics and 12-match sequences with observation masks. Boosted-tree challengers use those tensors in training and serving. A collected field can inform a tested challenger without being forced into the primary policy after a failed replacement gate.
 
 Random legal accounts evolve through observed prices and exact transfer/chip rules. Legal actions receive later realized returns; purged chronological splits train and assess action critics and state value. Hindsight best teams and transfers provide regret diagnostics. Winners from a test week cannot be fed back into that week's prediction and then presented as an out-of-sample result.
 

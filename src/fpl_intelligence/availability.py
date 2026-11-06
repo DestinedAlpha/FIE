@@ -322,7 +322,7 @@ def validate_joint_rotation(rows, models, store):
             calibration = previous.filter(pl.col("deadline_group") >= cut)
             target = frame.filter(pl.col("deadline_group") == group)
             with threadpool_limits(limits=1):
-                fitted = fit_components(train, calibration, False)
+                fitted = fit_components(train, calibration)
                 _, probs, _ = predict_models(
                     fitted, target.select(NAMES).to_numpy(), target["dc_probability"].to_list()
                 )

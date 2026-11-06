@@ -1,0 +1,44 @@
+# Research review · 6 November 2026
+
+This review applies the user's current instruction to retain the statistical/tree models and remove locally trained neural components. Original supplied design documents remain unchanged historical inputs; their technology suggestions do not override that instruction.
+
+## Sources and implementation decisions
+
+| Source reviewed | Useful finding | Result in this system |
+|---|---|---|
+| [FiveStat methodology](https://www.fivestat.co.uk/methodology), updated September 2026 | Separates team attack/defence, fixture score probabilities, player shares and minutes; evaluates football probabilities out of sample | Retain our separately tested attack/score-process and coherent-world comparisons. Improve participation with the role head below. Do not copy another model's blend/covariance constants without our own acceptance evidence. Their reported performance is not ours. |
+| [FPL Core Insights](https://github.com/olbauday/FPL-Core-Insights), README and [data review](https://github.com/olbauday/FPL-Core-Insights/blob/main/DATA_INTEGRATION_REVIEW.md) | Stable player code differs from repository ID; explicit minutes are authoritative; duplicate competitions, incomplete coverage, conflicting match copies and different xG definitions need controls | Existing other-competition ingestion now quarantines conflicting player-match/fixture copies. Positive minutes alone count as physical exposure. The new participation model uses workload alongside news and role; this data is connected to inference. No inference of ninety minutes from missing substitution times. |
+| [FPL Optimized](https://fploptimized.com/) | Expected versus actual points, distributions, ownership and hindsight optimization answer different questions | Retain common-world outcome comparisons, expected/net hit payback, actual-return ledgers and hindsight ceilings. Do not present hindsight scores as forecasts. |
+| [Open FPL Solver](https://github.com/solioanalytics/open-fpl-solver) | Current home of Sertalp Çay's optimization tools; HiGHS multi-period integer planning | Our solver already uses HiGHS with full-market prices, FT, transfers and chips. Retain visible bounds and legal warm incumbents. A conditional continuation bound is not a global bound over all first actions. |
+| [FPL Research](https://www.fplresearch.com/) | Historical manager qualification differs from a current-rank leaderboard | Retain separate prior-qualified and current top-1,000 cohorts. Earlier picks/transfers inform manager behavior; current rank cannot be a historical elite label. Their future moves remain probabilistic scenarios. |
+| [Elevenify Fantasy Frameworks](https://www.elevenify.com/p/fantasy-frameworks) | Understand model assumptions, probability scales and information that would change a decision | Preserve dated evidence, source sensitivities, late recourse and uncertainty. Correlated forecasts are not independent votes. Pundit agreement alone is not an expected-points increase. |
+| [vaastav historical archive](https://github.com/vaastav/Fantasy-Premier-League), [Understat](https://understat.com/) | Multi-season outcomes and attacking evidence complement current FPL data | Already ingested with stable identities and chronological lagging; enriched statistics feed the tested source/future trees. Preserve provider definitions and missingness. |
+| FBref / [2026 removal report](https://www.sportseconomics.org/sports-economics/fbref-com-data-removal) | The screenshot's Opta advice is outdated: the advanced-data agreement ended in January 2026 | Do not create an unavailable advanced-FBref dependency. The Sports Reference announcement URL returned 403 during this review; current reporting corroborates the change. |
+| r/fplAnalytics [expected-points methods](https://www.reddit.com/r/fplAnalytics/comments/1vioe4q/i_made_an_expected_points_model_here_is_how_ive/) and [follow-up](https://www.reddit.com/r/fplAnalytics/comments/1vkqtss/i_made_an_expected_points_model_part_2_does_it/) | Minutes/DefCon/bonus require explicit distributions; descriptive expected returns per appearance are not automatically prospective predictions | Retain minute bands, rule-aware DefCon and match-wide physical bonus comparisons. Do not substitute a filtered retrospective season fit for walk-forward prediction validation or train on anonymous opinions. |
+
+Core Insights permits use of its data and requests attribution; this project credits olbauday. No foreign repository scripts were executed or copied. Its PL detailed shots, positions and Elo are not all added indiscriminately: overlapping shot data and retrospectively supplied fields need distinct definitions, causal availability and demonstrated incremental value. Existing official and Understat advanced features remain connected to tested trees.
+
+## Implemented participation improvement
+
+The new LightGBM classifier uses 57 inputs: the existing 26 numerical features, nine dated role features, thirteen official news/availability features, seven workload features and two coverage indicators. Role includes archived season starts/minutes and recent starts from prior matches. Bootstrap archive schema 3 preserves the additional fields from the original hash-pinned pre-deadline files. Historical joins use stable player codes.
+
+Eight-deadline expanding tests reserve eight earlier deadlines for probability calibration. The mixture weight is selected only on 2024/25 GW1–19. Acceptance is GW20–38 (14,492 player-fixtures); independent replication is all 2025/26 (29,644). Current-season outcomes do not choose the configuration. Confidence intervals resample whole deadlines. Both overall point error and regular-starter error must improve; all four position cohorts are disclosed.
+
+| Held-out period | Minutes Brier, previous → role-aware | Point MSE, previous → role-aware |
+|---|---:|---:|
+| 2024/25 GW20–38 | 0.308270 → 0.298704 | 3.340446 → 3.310779 |
+| 2025/26 | 0.290465 → 0.278451 | 3.602296 → 3.544659 |
+
+Both point-MSE deadline-block intervals exclude zero: [-0.04363, -0.01424] and [-0.08171, -0.04015]. The participation Brier intervals also exclude zero. These are forecast improvements, not proof of a particular transfer gain or future rank. [Executed metrics and protocol](../artifacts/evaluations/role_minutes_validation.json).
+
+Immediate forecasts consume the accepted participation probabilities without multiplying published injury chance twice. Explicit availability scenarios and served suspensions retain their baseline scenario path. The previously accepted distant-fixture expert remains separately bound. Completed new labels trigger refitting; an upcoming gameweek never supplies its own labels.
+
+## Cleanup and data fixes
+
+Removed local tensor architectures, inference, training commands/options, dependency extra/index, CI job, weights and controls. The environment no longer contains PyTorch. Existing-install migration deletes only retired tensor weights inside its model directory, preserves account/keys/tree weights, removes the retired action input from historical training rows without altering outcomes, and refits manager-choice and action-critic trees. Historical content-addressed receipts are retained as provenance, not executable candidates.
+
+Unused substitutes no longer reset physical rest or count as played matches. Older frozen models explicitly retain the legacy workload transform, protecting train/serve compatibility. The latest Core Insights refresh retrieved 180/180 files, accepted 3,451 player-match records and quarantined 16 conflicting duplicate player-match groups; other identity/date rejections remain visible in coverage.
+
+The transfer investigation compares the actual synchronized squad against rolling and named alternatives on the same fresh forecast. Player names never enter a forced transfer rule. Better participation accuracy cannot by itself settle Van Dijk versus a midfielder: legal lineup displacement, captaincy, bank, transfer opportunity and the continuation search all affect that decision. Current recommendation evidence is recorded separately from these historical forecast tests.
+
+The planner now filters reusable plans by account before limiting the cache; unrelated branch activity cannot evict stronger candidates. Refreshed-market continuations are replayed against current prices and constraints and ranked on current forecasts. Candidates generated with a later information cutoff cannot seed an earlier search. An unaffordable older plan is still rejected, even if its old displayed score was higher.

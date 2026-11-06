@@ -1,4 +1,4 @@
-"""Temporal, multi-source neural challenger and chronological comparison.
+"""Multi-source boosted-tree challenger and chronological comparison.
 
 Unavailable sources are masked. Text comes from timestamped official news,
 not social posts. No hindsight-optimal team or future manager rank is a label.
@@ -6,205 +6,18 @@ not social posts. No hindsight-optimal team or future manager rank is a label.
 
 from __future__ import annotations
 
-import copy
 import hashlib
 from pathlib import Path
 
 import lightgbm as lgb
 import numpy as np
 import polars as pl
-from scipy.special import expit, softmax
 
 from .decision import PARAMETERS, minute_band, paired_bootstrap, score_metrics
 from .fusion_data import tree_matrix
 from .storage import Store, atomic_json, digest, now
 
 INPUTS = ("tab", "sequence", "sequence_mask", "text", "news", "market", "workload", "quality", "enrichment")
-
-
-def architecture(enrichment_width=0):
-    import torch
-    from torch import nn
-
-    class FusionNetwork(nn.Module):
-        def __init__(self):
-            super().__init__()
-            self.numeric = nn.Sequential(nn.Linear(26, 128), nn.GELU(), nn.LayerNorm(128), nn.Linear(128, 64))
-            self.history = nn.Linear(32, 64)
-            self.cls = nn.Parameter(torch.zeros(1, 1, 64))
-            self.position = nn.Parameter(torch.randn(1, 13, 64) * 0.02)
-            self.temporal = nn.TransformerEncoder(
-                nn.TransformerEncoderLayer(64, 4, 128, 0.15, batch_first=True, norm_first=True),
-                2,
-                enable_nested_tensor=False,
-            )
-            self.words = nn.Embedding(4096, 32, padding_idx=0)
-            self.text_conv = nn.Conv1d(32, 64, 3, padding=1)
-            self.news = nn.Sequential(nn.Linear(77, 128), nn.GELU(), nn.Linear(128, 64))
-            self.market = nn.Sequential(nn.Linear(9, 64), nn.GELU(), nn.Linear(64, 64))
-            self.workload = nn.Sequential(nn.Linear(7, 64), nn.GELU(), nn.Linear(64, 64))
-            self.enrichment = (
-                nn.Sequential(nn.Linear(enrichment_width, 64), nn.GELU(), nn.LayerNorm(64))
-                if enrichment_width
-                else None
-            )
-            self.source_type = nn.Parameter(torch.randn(1, 5 + int(bool(enrichment_width)), 64) * 0.02)
-            self.fusion = nn.TransformerEncoder(
-                nn.TransformerEncoderLayer(64, 4, 128, 0.15, batch_first=True, norm_first=True),
-                2,
-                enable_nested_tensor=False,
-            )
-            self.head = nn.Sequential(nn.Linear(64, 128), nn.GELU(), nn.Dropout(0.15))
-            self.band = nn.Linear(128, 4)
-            self.points = nn.Linear(128, 3)
-            self.start = nn.Linear(128, 1)
-            self.auxiliary = nn.Linear(128, 7)
-
-        def forward(self, batch):
-            n = len(batch["tab"])
-            seq = torch.cat([self.cls.expand(n, -1, -1), self.history(batch["sequence"])], 1) + self.position
-            mask = torch.cat(
-                [torch.zeros(n, 1, dtype=torch.bool, device=seq.device), ~batch["sequence_mask"]], 1
-            )
-            history = self.temporal(seq, src_key_padding_mask=mask)[:, 0]
-            text = torch.nn.functional.gelu(self.text_conv(self.words(batch["text"]).transpose(1, 2)))
-            token_mask = (batch["text"] != 0).unsqueeze(1)
-            text = (text * token_mask).sum(2) / token_mask.sum(2).clamp_min(1)
-            sources = [
-                self.numeric(batch["tab"]),
-                history,
-                self.news(torch.cat([text, batch["news"]], 1)),
-                self.market(batch["market"]),
-                self.workload(batch["workload"]),
-            ]
-            if self.enrichment is not None:
-                sources.append(self.enrichment(batch["enrichment"]))
-            source = torch.stack(sources, 1) + self.source_type
-            missing = torch.cat(
-                [torch.zeros(n, 1, dtype=torch.bool, device=source.device), batch["quality"] <= 0], 1
-            )
-            fused = self.fusion(source, src_key_padding_mask=missing)[:, 0]
-            hidden = self.head(fused)
-            return (
-                self.band(hidden),
-                self.points(hidden),
-                self.start(hidden).squeeze(1),
-                self.auxiliary(hidden),
-            )
-
-    return FusionNetwork()
-
-
-def standardized(arrays, indices, normalization=None):
-    x = {k: arrays[k][indices].copy() for k in INPUTS if k in arrays}
-    if normalization is None:
-        normalization = {
-            k: {"mean": x[k].mean(0).tolist(), "scale": np.maximum(x[k].std(0), 0.1).tolist()}
-            for k in ("tab", "news", "market", "workload", "enrichment")
-            if k in x
-        }
-    for k, stats in normalization.items():
-        x[k] = np.clip((x[k] - np.array(stats["mean"])) / np.array(stats["scale"]), -10, 10).astype(
-            np.float32
-        )
-    return x, normalization
-
-
-def tensor_batch(x, indices):
-    import torch
-
-    return {
-        k: torch.as_tensor(
-            v[indices],
-            dtype=torch.int64 if k == "text" else torch.bool if k == "sequence_mask" else torch.float32,
-        )
-        for k, v in x.items()
-    }
-
-
-def neural_predict(model, x):
-    import torch
-
-    logits, means, starts = [], [], []
-    model.eval()
-    with torch.inference_mode():
-        for first in range(0, len(x["tab"]), 1024):
-            a, b, c, _ = model(tensor_batch(x, slice(first, first + 1024)))
-            logits.append(a.numpy())
-            means.append(b.numpy())
-            starts.append(c.numpy())
-    return np.concatenate(logits), np.concatenate(means), np.concatenate(starts)
-
-
-def fit_neural(arrays, train, calibration, seed=47, epochs=20):
-    import torch
-    from torch.nn import functional as f
-
-    torch.set_num_threads(3)
-    torch.manual_seed(seed)
-    torch.use_deterministic_algorithms(True)
-    model = architecture(arrays["enrichment"].shape[1] if "enrichment" in arrays else 0)
-    x, normalization = standardized(arrays, train)
-    xc, _ = standardized(arrays, calibration, normalization)
-    bands = torch.tensor(minute_band(arrays["minutes"][train]))
-    target = torch.tensor(arrays["base_target"][train])
-    actual = arrays["target"][calibration]
-    starts = torch.tensor(arrays["start"][train])
-    observed_start = torch.tensor(arrays["start_mask"][train])
-    aux = torch.tensor(arrays["aux"][train])
-    optimizer = torch.optim.AdamW(model.parameters(), lr=0.001, weight_decay=0.02)
-    generator = np.random.default_rng(seed)
-    best, state, stale, trace = float("inf"), None, 0, []
-    for epoch in range(epochs):
-        model.train()
-        for first in range(0, len(train), 512):
-            if first == 0:
-                order = generator.permutation(len(train))
-            idx = order[first : first + 512]
-            logits, conditional, starter, components = model(tensor_batch(x, idx))
-            band = bands[idx]
-            appeared = band > 0
-            loss = f.cross_entropy(logits, band)
-            if appeared.any():
-                chosen = conditional[appeared, band[appeared] - 1]
-                loss = loss + 0.15 * f.mse_loss(chosen, target[idx][appeared])
-            valid = observed_start[idx]
-            if valid.any():
-                loss = loss + 0.2 * f.binary_cross_entropy_with_logits(starter[valid], starts[idx][valid])
-            labels = aux[idx]
-            known = (labels >= 0) & appeared[:, None]
-            if known.any():
-                loss = loss + 0.015 * f.poisson_nll_loss(
-                    components.clamp(-8, 4)[known], labels[known], log_input=True
-                )
-            optimizer.zero_grad()
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), 2)
-            optimizer.step()
-        logits, conditional, _ = neural_predict(model, xc)
-        probability = softmax(logits, 1)
-        mean = (probability[:, 1:] * conditional).sum(1) + (
-            probability * arrays["dc_prior"][calibration]
-        ).sum(1) * 2
-        rmse = score_metrics(actual, mean)["rmse"]
-        trace.append(rmse)
-        if rmse < best - 0.0002:
-            best, state, stale = rmse, copy.deepcopy(model.state_dict()), 0
-        else:
-            stale += 1
-        if stale >= 4:
-            break
-    model.load_state_dict(state)
-    return (
-        model,
-        normalization,
-        {
-            "epochs": len(trace),
-            "selected_epoch": int(np.argmin(trace)) + 1,
-            "calibration_rmse": best,
-            "parameters": sum(p.numel() for p in model.parameters()),
-        },
-    )
 
 
 def fit_tree(arrays, matrix, train, calibration):
@@ -221,6 +34,7 @@ def fit_tree(arrays, matrix, train, calibration):
 
 
 def tree_predict(bundle, matrix) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+
     def predict(model, values):
         return (
             np.asarray(model.predict(values, num_threads=1))
@@ -243,7 +57,7 @@ def tree_predict(bundle, matrix) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     starts = (
         starter.predict_proba(matrix)[:, 1] if hasattr(starter, "predict_proba") else predict(starter, matrix)
     )
-    return probability, conditional, np.asarray(starts)
+    return (probability, conditional, np.asarray(starts))
 
 
 def calibrate(probability, conditional, starts, arrays, calibration):
@@ -256,27 +70,20 @@ def calibrate(probability, conditional, starts, arrays, calibration):
     offsets = {}
     for k in range(1, 4):
         selected = band == k
-        # Shrink small-band corrections; fit only on the separate calibration slice.
         residual = arrays["base_target"][calibration][selected] - conditional[selected, k]
         offsets[str(k)] = float(residual.sum() / (len(residual) + 100))
-    return curves, offsets
+    return (curves, offsets)
 
 
 def corrected(probability, conditional, starts, curves, offsets):
     from .models import curve_apply
 
     p = np.column_stack([curve_apply(probability[:, k], curves[str(k)]) for k in range(4)])
-    p /= np.maximum(p.sum(1, keepdims=True), 1e-9)
+    p /= np.maximum(p.sum(1, keepdims=True), 1e-09)
     c = conditional.copy()
     for k in range(1, 4):
         c[:, k] += offsets[str(k)]
-    return p, c, curve_apply(starts, curves["start"])
-
-
-def predict_neural(model, normalization, arrays, indices) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    x, _ = standardized(arrays, indices, normalization)
-    logits, conditional, starts = neural_predict(model, x)
-    return softmax(logits, 1), np.column_stack([np.zeros(len(indices)), conditional]), expit(starts)
+    return (p, c, curve_apply(starts, curves["start"]))
 
 
 def load_data(store, feature_id=None):
@@ -293,13 +100,11 @@ def load_data(store, feature_id=None):
     ):
         raise ValueError("Fusion metadata integrity failed")
     meta = pl.read_parquet(metadata_path).to_dicts()
-    return arrays, meta, spec
+    return (arrays, meta, spec)
 
 
-def train_fusion(store: Store, epochs=20):
-    """Compare independently fitted trees and temporal fusion in six forward blocks."""
-    import torch
-
+def train_fusion(store: Store):
+    """Compare independently fitted multi-source boosted trees in six forward blocks."""
     from .decision import build_dataset
     from .fusion_data import build_fusion_data
 
@@ -323,16 +128,13 @@ def train_fusion(store: Store, epochs=20):
     protocol = {
         "availability": "Reference uses its live published-chance adjustment; all candidates respect the same confirmed zero-availability constraint",
         "test": "Expanding eight-deadline blocks from 2025/26, never shuffled",
-        "calibration": "Four immediately earlier deadlines excluded from fitting; neural early stopping and probability calibration share this earlier slice",
-        "neural": "Two-layer temporal transformer, hashed official news CNN, numerical/market/workload branches, two-layer masked source attention; minutes, conditional points, starters and component auxiliary heads",
+        "calibration": "Four immediately earlier deadlines excluded from fitting; probability calibration uses only this earlier slice",
         "seed": 47,
-        "max_epochs": epochs,
-        "promotion": "Upper deadline-bootstrap RMSE delta < 0 against existing production on identical rows; regular-starter improvement also required; tree and neural both disclosed",
+        "promotion": "Upper deadline-bootstrap RMSE delta < 0 against existing production on identical rows; regular-starter improvement also required; all supported tree results disclosed",
         "expert": "Only lagged choices from managers qualified on prior seasons; no current rank",
         "social": "No raw Reddit training; specialist statements remain source evidence until prospectively validated",
         "selection": "Choose one architecture by validation; no post-test optimized ensemble",
     }
-    # The comparison uses exact old out-of-fold predictions for the same rows.
     old, reference, oldrows = reference_forecasts(store, meta)
     import inspect
     import json
@@ -344,8 +146,7 @@ def train_fusion(store: Store, epochs=20):
             "protocol": protocol,
             "reference": reference["id"],
             "implementation": [
-                inspect.getsource(f)
-                for f in (fit_tree, fit_neural, calibrate, corrected, published_availability)
+                inspect.getsource(f) for f in (fit_tree, calibrate, corrected, published_availability)
             ],
         }
     )
@@ -370,15 +171,10 @@ def train_fusion(store: Store, epochs=20):
         tree = fit_tree(arrays, matrix, train, cal)
         curves, offsets = calibrate(*tree_predict(tree, matrix[cal]), arrays, cal)
         tp, tc, ts = corrected(*tree_predict(tree, matrix[test]), curves, offsets)
-        model, normalization, training = fit_neural(arrays, train, cal, epochs=epochs)
-        nc, no = calibrate(*predict_neural(model, normalization, arrays, cal), arrays, cal)
-        np_, ncond, ns = corrected(*predict_neural(model, normalization, arrays, test), nc, no)
         dc = arrays["dc_prior"][test]
         hard_absent = (arrays["news"][test, 5] > 0) & (arrays["news"][test, 6] == 0)
         tp[hard_absent] = [1, 0, 0, 0]
-        np_[hard_absent] = [1, 0, 0, 0]
         tmean = (tp * (tc + 2 * dc)).sum(1)
-        nmean = (np_ * (ncond + 2 * dc)).sum(1)
         for j, index in enumerate(test):
             row = meta[index]
             prior = oldrows.get((row["season"], row["player_id"], row["fixture_id"]))
@@ -391,32 +187,23 @@ def train_fusion(store: Store, epochs=20):
                     "minutes": float(arrays["minutes"][index]),
                     "baseline": prior["predicted"] * published_availability(arrays["news"][index]),
                     "tree": float(tmean[j]),
-                    "network": float(nmean[j]),
                     "tree_p_any": float(1 - tp[j, 0]),
-                    "network_p_any": float(1 - np_[j, 0]),
                     "tree_p60": float(tp[j, 2:].sum()),
-                    "network_p60": float(np_[j, 2:].sum()),
                 }
             )
         folds.append(
-            {
-                "test": block,
-                "train_rows": len(train),
-                "calibration_rows": len(cal),
-                "test_rows": len(test),
-                "neural": training,
-            }
+            {"test": block, "train_rows": len(train), "calibration_rows": len(cal), "test_rows": len(test)}
         )
         atomic_json(
             checkpoint, {"key": checkpoint_key, "predictions": predictions[block_start:], "fold": folds[-1]}
         )
-        print(f"Fusion validated {block[0]}–{block[-1]}: {training}", flush=True)
+        print(f"Tree fusion validated {block[0]}–{block[-1]}", flush=True)
     y = np.array([r["actual"] for r in predictions])
     baseline = np.array([r["baseline"] for r in predictions])
     regular = np.array([r["prior_start"] >= 0.6 for r in predictions])
     metrics = {}
     eligible = []
-    for kind in ("tree", "network"):
+    for kind in ("tree",):
         values = np.array([r[kind] for r in predictions])
         ci = paired_bootstrap(predictions, kind)
         passed = (
@@ -455,7 +242,6 @@ def train_fusion(store: Store, epochs=20):
             "This is an architecture comparison, not proof of winning a league or absence of bias",
         ],
     }
-    # Save the final candidate for reproducible inference, including when it fails promotion.
     cut = unique[-4]
     train = np.flatnonzero(groups < cut)
     cal = np.flatnonzero(groups >= cut)
@@ -472,20 +258,9 @@ def train_fusion(store: Store, epochs=20):
         path = directory / (name + ".txt")
         model.booster_.save_model(str(path))
         tree_spec["hashes"][name] = hashlib.sha256(path.read_bytes()).hexdigest()
-    model, normalization, training = fit_neural(arrays, train, cal, epochs=epochs)
-    nc, no = calibrate(*predict_neural(model, normalization, arrays, cal), arrays, cal)
-    weights = directory / "network.pt"
-    torch.save(model.state_dict(), weights)
     report.update(
         directory=directory.name,
         tree_spec=tree_spec,
-        network_spec={
-            "normalization": normalization,
-            "curves": nc,
-            "offsets": no,
-            "hash": hashlib.sha256(weights.read_bytes()).hexdigest(),
-            "training": training,
-        },
         production_fit_before=cut,
         production_training_rows=len(train),
         production_calibration_rows=len(cal),
@@ -496,50 +271,35 @@ def train_fusion(store: Store, epochs=20):
     report["id"] = store.put("fusion_model", report)
     atomic_json(
         Path("artifacts/evaluations/fusion_model.json"),
-        {k: v for k, v in report.items() if k not in ("tree_spec", "network_spec")},
+        {k: v for k, v in report.items() if k not in ("tree_spec",)},
     )
     return freeze_fusion_artifacts(store, report)
 
 
 def candidate_predict(store, spec, arrays, kind):
+    """Load an independently fitted tree challenger with verified checksums."""
+    if kind != "tree":
+        raise ValueError("Only boosted-tree fusion is supported")
     if not spec.get("enrichment_width", 0):
         arrays = {k: v for k, v in arrays.items() if k != "enrichment"}
         arrays["quality"] = arrays["quality"][:, :4]
-
-    """Hash-verified, non-pickle loading for either independently fitted candidate."""
     directory = store.root / "models" / spec["directory"]
-    if kind == "tree":
-        models = {}
-        for key, expected in spec["tree_spec"]["hashes"].items():
-            path = directory / (key + ".txt")
-            if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
-                raise ValueError("Fusion tree integrity verification failed")
-            models[key] = lgb.Booster(model_file=str(path))
-        matrix = tree_matrix(
-            arrays["tab"],
-            arrays["news"],
-            arrays["market"],
-            arrays["workload"],
-            arrays["text"],
-            arrays["sequence"],
-            enrichment=arrays.get("enrichment"),
-        )
-        return corrected(
-            *tree_predict(models, matrix), spec["tree_spec"]["curves"], spec["tree_spec"]["offsets"]
-        )
-    if kind != "network":
-        raise ValueError("Unknown fusion candidate")
-    import torch
-
-    torch.set_num_threads(3)
-    path = directory / "network.pt"
-    config = spec["network_spec"]
-    if hashlib.sha256(path.read_bytes()).hexdigest() != config["hash"]:
-        raise ValueError("Fusion neural integrity verification failed")
-    model = architecture(spec.get("enrichment_width", 0))
-    model.load_state_dict(torch.load(path, map_location="cpu", weights_only=True))
-    raw = predict_neural(model, config["normalization"], arrays, np.arange(len(arrays["tab"])))
-    return corrected(*raw, config["curves"], config["offsets"])
+    models = {}
+    for key, expected in spec["tree_spec"]["hashes"].items():
+        path = directory / (key + ".txt")
+        if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+            raise ValueError("Fusion tree integrity verification failed")
+        models[key] = lgb.Booster(model_file=str(path))
+    matrix = tree_matrix(
+        arrays["tab"],
+        arrays["news"],
+        arrays["market"],
+        arrays["workload"],
+        arrays["text"],
+        arrays["sequence"],
+        enrichment=arrays.get("enrichment"),
+    )
+    return corrected(*tree_predict(models, matrix), spec["tree_spec"]["curves"], spec["tree_spec"]["offsets"])
 
 
 def compare_live(store: Store):
@@ -548,7 +308,7 @@ def compare_live(store: Store):
     from .ingestion import load_market
 
     players, market = load_market(store)
-    start = next(e["id"] for e in market["events"] if e.get("is_next"))
+    start = next((e["id"] for e in market["events"] if e.get("is_next")))
     rows, _ = future_inputs(store, market, players, start, start)
     spec = store.get("fusion_model")
     inputs = live_inputs(store, rows, market, players, spec["feature_id"])
@@ -558,15 +318,19 @@ def compare_live(store: Store):
     )
     if old.get("fusion_model_id"):
         p, c, _ = production_predictions(store, old, rows, market, players)
-    # Match the production baseline's availability adjustment exactly.
     availability = np.array([r["availability"] for r in rows])
-    p[:, 1:] *= availability[:, None]
-    p[:, 0] = 1 - p[:, 1:].sum(1)
+    included = np.zeros(len(rows), dtype=bool)
+    if old.get("role_minutes_model_id"):
+        from .role_minutes import apply
+
+        p, included = apply(store, old["role_minutes_model_id"], rows, market, players, p, start)
+    p[~included, 1:] *= availability[~included, None]
+    p[~included, 0] = 1 - p[~included, 1:].sum(1)
     dc = np.array([r["dc_probability"] for r in rows])
     base = (p * (c + 2 * dc)).sum(1)
     means = {}
     source_sensitivity: dict[str, dict] = {}
-    for kind in ("tree", "network"):
+    for kind in ("tree",):
         p, c, _ = candidate_predict(store, spec, inputs, kind)
         p[np.array([r["availability"] == 0 for r in rows])] = [1, 0, 0, 0]
         means[kind] = (p * (c + 2 * dc)).sum(1)
@@ -597,7 +361,6 @@ def compare_live(store: Store):
                 "event": start,
                 "production": float(base[i]),
                 "tree": float(means["tree"][i]),
-                "network": float(means["network"][i]),
             }
         )
     report = {
@@ -633,20 +396,18 @@ def audit_fusion_decisions(store: Store):
         players: dict[int, dict[str, float]] = defaultdict(lambda: defaultdict(float))
         for row in records:
             p = players[row["player_id"]]
-            for field in ("baseline", "tree", "network", "actual", "minutes"):
+            for field in ("baseline", "tree", "actual", "minutes"):
                 p[field] += row[field]
         outcomes = {}
-        for field in ("baseline", "tree", "network"):
+        for field in ("baseline", "tree"):
             chosen = sorted(players, key=lambda pid: (-players[pid][field], pid))[:2]
             outcomes[field] = next(
                 (players[pid]["actual"] for pid in chosen if players[pid]["minutes"] > 0), 0
             )
         captains.append({"deadline_group": group, **outcomes})
     policies = {}
-    for kind in ("tree", "network"):
-        transformed = [
-            row | {"predicted": row[kind], "network": row["network"], "price_observed": True} for row in rows
-        ]
+    for kind in ("tree",):
+        transformed = [row | {"predicted": row[kind], "price_observed": True} for row in rows]
         result = replay_policy(
             store, spec={"id": spec["id"], "predictions": transformed}, artifact_kind="fusion_policy_" + kind
         )
@@ -657,9 +418,7 @@ def audit_fusion_decisions(store: Store):
     report = {
         "at": now(),
         "fusion_model_id": spec["id"],
-        "captain_totals": {
-            kind: sum(row[kind] for row in captains) for kind in ("baseline", "tree", "network")
-        },
+        "captain_totals": {kind: sum((row[kind] for row in captains)) for kind in ("baseline", "tree")},
         "captain_deadlines": len(captains),
         "policies": policies,
         "limits": [
@@ -671,7 +430,7 @@ def audit_fusion_decisions(store: Store):
             spec["selected"]
             and policies[spec["selected"]]["transfer-learned"]["realized_net_points"]
             >= policies[spec["selected"]]["transfer-shrinkage"]["realized_net_points"]
-            and sum(r[spec["selected"]] for r in captains) >= sum(r["baseline"] for r in captains)
+            and (sum((r[spec["selected"]] for r in captains)) >= sum((r["baseline"] for r in captains)))
         ),
     }
     report["id"] = store.put("fusion_decisions", report)
@@ -722,14 +481,9 @@ def validate_fusion_worlds(store: Store, worlds=512):
         train = np.flatnonzero(groups < cut)
         cal = np.flatnonzero((groups >= cut) & (groups < block[0]))
         test = np.flatnonzero(np.isin(groups, block))
-        if kind == "tree":
-            model = fit_tree(arrays, matrix, train, cal)
-            rawcal = tree_predict(model, matrix[cal])
-            rawtest = tree_predict(model, matrix[test])
-        else:
-            model, norm, _ = fit_neural(arrays, train, cal, epochs=spec["protocol"]["max_epochs"])
-            rawcal = predict_neural(model, norm, arrays, cal)
-            rawtest = predict_neural(model, norm, arrays, test)
+        model = fit_tree(arrays, matrix, train, cal)
+        rawcal = tree_predict(model, matrix[cal])
+        rawtest = tree_predict(model, matrix[test])
         curves, offsets = calibrate(*rawcal, arrays, cal)
         _, calconditional, _ = corrected(*rawcal, curves, offsets)
         probability, conditional, _ = corrected(*rawtest, curves, offsets)
@@ -751,7 +505,7 @@ def validate_fusion_worlds(store: Store, worlds=512):
             ordered = np.sort(points)
             crps = float(
                 np.abs(points - actual).mean()
-                - np.dot(2 * np.arange(1, worlds + 1) - worlds - 1, ordered) / (worlds**2)
+                - np.dot(2 * np.arange(1, worlds + 1) - worlds - 1, ordered) / worlds**2
             )
             mean = float(np.dot(probability[i], conditional[i] + 2 * arrays["dc_prior"][index]))
             records.append(
@@ -791,7 +545,7 @@ def validate_fusion_worlds(store: Store, worlds=512):
     report["passed"] = bool(
         regular["coverage80"] >= 0.75
         and regular["coverage90"] >= 0.85
-        and abs(regular["mean_sampling_bias"]) < 0.1
+        and (abs(regular["mean_sampling_bias"]) < 0.1)
     )
     report["id"] = store.put("fusion_uncertainty", report)
     atomic_json(Path("artifacts/evaluations/fusion_uncertainty.json"), report)
@@ -817,20 +571,17 @@ def production_predictions(store, spec, rows, market, players, scenario=None):
         for feature in ("report_age_days", "injury_reported"):
             healthy["enrichment"][:, FEATURES.index(feature)] = 0
     hp, hc, hs = candidate_predict(store, validation, healthy, kind)
-    # The network already reads immediate published injury chance. Future
-    # interpolation follows the separately validated recovery transition,
-    # rather than multiplying that signal twice or fading it by GW number.
     weight = np.ones(len(rows))
     for i, row in enumerate(rows):
         player = players[row["player_id"]]
-        initial = player.chance if player.chance is not None else (1.0 if player.status == "a" else 0.5)
+        initial = player.chance if player.chance is not None else 1.0 if player.status == "a" else 0.5
         if player.status in ("i", "d") and initial < 1:
             weight[i] = 1 - float(np.clip((row["availability"] - initial) / (1 - initial), 0, 1))
         elif player.status == "s" and row["availability"] == 1:
             weight[i] = 0
     joint = weight[:, None] * p * c + (1 - weight[:, None]) * hp * hc
     probabilities = weight[:, None] * p + (1 - weight[:, None]) * hp
-    conditional = np.divide(joint, np.maximum(probabilities, 1e-9))
+    conditional = np.divide(joint, np.maximum(probabilities, 1e-09))
     starts = weight * s + (1 - weight) * hs
     for i, row in enumerate(rows):
         hard_absent = row["availability"] == 0 or not players[row["player_id"]].selectable
@@ -839,15 +590,13 @@ def production_predictions(store, spec, rows, market, players, scenario=None):
             if (
                 change["player_id"] == row["player_id"]
                 and change["from_event"] <= row["event"] <= change.get("through_event", 38)
-                and "availability" in change
+                and ("availability" in change)
             ):
-                # Explicit availability scenarios replace the news state, rather
-                # than applying the same injury chance a second time.
                 probabilities[i] = hp[i]
                 conditional[i] = hc[i]
                 starts[i] = hs[i]
                 row["availability"] = change["availability"] if players[row["player_id"]].selectable else 0
-    return probabilities, conditional, starts
+    return (probabilities, conditional, starts)
 
 
 def promote_fusion(store: Store):
@@ -858,8 +607,8 @@ def promote_fusion(store: Store):
     if (
         decisions["fusion_model_id"] != spec["id"]
         or uncertainty["fusion_model_id"] != spec["id"]
-        or not decisions["promotable"]
-        or not uncertainty["passed"]
+        or (not decisions["promotable"])
+        or (not uncertainty["passed"])
     ):
         raise ValueError("Fusion forecast, legal policy and distribution promotion gates must all pass")
     kind = spec["selected"]
@@ -887,7 +636,6 @@ def promote_fusion(store: Store):
             prior
             | {
                 "predicted": row[kind],
-                "network": row["network"],
                 "price_lag": row["price_lag"],
                 "price_observed": True,
                 "p_any": row[kind + "_p_any"],
@@ -934,11 +682,7 @@ def promote_fusion(store: Store):
         production_fit_before=spec["production_fit_before"],
         fusion_decisions_id=decisions["id"],
         fusion_uncertainty_id=uncertainty["id"],
-        training_serve_transform="Shared fusion source_features, sequence, tree_matrix and standardized neural tensors",
-        neural={
-            "metrics": spec["candidates"]["network"]["metrics"],
-            "paired_vs_gbm_95ci": paired_bootstrap(rows, "network", "tree"),
-        },
+        training_serve_transform="Shared source_features, sequence summaries and tree_matrix",
     )
     minutes = arrays["minutes"][cal]
     bands = minute_band(minutes)
@@ -973,7 +717,7 @@ def freeze_fusion_artifacts(store: Store, spec=None):
         old = store.artifact_path(feature[field])
         sha = hashlib.sha256(old.read_bytes()).hexdigest()
         new = store.root / "features" / ("fusion-" + sha[:24] + suffix)
-        if old != new and not new.exists():
+        if old != new and (not new.exists()):
             shutil.copy2(old, new)
         feature[field] = str(new)
         if field == "metadata_path":
@@ -990,17 +734,14 @@ def freeze_fusion_artifacts(store: Store, spec=None):
     body["feature_id"] = feature["id"]
     original = store.root / "models" / spec["directory"]
     fingerprint = digest(
-        {
-            "tree": spec["tree_spec"],
-            "network": spec["network_spec"],
-            "feature": feature["hash"],
-            "protocol": spec["protocol"],
-        }
+        {"tree": spec["tree_spec"], "feature": feature["hash"], "protocol": spec["protocol"]}
     )
     frozen = store.root / "models" / ("fusion-" + fingerprint[:24])
     if original != frozen:
         frozen.mkdir(parents=True, exist_ok=True)
         for path in original.iterdir():
+            if path.suffix in (".pt", ".pth"):
+                continue
             destination = frozen / path.name
             if destination.exists() and destination.read_bytes() != path.read_bytes():
                 raise ValueError("Immutable fusion artifact conflict")
@@ -1011,7 +752,7 @@ def freeze_fusion_artifacts(store: Store, spec=None):
     body["id"] = store.put("fusion_model", body)
     atomic_json(
         Path("artifacts/evaluations/fusion_model.json"),
-        {k: v for k, v in body.items() if k not in ("tree_spec", "network_spec")},
+        {k: v for k, v in body.items() if k not in ("tree_spec",)},
     )
     atomic_json(Path("artifacts/evaluations/fusion_data_coverage.json"), feature)
     return body
@@ -1065,12 +806,12 @@ def reference_forecasts(store, metadata):
             block = testing[first : first + 4]
             test = frame.filter(pl.col("deadline_group").is_in(block))
             records = test.to_dicts()
-            if not any((r["season"], r["player_id"], r["fixture_id"]) in missing for r in records):
+            if not any(((r["season"], r["player_id"], r["fixture_id"]) in missing for r in records)):
                 continue
             cut = [g for g in groups if g < block[0]][-8]
             train = frame.filter(pl.col("deadline_group") < cut)
             cal = frame.filter((pl.col("deadline_group") >= cut) & (pl.col("deadline_group") < block[0]))
-            fitted = fit_components(train, cal, False)
+            fitted = fit_components(train, cal)
             mean, _, _ = predict_models(
                 fitted, test.select(NAMES).to_numpy(), test["dc_probability"].to_list()
             )
@@ -1078,7 +819,7 @@ def reference_forecasts(store, metadata):
                 output[row["season"], row["player_id"], row["fixture_id"]] = row | {
                     "predicted": float(mean[i])
                 }
-    return active, reference, output
+    return (active, reference, output)
 
 
 def refit_active_fusion(store: Store):
@@ -1107,39 +848,26 @@ def refit_active_fusion(store: Store):
     with tempfile.TemporaryDirectory(dir=store.root / "models", prefix="refit-") as temporary:
         directory = Path(temporary)
         for path in (store.root / "models" / validated["directory"]).iterdir():
+            if path.suffix in (".pt", ".pth"):
+                continue
             shutil.copy2(path, directory / path.name)
-        if kind == "tree":
-            matrix = tree_matrix(
-                arrays["tab"],
-                arrays["news"],
-                arrays["market"],
-                arrays["workload"],
-                arrays["text"],
-                arrays["sequence"],
-                enrichment=arrays.get("enrichment"),
-            )
-            fitted = fit_tree(arrays, matrix, train, cal)
-            curves, offsets = calibrate(*tree_predict(fitted, matrix[cal]), arrays, cal)
-            hashes = {}
-            for key, model in fitted.items():
-                path = directory / (key + ".txt")
-                model.booster_.save_model(str(path))
-                hashes[key] = hashlib.sha256(path.read_bytes()).hexdigest()
-            candidate["tree_spec"] = {"curves": curves, "offsets": offsets, "hashes": hashes}
-        else:
-            import torch
-
-            model, norm, training = fit_neural(arrays, train, cal, epochs=validated["protocol"]["max_epochs"])
-            curves, offsets = calibrate(*predict_neural(model, norm, arrays, cal), arrays, cal)
-            path = directory / "network.pt"
-            torch.save(model.state_dict(), path)
-            candidate["network_spec"] = {
-                "curves": curves,
-                "offsets": offsets,
-                "normalization": norm,
-                "training": training,
-                "hash": hashlib.sha256(path.read_bytes()).hexdigest(),
-            }
+        matrix = tree_matrix(
+            arrays["tab"],
+            arrays["news"],
+            arrays["market"],
+            arrays["workload"],
+            arrays["text"],
+            arrays["sequence"],
+            enrichment=arrays.get("enrichment"),
+        )
+        fitted = fit_tree(arrays, matrix, train, cal)
+        curves, offsets = calibrate(*tree_predict(fitted, matrix[cal]), arrays, cal)
+        hashes = {}
+        for key, model in fitted.items():
+            path = directory / (key + ".txt")
+            model.booster_.save_model(str(path))
+            hashes[key] = hashlib.sha256(path.read_bytes()).hexdigest()
+        candidate["tree_spec"] = {"curves": curves, "offsets": offsets, "hashes": hashes}
         candidate.update(
             at=now(),
             directory=directory.name,
@@ -1181,7 +909,7 @@ def refit_active_fusion(store: Store):
 
 
 def forecast_sources(store, forecast):
-    """Genuine tree/neural predictions for every deadline used by rival choices."""
+    """Genuine tree predictions for every deadline used by rival choices."""
     from collections import defaultdict
 
     from .decision import future_inputs
@@ -1205,7 +933,7 @@ def forecast_sources(store, forecast):
     rows, _ = future_inputs(store, market, players, forecast["start_event"], forecast["end_event"])
     dc = np.array([r["dc_probability"] for r in rows])
     values = {}
-    for kind in ("tree", "network"):
+    for kind in ("tree",):
         candidate_rows = [dict(r) for r in rows]
         p, c, _ = production_predictions(
             store, {"fusion_model_id": spec["id"], "fusion_kind": kind}, candidate_rows, market, players
@@ -1214,7 +942,7 @@ def forecast_sources(store, forecast):
             if row["availability"] == 0:
                 p[i] = [1, 0, 0, 0]
         values[kind] = (p * (c + 2 * dc)).sum(1)
-    totals: dict = defaultdict(lambda: {"tree": 0.0, "network": 0.0})
+    totals: dict = defaultdict(lambda: {"tree": 0.0})
     for i, row in enumerate(rows):
         for kind in values:
             totals[row["event"], row["player_id"]][kind] += float(values[kind][i])
@@ -1239,4 +967,4 @@ def published_availability(news):
     """Historical counterpart of the reference forecast's immediate adjustment."""
     if not news[12]:
         return 1.0
-    return float(news[6]) if news[5] else (1.0 if news[0] else 0.5)
+    return float(news[6]) if news[5] else 1.0 if news[0] else 0.5

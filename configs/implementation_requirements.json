@@ -226,8 +226,8 @@
       "runtime_evidence_kind": "temporal_model"
     },
     {
-      "id": "model.neural",
-      "requirement": "Purpose-built temporal/news/numerical/market/workload/enrichment neural fusion",
+      "id": "model.source_fusion",
+      "requirement": "Dated numerical/news/market/workload/enrichment boosted-tree fusion; locally trained neural components removed under the latest user instruction",
       "implementation": "src/fpl_intelligence/fusion.py:train_fusion",
       "test": "tests/test_fusion.py:test_fusion_promotion_cannot_skip_decision_or_uncertainty_gates",
       "runtime_evidence_kind": "fusion_model"
@@ -609,6 +609,48 @@
       "implementation": "src/fpl_intelligence/objectives.py:paid_transfer_evidence",
       "test": "tests/test_hit_support.py:test_precise_monte_carlo_cannot_establish_a_paid_hit_with_unfinished_search",
       "runtime_evidence_kind": "policy_selection"
+    },
+    {
+      "id": "model.role_minutes",
+      "requirement": "Chronological role-aware participation; stable-code joins and frozen context",
+      "implementation": "src/fpl_intelligence/role_minutes.py:validate",
+      "test": "tests/test_role_minutes.py:test_role_history_uses_stable_code_and_frozen_context",
+      "runtime_evidence_kind": "role_minutes_validation"
+    },
+    {
+      "id": "data.physical_rest",
+      "requirement": "Unused substitute observations do not count as physical appearances or reset rest",
+      "implementation": "src/fpl_intelligence/workload.py:workload_features",
+      "test": "tests/test_model_maintenance.py:test_unused_midweek_substitute_does_not_reset_physical_rest",
+      "runtime_evidence_kind": "workload"
+    },
+    {
+      "id": "data.duplicate_matches",
+      "requirement": "Conflicting copies quarantine the entire fixture",
+      "implementation": "src/fpl_intelligence/workload.py:canonical_player_matches",
+      "test": "tests/test_model_maintenance.py:test_conflicting_duplicate_match_excludes_every_copy",
+      "runtime_evidence_kind": "workload"
+    },
+    {
+      "id": "model.retirement",
+      "requirement": "Retire unsupported local weights without changing account data or tree weights",
+      "implementation": "src/fpl_intelligence/maintenance.py:maintain_models",
+      "test": "tests/test_model_maintenance.py:test_weight_cleanup_preserves_account_tree_and_external_files",
+      "runtime_evidence_kind": "model_maintenance"
+    },
+    {
+      "id": "optimizer.cache_scope",
+      "requirement": "Unrelated plans cannot evict legal continuations; refreshed-market reuse replays prices and constraints",
+      "implementation": "src/fpl_intelligence/decision_runtime.py:conditional_plan",
+      "test": "tests/test_strategy.py:test_equivalent_freehit_actions_reuse_a_validated_continuation",
+      "runtime_evidence_kind": "plan"
+    },
+    {
+      "id": "optimizer.causal_incumbents",
+      "requirement": "Search incumbents cannot originate in a later-information forecast",
+      "implementation": "src/fpl_intelligence/optimization.py:incumbent_precedes_forecast",
+      "test": "tests/test_model_maintenance.py:test_reused_actions_cannot_come_from_future_forecasts",
+      "runtime_evidence_kind": "plan"
     }
   ]
 }

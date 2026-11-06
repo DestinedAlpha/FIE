@@ -18,7 +18,7 @@ from .strategy import Decision, allowed_chips, candidate_actions, solve_action
 def continuation_terms(store, end_event, means, players, rules, state):
     """Compile a validated additive continuation model into MIP coefficients."""
     fallback = {
-        p: 0.1 * sum(means.get((e, p), 0) for e in range(end_event + 1, min(38, end_event + 4) + 1))
+        p: 0.1 * sum((means.get((e, p), 0) for e in range(end_event + 1, min(38, end_event + 4) + 1)))
         for p in players
     }
     result: dict[str, Any] = {
@@ -38,7 +38,7 @@ def continuation_terms(store, end_event, means, players, rules, state):
     coef = model["coefficients"]
     result.update(
         players={
-            p: coef[0] * sum(means.get((e, p), 0) for e in range(end_event + 1, min(38, end_event + 3) + 1))
+            p: coef[0] * sum((means.get((e, p), 0) for e in range(end_event + 1, min(38, end_event + 3) + 1)))
             for p in players
         },
         bank=coef[1] / 10,
@@ -50,7 +50,7 @@ def continuation_terms(store, end_event, means, players, rules, state):
     for chip, weight in zip(("wildcard", "freehit", "bboost", "3xc"), coef[3:]):
         try:
             a, b = rules.chip_window(chip, end_event + 1)
-            if any(u.chip == chip and a <= u.event <= b for u in state.used_chips):
+            if any((u.chip == chip and a <= u.event <= b for u in state.used_chips)):
                 continue
             value = float(weight) * min(1, (b - end_event) / 4)
             for event in range(state.event, end_event + 1):
@@ -62,38 +62,15 @@ def continuation_terms(store, end_event, means, players, rules, state):
 
 
 def critic_residual(store, features, kind):
+    if kind != "tree":
+        raise ValueError("Only boosted-tree decision models are supported")
     spec = store.get("decision_critic")
     item = spec["models"][kind]
     path = store.artifact_path(item["path"])
     if hashlib.sha256(path.read_bytes()).hexdigest() != item["hash"]:
         raise ValueError("Decision critic checksum mismatch")
     x = np.asarray(features, dtype=np.float32)
-    if kind == "tree":
-        return lgb.Booster(model_file=str(path)).predict(x, num_threads=1)
-    import torch
-    from torch import nn
-
-    model = nn.Sequential(
-        nn.Linear(len(spec["features"]), 64),
-        nn.SiLU(),
-        nn.LayerNorm(64),
-        nn.Linear(64, 32),
-        nn.SiLU(),
-        nn.Linear(32, 1),
-    )
-    model.load_state_dict(torch.load(path, map_location="cpu", weights_only=True))
-    model.eval()
-    with torch.inference_mode():
-        return (
-            model(
-                torch.tensor(
-                    (x - np.array(spec["neural"]["mean"])) / np.array(spec["neural"]["scale"]),
-                    dtype=torch.float32,
-                )
-            )
-            .squeeze(1)
-            .numpy()
-        )
+    return lgb.Booster(model_file=str(path)).predict(x, num_threads=1)
 
 
 def decision_inputs(store):
@@ -108,19 +85,19 @@ def decision_inputs(store):
         raise ValueError("Refresh forecasts for current market before strategy analysis")
     rules = Rules.from_bootstrap(store.latest("bootstrap", content_hash=market["source_hash"])[0])
     comparison = compare_live(store)
-    q: dict[str, dict[int, float]] = {k: {} for k in ("reference", "tree", "network")}
+    q: dict[str, dict[int, float]] = {k: {} for k in ("reference", "tree")}
     for r in comparison["players"]:
-        for kind, field in (("reference", "production"), ("tree", "tree"), ("network", "network")):
+        for kind, field in (("reference", "production"), ("tree", "tree")):
             q[kind][r["player_id"]] = r[field]
     for p in players:
         for kind in q:
             q[kind].setdefault(p, 0.0)
     long = {p: v["fourweek"] for p, v in values.items()}
-    return saved, state, players, market, rules, forecast, q, long
+    return (saved, state, players, market, rules, forecast, q, long)
 
 
 def analyze_decisions(store, seconds=0.4):
-    from .decision_training import action_features, state_features
+    from .decision_training import ACTION_FEATURES, action_features, state_features
 
     saved, state, players, market, rules, forecast, q, long = decision_inputs(store)
     candidates, errors = candidate_actions(state, players, rules, q, seconds=seconds, alternatives=2)
@@ -140,9 +117,9 @@ def analyze_decisions(store, seconds=0.4):
     )
     features = [action_features(d, state, players, rules, q, long) for d in candidates]
     critic = store.get("decision_critic") if store.list("decision_critic", 1) else None
-    predictions = (
-        {kind: critic_residual(store, features, kind) for kind in ("tree", "network")} if critic else {}
-    )
+    if critic and list(critic.get("features", [])) != list(ACTION_FEATURES):
+        critic = None
+    predictions = {kind: critic_residual(store, features, kind) for kind in ("tree",)} if critic else {}
     result = []
     value = store.get("state_value_model") if store.list("state_value_model", 1) else None
     for i, (d, x) in enumerate(zip(candidates, features)):
@@ -151,7 +128,7 @@ def analyze_decisions(store, seconds=0.4):
                 np.dot(state_features(d.state, players, rules, long, q["reference"]), value["coefficients"])
             )
             if value and value["promoted"]
-            else 0.1 * x[12]
+            else 0.1 * x[ACTION_FEATURES.index("squad_future_points")]
         )
         critic_config = critic or {}
         item = {
@@ -159,7 +136,6 @@ def analyze_decisions(store, seconds=0.4):
             "ledger": d.ledger,
             "reference": x[0],
             "tree": x[1],
-            "network": x[2],
             "continuation": continuation,
             "reference_plus_continuation": x[0] + continuation,
             "critic_scores": {
@@ -193,8 +169,7 @@ def analyze_decisions(store, seconds=0.4):
         else "Complete challenger comparison; current multiweek policy retained by validation gate",
         "connections": {
             "official_and_history": "Reference forecast and rule transitions",
-            "news_managers_workload": "Tree/neural fusion and source-conditioned inputs",
-            "neural": "Temporal fusion produces player forecasts; separate listwise critic learns decision regret",
+            "news_managers_workload": "Multi-source tree models and source-conditioned inputs",
             "optimizer": "All selectable players, transfers, hits, all currently legal chips and exact bank/FT transitions",
             "hindsight": "Outcome labels and diagnostic ceilings only",
             "continuation": "Audited learned state value when its held-out gate passes",
@@ -243,12 +218,11 @@ def timing_analysis(store, worlds=24):
     committed = commit_before_deadline(state, action, players, rules)
     pred, model = market_predictions(store, players, state.event)
     rng = np.random.default_rng(173)
-    deadline = next(e["deadline_time"] for e in market["events"] if e["id"] == state.event)
+    deadline = next((e["deadline_time"] for e in market["events"] if e["id"] == state.event))
     hours = (
         datetime.fromisoformat(deadline.replace("Z", "+00:00")) - datetime.fromisoformat(now())
     ).total_seconds() / 3600
-    # Prioritize sources by whether a feasible alternative or the actual account uses them.
-    relevant = set(p.player_id for p in state.lots) | set(action.buy)
+    relevant = set((p.player_id for p in state.lots)) | set(action.buy)
     relevant.update(sorted(players, key=lambda p: -q["reference"].get(p, 0))[:30])
     results = []
     source_values = []
@@ -267,6 +241,7 @@ def timing_analysis(store, worlds=24):
             changed[p] = players[p].model_copy(update={"price": max(0, players[p].price + delta)})
 
         def priced(s):
+
             def update(lots):
                 return [
                     lot.model_copy(
@@ -290,8 +265,6 @@ def timing_analysis(store, worlds=24):
 
         early = priced(committed)
         waiting = priced(state)
-        # Both sides may make further legal transfers after observing information.
-        # An activated chip remains the only chip in the early branch.
         early_modes = [action.chip] if action.chip else allowed_chips(early, rules)
 
         def choose(s, modes):
@@ -326,7 +299,6 @@ def timing_analysis(store, worlds=24):
         )
     gains = np.array([r["wait_minus_early"] for r in results])
     stderr = float(gains.std(ddof=1) / np.sqrt(len(gains)))
-    # Value of a targeted availability report over legal, pre-generated candidates.
     analysis = (
         store.get("decision_analysis") if store.list("decision_analysis", 1) else analyze_decisions(store)
     )
@@ -343,12 +315,12 @@ def timing_analysis(store, worlds=24):
                     local[p] = 0
                 line = best_lineup(squad, local, players, rules)
                 value = (
-                    sum(local.get(k, 0) for k in line.xi)
+                    sum((local.get(k, 0) for k in line.xi))
                     + local.get(line.captain, 0) * (2 if a.chip == "3xc" else 1)
                     - row["ledger"]["hit"]
                 )
                 if a.chip == "bboost":
-                    value += sum(local.get(k, 0) for k in line.bench)
+                    value += sum((local.get(k, 0) for k in line.bench))
                 values.append(value)
             payoffs.append(values)
         matrix = np.array(payoffs)
@@ -398,7 +370,7 @@ def conditional_plan(
 ):
     """Fix one legal first action and solve its full remaining horizon independently."""
     from .ingestion import load_market
-    from .optimization import optimize
+    from .optimization import incumbent_precedes_forecast, optimize
     from .rules import optimize_bench
     from .simulation import score_plan
 
@@ -422,26 +394,28 @@ def conditional_plan(
     means = {r["player_id"]: r["mean"] for r in forecast["players"] if r["event"] == state.event}
     line = action.lineup
     row["expected_additive_net"] = (
-        sum(means.get(p, 0) for p in line.xi)
+        sum((means.get(p, 0) for p in line.xi))
         + means.get(line.captain, 0) * (2 if action.chip == "3xc" else 1)
         - row["hit"]
     )
     if action.chip == "bboost":
-        row["expected_additive_net"] += sum(means.get(p, 0) for p in line.bench)
+        row["expected_additive_net"] += sum((means.get(p, 0) for p in line.bench))
     row["assumptions"] = [
         "Exact fixed first action; later decisions are re-optimized on frozen current forecasts"
     ]
     if end_event > state.event:
         identity = store.put("planning_state", following.model_dump())
-        # Equivalent first actions (especially restored FH squads) must not look
-        # worse merely because a fresh continuation search has a weaker incumbent.
         from .scenarios import action_from_row
 
         compatible = []
-        for item in store.list("plan", 100):
+        for item in store.list_matching("plan", {"state_id": state_id}, 100):
             prior = store.get("plan", item["id"])
+            if not incumbent_precedes_forecast(store, prior, forecast):
+                continue
             rows = prior.get("ledger", [])
-            if prior.get("state_id") != state_id or prior.get("market_id") != market["id"] or not rows:
+            # Reprice and replay every action below. A refreshed market hash
+            # alone must not discard a still-legal stronger continuation.
+            if prior.get("state_id") != state_id or (not rows):
                 continue
             if rows[0]["event"] != state.event or rows[-1]["event"] < end_event:
                 continue
@@ -451,11 +425,21 @@ def conditional_plan(
                     continue
                 suffix = [r for r in rows if following.event <= r["event"] <= end_event]
                 trial = following
+                current_value = 0.0
                 for step in suffix:
-                    trial, _ = transition(trial, action_from_row(step), players, rules)
-                compatible.append(
-                    (sum(r.get("expected_additive_net", 0) for r in suffix), suffix, prior["id"])
-                )
+                    trial, checked = transition(trial, action_from_row(step), players, rules)
+                    values = {
+                        r["player_id"]: r["mean"] for r in forecast["players"] if r["event"] == step["event"]
+                    }
+                    line = best_lineup(checked["playing_squad"], values, players, rules)
+                    current_value += (
+                        sum(values.get(p, 0) for p in line.xi)
+                        + values.get(line.captain, 0) * (2 if step["chip"] == "3xc" else 1)
+                        - checked["hit"]
+                    )
+                    if step["chip"] == "bboost":
+                        current_value += sum(values.get(p, 0) for p in line.bench)
+                compatible.append((current_value, suffix, prior["id"]))
             except ValueError:
                 continue
         if compatible:
@@ -478,7 +462,7 @@ def conditional_plan(
             end_event,
             seconds,
             use_decision_critic=False,
-            **(continuation_options or {}),
+            **continuation_options or {},
         )
         plan = {k: v for k, v in tail.items() if k != "id"}
         plan["ledger"] = [row] + tail["ledger"]
@@ -528,7 +512,7 @@ def refine_frontier(store, seconds=20):
     end = old["end_event"]
     pool = analysis["candidates"]
     indices = {analysis["selected_candidate"]}
-    for key in ("reference_plus_continuation", "tree", "network"):
+    for key in ("reference_plus_continuation", "tree"):
         indices.add(max(range(len(pool)), key=lambda i: pool[i][key]))
     if analysis["promotion_gate_passed"]:
         indices.add(
@@ -548,7 +532,7 @@ def refine_frontier(store, seconds=20):
             if (
                 candidate["state_id"] == state["id"]
                 and candidate["forecast_id"] == forecast["id"]
-                and candidate.get("end_event", candidate["ledger"][-1]["event"]) == end
+                and (candidate.get("end_event", candidate["ledger"][-1]["event"]) == end)
             ):
                 plans.append(candidate)
     for i in sorted(indices):

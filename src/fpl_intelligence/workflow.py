@@ -10,7 +10,7 @@ from .account_sync import state_lock
 from .storage import Store, now
 
 
-def full_training(store: Store, samples=24, epochs=20, refresh=False):
+def full_training(store: Store, samples=24, refresh=False):
     from .coherent import compare_football_worlds, train_components, validate_bonus_model
     from .context_archive import import_context
     from .context_validation import evaluate_context
@@ -41,8 +41,8 @@ def full_training(store: Store, samples=24, epochs=20, refresh=False):
         asyncio.run(refresh_sources(store))
     record("context", asyncio.run(import_context(store)))
     record("football_models", football_training(store, refresh))
-    record("reference", train_decisions(store, False))
-    record("source_fusion", train_fusion(store, epochs))
+    record("reference", train_decisions(store))
+    record("source_fusion", train_fusion(store))
     record("fusion_review", review_fusion(store))
     compare_live(store)
     from .consensus import compare_live_consensus, fit_consensus, prepare_inputs, validate_continuous_policy
@@ -54,6 +54,9 @@ def full_training(store: Store, samples=24, epochs=20, refresh=False):
     from .future_training import train_future_component
 
     record("future_fixture_learning", train_future_component(store))
+    from .role_minutes import ensure
+
+    record("role_minutes", ensure(store, store.get("decision_model")))
     record("horizon", train_horizon(store))
     from .policy_learning import train_policy
 
@@ -239,7 +242,11 @@ def refresh_cycle(store: Store):
 
             refit_active_fusion(store)
         else:
-            train_decisions(store, False)
+            train_decisions(store)
+    from .role_minutes import ensure
+
+    if store.list("decision_model", 1):
+        ensure(store, store.get("decision_model"))
     from .account_sync import next_event, reconcile_public
 
     synchronization = reconcile_public(store, original_state["id"])

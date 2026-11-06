@@ -28,7 +28,7 @@ from .rules import Rules, score_gameweek, selling_price
 from .storage import Store, atomic_json, digest, now
 from .strategy import candidate_actions, solve_action
 
-VERSION = "evolving-decisions-v3"
+VERSION = "evolving-decisions-v4"
 STATE_FEATURES = (
     "squad_future_points",
     "bank_millions",
@@ -41,7 +41,6 @@ STATE_FEATURES = (
 ACTION_FEATURES = (
     "reference_points",
     "tree_points",
-    "network_points",
     "fourweek_points",
     "hit",
     "purchases",
@@ -65,15 +64,14 @@ def season_rules(store, season):
     try:
         bootstrap = store.latest(source)[0]
     except ValueError:
-        row = next(r for r in json.loads(MANIFEST.read_text())["snapshots"] if r["season"] == season)
+        row = next((r for r in json.loads(MANIFEST.read_text())["snapshots"] if r["season"] == season))
         response = httpx.get(row["url"], timeout=30)
         response.raise_for_status()
         if hashlib.sha256(response.content).hexdigest() != row["sha256"]:
             raise ValueError("Historical rules archive hash changed")
-        original = json.loads(lzma.decompress(response.content, memlimit=128_000_000))
+        original = json.loads(lzma.decompress(response.content, memlimit=128000000))
         bootstrap = {k: original[k] for k in ("game_settings", "element_types", "chips", "events")}
         bootstrap["game_config"] = original.get("game_config", {})
-        # Preserve the official season-identifying path without inventing a year.
         bootstrap["element_stats"] = original.get("element_stats", [])
         bootstrap["total_players"] = original.get("total_players")
         bootstrap["elements"] = original["elements"][:1]
@@ -88,11 +86,11 @@ def training_markets(store):
     spec = store.get("fusion_model")
     heldout = pl.read_parquet(store.artifact_path(spec["prediction_path"])).to_dicts()
     forecasts: dict[tuple, dict[str, dict]] = defaultdict(
-        lambda: {k: defaultdict(float) for k in ("reference", "tree", "network")}
+        lambda: {k: defaultdict(float) for k in ("reference", "tree")}
     )
     for row in heldout:
         key = (row["season"], row["event"])
-        for kind, field in (("reference", "baseline"), ("tree", "tree"), ("network", "network")):
+        for kind, field in (("reference", "baseline"), ("tree", "tree")):
             forecasts[key][kind][int(row["player_id"])] += float(row[field])
     long_model = store.get("horizon_model")
     longs: dict[tuple, dict[int, float]] = defaultdict(dict)
@@ -130,7 +128,7 @@ def training_markets(store):
             news=packet.get("news") or "",
             raw=packet,
         )
-    return registry, forecasts, longs, actual, minutes
+    return (registry, forecasts, longs, actual, minutes)
 
 
 def reprice(state, players, rules):
@@ -147,7 +145,7 @@ def reprice(state, players, rules):
         )
         for lot in state.lots
     ]
-    counts = Counter(players[p.player_id].team for p in lots)
+    counts = Counter((players[p.player_id].team for p in lots))
     return state.model_copy(
         update={"lots": lots, "grandfathered_clubs": [c for c, n in counts.items() if n > rules.club_limit]}
     )
@@ -155,14 +153,16 @@ def reprice(state, players, rules):
 
 def state_features(state, players, rules, long, short):
     future = sum(
-        max(-10, long.get(lot.player_id, 4 * short.get(lot.player_id, 0)) - short.get(lot.player_id, 0))
-        for lot in state.lots
+        (
+            max(-10, long.get(lot.player_id, 4 * short.get(lot.player_id, 0)) - short.get(lot.player_id, 0))
+            for lot in state.lots
+        )
     )
     flags = []
     for chip in ("wildcard", "freehit", "bboost", "3xc"):
         try:
             a, b = rules.chip_window(chip, state.event)
-            unused = not any(u.chip == chip and a <= u.event <= b for u in state.used_chips)
+            unused = not any((u.chip == chip and a <= u.event <= b for u in state.used_chips))
             flags.append(float(unused) * min(1, (b - state.event + 1) / 4))
         except ValueError:
             flags.append(0.0)
@@ -173,16 +173,16 @@ def action_features(decision, before, players, rules, forecasts, long):
     line = decision.action.lineup
     assert line is not None
     vals = []
-    for name in ("reference", "tree", "network"):
+    for name in ("reference", "tree"):
         q = forecasts[name]
-        score = sum(q.get(p, 0) for p in line.xi) + q.get(line.captain, 0)
+        score = sum((q.get(p, 0) for p in line.xi)) + q.get(line.captain, 0)
         if decision.action.chip == "3xc":
             score += q.get(line.captain, 0)
         if decision.action.chip == "bboost":
-            score += sum(q.get(p, 0) for p in line.bench)
+            score += sum((q.get(p, 0) for p in line.bench))
         vals.append(score - decision.ledger["hit"])
     chips = [float(decision.action.chip == c) for c in ("wildcard", "freehit", "bboost", "3xc")]
-    longvalue = sum(long.get(p, 4 * forecasts["reference"].get(p, 0)) for p in line.xi) + long.get(
+    longvalue = sum((long.get(p, 4 * forecasts["reference"].get(p, 0)) for p in line.xi)) + long.get(
         line.captain, 4 * forecasts["reference"].get(line.captain, 0)
     )
     expiring = 0.0
@@ -199,7 +199,7 @@ def action_features(decision, before, players, rules, forecasts, long):
         *chips,
         state_features(decision.state, players, rules, long, forecasts["reference"])[0],
         expiring,
-        sum(players[p].chance == 0 for p in decision.ledger["permanent_squad"]),
+        sum((players[p].chance == 0 for p in decision.ledger["permanent_squad"])),
         max(vals) - min(vals),
     ]
 
@@ -227,7 +227,7 @@ def evolve(store: Store, states_per_week=24, horizon=4, seconds=0.15, max_transf
         if (
             event == 1
             or (season, event) not in longs
-            or not all((season, g) in registry for g in range(event, event + horizon))
+            or (not all(((season, g) in registry for g in range(event, event + horizon))))
         ):
             continue
         group = f"{season}-GW{event:02d}"
@@ -235,8 +235,10 @@ def evolve(store: Store, states_per_week=24, horizon=4, seconds=0.15, max_transf
         if checkpoint.exists():
             cached = json.loads(checkpoint.read_text())
             valid = all(
-                len({u["event"] for u in r["state"]["used_chips"]}) == len(r["state"]["used_chips"])
-                for r in cached["actions"]
+                (
+                    len({u["event"] for u in r["state"]["used_chips"]}) == len(r["state"]["used_chips"])
+                    for r in cached["actions"]
+                )
             )
             if not valid:
                 checkpoint.rename(checkpoint.with_suffix(".rejected"))
@@ -265,7 +267,6 @@ def evolve(store: Store, states_per_week=24, horizon=4, seconds=0.15, max_transf
                             uses.append(ChipUse(chip=chip, event=int(rng.integers(a, event))))
                     except ValueError:
                         pass
-            # A real account can activate only one chip at a deadline.
             dates = set()
             lawful = []
             for usage in uses:
@@ -309,7 +310,6 @@ def evolve(store: Store, states_per_week=24, horizon=4, seconds=0.15, max_transf
                     pred = forecasts[season, g]["reference"]
                     try:
                         following = reprice(following, market, rules)
-                        # Future information is revealed only at its own deadline.
                         choices, _ = candidate_actions(
                             following,
                             market,
@@ -439,6 +439,27 @@ def load_episodes(store):
     if hashlib.sha256(path.read_bytes()).hexdigest() != spec["hash"]:
         raise ValueError("Evolving dataset checksum mismatch")
     data = json.loads(gzip.decompress(path.read_bytes()))
+    if data["actions"] and len(data["actions"][0]["x"]) == len(ACTION_FEATURES) + 1:
+        # Reuse legally replayed outcomes, dropping the retired third forecast.
+        for row in data["actions"]:
+            if len(row["x"]) != len(ACTION_FEATURES) + 1:
+                raise ValueError("Mixed decision feature contracts")
+            del row["x"][2]
+            row["x"][-1] = abs(row["x"][0] - row["x"][1])
+        migrated = path.with_name(path.name.replace(".json.gz", "-trees-v4.json.gz"))
+        migrated.write_bytes(gzip.compress(json.dumps(data, allow_nan=False).encode(), mtime=0))
+        spec = {k: v for k, v in spec.items() if k != "id"}
+        spec.update(
+            at=now(),
+            path=str(migrated),
+            hash=hashlib.sha256(migrated.read_bytes()).hexdigest(),
+            version=VERSION,
+            action_features=ACTION_FEATURES,
+        )
+        spec["id"] = store.put("evolving_dataset", spec)
+        path = migrated
+    if any(len(row["x"]) != len(ACTION_FEATURES) for row in data["actions"]):
+        raise ValueError("Unsupported decision feature contract")
     if spec.get("scoring_version") != "all-deadline-chips-v2":
         registry, _, _, outcomes, minutes = training_markets(store)
         rules = {season: season_rules(store, season) for season, _ in registry}
@@ -454,7 +475,7 @@ def load_episodes(store):
         )
         spec["id"] = store.put("evolving_dataset", spec)
         atomic_json(Path("artifacts/evaluations/evolving_dataset.json"), spec)
-    return data, spec
+    return (data, spec)
 
 
 def rescore_records(actions, states, registry, outcomes, minutes, rules):
@@ -465,7 +486,7 @@ def rescore_records(actions, states, registry, outcomes, minutes, rules):
         season = action["group"].split("-GW")[0]
         scores = []
         for row in action["ledger"]:
-            key = season, row["event"]
+            key = (season, row["event"])
             scores.append(
                 float(
                     score_gameweek(
@@ -490,7 +511,7 @@ def partition(rows):
     test = [r for r in rows if r["group"] >= "2025/26-GW28"]
     if not all((train, cal, test)):
         raise ValueError("Purged train/calibration/test partitions require more completed episodes")
-    return train, cal, test
+    return (train, cal, test)
 
 
 def gain_interval(rows):
@@ -505,74 +526,7 @@ def gain_interval(rows):
     return np.quantile(values[indices].mean(1), [0.025, 0.975]).tolist()
 
 
-def fit_critic(train, cal, seed=117):
-    """Listwise regret learning: hindsight return differences supervise choices."""
-    import torch
-    from torch import nn
-
-    torch.set_num_threads(3)
-    torch.manual_seed(seed)
-    x = np.array([r["x"] for r in train], dtype=np.float32)
-    mu = x.mean(0)
-    sd = np.maximum(x.std(0), 0.01)
-    model = nn.Sequential(
-        nn.Linear(len(ACTION_FEATURES), 64),
-        nn.SiLU(),
-        nn.LayerNorm(64),
-        nn.Linear(64, 32),
-        nn.SiLU(),
-        nn.Linear(32, 1),
-    )
-    with torch.no_grad():
-        cast(torch.Tensor, cast(nn.Linear, model[-1]).bias).fill_(
-            float(np.mean([r["return"] - r["predicted_reference"] for r in train]))
-        )
-    optimizer = torch.optim.AdamW(model.parameters(), lr=0.001, weight_decay=0.02)
-    groups = defaultdict(list)
-    for i, r in enumerate(train):
-        groups[r["account"]].append(i)
-    xx = torch.tensor((x - mu) / sd)
-    target = torch.tensor([r["return"] for r in train], dtype=torch.float32)
-    baseline = torch.tensor([r["predicted_reference"] for r in train], dtype=torch.float32)
-    best = None
-    bestloss = float("inf")
-    patience = 0
-    cx = torch.tensor((np.array([r["x"] for r in cal], dtype=np.float32) - mu) / sd)
-    cy = np.array([r["return"] for r in cal])
-    cb = np.array([r["predicted_reference"] for r in cal])
-    for epoch in range(250):
-        model.train()
-        optimizer.zero_grad()
-        pred = model(xx).squeeze(1) + baseline
-        loss = torch.nn.functional.smooth_l1_loss(pred, target, beta=10)
-        for idx in groups.values():
-            if len(idx) > 1:
-                # Both realized winner and near-winners contribute; no inference sees them.
-                preference = torch.softmax((target[idx] - target[idx].max()) / 5, dim=0)
-                loss = loss - (preference * torch.log_softmax(pred[idx] / 5, dim=0)).sum() / len(groups) * 5
-        loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 2)
-        optimizer.step()
-        model.eval()
-        with torch.no_grad():
-            raw = model(cx).squeeze(1).numpy() + cb
-        value = float(np.mean((raw - cy) ** 2))
-        if value < bestloss:
-            bestloss = value
-            best = {k: v.detach().clone() for k, v in model.state_dict().items()}
-            patience = 0
-        else:
-            patience += 1
-        if patience >= 6:
-            break
-    assert best is not None
-    model.load_state_dict(best)
-    return model, mu, sd, epoch + 1
-
-
 def train_decision_models(store):
-    import torch
-
     data, dataset = load_episodes(store)
     train, cal, test = partition(data["actions"])
     tree = lgb.LGBMRegressor(
@@ -586,15 +540,10 @@ def train_decision_models(store):
         random_state=117,
     )
     tree.fit([r["x"] for r in train], [r["return"] - r["predicted_reference"] for r in train])
-    network, mu, sd, epochs = fit_critic(train, cal)
 
     def predictions(rows, kind):
         x = np.array([r["x"] for r in rows], dtype=np.float32)
-        if kind == "tree":
-            return tree.predict(x, num_threads=1)
-        network.eval()
-        with torch.no_grad():
-            return network(torch.tensor((x - mu) / sd)).squeeze(1).numpy()
+        return tree.predict(x, num_threads=1)
 
     def decisions(rows, residual, weight):
         groups = defaultdict(list)
@@ -611,7 +560,7 @@ def train_decision_models(store):
                     "gain": selected["return"] - baseline["return"],
                     "score": selected["return"],
                     "baseline": baseline["return"],
-                    "best_searched": max(r["return"] for r, _ in choices),
+                    "best_searched": max((r["return"] for r, _ in choices)),
                     "first_chip": selected["chip"],
                 }
             )
@@ -619,7 +568,7 @@ def train_decision_models(store):
 
     candidates = {}
     weights = {}
-    for kind in ("tree", "network"):
+    for kind in ("tree",):
         cp = predictions(cal, kind)
         choice = {
             str(w): float(np.mean([r["gain"] for r in decisions(cal, cp, w)])) for w in (0, 0.25, 0.5, 1)
@@ -647,8 +596,6 @@ def train_decision_models(store):
     directory.mkdir(parents=True, exist_ok=True)
     tree_path = directory / "tree.txt"
     tree.booster_.save_model(str(tree_path))
-    neural_path = directory / "network.pt"
-    torch.save(network.state_dict(), neural_path)
     report = {
         "at": now(),
         "dataset_id": dataset["id"],
@@ -661,15 +608,9 @@ def train_decision_models(store):
         "candidates": candidates,
         "selected": selected,
         "architecture_selected_on_calibration": calibrated_kind,
-        "neural": {
-            "epochs": epochs,
-            "mean": mu.tolist(),
-            "scale": sd.tolist(),
-            "parameters": sum(p.numel() for p in network.parameters()),
-        },
         "models": {
             k: {"path": str(p), "hash": hashlib.sha256(p.read_bytes()).hexdigest()}
-            for k, p in [("tree", tree_path), ("network", neural_path)]
+            for k, p in [("tree", tree_path)]
         },
         "invalid_actions": 0,
         "all_market": True,
@@ -700,7 +641,7 @@ def train_state_value(store, rows, dataset, actions=None):
             np.concatenate([y, np.zeros(z.shape[1])]),
             bounds=([-np.inf] + [0] * x.shape[1], [np.inf] * z.shape[1]),
         )
-        return float(fit.x[0]), fit.x[1:] / sd
+        return (float(fit.x[0]), fit.x[1:] / sd)
 
     best = None
     for ridge in (1, 5, 20):
@@ -744,7 +685,7 @@ def train_state_value(store, rows, dataset, actions=None):
         "dataset_id": dataset["id"],
         "features": STATE_FEATURES,
         "feature_bounds": [
-            [float(min(r["x"][i] for r in train)), float(max(r["x"][i] for r in train))]
+            [float(min((r["x"][i] for r in train))), float(max((r["x"][i] for r in train)))]
             for i in range(len(STATE_FEATURES))
         ],
         "policy_review": policy_review,

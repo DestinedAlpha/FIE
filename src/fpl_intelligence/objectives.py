@@ -199,7 +199,9 @@ def choose_recommendation(
         300.0, max(60.0, max(p.get("solver", {}).get("runtime_seconds", 0) for p in plans))
     )
     plans = [*plans, hold_plan(store, reference["state_id"], forecast["id"], reference["end_event"])]
-    for item in store.list("plan", 500):
+    for item in store.list_matching(
+        "plan", {"state_id": reference["state_id"], "forecast_id": forecast["id"]}, 500
+    ):
         p = store.get("plan", item["id"])
         if (
             p.get("state_id") == reference["state_id"]

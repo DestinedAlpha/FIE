@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import builtins
 import gzip
 import hashlib
 import json
@@ -160,6 +161,21 @@ class Store:
                 for r in db.execute(
                     "SELECT id,created_at FROM objects WHERE kind=? ORDER BY created_at DESC,rowid DESC LIMIT ?",
                     (kind, limit),
+                )
+            ]
+
+    def list_matching(self, kind: str, fields: dict, limit: int = 100) -> builtins.list[dict]:
+        """Filter before limiting so unrelated activity cannot evict useful plans."""
+        clauses = " AND json_extract(body,?)=?" * len(fields)
+        values = [item for key, value in fields.items() for item in ("$." + key, value)]
+        with self.db() as db:
+            return [
+                dict(row)
+                for row in db.execute(
+                    "SELECT id,created_at FROM objects WHERE kind=?"
+                    + clauses
+                    + " ORDER BY created_at DESC,rowid DESC LIMIT ?",
+                    (kind, *values, limit),
                 )
             ]
 

@@ -14,11 +14,11 @@ if (-not $UvCommand) {
     if (-not (Test-Path $UvPath)) { throw "Restart the terminal after installing uv, then run Start.cmd again." }
 } else { $UvPath = $UvCommand.Source }
 
-& $UvPath sync --frozen --extra neural
+& $UvPath sync --frozen
 if ($LASTEXITCODE -ne 0) { throw "Python dependencies could not be installed." }
 
 if (((Test-Path "data/state.sqlite.gz") -or (Test-Path "data/state.sqlite.manifest.json")) -and -not (Test-Path "data/state.sqlite")) {
-    & $UvPath run --extra neural python -m fpl_intelligence.database_archive data
+    & $UvPath run python -m fpl_intelligence.database_archive data
     if ($LASTEXITCODE -ne 0) { throw "The packaged database could not be restored." }
 }
 
@@ -52,7 +52,7 @@ if ($ConfigureProviders -or -not (Test-Path ".env")) {
     Set-Acl ".env" $Acl
     $FreeAccounts = Read-Host "Are the entered keys for free, unbilled accounts? (Y/N)"
     if ($FreeAccounts -match "^[Yy]") {
-        & $UvPath run --extra neural fpl configure-providers --unbilled
+        & $UvPath run fpl configure-providers --unbilled
         if ($LASTEXITCODE -ne 0) { Write-Warning "Hosted provider verification could not finish. Numerical forecasts remain available; run Configure keys.cmd to retry." }
     }
 }
@@ -67,21 +67,23 @@ if (-not (Test-Path "apps/web/dist/index.html")) {
     if ($LASTEXITCODE -ne 0) { throw "Frontend build failed." }
 }
 
-& $UvPath run --extra neural python -c "from fpl_intelligence.storage import Store; s=Store(); raise SystemExit(0 if all(s.list(kind, 1) for kind in ('market', 'state', 'forecast', 'selected_plan')) and s.get('forecast').get('model_version') == 'learned-points-v1' else 1)"
+& $UvPath run fpl maintain-models
+if ($LASTEXITCODE -ne 0) { throw "Numerical model migration failed; existing account data remains preserved." }
+& $UvPath run python -c "from fpl_intelligence.storage import Store; s=Store(); raise SystemExit(0 if all(s.list(kind, 1) for kind in ('market', 'state', 'forecast', 'selected_plan')) and s.get('forecast').get('model_version') == 'learned-points-v1' else 1)"
 $NeedsInitialisation = ($LASTEXITCODE -ne 0) -or $RebuildModel
 if ($NeedsInitialisation) {
-    & $UvPath run --extra neural fpl ingest
+    & $UvPath run fpl ingest
     if ($LASTEXITCODE -ne 0) { throw "Official data ingestion failed." }
-    & $UvPath run --extra neural python -c "from fpl_intelligence.storage import Store; raise SystemExit(0 if Store().list('state', 1) else 1)"
+    & $UvPath run python -c "from fpl_intelligence.storage import Store; raise SystemExit(0 if Store().list('state', 1) else 1)"
     if ($LASTEXITCODE -ne 0) {
         if (Test-Path "data/account-confirmed.json") {
-            & $UvPath run --extra neural fpl reconcile-team --path data/account-confirmed.json --confirmed
-        } else { & $UvPath run --extra neural fpl reconcile-team }
+            & $UvPath run fpl reconcile-team --path data/account-confirmed.json --confirmed
+        } else { & $UvPath run fpl reconcile-team }
         if ($LASTEXITCODE -ne 0) { throw "Account import needs current valid selling quotes." }
     }
-    & $UvPath run --extra neural fpl train
+    & $UvPath run fpl train
     if ($LASTEXITCODE -ne 0) { throw "Chronological decision training failed." }
-    & $UvPath run --extra neural fpl refresh-current
+    & $UvPath run fpl refresh-current
     if ($LASTEXITCODE -ne 0) { Write-Warning "Current planning could not finish. The app will open so you can inspect data health, correct account details and retry refresh." }
 }
 
@@ -102,4 +104,4 @@ if (-not $NoBrowser) {
         }
     }
 }
-& $UvPath run --extra neural fpl serve --port $Port
+& $UvPath run fpl serve --port $Port

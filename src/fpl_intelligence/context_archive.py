@@ -33,8 +33,10 @@ FIELDS = (
     "ep_next",
     "points_per_game",
     "form",
+    "starts",
+    "minutes",
 )
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 
 def check_proof(row):
@@ -129,8 +131,8 @@ async def import_context(store: Store):
     return result
 
 
-def load_context(store: Store):
-    report = store.get("context_archive")
+def load_context(store: Store, archive_id=None):
+    report = store.get("context_archive", archive_id)
     result = {}
     for row in report["entries"]:
         body, _ = store.latest(row["source"], content_hash=row.get("hash"))

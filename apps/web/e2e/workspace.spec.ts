@@ -101,7 +101,7 @@ test("manager behavior, source fusion and transfer learning are visible", async 
   ).toBeVisible();
   await navigate(page, "Model & data");
   await expect(
-    page.getByRole("heading", { name: "Sources and neural validation" }),
+    page.getByRole("heading", { name: "Sources and model validation" }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", {
@@ -109,8 +109,9 @@ test("manager behavior, source fusion and transfer learning are visible", async 
     }),
   ).toBeVisible();
   await expect(
-    page.getByText("Temporal neural fusion", { exact: true }),
+    page.getByRole("heading", { name: "Role-aware minutes" }),
   ).toBeVisible();
+  await expect(page.getByText("Temporal neural fusion", { exact: true })).toHaveCount(0);
   await expect(page.getByText(/\d+ held-out account decisions/)).toBeVisible();
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth > window.innerWidth + 1,

@@ -45,6 +45,7 @@ def test_mixture_preserves_mass_and_total_point_expectation():
 
 def test_historical_tensors_ignore_target_and_future_history(market):
     builder = object.__new__(DeadlineInputs)
+    builder.workload_version = "legacy-v1"
     builder.history = defaultdict(list)
     # Exact four-hour completion boundary is excluded, as are future seasons.
     builder.history["code", 1] = [

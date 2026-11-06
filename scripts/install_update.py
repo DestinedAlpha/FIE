@@ -14,6 +14,10 @@ from pathlib import Path
 from fpl_intelligence.database_archive import unpack_database
 
 RESEARCH_KINDS = {
+    "role_minutes_validation",
+    "role_minutes_model",
+    "model_maintenance",
+    "transfer_research",
     "decision_critic",
     "state_value_model",
     "market_model",
@@ -47,7 +51,6 @@ RESEARCH_KINDS = {
     "source_text",
     "community_lead",
     "fusion_policy_tree",
-    "fusion_policy_network",
     "decision_features",
     "shot_archive",
     "shot_refresh",

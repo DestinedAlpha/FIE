@@ -79,8 +79,10 @@ def create_app(root=None):
 
     @asynccontextmanager
     async def lifespan(application):
+        from .maintenance import maintain_models
         from .scheduling import start_scheduler
 
+        maintain_models(store)
         stop, thread = start_scheduler(store, launch)
         if store.list("state", 1) and store.list("market", 1) and store.list("decision_model", 1):
             from .account_sync import next_event
@@ -281,6 +283,8 @@ def create_app(root=None):
             "cohort",
             "chip_counterfactual",
             "decision_model",
+            "role_minutes_validation",
+            "role_minutes_model",
             "decision_audit",
             "decision_policy",
             "provider_setup",
@@ -308,6 +312,8 @@ def create_app(root=None):
         ):
             try:
                 artifact = store.get(kind)
+                if kind == "role_minutes_model":
+                    artifact = {k: v for k, v in artifact.items() if k not in ("path", "curves")}
                 if kind in (
                     "decision_audit",
                     "decision_policy",
@@ -540,9 +546,7 @@ def create_app(root=None):
         result["request_metrics_24h"] = request_metrics(store)
         try:
             fusion = store.get("fusion_model")
-            result["fusion_model"] = {
-                k: v for k, v in fusion.items() if k not in ("tree_spec", "network_spec")
-            }
+            result["fusion_model"] = {k: v for k, v in fusion.items() if k not in ("tree_spec",)}
             result["fusion_model"]["promoted"] = (result["decision_model"] or {}).get(
                 "fusion_model_id"
             ) == fusion["id"]
@@ -621,6 +625,9 @@ def create_app(root=None):
                     result = refit_active_fusion(store)
                 else:
                     result = train_decisions(store)
+                from .role_minutes import ensure
+
+                result = ensure(store, result)
             return {"decision_model_id": result["id"]}
 
         return launch("train", {}, work)
@@ -852,10 +859,6 @@ def create_app(root=None):
     @app.post("/api/fusion/train")
     def fusion_train():
         def work():
-            try:
-                __import__("torch")
-            except ImportError:
-                raise ValueError("Advanced CPU training requires: uv sync --extra neural") from None
             from .context_archive import import_context
             from .fusion import compare_live, review_fusion, train_fusion
 

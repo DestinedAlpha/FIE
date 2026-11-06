@@ -45,7 +45,7 @@ The earlier-season ensemble-minus-reference gain interval is [-2.74, 7.32]: the 
 ## Remaining acceptance limits
 
 - The reference benchmark below and the later paired future-expert replay measure their declared expected-points pipelines, including lookahead and chips. It does not validate every alternative rival/rank objective or rejected research model.
-- Neural fusion, decision critics and learned continuation have trained artifacts and comparisons; failed replacement gates keep them out of the primary policy. More parameters do not establish predictive advantage.
+- Source fusion, decision critics and learned continuation have trained artifacts and comparisons; failed replacement gates keep them out of the primary policy. More parameters do not establish predictive advantage.
 - The prepared 0.9 primary plan has a 12-point first hit and 1.91% additive MIP gap. Its 1.73 modeled-point advantage over the strongest retained no-hit incumbent excludes model/solver uncertainty and does not prove the paid hit optimal. The interface and report retain that independently solved no-hit alternative.
 - Optional source coverage is incomplete: no compatible free Premier League odds were returned, and shot-feed failures retain verified cached data. Unsupported social opinions receive no invented numerical uplift.
 - The implementation catalog traces selected tested behaviors, not exhaustive acceptance of every supplied-document requirement.

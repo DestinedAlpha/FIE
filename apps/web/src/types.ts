@@ -91,6 +91,8 @@ export type State = {
   deadline_bank: number | null;
 };
 export type Dashboard = FootballEvidenceData & {
+  role_minutes_model?: { id: string; completed_labels_through: string; training_rows: number; calibration_rows: number } | null;
+  role_minutes_validation?: { passed: boolean; scope: string; metrics: Record<string, { rows: number; deadlines: number; reference: { brier: number; points_squared: number }; candidate: { brier: number; points_squared: number } }> } | null;
   refresh_schedule?: { enabled: boolean; interval_minutes: number } | null;
   decision_critic?: {
     invalid_actions:number;
@@ -169,7 +171,7 @@ export type Dashboard = FootballEvidenceData & {
     candidates: {
       reference: number;
       tree: number;
-      network: number;
+
       continuation: number;
       critic_scores: Record<string, number>;
       action: { buy: number[]; sell: number[]; chip: string | null };
@@ -340,7 +342,7 @@ export type Dashboard = FootballEvidenceData & {
       }
     >;
     folds: {
-      neural: { parameters: number; epochs: number; selected_epoch: number };
+
     }[];
     limits: string[];
     decision_validation?: {
@@ -360,10 +362,11 @@ export type Dashboard = FootballEvidenceData & {
       name: string;
       production: number;
       tree: number;
-      network: number;
+
     }[];
   } | null;
   decision_model?: {
+    role_minutes_model_id?: string;
     future_horizon_model_id?: string;
     promoted: boolean;
     seasons: string[];
@@ -375,7 +378,7 @@ export type Dashboard = FootballEvidenceData & {
     };
     production_training_rows: number;
     production_calibration_rows: number;
-    neural?: { metrics: { rmse: number }; paired_vs_gbm_95ci: number[] };
+
   } | null;
   decision_audit?: {
     captain_totals: {

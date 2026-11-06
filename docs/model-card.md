@@ -1,10 +1,10 @@
-# Current model card · 0.9 · 5 November 2026
+# Current model card · 0.12 · 6 November 2026
 
 The prepared build combines the validated `learned-points-v1` immediate reference with an accepted future-fixture expert. Calibrated recovery and accepted joint-DGW minute transitions remain connected. Current-week probabilities and sampled outcomes are preserved; future fixtures through an 18-week lead use the selected mixture. The expert's final fit uses 747,484 rows and 18,930 reserved calibration rows, with completed labels through GW9. GW10 has no outcome label.
 
 The future expert passes separate prediction, marginal-distribution and full legal-policy gates. Its earlier-season continuous policy scores **1,202 versus 1,098** over 19 weeks. The current-season diagnostic scores **538 versus 536** over GW1–9. The earlier-season per-deadline return-gain block interval is [0.58, 11.05]. Current outcomes do not select the configuration or authorize promotion. These studied historical archives do not establish future top-1% strength or consistent 550+ returns. See the [performance audit](performance-audit.md) and [release audit](../artifacts/evaluations/release_0_9.json).
 
-The six-block 326,671-parameter temporal neural challenger completed training and improves matched point RMSE, but fails the complete captain/policy replacement gate. It remains a connected comparison. The four-week transfer critic is retrained against the current horizon model; random/evolving-account decision learning, manager scenarios and conditional recourse remain separate, explicitly gated components.
+Locally trained neural components have been removed at the user’s request. The role-aware boosted-tree minutes expert has separate two-season validation. The four-week transfer critic is retrained against the current horizon model; random/evolving-account decision learning, manager scenarios and conditional recourse remain separate, explicitly gated components.
 
 Reference and future-expert replays preserve their models, cutoff proofs, initial states, account transitions and actual outcomes. Prospective synchronized accounts freeze real future decisions with equal hypothetical resources. They do not submit account transfers, and finalized future results remain pending.
 
@@ -24,7 +24,7 @@ Training separates the probability of four minutes bands and conditional non-def
 
 Every four-deadline test block trains on earlier records and fits isotonic probability calibration on eight separate earlier deadlines. The final production base fit uses 113,260 rows; 5,220 recent rows are held out for probability calibration/residual tails. Base fitting precedes `2026/27-GW01`. Model text files have SHA-256 integrity checks and no executable pickle.
 
-## Point accuracy and neural comparison
+## Base reference point accuracy
 
 34,967 held-out player-fixtures:
 
@@ -32,11 +32,9 @@ Every four-deadline test block trains on earlier records and fits isotonic proba
 |---|---:|---:|---:|
 | Rolling shrinkage | 2.078634 | 1.287294 | 0.206890 |
 | Learned production mixture | 1.975220 | 1.036404 | 0.017001 |
-| Neural challenger | 1.972572 | 1.034164 | 0.014253 |
 
 Paired deadline-block bootstrap RMSE difference, production versus prior: [-0.11506358259867933, -0.09158032323105651]. Likely-starter RMSE: 3.124704 → 3.033483, on 8,527 rows. Promotion requires both the declared overall bootstrap gate and starter improvement.
 
-A standardized two-layer MLP (32,16), alpha 10, 100 iterations, trains only inside earlier folds. Its paired RMSE difference versus trees is [-0.005641918722270772, 0.00011298252437268989]. The interval includes zero. A more complex model has not established an improvement here; it is not silently promoted based on architecture or a tiny point estimate.
 
 ## Decision returns and hindsight
 

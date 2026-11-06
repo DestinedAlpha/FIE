@@ -48,6 +48,7 @@ def main():
                     "version": release,
                     "requires_existing_installation": True,
                     "existing_models_preserved": True,
+                    "retired_tensor_weights_removed_on_start": True,
                     "files": hashes,
                 },
                 indent=2,
@@ -55,7 +56,7 @@ def main():
         )
         zipped.writestr(
             prefix + "UPDATE-README.txt",
-            "Requires an existing FPL Intelligence installation. Extract separately, close the old app, and run Update existing.cmd. Select your existing application folder. Your account, keys, complete numerical models and historical data are preserved. The launcher rebuilds forecasts and applies the corrected recommendation policy. This is an application update, not a smaller model.\n",
+            "Requires an existing FPL Intelligence installation. Extract separately, close the old app, and run Update existing.cmd. Select your existing application folder. Your account, keys, accepted tree models and historical data are preserved. The launcher removes retired tensor weights/dependencies, migrates and refits companion trees, validates the role-aware minutes model, then rebuilds forecasts and recommendations. Initial migration/training takes several minutes on a CPU. No account transfers are submitted.\n",
         )
     with ZipFile(output) as zipped:
         assert zipped.testzip() is None

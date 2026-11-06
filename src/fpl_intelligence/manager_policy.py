@@ -27,7 +27,6 @@ PLAYER_FEATURES = (
     "injury",
     "reference_points",
     "tree_points",
-    "network_points",
     "club_owned",
     "owned",
     "previous_captain",
@@ -51,15 +50,15 @@ def choice_features(packet, p, owned, previous, transfers, bank, ft, event, pack
         float(chance) / 100 if chance is not None else 1.0,
         float(chance is not None),
         float(packet.get("status") in ("i", "s", "d", "u")),
-        *[points.get(p, {}).get(k, 0) for k in ("baseline", "tree", "network")],
-        sum(packets.get(q, {}).get("team") == packet["team"] for q in owned),
+        *[points.get(p, {}).get(k, 0) for k in ("baseline", "tree")],
+        sum((packets.get(q, {}).get("team") == packet["team"] for q in owned)),
         float(p in owned),
-        float(any(r["element"] == p and r.get("is_captain") for r in previous)),
-        sum(r["element_in"] == p for r in transfers),
-        sum(r["element_out"] == p for r in transfers),
+        float(any((r["element"] == p and r.get("is_captain") for r in previous))),
+        sum((r["element_in"] == p for r in transfers)),
+        sum((r["element_out"] == p for r in transfers)),
         bank / 10,
         ft,
-        sum(packets.get(q, {}).get("status") in ("d", "i", "s", "u") for q in owned),
+        sum((packets.get(q, {}).get("status") in ("d", "i", "s", "u") for q in owned)),
         event / 38,
     ]
 
@@ -88,7 +87,7 @@ def manager_inputs(manager, event, packets, pointmap, ft):
         )
         for p, v in context.items()
     }
-    return values, owned, context
+    return (values, owned, context)
 
 
 def train_manager_policy(store):
@@ -102,13 +101,11 @@ def train_manager_policy(store):
     fusion = store.get("fusion_model")
     for r in pl.read_parquet(store.artifact_path(fusion["prediction_path"])).to_dicts():
         if r["season"] == season:
-            d = pointmap[r["event"]].setdefault(
-                r["player_id"], {k: 0.0 for k in ("baseline", "tree", "network")}
-            )
+            d = pointmap[r["event"]].setdefault(r["player_id"], {k: 0.0 for k in ("baseline", "tree")})
             for k in d:
                 d[k] += float(r[k])
     decisions = [r for r in behavior_rows(report, packets) if r["label"] is not None]
-    last = max(r["event"] for r in decisions)
+    last = max((r["event"] for r in decisions))
     rng = np.random.default_rng(143)
     training: dict[str, list[dict[str, Any]]] = {"buy": [], "sell": []}
     evaluation: dict[str, list[dict[str, Any]]] = {"buy": [], "sell": []}
@@ -130,14 +127,16 @@ def train_manager_policy(store):
             ]
             if event < last - 3:
                 training[kind].extend(
-                    {
-                        "x": values[p],
-                        "y": int(p in positives),
-                        "weight": 1
-                        if p in positives
-                        else len(negatives) / max(1, len(chosen) - len(positives)),
-                    }
-                    for p in chosen
+                    (
+                        {
+                            "x": values[p],
+                            "y": int(p in positives),
+                            "weight": 1
+                            if p in positives
+                            else len(negatives) / max(1, len(chosen) - len(positives)),
+                        }
+                        for p in chosen
+                    )
                 )
             else:
                 evaluation[kind].append(
@@ -184,10 +183,9 @@ def train_manager_policy(store):
         )
         model.fit([r["x"] for r in rows], [r["y"] for r in rows], sample_weight=[r["weight"] for r in rows])
         diagnostics = []
-        # Temperature is picked on the first two later deadlines, never test weeks.
         for item in evaluation[kind]:
             raw = np.asarray(model.predict_proba(item["x"]))[:, 1]
-            item["logits"] = logit(np.clip(raw, 1e-6, 1 - 1e-6))
+            item["logits"] = logit(np.clip(raw, 1e-06, 1 - 1e-06))
 
         def score(items, t):
             vals = []
@@ -244,7 +242,7 @@ def train_manager_policy(store):
     )
 
     def chipprob(rows):
-        p = np.full((len(rows), 5), 1e-8)
+        p = np.full((len(rows), 5), 1e-08)
         p[:, chip.classes_.astype(int)] = chip.predict_proba([r["x"] for r in rows])
         return p / p.sum(1, keepdims=True)
 
@@ -277,9 +275,13 @@ def train_manager_policy(store):
             for m in report["members"]
             for r in (m.get("history") or {}).get("current", [])
             if r.get("event_transfers", 0) >= 3
-            and not any(
-                c["event"] == r["event"] and c["name"] in ("wildcard", "freehit")
-                for c in (m.get("history") or {}).get("chips", [])
+            and (
+                not any(
+                    (
+                        c["event"] == r["event"] and c["name"] in ("wildcard", "freehit")
+                        for c in (m.get("history") or {}).get("chips", [])
+                    )
+                )
             )
         ]
         or [3],
@@ -305,6 +307,8 @@ def train_manager_policy(store):
 
 def policy_models(store, forecast=None):
     spec = store.get("manager_policy", (forecast or {}).get("manager_policy_id"))
+    if list(spec["player_features"]) != list(PLAYER_FEATURES):
+        raise ValueError("Manager policy feature contract changed; run fpl maintain-models")
     models: dict = {}
     for name, item in spec["models"].items():
         path = store.artifact_path(item["path"])
@@ -317,7 +321,7 @@ def policy_models(store, forecast=None):
         predictions = forecast_sources(store, forecast)
         models["__point_forecasts"] = {(r["event"], r["player_id"]): r for r in predictions["predictions"]}
         models["__fusion_forecast_id"] = predictions["id"]
-    return spec, models
+    return (spec, models)
 
 
 def action_preferences(store, state, players, means, models=None):
@@ -331,15 +335,8 @@ def action_preferences(store, state, players, means, models=None):
     transfers = [r for r in record.get("transfers", []) if state.event - 3 <= r["event"] < state.event]
     forecasts = bundle.get("__point_forecasts")
     if forecasts is None:
-        raise ValueError("Manager choice inference requires separate tree/neural forecasts")
-    points = {
-        p: {
-            "baseline": means.get(p, 0),
-            "tree": forecasts[state.event, p]["tree"],
-            "network": forecasts[state.event, p]["network"],
-        }
-        for p in players
-    }
+        raise ValueError("Manager choice inference requires separate tree forecasts")
+    points = {p: {"baseline": means.get(p, 0), "tree": forecasts[state.event, p]["tree"]} for p in players}
     ids = sorted(players)
     x = np.array(
         [
@@ -363,12 +360,11 @@ def action_preferences(store, state, players, means, models=None):
         if not spec["metrics"][name]["promoted"]:
             continue
         probs = bundle[name].predict(x, num_threads=1)
-        scores = logit(np.clip(probs, 1e-6, 1 - 1e-6)) / spec["metrics"][name]["temperature"]
+        scores = logit(np.clip(probs, 1e-06, 1 - 1e-06)) / spec["metrics"][name]["temperature"]
         for i, p in enumerate(ids):
-            # Retaining a likely sale has the opposite preference to purchasing it.
-            if (name == "buy" and p not in owned) or (name == "sell" and p in owned):
+            if name == "buy" and p not in owned or (name == "sell" and p in owned):
                 preference[p] += (1 if name == "buy" else -1) * float(np.clip(scores[i], -8, 8))
-    return preference, spec
+    return (preference, spec)
 
 
 def rollout_action(store, member, state, players, rules, means, history, branch, step, loaded):
@@ -382,7 +378,7 @@ def rollout_action(store, member, state, players, rules, means, history, branch,
     record = bundle.get("__record")
     if record is None:
         selections = {}
-        for event in sorted(r["event"] for r in history["current"])[-2:]:
+        for event in sorted((r["event"] for r in history["current"]))[-2:]:
             try:
                 selections[str(event)] = store.latest(f"picks_{member['entry']}_{event}")[0]
             except ValueError:
@@ -395,7 +391,7 @@ def rollout_action(store, member, state, players, rules, means, history, branch,
         record = {"entry": member["entry"], "history": history, "picks": selections, "transfers": transfers}
         bundle["__record"] = record
     packets = {(state.event, p): player.raw for p, player in players.items()}
-    future = next(r for r in behavior_rows({"members": [record]}, packets) if r["label"] is None)
+    future = next((r for r in behavior_rows({"members": [record]}, packets) if r["label"] is None))
     x = future["x"]
     x[0] = state.event
     x[1] = state.free_transfers
@@ -421,7 +417,6 @@ def rollout_action(store, member, state, players, rules, means, history, branch,
         baseprob = np.array(member["population_count_prior"])
     count = int(rng.choice(4, p=baseprob / baseprob.sum()))
     if count == 3:
-        # Represent 3+ with the observed ordinary-transfer tail, excluding chip churn.
         if "__tail" not in bundle:
             bundle["__tail"] = spec.get("ordinary_transfer_tail", [3])
         count = min(int(rng.choice(bundle["__tail"])), rules.transfer_cap - state.transfers_made)
@@ -440,7 +435,6 @@ def rollout_action(store, member, state, players, rules, means, history, branch,
     label = CHIPS[int(rng.choice(5, p=probs))]
     chip = None if label == "none" else label
     preference, _ = action_preferences(store, state, players, means, loaded)
-    # Choice-model log odds express manager preferences, never our own player xPts.
     count_constraint_relaxed = False
     try:
         d = solve_action(
@@ -499,7 +493,7 @@ def rollout_action(store, member, state, players, rules, means, history, branch,
             "event_transfers_cost": d.ledger["event_total_hit"],
             "points": d.utility + d.ledger["hit"],
             "bank": d.state.bank,
-            "value": sum(players[lot.player_id].price for lot in d.state.lots),
+            "value": sum((players[lot.player_id].price for lot in d.state.lots)),
         }
     )
     if d.action.chip:
@@ -513,13 +507,15 @@ def rollout_action(store, member, state, players, rules, means, history, branch,
         ]
     }
     record["transfers"].extend(
-        {
-            "event": state.event,
-            "element_out": old["player_id"],
-            "element_in": new["player_id"],
-            "element_out_cost": old["units"],
-            "element_in_cost": new["units"],
-        }
-        for old, new in transfer_pairs(d.ledger, players)
+        (
+            {
+                "event": state.event,
+                "element_out": old["player_id"],
+                "element_in": new["player_id"],
+                "element_out_cost": old["units"],
+                "element_in_cost": new["units"],
+            }
+            for old, new in transfer_pairs(d.ledger, players)
+        )
     )
     return d

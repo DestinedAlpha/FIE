@@ -36,9 +36,9 @@ def advanced_vector(past):
         for window in (3, 12):
             rows = past[-window:]
             valid = [r for r in rows if r.get(field) not in (None, "")]
-            exposure = sum(number(r, "minutes") / 90 for r in valid)
-            values.append(sum(number(r, field) for r in valid) / (exposure + 2))
-        values.append(sum(r.get(field) not in (None, "") for r in past[-12:]) / max(1, min(12, len(past))))
+            exposure = sum((number(r, "minutes") / 90 for r in valid))
+            values.append(sum((number(r, field) for r in valid)) / (exposure + 2))
+        values.append(sum((r.get(field) not in (None, "") for r in past[-12:])) / max(1, min(12, len(past))))
     return values
 
 
@@ -70,7 +70,7 @@ def train_horizon(store: Store, horizon=4):
     pointrows = pl.read_parquet(store.artifact_path(source["prediction_path"])).to_dicts()
     pointmap: dict[tuple, dict[str, float]] = defaultdict(lambda: defaultdict(float))
     for row in pointrows:
-        for field in ("baseline", "tree", "network"):
+        for field in ("baseline", "tree"):
             pointmap[row["season"], row["event"], row["player_id"]][field] += row[field]
     matrix = tree_matrix(
         arrays["tab"],
@@ -100,7 +100,7 @@ def train_horizon(store: Store, horizon=4):
     dc: Any = []
     for key, index in sorted(first.items()):
         season, event, player = key
-        if not all(e in weeks[season] for e in range(event, event + horizon)):
+        if not all((e in weeks[season] for e in range(event, event + horizon))):
             continue
         values = sum((outcomes[season, e, player] for e in range(event, event + horizon)), start=np.zeros(2))
         row = meta[index]
@@ -211,7 +211,6 @@ def train_horizon(store: Store, horizon=4):
             "Repeating a one-week reference is a horizon baseline, not a claim to reproduce the full multiweek optimizer",
         ],
     }
-    # Final production-value model follows the same purged contract.
     calgroups = unique[-4:]
     cut = calgroups[0]
     train = np.flatnonzero(ends < cut)
@@ -255,8 +254,8 @@ def block_interval(rows, field, baseline="baseline", length=4):
         part = [r for r in rows if r["deadline_group"] == group]
         summary.append(
             [
-                sum((r[field] - r["actual"]) ** 2 for r in part),
-                sum((r[baseline] - r["actual"]) ** 2 for r in part),
+                sum(((r[field] - r["actual"]) ** 2 for r in part)),
+                sum(((r[baseline] - r["actual"]) ** 2 for r in part)),
                 len(part),
             ]
         )
@@ -281,7 +280,7 @@ def live_values(store: Store):
     model = store.get("horizon_model")
     fusion = store.get("fusion_model", model["fusion_model_id"])
     players, market = load_market(store)
-    event = next(e["id"] for e in market["events"] if e.get("is_next"))
+    event = next((e["id"] for e in market["events"] if e.get("is_next")))
     rows, _ = future_inputs(store, market, players, event, event)
     kickoff = {f["id"]: f.get("kickoff_time") or "" for f in market["fixtures"]}
     unique: dict[int, dict] = {}
@@ -324,4 +323,4 @@ def live_values(store: Store):
             "fourweek": float(raw[i] + expected_dc),
             "short": float(np.dot(probability[i], conditional[i] + 2 * np.array(row["dc_probability"]))),
         }
-    return output, players, market, model
+    return (output, players, market, model)

@@ -63,7 +63,7 @@ def sequence(past):
     return values, mask
 
 
-def source_features(context, expert, workload, code, deadline):
+def source_features(context, expert, workload, code, deadline, workload_version="positive-exposure-v2"):
     available = context is not None
     context = context or {}
     status = context.get("status", "")
@@ -93,7 +93,7 @@ def source_features(context, expert, workload, code, deadline):
         float(bool(expert)),
         number(context, "now_cost") / 100,
     ]
-    load = workload_features(workload, code, deadline) if workload else [0.0] * 7
+    load = workload_features(workload, code, deadline, workload_version) if workload else [0.0] * 7
     quality = [1.0, float(available), float(available or expert), float(load[-1] > 0)]
     return (
         text,
@@ -284,7 +284,8 @@ def build_fusion_data(store: Store):
     metadata.replace(frozen_metadata)
     result = {
         "at": now(),
-        "version": "fusion-inputs-v2",
+        "version": "fusion-inputs-v3",
+        "workload_transform": "positive-exposure-v2",
         "enrichment_features": ENRICHMENT_FEATURES,
         "rows": len(records),
         "excluded_not_registered_before_deadline": missing,
@@ -330,8 +331,11 @@ def live_inputs(store, rows, market, players, feature_id=None):
     from .enrichment import EnrichmentIndex
 
     temporal_id = None
+    workload_version = "positive-exposure-v2"
     if feature_id is not None:
-        temporal_id = store.get("fusion_features", feature_id).get("lineage", {}).get("temporal_model")
+        feature_spec = store.get("fusion_features", feature_id)
+        temporal_id = feature_spec.get("lineage", {}).get("temporal_model")
+        workload_version = feature_spec.get("workload_transform", "legacy-v1")
     enrichment = EnrichmentIndex(store, originals, temporal_id)
     history = defaultdict(list)
     for original in originals:
@@ -379,7 +383,12 @@ def live_inputs(store, rows, market, players, feature_id=None):
             (market["season"], latest_expert, player.id), {"sample": sample} if sample else {}
         )
         txt, news, market_values, load, quality = source_features(
-            context, expert, work_by_code.get(player.code, []), player.code, deadlines[row["event"]]
+            context,
+            expert,
+            work_by_code.get(player.code, []),
+            player.code,
+            deadlines[row["event"]],
+            workload_version,
         )
         enriched = enrichment.vector(player.code, player.position, issued_cutoff, market["season"], context)
         quality = np.append(quality, float(enriched[-2] > 0 or enriched[-1] > 0))

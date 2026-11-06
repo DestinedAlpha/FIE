@@ -303,7 +303,7 @@ def fit_deadline(store, frame, deadline, group, directory):
     cal = past.filter(pl.col("deadline_group") >= cut)
     assert train["deadline_group"].max() < cal["deadline_group"].min() < group
     with threadpool_limits(limits=1):
-        fitted = fit_components(train, cal, False)
+        fitted = fit_components(train, cal)
     hashes = {}
     directory.mkdir(parents=True, exist_ok=True)
     for name, model in fitted.items():
