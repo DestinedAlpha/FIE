@@ -39,7 +39,7 @@ Removed local neural training/inference, weights, dependencies and controls. Exi
 
 Added a separately validated role-aware minutes classifier using recent starts, archived season role, availability and observed workload. Selection uses 2024/25 GW1–19; later 2024/25 and all 2025/26 are held out. It improves participation calibration and point error in both periods. Ordinary retraining learns newly finalized results. Its forecast validation is separate from the older full-policy scorecards.
 
-Fixed unused substitutes resetting physical rest; frozen older models retain their original transform. Core Insights imports quarantine conflicting duplicate matches. Paid transfers still require evidence beyond unresolved no-hit search. No named player is forced into or excluded from recommendations.
+Fixed unused substitutes resetting physical rest; frozen older models retain their original transform. Core Insights imports quarantine conflicting duplicate matches. Paid transfers require evidence beyond unresolved no-hit search. Optional current chip use also requires support over an ordinary-transfer control with later chips available; committed, explicitly fixed and expiring entitlements retain their rules. No named player is forced into or excluded from recommendations.
 
 [Research and implementation decisions](docs/research-review-2026-11-06.md) · [Source fusion](docs/source-fusion.md) · [Decision learning](docs/decision-learning.md) · [Performance audit](docs/performance-audit.md).
 

@@ -49,6 +49,8 @@ def verify(archive: Path):
         models.mkdir(parents=True)
         model = models / "existing-model.bin"
         model.write_bytes(b"existing-complete-numerical-model")
+        retired = models / "retired.pt"
+        retired.write_bytes(b"retired-tensor-model")
         with sqlite3.connect(target / "data/state.sqlite") as db:
             db.execute("CREATE TABLE account (bank INTEGER, points INTEGER)")
             db.execute("INSERT INTO account VALUES (16,470)")
@@ -58,6 +60,18 @@ def verify(archive: Path):
             capture_output=True,
             text=True,
         )
+        subprocess.run(
+            [
+                sys.executable,
+                "-c",
+                "import sys; from pathlib import Path; p=Path(sys.argv[1]); sys.path.insert(0,str(p/'src')); from fpl_intelligence.storage import Store; from fpl_intelligence.maintenance import maintain_models; maintain_models(Store(p/'data'))",
+                str(target),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        assert not retired.exists()
         assert (target / ".env").read_text() == "EXISTING_PRIVATE_KEY=preserved\n"
         assert model.read_bytes() == b"existing-complete-numerical-model"
         with sqlite3.connect(target / "data/state.sqlite") as db:
@@ -77,6 +91,7 @@ def verify(archive: Path):
         "account_database": "preserved",
         "keys": "preserved",
         "existing_models": "preserved",
+        "retired_weights": "removed by installed migration",
         "backup": "verified",
     }
     atomic_json(source / "artifacts/runtime/update-verification.json", result)

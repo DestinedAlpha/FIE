@@ -4,12 +4,19 @@ from __future__ import annotations
 
 import numpy as np
 
-SELECTION_VERSION = "paid-transfer-evidence-v2"
+SELECTION_VERSION = "resource-evidence-v3"
 
 
 def stale_paid_evidence(plan, receipt):
     """Invalidate a persisted expected-points paid recommendation after upgrading."""
     selection = receipt.get("selection", {})
+    if (
+        plan["ledger"][0].get("chip")
+        and selection.get("objective") == "expected_points"
+        and selection.get("selected_plan_id") == plan["id"]
+    ):
+        if receipt.get("selection_version") != SELECTION_VERSION:
+            return True
     return bool(
         plan["ledger"][0]["hit"] > 0
         and selection.get("objective") == "expected_points"
@@ -19,6 +26,33 @@ def stale_paid_evidence(plan, receipt):
             or not (receipt.get("immediate_hit_evidence") or {}).get("hit_supported_beyond_search_error")
         )
     )
+
+
+def chip_has_future_value(state, rules, event, chip, fixed_chips=None):
+    """Committed, explicitly pinned and expiring entitlements are distinct."""
+    return (
+        not state.get("active_chip")
+        and event not in (fixed_chips or {})
+        and rules.chip_window(chip, event)[1] > event
+    )
+
+
+def chip_use_evidence(candidate, alternative, difference, search):
+    evidence = paid_transfer_evidence(candidate, alternative, difference, search, require_no_hit=False)
+    return {
+        "chip": candidate["ledger"][0]["chip"],
+        "candidate_plan_id": candidate["id"],
+        "alternative_plan_id": alternative["id"],
+        "net_mean_gain": evidence["net_mean_gain"],
+        "paired_mc_interval_95": evidence["paired_mc_interval_95"],
+        "search_allowance": evidence["no_hit_search_allowance"],
+        "control_plan_id": search["id"],
+        "supported_beyond_search_error": evidence["hit_supported_beyond_search_error"],
+        "reason": "Current chip advantage exceeds unfinished ordinary-transfer search"
+        if evidence["hit_supported_beyond_search_error"]
+        else "Chip retained: its modeled advantage is unresolved against ordinary transfers and later chip use",
+        "scope": "Same frozen horizon and outcome worlds; future chip use remains available. Additive search sensitivity excludes forecast error and is not an exact nonlinear bound.",
+    }
 
 
 def source_forecast_review(store, plan, forecast):
@@ -67,7 +101,7 @@ def source_forecast_review(store, plan, forecast):
     return result
 
 
-def paid_transfer_evidence(candidate, alternative, difference, no_hit_search):
+def paid_transfer_evidence(candidate, alternative, difference, no_hit_search, *, require_no_hit=True):
     """Separate numerical sampling error from unfinished counterfactual search.
 
     The solver allowance is a conservative sensitivity in the additive surrogate,
@@ -77,7 +111,9 @@ def paid_transfer_evidence(candidate, alternative, difference, no_hit_search):
     for other in (alternative, no_hit_search):
         if other and any(other.get(k) != candidate.get(k) for k in ("state_id", "forecast_id", "end_event")):
             raise ValueError("Paid transfer evidence requires identical frozen inputs")
-    if alternative["ledger"][0]["hit"] > 0 or (no_hit_search and no_hit_search["ledger"][0]["hit"] > 0):
+    if require_no_hit and (
+        alternative["ledger"][0]["hit"] > 0 or (no_hit_search and no_hit_search["ledger"][0]["hit"] > 0)
+    ):
         raise ValueError("The no-hit counterfactual charges a new hit")
     delta = np.asarray(difference, dtype=float)
     if delta.ndim != 1 or len(delta) < 2 or not np.isfinite(delta).all():
@@ -88,7 +124,8 @@ def paid_transfer_evidence(candidate, alternative, difference, no_hit_search):
     bound, objective = solver.get("best_bound"), solver.get("objective")
     complete_search = bool(
         no_hit_search
-        and no_hit_search.get("first_week_hit_budget") == 0
+        and no_hit_search.get("first_week_hit_budget")
+        == (0 if require_no_hit else max(0, candidate["ledger"][0]["hit"]))
         and "continuation_plan_id" not in solver
         and bound is not None
         and objective is not None
@@ -286,6 +323,58 @@ def choose_recommendation(
                     - float(outcomes[index].mean()),
                     reason=hit_evidence["reason"],
                 )
+    chip_evidence = None
+    current_chip = plans[index]["ledger"][0].get("chip")
+    if mode == "expected_points" and current_chip:
+        from .rules import Rules
+
+        state = store.get("state", reference["state_id"])
+        rules = Rules.from_bootstrap(store.latest("bootstrap")[0])
+        event = plans[index]["ledger"][0]["event"]
+        if chip_has_future_value(state, rules, event, current_chip, fixed_chips):
+            control = optimize(
+                store,
+                reference["state_id"],
+                forecast["id"],
+                reference["end_event"],
+                60,
+                blocked_chips={event: ("wildcard", "freehit", "bboost", "3xc")},
+                first_week_hit_budget=max(0, plans[index]["ledger"][0]["hit"]),
+                max_transfers=max_transfers,
+                use_decision_critic=False,
+                pin_chips=fixed_chips,
+            )
+            value = score_plans(store, [control], forecast)[0]
+            plans.append(control)
+            outcomes.append(value)
+            rows.append(
+                {
+                    "plan_id": control["id"],
+                    "expected_net_points": float(value.mean()),
+                    "cvar_points": cvar(value, tail_fraction),
+                    "immediate_net_points": control["ledger"][0].get("simulated_net_mean"),
+                    "immediate_hit": control["ledger"][0]["hit"],
+                }
+            )
+            ordinary = [
+                i
+                for i, p in enumerate(plans)
+                if not p["ledger"][0].get("chip")
+                and p["ledger"][0]["hit"] <= max(0, plans[index]["ledger"][0]["hit"])
+            ]
+            alternative = max(ordinary, key=lambda i: float(outcomes[i].mean()))
+            chip_evidence = chip_use_evidence(
+                plans[index], plans[alternative], outcomes[index] - outcomes[alternative], control
+            )
+            if not chip_evidence["supported_beyond_search_error"]:
+                index = alternative
+                selection.update(
+                    selected_plan_id=plans[index]["id"],
+                    objective_value=float(outcomes[index].mean()),
+                    actual_ev_sacrifice=max(r["expected_net_points"] for r in rows)
+                    - float(outcomes[index].mean()),
+                    reason=chip_evidence["reason"],
+                )
     receipt = {
         "at": now(),
         "selection_version": SELECTION_VERSION,
@@ -294,6 +383,7 @@ def choose_recommendation(
         "selection": selection,
         "candidates": rows,
         "immediate_hit_evidence": hit_evidence,
+        "immediate_chip_evidence": chip_evidence,
         "no_hit_search_seconds": comparison_seconds,
     }
     receipt["id"] = store.put("policy_selection", receipt)

@@ -794,7 +794,16 @@ export function HitEvidence({
   if (!plan) return null;
   const receipt = data.policy_selection?.selection.selected_plan_id === plan.id ? data.policy_selection : null;
   const evidence = receipt?.immediate_hit_evidence;
-  if (!plan.ledger[0].hit && receipt?.selection_version === "paid-transfer-evidence-v2" && evidence && !evidence.hit_supported_beyond_search_error) {
+  const chipEvidence = receipt?.immediate_chip_evidence;
+  if (chipEvidence && !chipEvidence.supported_beyond_search_error) {
+    return <section className="panel">
+      <h3>{chipNames[chipEvidence.chip] ?? chipEvidence.chip} retained</h3>
+      <p>{chipEvidence.reason}. Its modeled full-horizon gain is {chipEvidence.net_mean_gain.toFixed(2)} points; the ordinary-transfer search allowance is {chipEvidence.search_allowance?.toFixed(2) ?? "unavailable"}.</p>
+      <p>Later chip use remains available in the comparison. Sampling precision does not settle forecast or search uncertainty.</p>
+      <button className="button secondary" onClick={() => explore(chipEvidence.candidate_plan_id)}>Inspect chip alternative</button>
+    </section>;
+  }
+  if (!plan.ledger[0].hit && receipt?.selection_version === "resource-evidence-v3" && evidence && !evidence.hit_supported_beyond_search_error) {
     return <section className="panel">
       <h3>Paid transfer withheld</h3>
       <p>{evidence.reason}. The raw paid-hit proposal gains only {evidence.net_mean_gain.toFixed(2)} modeled points over the full horizon;

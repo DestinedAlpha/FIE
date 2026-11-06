@@ -651,6 +651,13 @@
       "implementation": "src/fpl_intelligence/optimization.py:incumbent_precedes_forecast",
       "test": "tests/test_model_maintenance.py:test_reused_actions_cannot_come_from_future_forecasts",
       "runtime_evidence_kind": "plan"
+    },
+    {
+      "id": "optimizer.chip_evidence",
+      "requirement": "Optional current chip use requires support beyond ordinary-transfer search; preserve committed, pinned and expiring entitlements",
+      "implementation": "src/fpl_intelligence/objectives.py:chip_use_evidence",
+      "test": "tests/test_hit_support.py:test_current_chip_requires_support_beyond_ordinary_transfer_search",
+      "runtime_evidence_kind": "policy_selection"
     }
   ]
 }

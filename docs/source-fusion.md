@@ -28,3 +28,5 @@ uv run fpl maintain-models
 ```
 
 The launcher removes retired local tensor weights, refits companion trees against their supported feature contracts and synchronizes dependencies. Historical content-addressed experiment receipts remain immutable provenance; unsupported candidates cannot run or be selected.
+
+Optional current chip use is compared with a full ordinary-transfer control that preserves later chips and the same hit budget. A precise simulated mean cannot settle an advantage smaller than unfinished additive search. Committed, explicitly fixed and expiring current entitlements retain their rules.

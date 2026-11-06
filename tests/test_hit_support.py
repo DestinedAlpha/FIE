@@ -112,3 +112,59 @@ def test_forecast_review_distinguishes_fitness_from_starts_and_keeps_missing_ep(
     rows = source_forecast_review(store, p, f)
     assert rows[0]["official_availability"] == 1 and rows[0]["model_start_probability"] == 0.74
     assert rows[0]["official_next_points"] == 5.5 and rows[1]["official_next_points"] is None
+
+
+@pytest.mark.parametrize("gain,chip_used", [(1.2, False), (20, True)])
+def test_current_chip_requires_support_beyond_ordinary_transfer_search(
+    tmp_path, monkeypatch, rules, gain, chip_used
+):
+    from fpl_intelligence.rules import Rules
+
+    store = Store(tmp_path)
+    sid = store.put("state", {"active_chip": None})
+    chip, ordinary = policy("chip", 600 + gain), policy("ordinary", 600)
+    chip["ledger"][0]["chip"] = "freehit"
+    for plan in (chip, ordinary):
+        plan["state_id"] = sid
+        plan["id"] = store.put("plan", {k: v for k, v in plan.items() if k != "id"})
+    monkeypatch.setattr(store, "latest", lambda *a: ({}, {}))
+    monkeypatch.setattr(Rules, "from_bootstrap", classmethod(lambda *a: rules))
+
+    def control(*a, **kw):
+        assert set(kw["blocked_chips"][10]) == {"wildcard", "freehit", "bboost", "3xc"}
+        assert kw["first_week_hit_budget"] == 0
+        return ordinary
+
+    monkeypatch.setattr("fpl_intelligence.optimization.optimize", control)
+    monkeypatch.setattr("fpl_intelligence.optimization.hold_plan", lambda *a: ordinary)
+    monkeypatch.setattr(
+        "fpl_intelligence.simulation.score_plans",
+        lambda s, ps, f: [np.full(100, p["simulation"]["mean"]) for p in ps],
+    )
+    selected, receipt = choose_recommendation(store, [chip], {"id": "same-forecast"})
+    assert bool(selected["ledger"][0]["chip"]) == chip_used
+    assert receipt["immediate_chip_evidence"]["supported_beyond_search_error"] == chip_used
+
+
+def test_committed_pinned_and_expiring_chips_keep_their_entitlement_rules(rules):
+    from fpl_intelligence.objectives import chip_has_future_value
+
+    assert chip_has_future_value({}, rules, 10, "freehit")
+    assert not chip_has_future_value({"active_chip": "freehit"}, rules, 10, "freehit")
+    assert not chip_has_future_value({}, rules, 10, "freehit", {10: "freehit"})
+    assert not chip_has_future_value({}, rules, 19, "freehit")
+
+
+def test_chip_comparison_includes_ordinary_actions_at_the_same_hit_budget():
+    from fpl_intelligence.objectives import chip_use_evidence
+
+    boosted, ordinary = policy("boosted", 601, hit=4), policy("ordinary", 600, hit=4)
+    boosted["ledger"][0]["chip"] = "bboost"
+    ordinary["first_week_hit_budget"] = 4
+    evidence = chip_use_evidence(boosted, ordinary, np.ones(100), ordinary)
+    assert not evidence["supported_beyond_search_error"]
+    stronger = policy("stronger", 615, hit=4)
+    stronger["ledger"][0]["chip"] = "bboost"
+    assert chip_use_evidence(stronger, ordinary, np.full(100, 15), ordinary)["supported_beyond_search_error"]
+    with pytest.raises(ValueError, match="charges a new hit"):
+        paid_transfer_evidence(boosted, ordinary, np.ones(100), ordinary)

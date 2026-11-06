@@ -444,6 +444,7 @@ export type Dashboard = FootballEvidenceData & {
     alternative_gap: number | null;
   } | null;
   policy_selection?: {
+    immediate_chip_evidence?: { chip: string; candidate_plan_id: string; alternative_plan_id: string; net_mean_gain: number; search_allowance: number | null; supported_beyond_search_error: boolean; reason: string } | null;
     selection_version?: string;
     selection: { selected_plan_id: string; reason?: string; actual_ev_sacrifice: number };
     immediate_hit_evidence?: {
