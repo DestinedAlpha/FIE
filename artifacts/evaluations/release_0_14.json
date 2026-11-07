@@ -6,7 +6,8 @@
     "default_live_mip_gap": 0,
     "historical_scorecards_recomputed": false,
     "retained_forecast_cutoff": "2026-11-06T14:25:13.867713+00:00",
-    "scope": "Engineering verification with retained v0.13 forecast/plan evidence; does not certify the unlimited-search policy on historical football outcomes"
+    "scope": "Engineering verification with retained v0.13 forecast/plan evidence; does not certify the unlimited-search policy on historical football outcomes",
+    "solver_budget_reporting": "Effective unlimited budgets are null; each solver diagnostic also records unlimited and time_limit."
   },
   "account_state_id": "7b62e815bffd50f908e4e8b63d43f93670e1625e5ad59805ed3572925e08de83",
   "market_id": "557a7041b6618a9b7996119025814b04c1b9362986845588a31e4034587198c9",
@@ -441,7 +442,11 @@
     "browser_skipped": 0,
     "browser_fixture_scope": "Isolated real-data DB snapshot; API and account deadline clocks fixed to 2026-11-06T15:00:00+00:00 for the retained GW10 forecast. This is a UI integration test, not a live forecast or football performance test.",
     "ledger_replay": "passed",
-    "connected_model_checksums": "passed"
+    "connected_model_checksums": "passed",
+    "supplemental_search_metadata_regressions": {
+      "passed": true,
+      "tests": 30
+    }
   },
   "scope": "Executed implementation checks and historical gates; future football outcomes and global optimality are not certified"
 }
