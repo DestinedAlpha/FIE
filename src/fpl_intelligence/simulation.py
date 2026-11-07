@@ -719,7 +719,8 @@ def lineup_worlds(lineup, points, minutes, ids, players, rules, chip=None):
     relevant = lineup.xi + lineup.bench
     local_index = {p: i for i, p in enumerate(relevant)}
     local_points = points[:, [index[p] for p in relevant]]
-    patterns, inverse = np.unique(minutes[:, [index[p] for p in relevant]] > 0, axis=0, return_inverse=True)
+    eligibility = (minutes[:, [index[p] for p in relevant]] > 0) | (local_points != 0)
+    patterns, inverse = np.unique(eligibility, axis=0, return_inverse=True)
     selected_patterns = np.zeros((len(patterns), len(relevant)), dtype=bool)
     for group, pattern in enumerate(patterns):
         selected = scoring_ids(lineup, dict(zip(relevant, pattern)), players, rules, chip == "bboost")

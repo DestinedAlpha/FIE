@@ -72,3 +72,37 @@ def test_double_cameo_is_not_a_60_minute_fixture(tmp_path, market, rules, monkey
         report["players"][0]["mean"] += 1
         with pytest.raises(ValueError, match="summary differs"):
             validate_forecast(report, arrays)
+
+
+def test_zero_minute_disciplinary_penalties_are_valid_worlds():
+    forecast = {
+        "player_ids": [1],
+        "start_event": 1,
+        "end_event": 1,
+        "worlds": 2,
+        "fixtures": [
+            {"event": 1, "player_id": 1, "fixture_id": 1, "mean": -1, "minutes": 0, "p_zero": 1, "p_60": 0}
+        ],
+        "players": [
+            {
+                "event": 1,
+                "player_id": 1,
+                "mean": -1,
+                "sd": 0,
+                "minutes_mean": 0,
+                "p_zero": 1,
+                "p_start": 0,
+                "p_60": 0,
+                "p_haul": 0,
+                "fixture_count": 1,
+                "point_quantiles": [-1, -1, -1],
+                "minute_quantiles": [0, 0, 0],
+                "components": {"discipline": -1},
+            }
+        ],
+    }
+    arrays = {"points_1": np.full((2, 1), -1), "minutes_1": np.zeros((2, 1))}
+    assert validate_forecast(forecast, arrays)["passed"]
+    arrays["points_1"][:] = 1
+    with pytest.raises(ValueError, match="participation"):
+        validate_forecast(forecast, arrays)

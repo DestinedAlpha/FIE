@@ -36,7 +36,7 @@ def validate_forecast(forecast, arrays):
             or not np.isfinite(minutes).all()
         ):
             raise ValueError("Invalid forecast world dimensions or nonfinite draws")
-        if np.any(points[minutes == 0] != 0) or np.any(minutes < 0):
+        if np.any(points[minutes == 0] > 0) or np.any(minutes < 0):
             raise ValueError("Forecast points contradict player participation")
         for pid, col in index.items():
             row = records[event, pid]

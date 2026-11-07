@@ -135,7 +135,11 @@ def bonus_awards(bps: dict[int, float]) -> dict[int, int]:
 def score_fixture(events: dict, position: int, rules: Rules) -> int:
     minutes = events.get("minutes", 0)
     if not minutes:
-        return 0
+        # Cards received off the pitch still incur penalties and count for autosubs.
+        return int(
+            events.get("yellow_cards", 0) * rules.reward("yellow_cards", position, -1)
+            + events.get("red_cards", 0) * rules.reward("red_cards", position, -3)
+        )
     reward = rules.reward
     points = reward("long_play", position, 2) if minutes >= 60 else reward("short_play", position, 1)
     points += events.get("goals_scored", 0) * reward(
@@ -210,7 +214,8 @@ def score_gameweek(
     rules: Rules,
     chip: str | None = None,
 ) -> float:
-    ids = scoring_ids(lineup, {p: m > 0 for p, m in minutes.items()}, players, rules, chip == "bboost")
+    played = {p: minutes.get(p, 0) > 0 or points.get(p, 0) != 0 for p in set(minutes) | set(points)}
+    ids = scoring_ids(lineup, played, players, rules, chip == "bboost")
     captain = lineup.captain if minutes.get(lineup.captain, 0) > 0 else lineup.vice
     extra = points.get(captain, 0) if minutes.get(captain, 0) > 0 else 0
     return sum(points.get(p, 0) for p in ids) + extra * (2 if chip == "3xc" else 1)
@@ -414,7 +419,8 @@ def optimize_bench(lineup: Lineup, points, minutes, ids: list[int], players: dic
     relevant = lineup.xi + lineup.bench
     local_points = points[:, [index[p] for p in relevant]]
     local_index = {p: i for i, p in enumerate(relevant)}
-    patterns, inverse = np.unique(minutes[:, [index[p] for p in relevant]] > 0, axis=0, return_inverse=True)
+    eligibility = (minutes[:, [index[p] for p in relevant]] > 0) | (local_points != 0)
+    patterns, inverse = np.unique(eligibility, axis=0, return_inverse=True)
     totals = np.column_stack(
         [
             np.bincount(inverse, weights=local_points[:, column], minlength=len(patterns))

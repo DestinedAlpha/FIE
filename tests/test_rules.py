@@ -189,3 +189,48 @@ def test_grandfathering_resolved_by_transfer(market, rules, state):
     validate_squad(state, market, rules)
     with pytest.raises(ValueError, match="More than"):
         transition(state, Action(sell=[15], buy=[30]), market, rules)
+
+
+def test_off_pitch_cards_score_penalties_without_awarding_play_or_bonus(rules):
+    assert score_fixture({"minutes": 0, "yellow_cards": 1, "bonus": 3}, 2, rules) == -1
+    assert score_fixture({"minutes": 0, "red_cards": 1}, 2, rules) == -3
+    assert score_fixture({"minutes": 0, "bonus": 3}, 2, rules) == 0
+
+
+def test_zero_minute_cards_have_exact_autosub_and_world_scoring(market, rules):
+    import numpy as np
+
+    from fpl_intelligence.domain import Lineup
+    from fpl_intelligence.rules import optimize_bench
+    from fpl_intelligence.simulation import lineup_worlds
+
+    lineup = Lineup(xi=[1, 3, 4, 5, 8, 9, 10, 11, 13, 14, 15], bench=[2, 6, 7, 12], captain=3, vice=13)
+    ids = list(range(1, 16))
+    for card, absent, replacement in [
+        (3, [], None),
+        (1, [], None),
+        (2, [1], (1, 2)),
+        (6, [3], (3, 6)),
+        (12, [8, 6, 7], (8, 12)),
+    ]:
+        points, minutes = {p: 2 for p in ids}, {p: 90 for p in ids}
+        for p in absent:
+            points[p], minutes[p] = 0, 0
+        points[card], minutes[card] = -1, 0
+        playing = list(lineup.xi)
+        if replacement:
+            playing[playing.index(replacement[0])] = replacement[1]
+        # Captain fallback uses the official no-minutes rule; card eligibility
+        # determines autosubs independently of on-pitch exposure.
+        bonus = points[3] if minutes[3] else points[13]
+        pa = np.array([[points[p] for p in ids]])
+        ma = np.array([[minutes[p] for p in ids]])
+        for chip in (None, "3xc", "bboost"):
+            expected = sum(points[p] for p in (ids if chip == "bboost" else playing)) + bonus * (
+                2 if chip == "3xc" else 1
+            )
+            assert score_gameweek(points, minutes, lineup, market, rules, chip) == expected
+            assert lineup_worlds(lineup, pa, ma, ids, market, rules, chip)[0] == expected
+        if card == 6:
+            ordered = optimize_bench(lineup, pa, ma, ids, market, rules)
+            assert ordered.bench.index(7) < ordered.bench.index(6)
