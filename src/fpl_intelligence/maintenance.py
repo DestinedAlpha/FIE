@@ -8,6 +8,9 @@ from .storage import now
 def maintain_models(store):
     from .decision_training import ACTION_FEATURES, train_decision_models
     from .manager_policy import PLAYER_FEATURES, train_manager_policy
+    from .workload import migrate_cached_workload
+
+    migrate_cached_workload(store)
 
     # Revalidate cached evidence once when the guard contract changes. Originals
     # remain immutable; unsupported claims are quarantined, never deleted.

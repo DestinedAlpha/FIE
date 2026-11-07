@@ -739,8 +739,8 @@ def freeze_fusion_artifacts(store: Store, spec=None):
         "lineage",
         {
             "context_archive": store.get("context_archive")["id"],
-            "elite_cohort": store.get("elite_cohort")["id"],
-            "workload": store.get("workload")["id"],
+            "elite_cohort": store.get("elite_cohort")["id"] if store.list("elite_cohort", 1) else None,
+            "workload": store.get("workload")["id"] if store.list("workload", 1) else None,
         },
     )
     feature["id"] = store.put("fusion_features", feature)

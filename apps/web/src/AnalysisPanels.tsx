@@ -756,7 +756,7 @@ export function CaptainEvidence({
               <th>Projected points</th>
               <th>Captain bonus including backup</th>
               <th>Best backup</th>
-              <th>Chance of 60+ minutes</th>
+              <th>Chance of 60+ minutes in a fixture</th>
               <th>10–90% outcome</th>
             </tr>
           </thead>
@@ -786,6 +786,7 @@ export function CaptainEvidence({
       <p>
         These are expectations with overlapping outcome ranges. A forecast
         advantage does not guarantee a higher score this week.
+        {" "}<a href="/api/forecast/diagnostics" target="_blank" rel="noreferrer">Forecast validation and independent comparison</a>
       </p>
     </section>
   );

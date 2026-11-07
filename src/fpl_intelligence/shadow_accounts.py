@@ -27,8 +27,10 @@ from .strategy import solve_action
 class ShadowStore(Store):
     """Keep hypothetical selection receipts separate from the real account."""
 
-    def put(self, kind, body):
-        return super().put("shadow_policy_selection" if kind == "policy_selection" else kind, body)
+    def put(self, kind, body, *, connection=None):
+        return super().put(
+            "shadow_policy_selection" if kind == "policy_selection" else kind, body, connection=connection
+        )
 
 
 def save_capture(store, cohort, registry):

@@ -66,6 +66,13 @@ def test_invalid_roster_statistics_are_not_cached(field, value):
         validate_payload(data)
 
 
+def test_unknown_shot_situation_is_not_silently_a_set_piece():
+    data = match_data()
+    data["shots"]["h"][0]["situation"] = "NewUnknownCategory"
+    with pytest.raises(ValueError, match="Unknown shot situation"):
+        validate_payload(data)
+
+
 def test_partial_refresh_retains_verified_matches_and_rejects_bad_cache(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     store = Store(tmp_path)

@@ -133,6 +133,9 @@ async def collect_elite(store: Store, limit=100):
 
 
 def elite_features(store: Store):
+    if not store.list("elite_cohort", 1):
+        # Optional evidence is missing, not an observed zero-ownership cohort.
+        return {}, {"id": None, "retrieved_managers": 0, "retrieved_manager_gameweeks": 0}
     report = store.get("elite_cohort")
     output = {}
     events = sorted({r["event"] for r in report["selections"]})

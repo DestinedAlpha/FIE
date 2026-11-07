@@ -240,6 +240,17 @@ def create_app(root=None):
             "mode": "local private",
         }
 
+    @app.get("/api/forecast/diagnostics")
+    def forecast_diagnostics():
+        from .independent_sources import compare_fivestat
+
+        forecast = store.get("forecast")
+        return {
+            "forecast_id": forecast["id"],
+            "numerical_contract": forecast.get("validation"),
+            "independent_comparison": compare_fivestat(store, forecast),
+        }
+
     @app.get("/api/dashboard")
     def dashboard(event: int | None = None):
         result: dict[str, Any] = {
@@ -462,6 +473,11 @@ def create_app(root=None):
                 or (result["forecast"] or {}).get("model_version") != "learned-points-v1"
                 or (result["forecast"] or {}).get("decision_model_id")
                 != (result["decision_model"] or {}).get("id")
+            )
+            from .readiness import workload_is_current
+
+            selected_plan["stale"] |= not workload_is_current(
+                store, result["forecast"] or {}, result["decision_model"] or {}
             )
             if selected_plan["ledger"][0]["hit"] > 0 or selected_plan["ledger"][0].get("chip"):
                 from .objectives import stale_paid_evidence
@@ -1199,6 +1215,9 @@ def create_app(root=None):
                 or current_forecast.get("decision_model_id") != store.get("decision_model")["id"]
                 or (deadline is not None and moment(deadline) <= moment(now()))
             )
+            from .readiness import workload_is_current
+
+            plan["stale"] |= not workload_is_current(store, current_forecast)
         except (ValueError, KeyError):
             plan["stale"] = True
         if plan["stale"]:

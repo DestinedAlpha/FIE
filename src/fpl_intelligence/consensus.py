@@ -115,7 +115,9 @@ class DeadlineInputs:
         for row in self.originals:
             self.history[player_key(row)].append(row)
         self.workload = defaultdict(list)
-        for record in store.get("workload")["records"]:
+        from .workload import records as workload_records
+
+        for record in workload_records(store):
             self.workload[record["player_code"]].append(record)
 
     def build(self, rows, players, packet):

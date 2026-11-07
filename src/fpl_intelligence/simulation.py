@@ -556,6 +556,7 @@ def forecast(
     arrays: dict[str, Any] = {}
     for event in range(start_event, end_event + 1):
         points = np.zeros((worlds, len(ids)), dtype=np.int16)
+        qualifies_60 = np.zeros_like(points, dtype=bool)
         minutes = np.zeros_like(points)
         start_count = np.zeros_like(points)
         components: dict[str, Any] = {}
@@ -605,6 +606,7 @@ def forecast(
             columns = [index[i] for i in f_ids]
             points[:, columns] += p
             minutes[:, columns] += m
+            qualifies_60[:, columns] |= m >= 60
             start_count[:, columns] += (starts == 0) & (m > 0)
             audits.append(audit)
             for key, value in comp.items():
@@ -636,7 +638,8 @@ def forecast(
                     "minutes_mean": round(float(m.mean()), 2),
                     "p_zero": float((m == 0).mean()),
                     "p_start": float((start_count[:, column] > 0).mean()),
-                    "p_60": float((m >= 60).mean()),
+                    "p_60": float(qualifies_60[:, column].mean()),
+                    "p_60_semantics": "at_least_one_fixture_with_60_minutes",
                     "p_haul": float((p >= 10).mean()),
                     "components": {k: round(float(v[column]), 4) for k, v in components.items()},
                     "history_count": profiles[identity]["history_count"],

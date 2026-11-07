@@ -19,6 +19,7 @@ from .decision import NAMES, PARAMETERS, fit_components, minute_band, predict_mo
 from .models import curve_apply, curve_fit
 from .storage import atomic_json, digest, now
 from .workload import WORKLOAD_TRANSFORM, workload_features
+from .workload import records as workload_records
 
 VERSION = "role-minutes-v3"
 PARAMS = PARAMETERS | {"n_estimators": 220, "num_leaves": 16, "min_child_samples": 100, "reg_lambda": 20}
@@ -62,7 +63,8 @@ def historical_inputs(store, arrays, metadata, features, context_id=None):
     from .context_archive import load_context
 
     packets = load_context(store, context_id or features.get("lineage", {}).get("context_archive"))
-    workload = store.get("workload", features["lineage"]["workload"])["records"]
+    workload_id = features.get("lineage", {}).get("workload")
+    workload = workload_records(store, workload_id) if workload_id else []
     by_code = defaultdict(list)
     for row in workload:
         by_code[row["player_code"]].append(row)
@@ -302,7 +304,7 @@ def apply(store, model_id, rows, market, players, probabilities, start_event):
 
     by_code = defaultdict(list)
     cutoff = information_time(store)
-    for record in store.get("workload")["records"]:
+    for record in workload_records(store):
         if time_value(record["known_after"]) < time_value(cutoff):
             by_code[record["player_code"]].append(record)
     roles, loads = [], []
@@ -388,7 +390,7 @@ def audit_input_contract(store, event=None):
         players, market = attach_market(staged, packet, originals)
         for kind in ("shot_archive", "temporal_model", "elite_cohort", "workload"):
             identity = features.get("lineage", {}).get(kind)
-            if store.list(kind, 1):
+            if identity:
                 body = store.get(kind, identity)
                 staged.put(kind, {k: v for k, v in body.items() if k != "id"})
         staged.put("fusion_features", {k: v for k, v in features.items() if k != "id"})
@@ -396,7 +398,7 @@ def audit_input_contract(store, event=None):
         inputs = live_inputs(staged, rows, market, players, features["id"])
         roles, loads = [], []
         work = defaultdict(list)
-        for row in staged.get("workload")["records"]:
+        for row in workload_records(staged):
             work[row["player_code"]].append(row)
         for j, row in enumerate(rows):
             player = players[row["player_id"]]

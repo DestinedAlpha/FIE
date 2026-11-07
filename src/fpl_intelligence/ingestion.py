@@ -26,11 +26,12 @@ class Official:
         self.transport = PublicTransport(store, concurrency)
         self.errors: list[dict] = []
 
-    async def fetch(self, client: httpx.AsyncClient, path: str, source: str | None = None):
+    async def fetch(self, client: httpx.AsyncClient, path: str, source: str | None = None, *, publish=True):
         source = source or path.strip("/").replace("/", "_")
         try:
             body = await self.transport.get(client, BASE + path, source)
-            self.store.snapshot(source, BASE + path, body)
+            if publish:
+                self.store.snapshot(source, BASE + path, body)
             return body
         except (httpx.HTTPError, ValueError) as exc:
             self.errors.append({"source": source, "error": str(exc)[:180], "at": now()})
@@ -45,12 +46,12 @@ class Official:
             headers={"User-Agent": "FPL-Intelligence/0.1 personal research"},
         ) as client:
             bootstrap, fixtures = await asyncio.gather(
-                self.fetch(client, "bootstrap-static/", "bootstrap"),
-                self.fetch(client, "fixtures/", "fixtures"),
+                self.fetch(client, "bootstrap-static/", "bootstrap", publish=False),
+                self.fetch(client, "fixtures/", "fixtures", publish=False),
             )
             if not isinstance(bootstrap, dict) or not isinstance(fixtures, list):
                 raise ValueError("Core refresh failed; retained prior snapshots are unchanged")
-            normalize(self.store, bootstrap, fixtures)
+            normalize(self.store, bootstrap, fixtures, publish_core=True)
             from .context_archive import capture_live_context
 
             capture_live_context(self.store, bootstrap)
@@ -98,6 +99,12 @@ class Official:
                 self.store.snapshot("solio", str(response.url), body, body.get("generatedAt"))
             except (httpx.HTTPError, ValueError) as exc:
                 self.errors.append({"source": "solio", "error": str(exc)[:180]})
+            from .independent_sources import collect_fivestat
+
+            try:
+                await collect_fivestat(self.store)
+            except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
+                self.errors.append({"source": "fivestat", "error": str(exc)[:180]})
         report = {
             "captured_at": now(),
             "players": len(bootstrap["elements"]),
@@ -119,7 +126,47 @@ def season_of(bootstrap: dict) -> str:
     return f"{year}/{str(year + 1)[2:]}"
 
 
-def normalize(store: Store, bootstrap: dict, fixtures: list) -> None:
+def validate_core(bootstrap: dict, fixtures: list) -> None:
+    """Validate related registries before making either response current."""
+    registries = {}
+    for name in ("elements", "element_types", "events", "teams"):
+        rows = bootstrap.get(name)
+        if not isinstance(rows, list) or not rows or any(not isinstance(r, dict) for r in rows):
+            raise ValueError("Official bootstrap schema missing registry: " + name)
+        ids = [r.get("id") for r in rows]
+        if any(type(i) is not int or i < 1 for i in ids) or len(ids) != len(set(ids)):
+            raise ValueError("Invalid or duplicate official registry identities: " + name)
+        registries[name] = set(ids)
+    for event in bootstrap["events"]:
+        deadline = datetime.fromisoformat(event["deadline_time"].replace("Z", "+00:00"))
+        if deadline.tzinfo is None:
+            raise ValueError("Official deadline requires a timezone")
+    for player in bootstrap["elements"]:
+        if (
+            player.get("team") not in registries["teams"]
+            or player.get("element_type") not in registries["element_types"]
+        ):
+            raise ValueError("Official player references an unknown team or position")
+    fixture_ids = set()
+    for fixture in fixtures:
+        if (
+            not isinstance(fixture, dict)
+            or type(fixture.get("id")) is not int
+            or fixture["id"] in fixture_ids
+        ):
+            raise ValueError("Invalid or duplicate official fixture identity")
+        fixture_ids.add(fixture["id"])
+        if (
+            fixture.get("team_h") not in registries["teams"]
+            or fixture.get("team_a") not in registries["teams"]
+            or fixture["team_h"] == fixture["team_a"]
+            or (fixture.get("event") is not None and fixture["event"] not in registries["events"])
+        ):
+            raise ValueError("Official fixture references an unknown team or event")
+
+
+def normalize(store: Store, bootstrap: dict, fixtures: list, *, publish_core=False) -> None:
+    validate_core(bootstrap, fixtures)
     if not bootstrap.get("elements") or not bootstrap.get("element_types") or not bootstrap.get("events"):
         raise ValueError("Official bootstrap schema missing required registry fields")
     season = season_of(bootstrap)
@@ -150,19 +197,24 @@ def normalize(store: Store, bootstrap: dict, fixtures: list) -> None:
         directory / "players.parquet"
     )
     pl.DataFrame(fixtures, infer_schema_length=None).write_parquet(directory / "fixtures.parquet")
-    store.put(
-        "market",
-        {
-            "season": season,
-            "players": players,
-            "teams": bootstrap["teams"],
-            "events": bootstrap["events"],
-            "fixtures": fixtures,
-            "source_hash": digest(bootstrap),
-            "fixture_hash": digest(fixtures),
-            "known_at": now(),
-        },
-    )
+    market = {
+        "season": season,
+        "players": players,
+        "teams": bootstrap["teams"],
+        "events": bootstrap["events"],
+        "fixtures": fixtures,
+        "source_hash": digest(bootstrap),
+        "fixture_hash": digest(fixtures),
+        "known_at": now(),
+    }
+    # Readers observe either the preceding complete core or this complete core.
+    # Immutable blobs can safely precede the transaction; failed publication
+    # leaves no new snapshot registry pointers or market object behind.
+    with store.db() as connection:
+        if publish_core:
+            store.snapshot("bootstrap", BASE + "bootstrap-static/", bootstrap, connection=connection)
+            store.snapshot("fixtures", BASE + "fixtures/", fixtures, connection=connection)
+        store.put("market", market, connection=connection)
 
 
 def load_market(store: Store, identity: str | None = None) -> tuple[dict[int, Player], dict]:

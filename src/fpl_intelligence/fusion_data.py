@@ -307,7 +307,7 @@ def build_fusion_data(store: Store):
             **enrichment.lineage,
             "context_archive": archive["id"],
             "elite_cohort": elite["id"],
-            "workload": store.get("workload")["id"],
+            "workload": store.get("workload")["id"] if store.list("workload", 1) else None,
         },
         "coverage": {
             "news": float(converted["quality"][:, 1].mean()),

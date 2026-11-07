@@ -99,6 +99,14 @@ def validate_payload(data, *, league=False):
                     int(shot["player_id"])
                     if not all(isinstance(shot[k], str) for k in ("situation", "result")):
                         raise ValueError("Expected shot situation and result")
+                    if shot["situation"] not in (
+                        "OpenPlay",
+                        "Penalty",
+                        "FromCorner",
+                        "SetPiece",
+                        "DirectFreekick",
+                    ):
+                        raise ValueError("Unknown shot situation; refusing to infer an attacking channel")
                     value = float(shot["xG"])
                     if not math.isfinite(value) or not 0 <= value <= 1:
                         raise ValueError("Invalid shot xG")

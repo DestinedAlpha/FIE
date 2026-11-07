@@ -375,6 +375,10 @@ def optimize(
         or forecast.get("decision_model_id") != current_model["id"]
     ):
         raise ValueError("Forecast predates the validated current model; rebuild forecasts before solving")
+    from .readiness import workload_is_current
+
+    if not workload_is_current(store, forecast, current_model):
+        raise ValueError("Forecast predates current workload inputs; rebuild forecasts before solving")
     rules = Rules.from_bootstrap(store.latest("bootstrap")[0])
     validate_squad(state, players, rules)
     if forecast["market_id"] != market["id"] or forecast["rules_hash"] != rules.hash:

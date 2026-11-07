@@ -1,0 +1,74 @@
+from types import SimpleNamespace
+
+import numpy as np
+import pytest
+
+from fpl_intelligence import decision
+from fpl_intelligence.forecast_validation import validate_forecast
+from fpl_intelligence.storage import Store
+
+
+def test_double_cameo_is_not_a_60_minute_fixture(tmp_path, market, rules, monkeypatch):
+    store = Store(tmp_path)
+    player = market[1]
+    boot = store.snapshot("bootstrap", "https://example.test/", {})
+    spec = {
+        "promoted": True,
+        "minute_quantiles": {str(k): [m, m] for k, m in enumerate([0, 30, 74, 90])},
+        "dependence": {"defence": 0, "attack": 0},
+        "residuals": {},
+        "feature_id": "frozen",
+        "seasons": [],
+    }
+    store.put("decision_model", spec)
+    context = {
+        "id": "market",
+        "season": "2026/27",
+        "source_hash": boot["hash"],
+        "fixture_hash": "fixtures",
+        "events": [{"id": 9, "is_next": True}],
+        "fixtures": [],
+    }
+    rows = [
+        {
+            "player_id": player.id,
+            "fixture_id": f,
+            "event": 9,
+            "team": player.team,
+            "x": [0] * 26,
+            "availability": 1,
+            "minutes_cap": 90,
+            "dc_probability": [0] * 4,
+            "profile": {"history_count": 5, "action_coverage": 1},
+        }
+        for f in (1, 2)
+    ]
+    monkeypatch.setattr(decision, "load_market", lambda *_: ({player.id: player}, context))
+    monkeypatch.setattr(decision, "future_inputs", lambda *_: (rows, []))
+    monkeypatch.setattr(
+        decision, "load_bundle", lambda *_: {"starter": SimpleNamespace(predict=lambda *_, **__: [0, 0])}
+    )
+    monkeypatch.setattr(decision, "curve_apply", lambda p, _: p)
+    store.put("decision_model", {**spec, "curves": {"start": {}}})
+    monkeypatch.setattr(
+        decision, "predict_models", lambda *_: (None, np.array([[0, 1, 0, 0]] * 2), np.ones((2, 4)))
+    )
+    monkeypatch.setattr("fpl_intelligence.rules.Rules.from_bootstrap", lambda *_: rules)
+    monkeypatch.setattr(
+        decision,
+        "sample_point_outcomes",
+        lambda rng, probs, cond, dc, residuals, pos, u, ru: (
+            np.ones(len(u), dtype=np.int16),
+            np.ones(len(u), dtype=int),
+            np.zeros(len(u)),
+        ),
+    )
+    report = decision.learned_forecast(store, 9, 9, 100, 11)
+    row = report["players"][0]
+    assert row["minutes_mean"] == 60 and row["p_60"] == 0 and row["mean"] == 2
+    assert row["p_60_semantics"] == "at_least_one_fixture_with_60_minutes"
+    assert report["validation"]["passed"]
+    with np.load(store.artifact_path(report["scenario_path"])) as arrays:
+        report["players"][0]["mean"] += 1
+        with pytest.raises(ValueError, match="summary differs"):
+            validate_forecast(report, arrays)

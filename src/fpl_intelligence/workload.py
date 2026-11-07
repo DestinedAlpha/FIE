@@ -16,6 +16,13 @@ from .storage import Store, atomic_json, now
 REPO = "olbauday/FPL-Core-Insights"
 
 
+def records(store: Store, identity: str | None = None):
+    """Missing optional input is masked; a missing pinned artifact is an error."""
+    if identity is None and not store.list("workload", 1):
+        return []
+    return store.get("workload", identity)["records"]
+
+
 def canonical_player_matches(records):
     """Deduplicate identical exports; quarantine every conflicting copy."""
     from collections import defaultdict
@@ -107,7 +114,17 @@ async def import_workload(store: Store, seasons=("2025-2026", "2026-2027")):
                     text = await transport.get(
                         client, url, "workload_file", json_body=False, max_bytes=8_000_000
                     )
-                    rows = list(csv.DictReader(io.StringIO(text)))
+                    reader = csv.DictReader(io.StringIO(text))
+                    required = (
+                        {"player_id", "player_code"}
+                        if path.endswith("/players.csv")
+                        else {"match_id", "kickoff_time", "finished"}
+                        if path.endswith("/fixtures.csv")
+                        else {"match_id", "player_id", "minutes_played"}
+                    )
+                    if not required <= set(reader.fieldnames or []):
+                        raise ValueError("Workload CSV schema missing required columns")
+                    rows = list(reader)
                     bodies[path] = rows
                     store.snapshot(
                         "workload_" + __import__("hashlib").sha256(path.encode()).hexdigest()[:20],
@@ -118,6 +135,22 @@ async def import_workload(store: Store, seasons=("2025-2026", "2026-2027")):
                     errors.append({"path": path, "error": str(error)[:140]})
 
         await asyncio.gather(*(one(path) for path in paths))
+    if errors or len(bodies) != len(paths):
+        report = {
+            "at": now(),
+            "status": "incomplete; preceding verified workload retained",
+            "errors": errors,
+            "retrieved_files": len(bodies),
+            "requested_files": len(paths),
+            "retained_id": store.get("workload")["id"] if store.list("workload", 1) else None,
+        }
+        report["id"] = store.put("workload_refresh", report)
+        return report
+    return normalize_workload(store, bodies, commit, seasons, paths)
+
+
+def normalize_workload(store, bodies, commit, seasons, paths, fetched_at=None):
+    """Only complete source batches reach the active aggregate registry."""
     codes = {
         season: {
             int(r["player_id"]): int(r["player_code"])
@@ -187,8 +220,11 @@ async def import_workload(store: Store, seasons=("2025-2026", "2026-2027")):
                 future.append(record)
     accepted, conflicts = canonical_player_matches(accepted)
     rejected.extend(conflicts)
+    if not accepted and not future:
+        raise ValueError("Workload batch contains no verified player-match observations or fixtures")
     result = {
         "at": now(),
+        "source_fetched_at": fetched_at or now(),
         "source": REPO,
         "commit": commit,
         "requested_files": len(paths),
@@ -199,7 +235,8 @@ async def import_workload(store: Store, seasons=("2025-2026", "2026-2027")):
         "rejected_player_matches": len(rejected),
         "rejections": rejected,
         "conflicting_duplicates": len(conflicts),
-        "errors": errors,
+        "errors": [],
+        "schema_version": "workload-registry-v2",
         "zero_minutes_policy": "Explicit minutes_played=0 is a bench nonappearance; never derived from start/finish timestamps",
         "limits": [
             "Retrospective match enrichment, not original pre-deadline source capture",
@@ -213,6 +250,77 @@ async def import_workload(store: Store, seasons=("2025-2026", "2026-2027")):
         {k: v for k, v in result.items() if k not in ("records", "scheduled", "rejections", "errors")},
     )
     return result
+
+
+def migrate_cached_workload(store):
+    """Reparse legacy caches from their own pinned raw CSVs, without a network call."""
+    from urllib.parse import unquote
+
+    if not store.list("workload", 1):
+        return None
+    previous = store.get("workload")
+    if previous.get("schema_version") == "workload-registry-v2" or all(
+        r.get("fixture_signature") for r in previous["records"]
+    ):
+        return None
+    prefix = f"https://raw.githubusercontent.com/{REPO}/{previous['commit']}/"
+    with store.db() as db:
+        sources = [
+            r[0] for r in db.execute("SELECT DISTINCT source FROM snapshots WHERE source LIKE 'workload_%'")
+        ]
+    bodies = {}
+    for source in sources:
+        body, meta = store.latest(source)
+        if meta["url"].startswith(prefix) and body.get("commit") == previous["commit"]:
+            bodies[unquote(meta["url"][len(prefix) :])] = body["rows"]
+    if len(bodies) != previous["requested_files"]:
+        raise ValueError(
+            "Legacy workload migration requires its complete retained source batch; refresh sources"
+        )
+    seasons = sorted({p.split("/")[1] for p in bodies})
+    result = normalize_workload(
+        store,
+        bodies,
+        previous["commit"],
+        seasons,
+        list(bodies),
+        previous.get("source_fetched_at", previous["at"]),
+    )
+    store.put(
+        "workload_migration",
+        {
+            "at": now(),
+            "previous_id": previous["id"],
+            "workload_id": result["id"],
+            "source": "Reparsed retained pinned CSVs; previous archive preserved",
+        },
+    )
+    return result
+
+
+def refresh_workload_due(store):
+    """Daily numerical-input refresh; failed attempts keep the last verified feed."""
+    if store.list("workload_refresh_attempt", 1):
+        previous = store.get("workload_refresh_attempt")
+        if time_value(now()) - time_value(previous["at"]) < timedelta(
+            hours=24 if previous.get("success") else 4
+        ):
+            return previous
+    attempt = {"at": now(), "success": False, "status": "started"}
+    store.put("workload_refresh_attempt", attempt)
+    try:
+        result = asyncio.run(import_workload(store))
+        attempt.update(
+            success="retained_id" not in result,
+            status=result.get("status", "updated"),
+            artifact_id=result["id"],
+        )
+    except (httpx.HTTPError, ValueError, KeyError, TypeError) as error:
+        from .settings import redact
+
+        attempt.update(status="unavailable; preceding workload retained", reason=redact(error)[:180])
+    attempt["id"] = store.put("workload_refresh_attempt", attempt)
+    return attempt
 
 
 WORKLOAD_TRANSFORM = "positive-exposure-v2"

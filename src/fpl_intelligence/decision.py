@@ -785,6 +785,7 @@ def learned_forecast(
         raise ValueError("Invalid scenario budget")
     players, market = load_market(store)
     start = start_event or next((e["id"] for e in market["events"] if e.get("is_next")), 38)
+    live_workload_id = store.get("workload")["id"] if store.list("workload", 1) else None
     if not 1 <= start <= end_event <= 38:
         raise ValueError("Invalid forecast horizon")
     from .research import active_beliefs
@@ -852,6 +853,7 @@ def learned_forecast(
         previous_simulated: dict[int, dict[str, Any]] = {}
         points = np.zeros((worlds, len(ids)), dtype=np.int16)
         minutes = np.zeros_like(points)
+        qualifies_60 = np.zeros_like(points, dtype=bool)
         component_totals = {
             "appearance": np.zeros(len(ids)),
             "defcon": np.zeros(len(ids)),
@@ -929,6 +931,7 @@ def learned_forecast(
             values[sampled_minutes == 0] = 0
             points[:, column] += values
             minutes[:, column] += sampled_minutes
+            qualifies_60[:, column] |= sampled_minutes >= 60
             appearance = (sampled_minutes > 0).astype(int) + (sampled_minutes >= 60)
             parts = {
                 "appearance": float(appearance.mean()),
@@ -979,7 +982,8 @@ def learned_forecast(
                     "p_start_semantics": "maximum_fixture_start_probability"
                     if fixture_count[col] > 1
                     else "fixture_start_probability",
-                    "p_60": float((m >= 60).mean()),
+                    "p_60": float(qualifies_60[:, col].mean()),
+                    "p_60_semantics": "at_least_one_fixture_with_60_minutes",
                     "p_haul": float((p >= 10).mean()),
                     "components": {k: round(float(v[col]), 4) for k, v in component_totals.items()},
                     "history_count": next(
@@ -1028,6 +1032,7 @@ def learned_forecast(
         "market_id": market["id"],
         "input_hashes": [market["source_hash"], market["fixture_hash"], spec["feature_id"]],
         "input_manifest": {
+            "live_workload_id": live_workload_id,
             "decision_model_id": spec["id"],
             "training_feature_id": spec["feature_id"],
             "seasons": spec["seasons"],
@@ -1057,8 +1062,14 @@ def learned_forecast(
         ],
         "runtime_seconds": round(time.monotonic() - started, 3),
     }
+    from .forecast_validation import validate_forecast
+    from .readiness import workload_is_current
+
+    if not workload_is_current(store, body, spec):
+        raise ValueError("Workload changed during forecasting; retry with current inputs")
     from .worlds import save_worlds
 
+    body["validation"] = validate_forecast(body, arrays)
     body["scenario_path"] = save_worlds(store, digest(body), arrays)
     body["id"] = store.put("scenario_forecast" if scenario else "forecast", body)
     if not scenario and body["source_challenger_model_id"]:

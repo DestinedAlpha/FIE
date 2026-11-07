@@ -291,7 +291,7 @@ async def refresh_sources(store: Store):
         if isinstance(result, BaseException):
             output[kind] = {"status": "unavailable", "reason": redact(result)[:160]}
         else:
-            output[kind] = {"status": "updated", "id": result["id"]}
+            output[kind] = {"status": result.get("status", "updated"), "id": result["id"]}
     return output
 
 

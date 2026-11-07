@@ -9,7 +9,7 @@ import json
 import os
 import sqlite3
 import tempfile
-from contextlib import closing, contextmanager
+from contextlib import closing, contextmanager, nullcontext
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -75,7 +75,9 @@ class Store:
         finally:
             connection.close()
 
-    def snapshot(self, source: str, url: str, body: Any, published: str | None = None) -> dict:
+    def snapshot(
+        self, source: str, url: str, body: Any, published: str | None = None, *, connection=None
+    ) -> dict:
         sha = digest(body)
         path = self.root / "raw" / f"{sha}.json.gz"
         if not path.exists():
@@ -102,7 +104,7 @@ class Store:
             path=str(path.relative_to(self.root)),
             status=200,
         )
-        with self.db() as db:
+        with nullcontext(connection) if connection is not None else self.db() as db:
             db.execute(
                 "INSERT INTO snapshots(source,url,captured_at,source_published_at,hash,path,status) "
                 "VALUES(:source,:url,:captured_at,:source_published_at,:hash,:path,:status)",
@@ -129,9 +131,9 @@ class Store:
             raise ValueError(f"Snapshot integrity failure: {source}")
         return body, meta
 
-    def put(self, kind: str, body: dict) -> str:
+    def put(self, kind: str, body: dict, *, connection=None) -> str:
         identity = digest(body)
-        with self.db() as db:
+        with nullcontext(connection) if connection is not None else self.db() as db:
             db.execute(
                 "INSERT OR IGNORE INTO objects VALUES(?,?,?,?)",
                 (kind, identity, now(), json.dumps(body, allow_nan=False)),

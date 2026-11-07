@@ -12,6 +12,15 @@ from pathlib import Path
 from .storage import atomic_json, now
 
 
+def workload_is_current(store, forecast, model=None):
+    model = model if model is not None else store.get("decision_model")
+    if not (model.get("role_minutes_model_id") or model.get("fusion_model_id")):
+        return True
+    manifest = forecast.get("input_manifest", {})
+    current = store.get("workload")["id"] if store.list("workload", 1) else None
+    return "live_workload_id" in manifest and manifest["live_workload_id"] == current
+
+
 def selection_is_current(store, plan):
     """Check all serving pointers and the deadline immediately before publication."""
     try:
@@ -31,6 +40,7 @@ def selection_is_current(store, plan):
             )
         )
         or forecast.get("decision_model_id") != model["id"]
+        or not workload_is_current(store, forecast, model)
     ):
         return False
     from .account_sync import next_event
@@ -198,6 +208,8 @@ def operational_readiness(store):
         reasons.append("Forecast uses an older market")
     if forecast.get("decision_model_id") != model["id"]:
         reasons.append("Forecast uses an older model")
+    if not workload_is_current(store, forecast, model):
+        reasons.append("Forecast needs current workload inputs")
     from .account_sync import next_event
 
     if market.get("events") and state.get("event") != next_event(market):

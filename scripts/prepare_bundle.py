@@ -61,7 +61,7 @@ def main():
                 if (
                     path.is_file()
                     and not name.startswith(("artifacts/runtime/", "data/", "updates/"))
-                    and path.name != ".env"
+                    and not path.name.startswith(".env")
                 ):
                     bundle.write(path, "FPL-Intelligence/" + name)
             for path in (root / "apps" / "web" / "dist").rglob("*"):

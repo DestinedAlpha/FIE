@@ -470,7 +470,10 @@ def run_replay(store, events=None, worlds=4000, seconds=60, publish=True, partic
             or store.get("role_minutes_validation", role["validation_id"])["context_archive_id"]
         )
         role_x = historical_inputs(store, role_arrays, role_meta, role_features, role_context_id)
-        role_workload = store.get("workload", role_features["lineage"]["workload"])["records"]
+        from .workload import records as workload_records
+
+        workload_id = role_features.get("lineage", {}).get("workload")
+        role_workload = workload_records(store, workload_id) if workload_id else []
     directory = (
         store.root
         / "models"

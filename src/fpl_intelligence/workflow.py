@@ -223,6 +223,9 @@ def refresh_cycle(store: Store):
         asyncio.run(Official(store).ingest(histories=True))
         market = store.get("market")
         changed_labels = before_histories != history_hashes()
+    from .workload import refresh_workload_due
+
+    refresh_workload_due(store)
     active = store.get("decision_model") if store.list("decision_model", 1) else {}
     represented = max(
         (r["event"] for r in active.get("predictions", []) if r["season"] == market.get("season")), default=0
@@ -365,7 +368,16 @@ def football_training(store, refresh=False):
         stages.append({"stage": name, "artifact_id": result["id"]})
 
     if refresh or not store.list("shot_archive", 1):
-        record("shots", asyncio.run(collect_shots(store)))
+        try:
+            record("shots", asyncio.run(collect_shots(store)))
+        except (ValueError, httpx.HTTPError) as error:
+            stages.append(
+                {
+                    "stage": "shots",
+                    "status": "Source unavailable; retained cached evidence or missing-input fallback",
+                    "error": str(error)[:180],
+                }
+            )
     if refresh:
         for name, source in [("discipline_source", collect_discipline_news), ("odds_source", collect_odds)]:
             try:
@@ -380,11 +392,28 @@ def football_training(store, refresh=False):
                 )
     record("discipline", build_discipline(store))
     record("availability", train_availability(store))
-    record("temporal", validate_temporal(store))
-    record("attack", train_attack(store))
+    shots = store.get("shot_archive")["records"] if store.list("shot_archive", 1) else []
+    groups = {f"{r['season']}-GW{r['event']:02d}" for r in shots}
+    shot_splits = (
+        any(g < "2024/25-GW25" for g in groups),
+        any("2024/25-GW25" <= g < "2025/26-GW01" for g in groups),
+        any(g >= "2025/26-GW01" for g in groups),
+    )
+    if all(shot_splits):
+        record("temporal", validate_temporal(store))
+        record("attack", train_attack(store))
+        record("luck_diagnostic", luck_report(store))
+    else:
+        stages.append(
+            {
+                "stage": "shot_dependent_fits",
+                "status": "Unavailable: verified shot history does not cover all chronological splits; retained accepted models and official-data forecasts",
+                "records": len(shots),
+                "chronological_splits_present": shot_splits,
+            }
+        )
     record("score_process", train_score_process(store))
     record("market_constraints", calibrate_odds(store))
-    record("luck_diagnostic", luck_report(store))
     report = {
         "at": now(),
         "stages": stages,
