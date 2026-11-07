@@ -1,0 +1,2 @@
+d79b6cb14a7f84b33c77d0ab5d54edc54dd7f8a0807a27fb6e9b1f75c0621970  FPL-Intelligence-0.14.0-Update.zip
+53a95b45125ee0ed07a4d7152b69f3eabbfa7528067833bc4db773f26a14931a  FPL-Intelligence-0.14.1-Update.zip
