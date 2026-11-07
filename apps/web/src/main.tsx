@@ -1065,6 +1065,7 @@ function App() {
                       <label>
                         Plan through
                         <select
+                          aria-label="Plan through"
                           value={end}
                           onChange={(e) => setEnd(+e.target.value)}
                         >
