@@ -100,6 +100,7 @@ test("recommendation, legal XI, full market and planner exports", async ({
     "12",
   );
   await page.getByRole("combobox", {name:"Gameweek", exact:true}).selectOption("20");
+  await navigate(page, "Season planner");
   await expect(page.getByLabel("Plan through", {exact:true})).toHaveValue("38");
   expect(errors).toEqual([]);
   await page.screenshot({
