@@ -1,6 +1,6 @@
 # FIE 0.14.2 completion and verification
 
-The current engineering scope is implemented and exercised. The [205-item disposition ledger](../artifacts/evaluations/release_0_14_2.json) retains all 189 original findings and adds 16 confirmed issues from this implementation. It links present implementation, executed regressions and actual-data evidence. Scientific hypotheses, unavailable external observations and deliberate modelling approximations are distinguished from defects. Original historical reports and supplied research documents remain unchanged.
+The current engineering scope is implemented and exercised. The [206-item disposition ledger](../artifacts/evaluations/release_0_14_2.json) retains all 189 original findings and adds 17 confirmed issues from this implementation. It links present implementation, executed regressions and actual-data evidence. Scientific hypotheses, unavailable external observations and deliberate modelling approximations are distinguished from defects. Original historical reports and supplied research documents remain unchanged.
 
 ## Implemented corrections
 
@@ -12,6 +12,8 @@ The current engineering scope is implemented and exercised. The [205-item dispos
 - Rival comparisons work after GW9. Planner defaults remain valid after GW19. Account editing preserves selling-quote verification and uses concurrent-version checks. Public synchronization retained the completed Gabriel/Tavernier moves, bank and free transfers.
 - Hosted extraction filters expired capabilities and outdated quality results, uses demonstrated current extraction reliability, resolves Unicode/full-name collisions and excludes related-story text. Missing publication zones remain bounded uncertainty, rather than fabricated UTC timestamps. Unsupported, stale or ambiguous evidence is rejected and queued with reasons. Neither hosted opinion nor manager ownership silently adds expected points.
 - The full portable package now also carries the updater checksum manifest. Existing-installation updates preserve credentials, accounts, accepted models and evidence, with transactional rollback and SQLite backups.
+
+Off-pitch cards are now scored even with zero minutes, and count for automatic substitutions and bench ordering. Nine actual historical observations and the current official rules confirm the case; scalar and world-based scoring agree. Captain fallback retains the official no-minutes rule. All retained historical totals reproduce after this correction. The accepted sampler does not independently estimate the frequency of these rare off-pitch incidents.
 
 ## Research and numerical checks
 
@@ -29,7 +31,7 @@ A new chronological club-minute reconciliation study improved points MSE and par
 
 ## Executed verification
 
-- **317 backend tests**, Ruff, formatting, typing and frontend build; **3 frontend unit tests**.
+- **320 backend tests**, Ruff, formatting, typing and frontend build; **3 frontend unit tests**.
 - **24 desktop/mobile browser journeys**, including account editing, market, planning, exports, research/rival views, background-job discovery/cancellation and the second-half horizon.
 - Windows and Linux CI, including Windows dependency/bootstrap, PowerShell parsing, launcher, packaged updater with a folder containing spaces, retained configuration/weights, built interface and loopback HTTP smoke checks.
 - Actual official refresh/account synchronization, complete workload refresh, cached Understat fallback, current rival comparison and current companion-model loading.

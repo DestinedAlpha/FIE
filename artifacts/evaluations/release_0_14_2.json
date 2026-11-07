@@ -2,9 +2,9 @@
   "at": "2026-11-07T15:50:15.559524+00:00",
   "version": "0.14.2",
   "baseline_revision": "4bc1885",
-  "implementation_revision": "255c4c78426416e790e23d286f35963755d7b20f",
+  "implementation_revision": "93049e73c76389102959d5d86956b8af26ef4f21",
   "original_findings": 189,
-  "total_findings": 205,
+  "total_findings": 206,
   "scope": "Current actionable engineering completed against available data and retained model scope. Every inherited item has a present disposition and source/test/evidence chain; scientific hypotheses are not mislabeled as reproduced bugs. No finite inspection proves universal optimal football forecasts.",
   "original_audit_sha256": "763fddb4305905112b64ca820810d5fbf41582e1f157d1c6dbc85f693ccaffc9",
   "items": [
@@ -4661,6 +4661,114 @@
         "tests/test_pipeline_verification.py"
       ],
       "evidence": "Reproduced failed Windows drive/UNC metadata on Linux; normalize either platform format into the current artifact root, retain traversal rejection, and resolve sealed availability without modifying its original JSON or checksum."
+    },
+    {
+      "issue": 206,
+      "title": "Off-pitch cards with zero minutes were discarded and omitted from autosub eligibility",
+      "current_disposition": "CONFIRMED_DEFECT_FIXED_AND_VERIFIED",
+      "implementation": [
+        "src/fpl_intelligence/rules.py",
+        "src/fpl_intelligence/simulation.py",
+        "src/fpl_intelligence/forecast_validation.py"
+      ],
+      "regressions": [
+        "tests/test_rules.py",
+        "tests/test_forecast_contract.py"
+      ],
+      "evidence": {
+        "at": "2026-11-07T19:55:06.937873+00:00",
+        "url": "https://fantasy.premierleague.com/help/rules",
+        "script_url": "https://fantasy.premierleague.com/assets/index-mz_b6kc5.js",
+        "script_sha256": "89eb9897e68a14302c479082aae24990f763290322a1a2500bcc6af33f527f2b",
+        "autosub_quote": "Playing in a Gameweek means making an appearance on the pitch or receiving a yellow / red card.",
+        "captain_quote": "Your vice-captain comes into play if your captain plays no minutes in the Gameweek.",
+        "observed_records": [
+          {
+            "season": "2022/23",
+            "round": 16,
+            "element": 360,
+            "minutes": 0.0,
+            "total_points": -1.0,
+            "yellow_cards": 1.0,
+            "red_cards": 0.0
+          },
+          {
+            "season": "2022/23",
+            "round": 19,
+            "element": 360,
+            "minutes": 0.0,
+            "total_points": -1.0,
+            "yellow_cards": 1.0,
+            "red_cards": 0.0
+          },
+          {
+            "season": "2022/23",
+            "round": 28,
+            "element": 589,
+            "minutes": 0.0,
+            "total_points": -3.0,
+            "yellow_cards": 0.0,
+            "red_cards": 1.0
+          },
+          {
+            "season": "2023/24",
+            "round": 3,
+            "element": 284,
+            "minutes": 0.0,
+            "total_points": -1.0,
+            "yellow_cards": 1.0,
+            "red_cards": 0.0
+          },
+          {
+            "season": "2023/24",
+            "round": 18,
+            "element": 192,
+            "minutes": 0.0,
+            "total_points": -1.0,
+            "yellow_cards": 1.0,
+            "red_cards": 0.0
+          },
+          {
+            "season": "2023/24",
+            "round": 27,
+            "element": 445,
+            "minutes": 0.0,
+            "total_points": -1.0,
+            "yellow_cards": 1.0,
+            "red_cards": 0.0
+          },
+          {
+            "season": "2023/24",
+            "round": 31,
+            "element": 28,
+            "minutes": 0.0,
+            "total_points": -1.0,
+            "yellow_cards": 1.0,
+            "red_cards": 0.0
+          },
+          {
+            "season": "2024/25",
+            "round": 8,
+            "element": 565,
+            "minutes": 0.0,
+            "total_points": -1.0,
+            "yellow_cards": 1.0,
+            "red_cards": 0.0
+          },
+          {
+            "season": "2025/26",
+            "round": 22,
+            "element": 218,
+            "minutes": 0.0,
+            "total_points": -1.0,
+            "yellow_cards": 1.0,
+            "red_cards": 0.0
+          }
+        ],
+        "case_count": 9,
+        "model_scope": "Accepted empirical weights remain unchanged. The sampler does not independently estimate the rare off-pitch-card frequency; supplied disciplinary points are scored correctly."
+      },
+      "action": "Preserve off-pitch card penalties in fixture scoring, scalar/vector autosubs and bench ordering; retain the official no-minutes captain fallback rule. Permit disciplinary negative points at zero minutes in world validation. No accepted weights or incident-frequency model changed."
     }
   ],
   "numerical_verification": {
@@ -16632,7 +16740,7 @@
       "lineage_current": true
     },
     "backend": {
-      "tests": 317,
+      "tests": 320,
       "failures": 0
     },
     "frontend": {
@@ -16671,10 +16779,40 @@
       "manager_policy_id": "4b26caabed0a5bde0d131aa1c653af13e6da604e21ff7080d098cf2133bb72d9"
     },
     "windows_linux_ci": {
-      "run": 42407367471,
+      "run": 42408640892,
       "conclusion": "success",
-      "url": "https://github.com/DestinedAlpha/FIE/actions/runs/42407367471",
-      "includes": "317 regressions on each OS; UI build/unit checks; Windows launcher and actual packaged updater, retained settings/weights and backup"
+      "url": "https://github.com/DestinedAlpha/FIE/actions/runs/42408640892",
+      "includes": "320 regressions on each OS; UI build/unit checks; Windows launcher and packaged updater with retained settings/weights and backup"
+    },
+    "retained_scores_after_card_correction": {
+      "combined": {
+        "sealed_deadlines": 9,
+        "independently_scored_actions": 27,
+        "training_cutoffs_and_model_checksums": "passed",
+        "account_continuity": "passed"
+      },
+      "pipeline": {
+        "sealed_deadlines": 28,
+        "validated_actions": 84,
+        "models": "checksums passed",
+        "ledger_and_actual_scoring": "passed",
+        "continuous_actions": 84,
+        "sealed_actions": "matched",
+        "account_continuity": "passed",
+        "availability_checksums": "passed"
+      },
+      "earlier_future": {
+        "sealed_deadlines": 19,
+        "training_cutoffs_and_model_checksums": "passed",
+        "current_week_world_identity": "passed",
+        "continuous_accounts_and_actual_scores": "passed"
+      },
+      "current_future": {
+        "sealed_deadlines": 9,
+        "training_cutoffs_and_model_checksums": "passed",
+        "current_week_world_identity": "passed",
+        "continuous_accounts_and_actual_scores": "passed"
+      }
     }
   },
   "research_candidate": "artifacts/evaluations/role_balance_validation.json",
