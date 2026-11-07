@@ -61,3 +61,41 @@ jobs:
           } finally {
             if (-not $launcher.HasExited) { taskkill /PID $launcher.Id /T /F | Out-Null }
           }
+
+      - name: Smoke test packaged Windows updater
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          uv run python scripts/prepare_update.py
+          uv run python -c "from pathlib import Path; from zipfile import ZipFile; z=next(Path('artifacts/runtime').glob('FPL-Intelligence-*-Update.zip')); ZipFile(z).extractall('artifacts/runtime/windows-update')"
+          $package = Join-Path $PWD 'artifacts/runtime/windows-update/FPL-Intelligence-Update'
+          $existing = Join-Path $PWD 'artifacts/runtime/Existing FIE'
+          New-Item -ItemType Directory -Path "$existing/data/models" -Force | Out-Null
+          Copy-Item pyproject.toml,Start.cmd -Destination $existing
+          Copy-Item data/state.sqlite -Destination "$existing/data/state.sqlite"
+          Set-Content "$existing/.env" 'EXISTING_VERIFICATION_TOKEN=keep'
+          Set-Content "$existing/data/models/retained.txt" 'retained-model'
+          $arguments = @('-NoProfile','-ExecutionPolicy','Bypass','-File',('"' + "$package/scripts/update.ps1" + '"'),'-ExistingFolder',('"' + $existing + '"'),'-NoBrowser')
+          $updater = Start-Process powershell.exe -ArgumentList $arguments -PassThru -RedirectStandardOutput updater.out -RedirectStandardError updater.err
+          try {
+            $healthy = $false
+            for ($attempt = 0; $attempt -lt 180; $attempt++) {
+              try {
+                $health = Invoke-RestMethod 'http://127.0.0.1:8000/api/health' -TimeoutSec 1
+                if ($health.status -eq 'ok') { $healthy = $true; break }
+              } catch { }
+              if ($updater.HasExited) { break }
+              Start-Sleep -Milliseconds 500
+            }
+            if (-not $healthy) {
+              Get-Content updater.out,updater.err
+              throw 'Packaged Windows updater did not reach its installed server'
+            }
+            $page = Invoke-WebRequest 'http://127.0.0.1:8000/'
+            if ($page.Content -notmatch '<div id="root">') { throw 'Updated interface was not served' }
+            if ((Get-Content "$existing/.env") -ne 'EXISTING_VERIFICATION_TOKEN=keep') { throw 'Existing configuration changed' }
+            if ((Get-Content "$existing/data/models/retained.txt") -ne 'retained-model') { throw 'Existing weights changed' }
+            if (@(Get-ChildItem "$existing/artifacts/runtime/before-update-*/state.sqlite").Count -ne 1) { throw 'Update backup missing' }
+          } finally {
+            if (-not $updater.HasExited) { taskkill /PID $updater.Id /T /F | Out-Null }
+          }

@@ -56,6 +56,8 @@ def main():
             for path in (root / "apps/web/dist").rglob("*")
             if path.is_file()
         ]
+        database_parts = pack_database(backup, Path(temporary) / "database")
+        backup.unlink()  # The checksummed parts are the immutable snapshot; release the large temporary copy.
         with ZipFile(output, "w", compression=ZIP_DEFLATED, compresslevel=3) as bundle:
             bundle.writestr("FPL-Intelligence/app-files.json", json.dumps(application_files))
             bundle.writestr(
@@ -84,7 +86,7 @@ def main():
             for path in (root / "apps" / "web" / "dist").rglob("*"):
                 if path.is_file():
                     bundle.write(path, "FPL-Intelligence/" + path.relative_to(root).as_posix())
-            for part in pack_database(backup, Path(temporary) / "database"):
+            for part in database_parts:
                 bundle.write(part, "FPL-Intelligence/data/" + part.name)
             for folder in ("raw", "scenarios", "models", "features", "normalized"):
                 for path in (store.root / folder).rglob("*"):

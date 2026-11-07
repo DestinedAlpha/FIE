@@ -1,4 +1,4 @@
-param([string]$ExistingFolder)
+param([string]$ExistingFolder, [switch]$NoBrowser)
 $ErrorActionPreference = "Stop"
 $PackageRoot = Split-Path -Parent $PSScriptRoot
 if (-not $ExistingFolder) {
@@ -19,4 +19,6 @@ Get-CimInstance Win32_Process | Where-Object {
 } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
 & $UvCommand.Source run --project $PackageRoot python (Join-Path $PSScriptRoot "install_update.py") --target $ExistingFolder
 if ($LASTEXITCODE -ne 0) { throw "Update could not be applied. Your account and keys were not replaced." }
-& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ExistingFolder "scripts\start.ps1") -RebuildModel
+$LaunchArguments = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", (Join-Path $ExistingFolder "scripts\start.ps1"))
+if ($NoBrowser) { $LaunchArguments += "-NoBrowser" }
+& powershell.exe @LaunchArguments
