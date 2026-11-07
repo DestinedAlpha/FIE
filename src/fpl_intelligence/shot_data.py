@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import math
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from difflib import SequenceMatcher
@@ -64,6 +65,50 @@ def identify(name, position, candidates):
     return None
 
 
+def validate_payload(data, *, league=False):
+    """Reject soft errors and changed schemas before publishing a source snapshot."""
+    try:
+        if not isinstance(data, dict):
+            raise ValueError("Expected an object")
+        if league:
+            if not isinstance(data["dates"], list):
+                raise ValueError("Expected match dates")
+            for match in data["dates"]:
+                int(match["id"])
+                datetime.fromisoformat(match["datetime"])
+                if not isinstance(match["isResult"], bool):
+                    raise ValueError("Expected a result flag")
+                for side in ("h", "a"):
+                    if not isinstance(match[side]["title"], str):
+                        raise ValueError("Expected a club name")
+        else:
+            for side in ("h", "a"):
+                roster, shots = data["rosters"][side], data["shots"][side]
+                if not isinstance(roster, dict) or not isinstance(shots, list):
+                    raise ValueError("Expected rosters and shots")
+                for person in roster.values():
+                    int(person["player_id"])
+                    if not all(isinstance(person[k], str) for k in ("player", "position")):
+                        raise ValueError("Expected player identity and role")
+                    for key in ("time", "xA", "key_passes", "xGChain", "xGBuildup"):
+                        value = float(person[key])
+                        if not math.isfinite(value) or value < 0:
+                            raise ValueError("Invalid roster statistic")
+                    int(person["key_passes"])
+                for shot in shots:
+                    int(shot["player_id"])
+                    if not all(isinstance(shot[k], str) for k in ("situation", "result")):
+                        raise ValueError("Expected shot situation and result")
+                    value = float(shot["xG"])
+                    if not math.isfinite(value) or not 0 <= value <= 1:
+                        raise ValueError("Invalid shot xG")
+    except (KeyError, TypeError, AttributeError, ValueError, OverflowError) as exc:
+        raise ValueError(
+            f"Understat {'league' if league else 'match'} response has an invalid schema: {exc}"
+        ) from exc
+    return data
+
+
 async def collect_shots(store, seasons=None):
     from pathlib import Path
 
@@ -87,19 +132,24 @@ async def collect_shots(store, seasons=None):
             season = f"{year}/{str(year + 1)[2:]}"
             url = f"https://understat.com/getLeagueData/EPL/{year}"
             try:
-                league = await transport.get(client, url, f"shot_league_{year}")
+                league = validate_payload(
+                    await transport.get(client, url, f"shot_league_{year}"), league=True
+                )
                 store.snapshot(f"shot_league_{year}", url, league)
             except (httpx.HTTPError, ValueError) as exc:
                 errors.append(
                     {
                         "season": season,
                         "error": type(exc).__name__,
+                        "detail": str(exc),
                         "fallback": "Last verified league snapshot",
                     }
                 )
                 try:
                     league, _ = store.latest(f"shot_league_{year}")
-                except ValueError:
+                    validate_payload(league, league=True)
+                except ValueError as cached:
+                    errors.append({"season": season, "fallback_error": str(cached)})
                     continue
 
             async def one(match):
@@ -113,8 +163,9 @@ async def collect_shots(store, seasons=None):
                 try:
                     try:
                         data, _ = store.latest(source)
+                        validate_payload(data)
                     except ValueError:
-                        data = await transport.get(client, url, source)
+                        data = validate_payload(await transport.get(client, url, source))
                         store.snapshot(source, url, data)
                     for side in ("h", "a"):
                         team = match[side]["title"]
@@ -166,7 +217,7 @@ async def collect_shots(store, seasons=None):
                                 }
                             )
                 except (httpx.HTTPError, ValueError, KeyError) as exc:
-                    errors.append({"match": match["id"], "error": type(exc).__name__})
+                    errors.append({"match": match["id"], "error": type(exc).__name__, "detail": str(exc)})
 
             await asyncio.gather(*(one(match) for match in league["dates"]))
             print("Completed shot season", season, "matched observations", len(records), flush=True)
@@ -197,12 +248,29 @@ async def collect_shots(store, seasons=None):
                     retained["id"] = store.put("shot_archive", retained)
                     return retained
         raise ValueError("No usable shot observations and no last good archive")
+    # A partial provider recovery must not discard verified seasons or matches
+    # absent from this attempt. New validated observations supersede the same key.
+    fresh = {(r["season"], r["player_code"], r["fixture_id"]): r for r in records}
+    retained_count, retained_id = 0, None
+    for item in store.list("shot_archive", 100):
+        previous = store.get("shot_archive", item["id"])
+        if previous.get("matched", 0) > 0:
+            for row in previous["records"]:
+                key = row["season"], row["player_code"], row["fixture_id"]
+                if key not in fresh:
+                    fresh[key] = row
+                    retained_count += 1
+            retained_id = previous["id"]
+            break
+    records = [fresh[key] for key in sorted(fresh)]
     report = {
         "at": now(),
         "records": records,
         "matched": len(records),
         "unresolved": len(mappings),
         "errors": errors,
+        "retained_observations": retained_count,
+        "retained_archive_id": retained_id,
         "source": "https://understat.com",
         "temporal_track": "Dated match observations imported retrospectively; feature queries require completion strictly before deadline",
         "coverage": {

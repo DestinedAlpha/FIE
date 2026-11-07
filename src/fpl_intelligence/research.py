@@ -183,6 +183,9 @@ class Claim(Strict):
         return self
 
 
+EVIDENCE_VERSION = "extraction-v5-availability-polarity"
+
+
 class Belief(Strict):
     player_id: int
     parameter: Literal["p_start", "goals90", "assists90", "start_minutes"]
@@ -226,6 +229,48 @@ def named_players(text: str, players) -> set[int]:
     }
 
 
+def grounded_semantics(claim: Claim) -> Claim:
+    """Conservatively enforce polarity and uncertainty independently of the LLM."""
+    quote = claim.evidence_span.casefold()
+    kind = claim.claim_type
+    negative = re.search(
+        r"\bunavailable\b|\bnot (?:be |fully )?(?:available|fit for)\b|\bruled out\b|\b(?:remains?|still) out\b",
+        quote,
+    )
+    if kind == "available" and negative:
+        raise ValueError("Source negates the extracted availability claim")
+    if kind == "unavailable":
+        negated = re.search(r"\bnot (?:been )?ruled out\b|\bnot unavailable\b", quote)
+        uncertain = re.search(
+            r"\b(?:might|may|could) (?:be |still be )?(?:unavailable|ruled out|absent|miss|not be available)\b",
+            quote,
+        )
+        explicit = re.search(
+            r"\bunavailable\b|\bnot (?:be )?available\b|\bruled out\b|\bwill not play\b|\b(?:remains?|still) out\b|\bwill miss\b|suspend|suspension|status=[is]",
+            quote,
+        )
+        if negated or uncertain or not explicit:
+            if negated or uncertain or re.search(r"injur|limped|doubt|problem|status=d", quote):
+                claim = claim.model_copy(
+                    update={
+                        "claim_type": "injury_concern",
+                        "status": "speculative"
+                        if negated or uncertain or claim.status == "speculative"
+                        else "reported",
+                    }
+                )
+            else:
+                raise ValueError("Source does not establish unavailability")
+    if kind == "available" and not re.search(r"\bavailable\b|\bfit for\b|status=a", quote):
+        if re.search(r"injur|limped|doubt|problem|status=d", quote):
+            claim = claim.model_copy(update={"claim_type": "injury_concern", "status": "reported"})
+        else:
+            raise ValueError("Source does not establish availability")
+    if claim.claim_type == "training" and claim.status == "confirmed":
+        claim = claim.model_copy(update={"status": "reported"})
+    return claim
+
+
 def validate_claim(store: Store, claim: Claim, source_text: str) -> dict:
     from .ingestion import load_market
 
@@ -251,21 +296,7 @@ def validate_claim(store: Store, claim: Claim, source_text: str) -> dict:
     statement_names = named_players(claim.statement, players)
     if statement_names and statement_names != {claim.player_id}:
         raise ValueError("Claim statement and quoted player identity disagree")
-    quote = claim.evidence_span.casefold()
-    if claim.claim_type == "unavailable" and not re.search(
-        r"unavailable|not (?:be )?available|ruled out|will not play|suspend|suspension|status=[is]", quote
-    ):
-        if re.search(r"injur|limped|doubt|problem|status=d", quote):
-            claim = claim.model_copy(update={"claim_type": "injury_concern"})
-        else:
-            raise ValueError("Source does not establish unavailability")
-    if claim.claim_type == "available" and not re.search(
-        r"\b(?:is |will be |are )?available\b|\bfit for\b|status=a", quote
-    ):
-        if re.search(r"injur|limped|doubt|problem|status=d", quote):
-            claim = claim.model_copy(update={"claim_type": "injury_concern"})
-        else:
-            raise ValueError("Source does not establish availability")
+    claim = grounded_semantics(claim)
     # Display the actual supported words rather than an unverified model
     # paraphrase. An injury concern is not a confirmed future absence.
     claim = claim.model_copy(update={"statement": claim.evidence_span[:1200]})
@@ -282,7 +313,9 @@ def validate_claim(store: Store, claim: Claim, source_text: str) -> dict:
             continue
         previous_quote = re.sub(r"\W+", " ", previous["evidence_span"].casefold()).strip()
         if SequenceMatcher(None, normalized, previous_quote).ratio() >= 0.9:
-            result["origin_hash"] = previous["origin_hash"]
+            result["origin_hash"] = previous.get(
+                "origin_hash", digest({"player_id": claim.player_id, "quote": previous_quote})
+            )
         opposed = {previous["claim_type"], claim.claim_type} == {"available", "unavailable"}
         if (
             opposed
@@ -295,6 +328,15 @@ def validate_claim(store: Store, claim: Claim, source_text: str) -> dict:
 
 def save_claim(store: Store, claim: Claim, source_text: str) -> str:
     result = validate_claim(store, claim, source_text)
+    store.put(
+        "source_text",
+        {
+            "text": source_text,
+            "url": claim.source_url,
+            "known_at": claim.known_at,
+            "published_at": claim.published_at,
+        },
+    )
     identity = store.put("claim", result)
     store.event(
         "evidence",
@@ -464,6 +506,7 @@ async def request_claims(
                 if match is None:
                     raise ValueError("Extracted quotation is not supported verbatim")
                 claim.evidence_span = match.group(0)
+        claims = [grounded_semantics(claim) for claim in claims]
         store.put(
             "provider_call",
             {
@@ -512,7 +555,7 @@ async def extract(store: Store, source: dict, cap: FreeCapability, entities: lis
             "text": source["text"],
             "model": cap.model,
             "entities": entities,
-            "schema": "extraction-v4-identity-literal",
+            "schema": EVIDENCE_VERSION,
         }
     )
     for item in store.list("extraction", 1000):
@@ -656,7 +699,8 @@ def audit_claim_identities(store: Store):
                 raise ValueError("Original source body unavailable for identity review")
             validated = validate_claim(store, claim, source)
             if any(
-                validated[key] != getattr(claim, key) for key in ("evidence_span", "statement", "claim_type")
+                validated[key] != getattr(claim, key)
+                for key in ("evidence_span", "statement", "claim_type", "status")
             ):
                 replacement = store.put("claim", validated)
                 store.put(
@@ -679,6 +723,7 @@ def audit_claim_identities(store: Store):
     report = {
         "at": now(),
         "reviewed": reviewed,
+        "version": EVIDENCE_VERSION,
         "active_claims": len(active_claims(store, 10000)),
         "rule": "A source quote must resolve exactly the supplied player; ambiguous pronouns and cross-player spans are rejected",
     }

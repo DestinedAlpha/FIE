@@ -1,0 +1,293 @@
+{
+  "version": "authentic-extraction-v1",
+  "labeling": "Manually reviewed authentic excerpts, labels frozen before provider calls; multiple semantically supported secondary labels disclosed. IDs are evaluation-only entities, never live FPL claims.",
+  "selection": "Purposive coverage of absence/training/doubt/suspension and irrelevant scoring statistics from five archived reports. Not a representative random sample or a football-outcome test.",
+  "cases": [
+    {
+      "name": "Joao Pedro",
+      "text": "Xabi Alonso has confirmed that Joao Pedro will be ruled out for 'a few weeks' with a thigh injury",
+      "required": [
+        "unavailable"
+      ],
+      "allowed": {
+        "unavailable": [
+          "confirmed"
+        ],
+        "injury_concern": [
+          "reported",
+          "confirmed"
+        ]
+      },
+      "source_text_id": "51fec93895743e930f7fe649c7fca9d2a4808f20640fd3c0da4816f13476857e",
+      "source_url": "https://www.chelseafc.com/en/news/article/xabi-alonso-confirms-chelsea-team-news-for-liverpool",
+      "known_at": "2026-11-04T10:16:16.633614+00:00",
+      "published_at": null,
+      "player_id": 10001
+    },
+    {
+      "name": "Antoine Semenyo",
+      "text": "Enzo Maresca says Antoine Semenyo is the only player unavailable for Saturday\u2019s Premier League clash with Brighton.",
+      "required": [
+        "unavailable"
+      ],
+      "allowed": {
+        "unavailable": [
+          "confirmed"
+        ]
+      },
+      "source_text_id": "c3ff9e8ad0025ae66a3fabb56a8376262a721e9fcc67c7bd360d7eeec1d4e7a7",
+      "source_url": "https://www.mancity.com/news/mens/enzo-maresca-brighton-squad-update-63928963",
+      "known_at": "2026-11-04T10:16:24.177895+00:00",
+      "published_at": null,
+      "player_id": 10002
+    },
+    {
+      "name": "William Saliba",
+      "text": "William Saliba (back) is finally back in team training.",
+      "required": [
+        "training"
+      ],
+      "allowed": {
+        "training": [
+          "reported"
+        ],
+        "injury_concern": [
+          "reported"
+        ]
+      },
+      "source_text_id": "4c8107cd7cfb6ffff4dc3e56e94e976c1206df6e6ddee0369d62a02d903cbe19",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/11/03/saliba-back-in-training-latest-fpl-team-news-pre-gameweek-10",
+      "known_at": "2026-11-04T09:02:39.437928+00:00",
+      "published_at": "2026-11-03T19:35:00+00:00",
+      "player_id": 10003
+    },
+    {
+      "name": "Bukayo Saka",
+      "text": "Elsewhere, Bukayo Saka (quad) remains out.",
+      "required": [
+        "unavailable"
+      ],
+      "allowed": {
+        "unavailable": [
+          "confirmed"
+        ],
+        "injury_concern": [
+          "reported"
+        ]
+      },
+      "source_text_id": "4c8107cd7cfb6ffff4dc3e56e94e976c1206df6e6ddee0369d62a02d903cbe19",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/11/03/saliba-back-in-training-latest-fpl-team-news-pre-gameweek-10",
+      "known_at": "2026-11-04T09:02:39.437928+00:00",
+      "published_at": "2026-11-03T19:35:00+00:00",
+      "player_id": 10004
+    },
+    {
+      "name": "Max Dowman",
+      "text": "Max Dowman is still suspended domestically but can play in the Champions League.",
+      "required": [
+        "suspension"
+      ],
+      "allowed": {
+        "suspension": [
+          "confirmed"
+        ],
+        "available": [
+          "confirmed"
+        ]
+      },
+      "source_text_id": "4c8107cd7cfb6ffff4dc3e56e94e976c1206df6e6ddee0369d62a02d903cbe19",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/11/03/saliba-back-in-training-latest-fpl-team-news-pre-gameweek-10",
+      "known_at": "2026-11-04T09:02:39.437928+00:00",
+      "published_at": "2026-11-03T19:35:00+00:00",
+      "player_id": 10005
+    },
+    {
+      "name": "Ryan Gravenberch",
+      "text": "Ryan Gravenberch , who is suffering from a heel injury.",
+      "required": [
+        "injury_concern"
+      ],
+      "allowed": {
+        "injury_concern": [
+          "reported",
+          "confirmed"
+        ]
+      },
+      "source_text_id": "4c8107cd7cfb6ffff4dc3e56e94e976c1206df6e6ddee0369d62a02d903cbe19",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/11/03/saliba-back-in-training-latest-fpl-team-news-pre-gameweek-10",
+      "known_at": "2026-11-04T09:02:39.437928+00:00",
+      "published_at": "2026-11-03T19:35:00+00:00",
+      "player_id": 10006
+    },
+    {
+      "name": "Nico Elvedi",
+      "text": "\u201cNico is way better. He is back in training and is available for this game.\u201d \u2013 Daniel Farke on Nico Elvedi",
+      "required": [
+        "available"
+      ],
+      "allowed": {
+        "available": [
+          "confirmed"
+        ],
+        "training": [
+          "reported"
+        ]
+      },
+      "source_text_id": "89e38a18d7d7b1d641b0dfed007c74537b302523fc4f9277c1f2471b5ee6f6a2",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/10/29/fpl-gameweek-9-team-news-thursdays-live-injury-updates-2",
+      "known_at": "2026-10-29T15:00:55.210951+00:00",
+      "published_at": "2026-10-29T14:00:00+00:00",
+      "player_id": 10007
+    },
+    {
+      "name": "Anton Stach",
+      "text": "\u201cAnton Stach is struggling still a bit with his foot injury. So, let\u2019s see. I hope it will get better in the next 48 hours but it\u2019s a question mark.\u201d \u2013 Daniel Farke",
+      "required": [
+        "injury_concern"
+      ],
+      "allowed": {
+        "injury_concern": [
+          "reported",
+          "speculative"
+        ]
+      },
+      "source_text_id": "89e38a18d7d7b1d641b0dfed007c74537b302523fc4f9277c1f2471b5ee6f6a2",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/10/29/fpl-gameweek-9-team-news-thursdays-live-injury-updates-2",
+      "known_at": "2026-10-29T15:00:55.210951+00:00",
+      "published_at": "2026-10-29T14:00:00+00:00",
+      "player_id": 10008
+    },
+    {
+      "name": "Joe Rodon",
+      "text": "Joe Rodon (hamstring) is partly back in team training, although there\u2019s still some distance to go before he\u2019s troubling the first team.",
+      "required": [
+        "training"
+      ],
+      "allowed": {
+        "training": [
+          "reported"
+        ],
+        "injury_concern": [
+          "reported"
+        ],
+        "minutes_restriction": [
+          "reported"
+        ]
+      },
+      "source_text_id": "89e38a18d7d7b1d641b0dfed007c74537b302523fc4f9277c1f2471b5ee6f6a2",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/10/29/fpl-gameweek-9-team-news-thursdays-live-injury-updates-2",
+      "known_at": "2026-10-29T15:00:55.210951+00:00",
+      "published_at": "2026-10-29T14:00:00+00:00",
+      "player_id": 10009
+    },
+    {
+      "name": "Dan Ndoye",
+      "text": "Dan Ndoye is now a doubt, however.",
+      "required": [
+        "injury_concern"
+      ],
+      "allowed": {
+        "injury_concern": [
+          "reported",
+          "speculative"
+        ]
+      },
+      "source_text_id": "89e38a18d7d7b1d641b0dfed007c74537b302523fc4f9277c1f2471b5ee6f6a2",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/10/29/fpl-gameweek-9-team-news-thursdays-live-injury-updates-2",
+      "known_at": "2026-10-29T15:00:55.210951+00:00",
+      "published_at": "2026-10-29T14:00:00+00:00",
+      "player_id": 10010
+    },
+    {
+      "name": "Ismaila Sarr",
+      "text": "Ismaila Sarr (groin) remains out, along with Takehiro Tomiyasu (calf) and Chadi Riad (knee).",
+      "required": [
+        "unavailable"
+      ],
+      "allowed": {
+        "unavailable": [
+          "confirmed"
+        ],
+        "injury_concern": [
+          "reported"
+        ]
+      },
+      "source_text_id": "89e38a18d7d7b1d641b0dfed007c74537b302523fc4f9277c1f2471b5ee6f6a2",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/10/29/fpl-gameweek-9-team-news-thursdays-live-injury-updates-2",
+      "known_at": "2026-10-29T15:00:55.210951+00:00",
+      "published_at": "2026-10-29T14:00:00+00:00",
+      "player_id": 10011
+    },
+    {
+      "name": "Jack Butland",
+      "text": "\u201cJack is in training sessions with the group, which is excellent news. \u201cYes, [he could be involved]. We will see, we will decide tomorrow.\u201d \u2013 Sergej Jakirovic on Jack Butland",
+      "required": [
+        "training"
+      ],
+      "allowed": {
+        "training": [
+          "reported"
+        ],
+        "available": [
+          "speculative"
+        ]
+      },
+      "source_text_id": "89e38a18d7d7b1d641b0dfed007c74537b302523fc4f9277c1f2471b5ee6f6a2",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/10/29/fpl-gameweek-9-team-news-thursdays-live-injury-updates-2",
+      "known_at": "2026-10-29T15:00:55.210951+00:00",
+      "published_at": "2026-10-29T14:00:00+00:00",
+      "player_id": 10012
+    },
+    {
+      "name": "Carlos Baleba",
+      "text": "an injury to Carlos Baleba (\u00a34.9m).",
+      "required": [
+        "injury_concern"
+      ],
+      "allowed": {
+        "injury_concern": [
+          "reported",
+          "confirmed"
+        ]
+      },
+      "source_text_id": "b136b9f8921f75130a4445a3ae70a759a411c6dc10a317cb647db66bcf7c3007",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/11/04/fpl-notes-cunha-mbeumo-swap-baleba-injury-manzambis-mins",
+      "known_at": "2026-11-04T13:36:54.914683+00:00",
+      "published_at": "2026-11-04T11:15:00+00:00",
+      "player_id": 10013
+    },
+    {
+      "name": "Erling Haaland",
+      "text": "In Gameweek 9, Erling Haaland (\u00a315.8m) blanked for the first time since Gameweek 1 to disappoint the many millions of FPL managers who backed him with the armband.",
+      "required": [],
+      "allowed": {},
+      "source_text_id": "0e6644ae52dabd316a69562d80a67c44f39f9f4bc4f547bc116133a5cba0c174",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/11/06/who-is-the-best-captain-for-fpl-gameweek-10-5",
+      "known_at": "2026-11-06T09:49:38.829478+00:00",
+      "published_at": "2026-11-06T05:00:00+00:00",
+      "player_id": 10014
+    },
+    {
+      "name": "Cole Palmer",
+      "text": "Those who chanced a differential were rewarded with Chelsea duo Cole Palmer (\u00a39.8m) and Morgan Rogers (\u00a38.1m) scoring, and Nicolas Jackson (\u00a37.0m) and Evanilson (\u00a36.4m) continuing their good form.",
+      "required": [],
+      "allowed": {},
+      "source_text_id": "0e6644ae52dabd316a69562d80a67c44f39f9f4bc4f547bc116133a5cba0c174",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/11/06/who-is-the-best-captain-for-fpl-gameweek-10-5",
+      "known_at": "2026-11-06T09:49:38.829478+00:00",
+      "published_at": "2026-11-06T05:00:00+00:00",
+      "player_id": 10015
+    },
+    {
+      "name": "David Raya",
+      "text": "Another is premium goalkeeper David Raya (\u00a36.2m).",
+      "required": [],
+      "allowed": {},
+      "source_text_id": "c94868f25f304de67850623cb5361486750a2fff15855675fe95dd68d7aeea24",
+      "source_url": "https://www.fantasyfootballscout.co.uk/2026/11/06/big-at-the-back-what-is-the-best-five-man-fpl-defence-we-ask-our-pundits",
+      "known_at": "2026-11-06T09:49:36.311018+00:00",
+      "published_at": "2026-11-06T07:30:00+00:00",
+      "player_id": 10016
+    }
+  ]
+}

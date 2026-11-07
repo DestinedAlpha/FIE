@@ -271,6 +271,26 @@ def refresh_research(benchmark: bool = False):
     show(asyncio.run(benchmark_extraction(store) if benchmark else research_refresh(store)))
 
 
+@app.command("benchmark-authentic-extraction")
+def benchmark_authentic_extraction():
+    """Evaluate real archived news; never save test claims to live evidence."""
+    from .context import benchmark_authentic
+
+    result = asyncio.run(benchmark_authentic(Store()))
+    show(
+        {k: v for k, v in result.items() if k != "results"}
+        | {
+            "providers": [
+                {
+                    k: r[k]
+                    for k in ("provider", "model", "passed_cases", "total_cases", "all_passed", "errors")
+                }
+                for r in result["results"]
+            ]
+        }
+    )
+
+
 @app.command("configure-providers")
 def configure_providers(unbilled: bool = False):
     """Verify each optional free provider independently without printing credentials."""
@@ -858,6 +878,18 @@ def score_accounts():
     from .shadow_accounts import advance_shadow_accounts
 
     show(advance_shadow_accounts(Store()))
+
+
+@app.command("replay-composed")
+def replay_composed(end_event: int = 9, worlds: int = 4000, seconds: float = 60):
+    """Isolated continuous diagnostic of deadline-refitted current model families."""
+    from .composed_replay import run_composed
+    from .pipeline_jobs import replay_lock
+
+    store = Store()
+    with replay_lock(store.root / "pipeline-replay.lock"):
+        result = run_composed(store, end_event=end_event, worlds=worlds, seconds=seconds)
+    show({k: v for k, v in result.items() if k != "weeks"})
 
 
 @app.command("validate-future-policy")

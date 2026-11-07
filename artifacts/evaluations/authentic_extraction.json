@@ -1,0 +1,428 @@
+{
+  "at": "2026-11-07T07:14:18.568514+00:00",
+  "kind": "authentic_labeled_extraction_benchmark",
+  "corpus_hash": "e276ea23c325516fc6130f5dcde01b34114c83fa3b5bad27ede64a7216a2bd4e",
+  "examples": 16,
+  "source_articles": 7,
+  "results": [
+    {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "cases": [
+        {
+          "player_id": 10001,
+          "name": "Joao Pedro",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "unavailable",
+              "status": "confirmed",
+              "evidence_span": "Joao Pedro will be ruled out for 'a few weeks' with a thigh injury"
+            }
+          ]
+        },
+        {
+          "player_id": 10002,
+          "name": "Antoine Semenyo",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "unavailable",
+              "status": "confirmed",
+              "evidence_span": "Antoine Semenyo is the only player unavailable for Saturday\u2019s Premier League clash with Brighton"
+            }
+          ]
+        },
+        {
+          "player_id": 10003,
+          "name": "William Saliba",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "training",
+              "status": "reported",
+              "evidence_span": "William Saliba (back) is finally back in team training"
+            }
+          ]
+        },
+        {
+          "player_id": 10004,
+          "name": "Bukayo Saka",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "unavailable",
+              "status": "confirmed",
+              "evidence_span": "Bukayo Saka (quad) remains out"
+            }
+          ]
+        },
+        {
+          "player_id": 10005,
+          "name": "Max Dowman",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "suspension",
+              "status": "confirmed",
+              "evidence_span": "Max Dowman is still suspended domestically but can play in the Champions League."
+            }
+          ]
+        },
+        {
+          "player_id": 10006,
+          "name": "Ryan Gravenberch",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "injury_concern",
+              "status": "confirmed",
+              "evidence_span": "Ryan Gravenberch , who is suffering from a heel injury."
+            }
+          ]
+        },
+        {
+          "player_id": 10007,
+          "name": "Nico Elvedi",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "available",
+              "status": "confirmed",
+              "evidence_span": "\u201cNico is way better. He is back in training and is available for this game.\u201d \u2013 Daniel Farke on Nico Elvedi"
+            }
+          ]
+        },
+        {
+          "player_id": 10008,
+          "name": "Anton Stach",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "injury_concern",
+              "status": "speculative",
+              "evidence_span": "\u201cAnton Stach is struggling still a bit with his foot injury. So, let\u2019s see. I hope it will get better in the next 48 hours but it\u2019s a question mark.\u201d \u2013 Daniel Farke"
+            }
+          ]
+        },
+        {
+          "player_id": 10009,
+          "name": "Joe Rodon",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "training",
+              "status": "reported",
+              "evidence_span": "Joe Rodon (hamstring) is partly back in team training, although there\u2019s still some distance to go before he\u2019s troubling the first team."
+            }
+          ]
+        },
+        {
+          "player_id": 10010,
+          "name": "Dan Ndoye",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "injury_concern",
+              "status": "speculative",
+              "evidence_span": "Dan Ndoye is now a doubt, however."
+            }
+          ]
+        },
+        {
+          "player_id": 10011,
+          "name": "Ismaila Sarr",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "unavailable",
+              "status": "confirmed",
+              "evidence_span": "Ismaila Sarr (groin) remains out, along with Takehiro Tomiyasu (calf) and Chadi Riad (knee)."
+            }
+          ]
+        },
+        {
+          "player_id": 10012,
+          "name": "Jack Butland",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "training",
+              "status": "reported",
+              "evidence_span": "Jack is in training sessions with the group, which is excellent news."
+            }
+          ]
+        },
+        {
+          "player_id": 10013,
+          "name": "Carlos Baleba",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "injury_concern",
+              "status": "reported",
+              "evidence_span": "an injury to Carlos Baleba"
+            }
+          ]
+        },
+        {
+          "player_id": 10014,
+          "name": "Erling Haaland",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": []
+        },
+        {
+          "player_id": 10015,
+          "name": "Cole Palmer",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": []
+        },
+        {
+          "player_id": 10016,
+          "name": "David Raya",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": []
+        }
+      ],
+      "passed_cases": 16,
+      "total_cases": 16,
+      "unknown_entities": 0,
+      "errors": [],
+      "all_passed": true
+    },
+    {
+      "provider": "gemini",
+      "model": "gemini-3.5-flash-lite",
+      "cases": [
+        {
+          "player_id": 10001,
+          "name": "Joao Pedro",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "unavailable",
+              "status": "confirmed",
+              "evidence_span": "Xabi Alonso has confirmed that Joao Pedro will be ruled out for 'a few weeks' with a thigh injury"
+            }
+          ]
+        },
+        {
+          "player_id": 10002,
+          "name": "Antoine Semenyo",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "unavailable",
+              "status": "confirmed",
+              "evidence_span": "Enzo Maresca says Antoine Semenyo is the only player unavailable for Saturday\u2019s Premier League clash with Brighton."
+            }
+          ]
+        },
+        {
+          "player_id": 10003,
+          "name": "William Saliba",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "training",
+              "status": "reported",
+              "evidence_span": "William Saliba (back) is finally back in team training."
+            }
+          ]
+        },
+        {
+          "player_id": 10004,
+          "name": "Bukayo Saka",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "unavailable",
+              "status": "confirmed",
+              "evidence_span": "Bukayo Saka (quad) remains out."
+            }
+          ]
+        },
+        {
+          "player_id": 10009,
+          "name": "Joe Rodon",
+          "required_recalled": false,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": false,
+          "output": [
+            {
+              "claim_type": "injury_concern",
+              "status": "reported",
+              "evidence_span": "Joe Rodon (hamstring) is partly back in team training"
+            }
+          ]
+        },
+        {
+          "player_id": 10010,
+          "name": "Dan Ndoye",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "injury_concern",
+              "status": "reported",
+              "evidence_span": "Dan Ndoye is now a doubt, however."
+            }
+          ]
+        },
+        {
+          "player_id": 10011,
+          "name": "Ismaila Sarr",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "unavailable",
+              "status": "confirmed",
+              "evidence_span": "Ismaila Sarr (groin) remains out"
+            }
+          ]
+        },
+        {
+          "player_id": 10012,
+          "name": "Jack Butland",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "training",
+              "status": "reported",
+              "evidence_span": "Jack is in training sessions with the group"
+            }
+          ]
+        },
+        {
+          "player_id": 10013,
+          "name": "Carlos Baleba",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": [
+            {
+              "claim_type": "injury_concern",
+              "status": "reported",
+              "evidence_span": "an injury to Carlos Baleba"
+            }
+          ]
+        },
+        {
+          "player_id": 10014,
+          "name": "Erling Haaland",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": []
+        },
+        {
+          "player_id": 10015,
+          "name": "Cole Palmer",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": []
+        },
+        {
+          "player_id": 10016,
+          "name": "David Raya",
+          "required_recalled": true,
+          "literal_support": true,
+          "types_and_statuses_supported": true,
+          "passed": true,
+          "output": []
+        }
+      ],
+      "passed_cases": 11,
+      "total_cases": 16,
+      "unknown_entities": 0,
+      "errors": [
+        {
+          "batch": 1,
+          "error": "gemini extraction failed: ValueError Extracted quotation is not supported verbatim; no claims committed"
+        }
+      ],
+      "all_passed": false
+    }
+  ],
+  "production_unchanged": true,
+  "limits": [
+    "Purposive coverage of absence/training/doubt/suspension and irrelevant scoring statistics from five archived reports. Not a representative random sample or a football-outcome test.",
+    "Labels frozen before calls; no prompt tuning or provider promotion",
+    "Extraction accuracy is not football-outcome calibration or evidence of strategy improvement",
+    "Original historical claims are never imported into live evidence"
+  ],
+  "id": "1dcda83579c8a1319bac25be3e97ce60d910350c12da8e14a8cacde69d012b5d"
+}

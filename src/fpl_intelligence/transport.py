@@ -99,6 +99,10 @@ class PublicTransport:
                     elif json_body:
                         import json
 
+                        if content.lstrip().startswith(b"<"):
+                            raise ValueError(
+                                "Source returned HTML instead of JSON (including HTTP 200 error pages)"
+                            )
                         body = json.loads(content)
                     else:
                         body = content.decode("utf-8-sig")

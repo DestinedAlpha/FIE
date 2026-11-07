@@ -370,6 +370,7 @@ export type Dashboard = FootballEvidenceData & {
     }[];
   } | null;
   decision_model?: {
+    id?: string;
     role_minutes_model_id?: string;
     future_horizon_model_id?: string;
     promoted: boolean;
@@ -592,6 +593,12 @@ export type FuturePolicyReport = {
 };
 
 export type FootballEvidenceData = {
+  composed_policy_replay?: {
+    id:string; protocol:{season:string;events:number[];production_model_id:string;limitations:string[]};
+    totals:Record<string,number>;diagnostic_only:boolean;
+    weeks:{event:number;outcomes:Record<string,{net_points:number;hit:number;chip:string|null}>}[];
+    verification:{sealed_deadlines:number;independently_scored_actions:number};
+  }|null;
   future_horizon_model?: {id:string;fit_before:string;fit_as_of:string;training_evidence:{training_rows:number;calibration_rows:number;fit_max_label:string;cal_max_label:string};weight:number;max_lead:number;learning:string;feature_count:number}|null;
   horizon_refinement?: {selected:string;forecast_gate_passed:boolean;protocol:{scope:string;limits:string};metrics:Record<string,{reference:{rmse:number};candidate:{rmse:number};relevant_reference:{rmse:number};relevant_candidate:{rmse:number};weighted_loss_delta_95ci:number[]}>}|null;
   future_policy_replay?: FuturePolicyReport|null;

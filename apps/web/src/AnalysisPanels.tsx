@@ -1676,6 +1676,15 @@ export function FootballEvidence({data,busy,act}:Props) {
         <a href="/api/replay/weekly" download="weekly-replay.json">Download teams, captaincy, bench and cutoff proofs</a>
       </>:<p>No completed weekly replay is saved yet.</p>}
     </section>
+    {data.composed_policy_replay && <section className="panel">
+      <h3>Combined models · continuous account</h3>
+      <p>Role-aware minutes, conditional points and future fixtures, refitted before each deadline. Bank, transfers, hits and chips carry forward.</p>
+      <p>{data.composed_policy_replay.protocol.season}: <b>{data.composed_policy_replay.totals.composed_multiweek}</b> net points; {data.composed_policy_replay.totals.future_reference_multiweek} without the role head; {data.composed_policy_replay.totals.composed_one_week_no_chips} with one-week planning and no chips.</p>
+      <div className="table-scroll"><table><thead><tr><th>GW</th><th>Combined net</th><th>Reference net</th><th>One-week net</th><th>Hit</th><th>Chip</th></tr></thead><tbody>{data.composed_policy_replay.weeks.map(w=><tr key={w.event}><td>{w.event}</td><td>{w.outcomes.composed_multiweek.net_points}</td><td>{w.outcomes.future_reference_multiweek.net_points}</td><td>{w.outcomes.composed_one_week_no_chips.net_points}</td><td>{w.outcomes.composed_multiweek.hit}</td><td>{w.outcomes.composed_multiweek.chip||'—'}</td></tr>)}</tbody></table></div>
+      <p>Historical reconstruction with bounded research search. Diagnostic only; this does not establish future superiority or certify unlimited live search.</p>
+      <p>{data.composed_policy_replay.verification.independently_scored_actions} actions independently checked. {data.composed_policy_replay.protocol.production_model_id!==data.decision_model?.id?'The saved experiment predates the latest fitted model.':''}</p>
+      <a href="/api/replay/composed" download="composed-policy-replay.json">Download combined-model decisions and scoring proofs</a>
+    </section>}
     <section className="panel">
       <div className="section-title"><div><h3>{data.decision_model?.future_horizon_model_id?"Reference pipeline · continuous account":"Production pipeline · continuous account"}</h3><p>{data.decision_model?.future_horizon_model_id?"Historical reference comparison; the connected future-fixture model has its own continuous-account results below.":"Runs the production forecaster and full transfer/chip planner together. The account carries forward through observed prices, free transfers and hits; future actions are replanned after each deadline."}</p></div><button className="button secondary" disabled={busy} onClick={()=>act('/replay/pipeline')}>Run integrated replay</button></div>
       {data.pipeline_replay_progress && <p>Replay: {data.pipeline_replay_progress.stage}{data.pipeline_replay_progress.season?` · ${data.pipeline_replay_progress.season} GW${data.pipeline_replay_progress.event}`:''}. {data.pipeline_replay_progress.completed_deadlines} / {data.pipeline_replay_progress.total_deadlines} deadlines completed. Long runs resume from completed deadlines.</p>}

@@ -77,6 +77,7 @@ function App() {
   const [objective, setObjective] = useState("expected_points");
   const [budget, setBudget] = useState(5);
   const [editor, setEditor] = useState(false);
+  const [savingState, setSavingState] = useState(false);
   const [stateText, setStateText] = useState("");
   const [mobile, setMobile] = useState(false);
   const [beliefPlayer, setBeliefPlayer] = useState(0);
@@ -199,13 +200,14 @@ function App() {
     [players, projections, filter, query, sort],
   );
 
-  async function action(path: string, body: unknown = {}) {
+  async function action(path: string, body: unknown = {}, onAcknowledged?: () => void) {
     setBusy(true);
     setError("");
     setNotice("");
     setViewPlan(null);
     try {
       const result = await api<{ job_id?: string }>(path, body);
+      onAcknowledged?.();
       if (result.job_id) setJob(result.job_id);
       else {
         await reload();
@@ -237,12 +239,15 @@ function App() {
     setEditor(true);
   }
   async function saveState() {
+    if (savingState) return;
+    setSavingState(true);
     try {
       const state = JSON.parse(stateText);
-      if (await action("/state", { state, expected_state_id: data?.state?.id }))
-        setEditor(false);
+      await action("/state", { state, expected_state_id: data?.state?.id }, () => setEditor(false));
     } catch (e) {
       setError((e as Error).message);
+    } finally {
+      setSavingState(false);
     }
   }
   function stat(
@@ -1703,8 +1708,8 @@ function App() {
               value={stateText}
               onChange={(e) => setStateText(e.target.value)}
             />
-            <button className="button primary" onClick={saveState}>
-              Validate & save account
+            <button className="button primary" onClick={saveState} disabled={savingState}>
+              {savingState ? "Saving account…" : "Validate & save account"}
             </button>
           </section>
         </div>

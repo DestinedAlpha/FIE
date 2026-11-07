@@ -517,6 +517,7 @@ def create_app(root=None):
             "weekly_baseline_comparison",
             "pipeline_replay",
             "pipeline_replay_progress",
+            "composed_policy_replay",
             "horizon_refinement",
             "future_distribution_validation",
             "future_policy_replay",
@@ -552,6 +553,17 @@ def create_app(root=None):
                     continue
                 if kind == "pipeline_replay":
                     artifact = {k: v for k, v in artifact.items() if k != "epochs"}
+                if kind == "composed_policy_replay":
+                    artifact["weeks"] = [
+                        {
+                            **r,
+                            "outcomes": {
+                                p: {k: v for k, v in outcome.items() if k != "next_state"}
+                                for p, outcome in r["outcomes"].items()
+                            },
+                        }
+                        for r in artifact["weeks"]
+                    ]
                 if kind in ("future_policy_replay", "future_policy_diagnostic"):
                     artifact["weeks"] = [
                         {k: v for k, v in r.items() if k != "next_state"} for r in artifact["weeks"]
@@ -825,6 +837,10 @@ def create_app(root=None):
     @app.get("/api/replay/pipeline")
     def replay_pipeline_results():
         return store.get("pipeline_replay")
+
+    @app.get("/api/replay/composed")
+    def replay_composed_results():
+        return store.get("composed_policy_replay")
 
     @app.get("/api/replay/pipeline/decision/{season}/{event}")
     def replay_pipeline_decision(season: str, event: int):

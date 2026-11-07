@@ -9,6 +9,15 @@ def maintain_models(store):
     from .decision_training import ACTION_FEATURES, train_decision_models
     from .manager_policy import PLAYER_FEATURES, train_manager_policy
 
+    # Revalidate cached evidence once when the guard contract changes. Originals
+    # remain immutable; unsupported claims are quarantined, never deleted.
+    if store.list("claim", 1) and store.list("market", 1):
+        from .research import EVIDENCE_VERSION, audit_claim_identities
+
+        prior = store.get("claim_identity_audit") if store.list("claim_identity_audit", 1) else {}
+        if prior.get("version") != EVIDENCE_VERSION:
+            audit_claim_identities(store)
+
     removed = 0
     model_root = (store.root / "models").resolve()
     for path in model_root.rglob("*"):

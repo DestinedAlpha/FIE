@@ -6,6 +6,12 @@ The six supplied documents remain byte-for-byte unchanged in [`research/`](resea
 
 **Current acceptance status:** the role-v3 configuration scores **575** in independent weekly £100m teams. Historical future-expert validation scored **1,202 versus 1,098** in an earlier-season 19-week continuous replay and **538 versus 536** over GW1–9 under its earlier protocol. These different account problems do not certify the complete current policy. **Consistent 550+ continuous-account performance is not established.** See the [data/forecast audit](docs/data-and-forecast-audit.md) and [performance audit](docs/performance-audit.md).
 
+## What changed in 0.14.1
+
+Shot ingestion now diagnoses HTML error pages, validates provider schemas before caching, and preserves verified observations across partial refreshes. Hosted evidence has independent availability-polarity and training-status guards; upgrades also revalidate old cached claims. The real-news extraction benchmark supplements the earlier synthetic examples without turning language-model opinions into point adjustments.
+
+`fpl replay-composed` evaluates the combined role, conditional-points and future-fixture models through continuous legal accounts, with matched reference and simpler controls. Sealed decisions are independently re-scored; results appear in Model & data. It is a bounded historical diagnostic and does not certify unlimited live search or future superiority. `fpl benchmark-authentic-extraction` checks the frozen real-news corpus using eligible free providers. See [the research review](docs/research-review-2026-11-06.md).
+
 ## What changed in 0.14
 
 Live Optimize plan and Refresh data searches have no forced solve-time cutoff and target zero MIP gap, with progress and cooperative cancellation. Explicit finite research budgets remain available for reproducible comparisons. Exact search still optimizes an additive forecast objective, not unknowable future football outcomes.
@@ -14,7 +20,7 @@ The audit fixes account-editor verification/provenance, version conflicts, late-
 
 ## Windows
 
-**[Download the 0.14 existing-installation update](https://raw.githubusercontent.com/DestinedAlpha/FIE/v0.14.0/updates/FPL-Intelligence-0.14.0-Update.zip).** This small update requires your existing installation with its data and models.
+**[Download the 0.14.1 existing-installation update](https://raw.githubusercontent.com/DestinedAlpha/FIE/v0.14.1/updates/FPL-Intelligence-0.14.1-Update.zip).** This small update requires your existing installation with its data and models.
 
 For an existing installation, extract the new private download into a **separate folder** and run **Update existing.cmd**. Select the existing folder containing Start.cmd. The updater backs up the database/application, preserves your `.env` and account data, updates the application, retrains against current completed data and recomputes the plan. It does not apply any FPL account transfer.
 

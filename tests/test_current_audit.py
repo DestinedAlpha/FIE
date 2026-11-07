@@ -10,12 +10,40 @@ from types import SimpleNamespace
 import highspy
 import pytest
 
-from fpl_intelligence.context import extraction_eligible
+from fpl_intelligence.context import extraction_eligible, score_authentic
 from fpl_intelligence.domain import OptimizeRequest
 from fpl_intelligence.optimization import MIP
 from fpl_intelligence.readiness import operational_readiness
 from fpl_intelligence.search_control import configure_solver, search_session
 from fpl_intelligence.storage import Store
+
+
+def test_authentic_extraction_requires_literal_grounding_and_preserves_training_uncertainty():
+    cases = [
+        {
+            "player_id": 10,
+            "name": "A",
+            "text": "A is back in training.",
+            "required": ["training"],
+            "allowed": {"training": ["reported"]},
+        },
+        {"player_id": 11, "name": "B", "text": "B scored yesterday.", "required": [], "allowed": {}},
+    ]
+    claim = SimpleNamespace(
+        player_id=10, claim_type="training", status="reported", evidence_span="A is back in training."
+    )
+    rows, unknown = score_authentic(cases, [claim])
+    assert all(r["passed"] for r in rows) and unknown == 0
+    claim.status = "confirmed"
+    assert not score_authentic(cases, [claim])[0][0]["passed"]
+    claim.status, claim.evidence_span = "reported", "A will start."
+    assert not score_authentic(cases, [claim])[0][0]["literal_support"]
+    claim.player_id = 99999
+    assert score_authentic(cases, [claim])[1] == 1
+    false = SimpleNamespace(
+        player_id=11, claim_type="available", status="confirmed", evidence_span="B scored yesterday."
+    )
+    assert not score_authentic(cases, [false])[0][1]["passed"]
 
 
 def installer():

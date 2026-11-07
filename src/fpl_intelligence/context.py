@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -172,6 +173,122 @@ async def benchmark_extraction(store: Store) -> dict:
         )
     report["id"] = store.put("extraction_benchmark", report)
     atomic_json(Path("artifacts/evaluations/hosted_extraction.json"), report)
+    return report
+
+
+def score_authentic(cases, claims):
+    """Score literal support, required facts, secondary labels and abstention."""
+    found: dict[int, list] = {case["player_id"]: [] for case in cases}
+    unknown = 0
+    for claim in claims:
+        if claim.player_id in found:
+            found[claim.player_id].append(claim)
+        else:
+            unknown += 1
+    results = []
+    for case in cases:
+        output = found[case["player_id"]]
+        supported = all(c.evidence_span in case["text"] for c in output)
+        status = all(c.status in case["allowed"].get(c.claim_type, []) for c in output)
+        required = set(case["required"]) <= {c.claim_type for c in output}
+        results.append(
+            {
+                "player_id": case["player_id"],
+                "name": case["name"],
+                "required_recalled": required,
+                "literal_support": supported,
+                "types_and_statuses_supported": status,
+                "passed": required and supported and status,
+                "output": [
+                    {k: getattr(c, k) for k in ("claim_type", "status", "evidence_span")} for c in output
+                ],
+            }
+        )
+    return results, unknown
+
+
+async def benchmark_authentic(store: Store, corpus: Path = Path("research/extraction_authentic_cases.json")):
+    """Evaluate frozen genuine quotations without saving claims or selecting routes."""
+    body = json.loads(corpus.read_text())
+    cases = body["cases"]
+    if len({r["player_id"] for r in cases}) != len(cases):
+        raise ValueError("Benchmark entity IDs must be unique")
+    guards = {
+        kind: store.get(kind)["id"]
+        for kind in ("decision_model", "state", "provider_selection")
+        if store.list(kind, 1)
+    }
+    results, tested = [], set()
+    for row in store.list("provider_capability", 20):
+        spec = store.get("provider_capability", row["id"])
+        key = spec["provider"], spec["model"]
+        if key in tested:
+            continue
+        tested.add(key)
+        cap = FreeCapability.model_validate(
+            {k: v for k, v in spec.items() if k in FreeCapability.model_fields}
+        )
+        if not (
+            cap.free_text_verified
+            and cap.unbilled_account_attested
+            and cap.terms_eligible
+            and datetime.fromisoformat(cap.verified_until) > datetime.now(timezone.utc)
+        ):
+            continue
+        scored, errors, unknown = [], [], 0
+        for start in range(0, len(cases), 4):
+            batch = cases[start : start + 4]
+            # This envelope is an evaluation input assembled now; original
+            # publication/capture times and URLs remain in the frozen corpus.
+            source = {
+                "url": "https://www.premierleague.com/",
+                "known_at": now(),
+                "published_at": None,
+                "text": "Archived excerpts for extraction evaluation. No live recommendations.\n"
+                + "\n".join(r["text"] for r in batch),
+            }
+            try:
+                claims = await request_claims(
+                    store, source, cap, [{"id": r["player_id"], "name": r["name"]} for r in batch]
+                )
+                rows, invalid = score_authentic(batch, claims)
+                scored.extend(rows)
+                unknown += invalid
+            except ValueError as exc:
+                errors.append({"batch": start // 4, "error": str(exc)})
+            print(
+                "Authentic extraction", cap.provider, start // 4 + 1, "of", (len(cases) + 3) // 4, flush=True
+            )
+        passed = sum(r["passed"] for r in scored)
+        results.append(
+            {
+                "provider": cap.provider,
+                "model": cap.model,
+                "cases": scored,
+                "passed_cases": passed,
+                "total_cases": len(cases),
+                "unknown_entities": unknown,
+                "errors": errors,
+                "all_passed": passed == len(cases) and not errors and not unknown,
+            }
+        )
+    report = {
+        "at": now(),
+        "kind": "authentic_labeled_extraction_benchmark",
+        "corpus_hash": digest(body),
+        "examples": len(cases),
+        "source_articles": len({r["source_url"] for r in cases}),
+        "results": results,
+        "production_unchanged": all(store.get(k)["id"] == v for k, v in guards.items()),
+        "limits": [
+            body["selection"],
+            "Labels frozen before calls; no prompt tuning or provider promotion",
+            "Extraction accuracy is not football-outcome calibration or evidence of strategy improvement",
+            "Original historical claims are never imported into live evidence",
+        ],
+    }
+    report["id"] = store.put("authentic_extraction_benchmark", report)
+    atomic_json(Path("artifacts/evaluations/authentic_extraction.json"), report)
     return report
 
 

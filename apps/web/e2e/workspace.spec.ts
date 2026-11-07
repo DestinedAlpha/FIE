@@ -16,7 +16,10 @@ async function navigate(page: import("@playwright/test").Page, label: string) {
 test("editing an account preserves unverified quotes and original provenance", async ({ page }) => {
   let saved: any;
   let originalTime: string;
+  let releaseReload: () => void = () => {};
+  const reloadHeld = new Promise<void>(resolve => { releaseReload = resolve; });
   await page.route("**/api/dashboard*", async route => {
+    if (saved) await reloadHeld;
     const response = await route.fetch();
     const data = await response.json();
     data.state.lots[0].quote_confirmed = false;
@@ -33,6 +36,10 @@ test("editing an account preserves unverified quotes and original provenance", a
   await page.getByRole("button", {name: "Edit account state", exact: true}).click();
   await page.getByRole("button", {name: "Validate & save account", exact: true}).click();
   await expect(page.getByRole("dialog")).not.toBeVisible();
+  const reloaded = page.waitForResponse(response => response.url().includes('/api/dashboard') && response.status() === 200);
+  releaseReload();
+  await reloaded;
+  await expect(page.getByText('Saved.', {exact:true})).toBeVisible();
   expect(saved.state.lots[0].quote_confirmed).toBe(false);
   expect(saved.state.status).toBe("public_deadline");
   expect(saved.state.known_at).toBe(originalTime!);
@@ -182,6 +189,32 @@ test("completed weekly replay and football integration are visible",async({page}
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption('fixture');
   await expect(page.getByRole('combobox',{name:'Fixture',exact:true})).toBeVisible();
   expect(errors).toEqual([]);
+});
+
+test("combined-model evidence distinguishes continuous points from fresh weekly teams", async ({page}) => {
+  await page.route('**/api/dashboard*', async route => {
+    const response = await route.fetch();
+    const data = await response.json();
+    const outcomes = {
+      composed_multiweek: {net_points: 62, hit: 4, chip: null},
+      future_reference_multiweek: {net_points: 59, hit: 0, chip: null},
+      composed_one_week_no_chips: {net_points: 57, hit: 0, chip: null},
+    };
+    data.composed_policy_replay = {
+      id: 'browser-fixture', protocol: {season:'2026/27', events:[1], production_model_id:data.decision_model.id, limitations:[]},
+      totals: {composed_multiweek:62, future_reference_multiweek:59, composed_one_week_no_chips:57},
+      diagnostic_only:true, weeks:[{event:1,outcomes}], verification:{sealed_deadlines:1,independently_scored_actions:3},
+    };
+    await route.fulfill({response,json:data});
+  });
+  await openWorkspace(page);
+  await navigate(page, 'Model & data');
+  const panel = page.locator('section').filter({has:page.getByRole('heading',{name:'Combined models · continuous account',exact:true})});
+  await expect(panel).toContainText('62 net points');
+  await expect(panel).toContainText('Diagnostic only');
+  await expect(panel).toContainText('bounded research search');
+  await expect(panel.getByRole('link')).toHaveAttribute('href','/api/replay/composed');
+  await expect(panel.locator('tbody tr')).toHaveCount(1);
 });
 
 test("stale recommendations cannot display old transfers as current actions",async({page})=>{
