@@ -1,6 +1,6 @@
 # FIE 0.14.2 completion and verification
 
-The current engineering scope is implemented and exercised. The [204-item disposition ledger](../artifacts/evaluations/release_0_14_2.json) retains all 189 original findings and adds 15 confirmed issues from this implementation. It links present implementation, executed regressions and actual-data evidence. Scientific hypotheses, unavailable external observations and deliberate modelling approximations are distinguished from defects. Original historical reports and supplied research documents remain unchanged.
+The current engineering scope is implemented and exercised. The [205-item disposition ledger](../artifacts/evaluations/release_0_14_2.json) retains all 189 original findings and adds 16 confirmed issues from this implementation. It links present implementation, executed regressions and actual-data evidence. Scientific hypotheses, unavailable external observations and deliberate modelling approximations are distinguished from defects. Original historical reports and supplied research documents remain unchanged.
 
 ## Implemented corrections
 
@@ -29,7 +29,7 @@ A new chronological club-minute reconciliation study improved points MSE and par
 
 ## Executed verification
 
-- **312 backend tests**, Ruff, formatting, typing and frontend build; **3 frontend unit tests**.
+- **317 backend tests**, Ruff, formatting, typing and frontend build; **3 frontend unit tests**.
 - **24 desktop/mobile browser journeys**, including account editing, market, planning, exports, research/rival views, background-job discovery/cancellation and the second-half horizon.
 - Windows and Linux CI, including Windows dependency/bootstrap, PowerShell parsing, launcher, packaged updater with a folder containing spaces, retained configuration/weights, built interface and loopback HTTP smoke checks.
 - Actual official refresh/account synchronization, complete workload refresh, cached Understat fallback, current rival comparison and current companion-model loading.

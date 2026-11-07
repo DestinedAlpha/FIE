@@ -2,9 +2,9 @@
   "at": "2026-11-07T15:50:15.559524+00:00",
   "version": "0.14.2",
   "baseline_revision": "4bc1885",
-  "implementation_revision": "95df6c1c11ed56662a250942c922f21abbe5c779",
+  "implementation_revision": "255c4c78426416e790e23d286f35963755d7b20f",
   "original_findings": 189,
-  "total_findings": 204,
+  "total_findings": 205,
   "scope": "Current actionable engineering completed against available data and retained model scope. Every inherited item has a present disposition and source/test/evidence chain; scientific hypotheses are not mislabeled as reproduced bugs. No finite inspection proves universal optimal football forecasts.",
   "original_audit_sha256": "763fddb4305905112b64ca820810d5fbf41582e1f157d1c6dbc85f693ccaffc9",
   "items": [
@@ -4646,6 +4646,21 @@
         "scripts/verify_download.py"
       ],
       "evidence": "The SQLite backup is checksummed/compressed before ZIP assembly, then the redundant temporary backup is removed. Verification can recover byte-matched immutable files through hardlinks on constrained disks while genuinely rehydrating SQLite and extracting active outcome worlds."
+    },
+    {
+      "issue": 205,
+      "title": "Windows-authored model and sealed-availability paths could not relocate on Unix",
+      "current_disposition": "CONFIRMED_DEFECT_FIXED_AND_VERIFIED",
+      "implementation": [
+        "src/fpl_intelligence/storage.py",
+        "src/fpl_intelligence/pipeline_verification.py",
+        "scripts/verify_download.py"
+      ],
+      "regressions": [
+        "tests/test_integrity.py",
+        "tests/test_pipeline_verification.py"
+      ],
+      "evidence": "Reproduced failed Windows drive/UNC metadata on Linux; normalize either platform format into the current artifact root, retain traversal rejection, and resolve sealed availability without modifying its original JSON or checksum."
     }
   ],
   "numerical_verification": {
@@ -16617,7 +16632,7 @@
       "lineage_current": true
     },
     "backend": {
-      "tests": 312,
+      "tests": 317,
       "failures": 0
     },
     "frontend": {
@@ -16656,10 +16671,10 @@
       "manager_policy_id": "4b26caabed0a5bde0d131aa1c653af13e6da604e21ff7080d098cf2133bb72d9"
     },
     "windows_linux_ci": {
-      "run": 42406172122,
+      "run": 42407367471,
       "conclusion": "success",
-      "url": "https://github.com/DestinedAlpha/FIE/actions/runs/42406172122",
-      "includes": "312 regressions on each OS, UI build/unit tests, Windows launcher and actual packaged Windows updater with spaced path, retained settings/weights and backup"
+      "url": "https://github.com/DestinedAlpha/FIE/actions/runs/42407367471",
+      "includes": "317 regressions on each OS; UI build/unit checks; Windows launcher and actual packaged updater, retained settings/weights and backup"
     }
   },
   "research_candidate": "artifacts/evaluations/role_balance_validation.json",
