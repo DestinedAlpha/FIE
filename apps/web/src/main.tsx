@@ -1274,12 +1274,13 @@ function App() {
                         action("/rivals", {
                           league_id: 1873551,
                           entry_id: data.state?.entry_id || 9375678,
-                          compare_case: true,
+                          compare_current: true,
                         })
                       }
                     >
-                      Compare original strategies
+                      Compare current policies
                     </button>
+                    {data.state?.event === 9 && <button className="button secondary" disabled={busy || !data.forecast} onClick={() => action("/rivals", {league_id:1873551, entry_id:data.state?.entry_id || 9375678, compare_case:true})}>Compare original GW9 strategies</button>}
                   </div>
                   <div className="stats-grid rivals-stats">
                     {data.league?.members.map((m) =>
@@ -1376,8 +1377,7 @@ function App() {
                       </>
                     ) : (
                       <div className="empty-copy">
-                        Run the mini-league analysis with{" "}
-                        <code>uv run fpl rivals --case</code>. The comparison
+                        Select Compare current policies. The comparison
                         retrieves actual released squads and evaluates multiple
                         opponent policies.
                       </div>

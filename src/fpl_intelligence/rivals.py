@@ -376,6 +376,28 @@ def compare(
     return result
 
 
+def current_comparison(store: Store):
+    """Compare the current recommendation and hold using the same forecast worlds."""
+    from .readiness import selection_is_current
+
+    state = store.get("state")
+    forecast = store.get("forecast")
+    selected = store.get("plan", store.get("selected_plan")["plan_id"])
+    if not selection_is_current(store, selected):
+        raise ValueError("Refresh the current recommendation before comparing rivals")
+    selected = {**selected, "label": "Current recommendation"}
+    hold = hold_plan(store, state["id"], forecast["id"], selected["end_event"])
+    hold["label"] = "Hold current squad"
+    return compare(
+        store,
+        [selected] if selected["id"] == hold["id"] else [selected, hold],
+        forecast["id"],
+        store.get("league")["id"],
+        state["points"],
+        state["entry_id"],
+    )
+
+
 def case_comparison(store: Store, state_id: str, forecast_id: str, time_limit=15) -> dict:
     from .ingestion import resolve_name
 

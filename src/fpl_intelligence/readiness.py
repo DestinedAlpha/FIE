@@ -21,6 +21,20 @@ def workload_is_current(store, forecast, model=None):
     return "live_workload_id" in manifest and manifest["live_workload_id"] == current
 
 
+def forecast_dependencies_current(store, forecast, model=None):
+    if not workload_is_current(store, forecast, model):
+        return False
+    for key, kind in (
+        ("manager_policy_id", "manager_policy"),
+        ("manager_behavior_id", "manager_behavior"),
+        ("source_challenger_model_id", "fusion_model"),
+    ):
+        current = store.get(kind)["id"] if store.list(kind, 1) else None
+        if forecast.get(key) != current:
+            return False
+    return True
+
+
 def selection_is_current(store, plan):
     """Check all serving pointers and the deadline immediately before publication."""
     try:
@@ -40,7 +54,7 @@ def selection_is_current(store, plan):
             )
         )
         or forecast.get("decision_model_id") != model["id"]
-        or not workload_is_current(store, forecast, model)
+        or not forecast_dependencies_current(store, forecast, model)
     ):
         return False
     from .account_sync import next_event
@@ -210,6 +224,8 @@ def operational_readiness(store):
         reasons.append("Forecast uses an older model")
     if not workload_is_current(store, forecast, model):
         reasons.append("Forecast needs current workload inputs")
+    elif not forecast_dependencies_current(store, forecast, model):
+        reasons.append("Forecast needs current companion models")
     from .account_sync import next_event
 
     if market.get("events") and state.get("event") != next_event(market):

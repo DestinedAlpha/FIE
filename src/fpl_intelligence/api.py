@@ -63,6 +63,7 @@ class RivalRequest(Strict):
     league_id: int = Field(default=1873551, ge=1)
     entry_id: int = Field(default=9375678, ge=1)
     compare_case: bool = False
+    compare_current: bool = False
 
 
 class ResearchRequest(Strict):
@@ -474,9 +475,9 @@ def create_app(root=None):
                 or (result["forecast"] or {}).get("decision_model_id")
                 != (result["decision_model"] or {}).get("id")
             )
-            from .readiness import workload_is_current
+            from .readiness import forecast_dependencies_current
 
-            selected_plan["stale"] |= not workload_is_current(
+            selected_plan["stale"] |= not forecast_dependencies_current(
                 store, result["forecast"] or {}, result["decision_model"] or {}
             )
             if selected_plan["ledger"][0]["hit"] > 0 or selected_plan["ledger"][0].get("chip"):
@@ -1036,9 +1037,11 @@ def create_app(root=None):
     @app.post("/api/rivals")
     def refresh_rivals(request: RivalRequest):
         def work():
-            from .rivals import case_comparison, discover
+            from .rivals import case_comparison, current_comparison, discover
 
             league = asyncio.run(discover(store, request.league_id, request.entry_id))
+            if request.compare_current:
+                return {"comparison_id": current_comparison(store)["id"]}
             if request.compare_case:
                 comparison = case_comparison(store, store.get("state")["id"], store.get("forecast")["id"], 30)
                 return {"comparison_id": comparison["id"]}
@@ -1215,9 +1218,9 @@ def create_app(root=None):
                 or current_forecast.get("decision_model_id") != store.get("decision_model")["id"]
                 or (deadline is not None and moment(deadline) <= moment(now()))
             )
-            from .readiness import workload_is_current
+            from .readiness import forecast_dependencies_current
 
-            plan["stale"] |= not workload_is_current(store, current_forecast)
+            plan["stale"] |= not forecast_dependencies_current(store, current_forecast)
         except (ValueError, KeyError):
             plan["stale"] = True
         if plan["stale"]:

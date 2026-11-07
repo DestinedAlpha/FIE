@@ -87,7 +87,7 @@ if ($NeedsInitialisation) {
     & $UvPath run fpl refresh-current
     if ($LASTEXITCODE -ne 0) { Write-Warning "Current planning could not finish. The app will open so you can inspect data health, correct account details and retry refresh." }
 } else {
-    & $UvPath run python -c "from fpl_intelligence.storage import Store; from fpl_intelligence.readiness import workload_is_current; s=Store(); f=s.get('forecast'); raise SystemExit(0 if f.get('decision_model_id') == s.get('decision_model')['id'] and workload_is_current(s,f) else 1)"
+    & $UvPath run python -c "from fpl_intelligence.storage import Store; from fpl_intelligence.readiness import forecast_dependencies_current; s=Store(); f=s.get('forecast'); raise SystemExit(0 if f.get('decision_model_id') == s.get('decision_model')['id'] and forecast_dependencies_current(s,f) else 1)"
     if ($LASTEXITCODE -ne 0) {
         & $UvPath run fpl refresh-current
         if ($LASTEXITCODE -ne 0) { Write-Warning "The model migration completed, but forecasts need a refresh. Open the app to inspect data health and retry." }

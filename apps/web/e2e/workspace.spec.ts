@@ -130,7 +130,7 @@ test("manager behavior, source fusion and transfer learning are visible", async 
   ).toBeVisible();
   await expect(page.getByText(/1000 actual managers/)).toBeVisible();
   await expect(
-    page.getByText("Learned-count scenario", { exact: true }),
+    page.getByRole("button", { name: "Compare current policies", exact: true }),
   ).toBeVisible();
   await navigate(page, "Model & data");
   await expect(
