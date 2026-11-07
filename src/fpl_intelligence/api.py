@@ -540,6 +540,10 @@ def create_app(root=None):
                     from .replay import current_weekly_results
 
                     artifact = current_weekly_results(store)
+                elif kind == "composed_policy_replay":
+                    from .composed_replay import published_report
+
+                    artifact = published_report(store)
                 else:
                     artifact = store.get(kind)
                 if kind == "weekly_baseline_comparison" and (result.get("weekly_replay") or {}).get(
@@ -840,7 +844,9 @@ def create_app(root=None):
 
     @app.get("/api/replay/composed")
     def replay_composed_results():
-        return store.get("composed_policy_replay")
+        from .composed_replay import published_report
+
+        return published_report(store)
 
     @app.get("/api/replay/pipeline/decision/{season}/{event}")
     def replay_pipeline_decision(season: str, event: int):

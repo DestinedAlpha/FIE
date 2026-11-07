@@ -4,10 +4,35 @@ from copy import deepcopy
 
 import pytest
 
-from fpl_intelligence.composed_replay import POLICIES, verify_composed
+from fpl_intelligence.composed_replay import POLICIES, published_report, verify_composed
 from fpl_intelligence.domain import Action
 from fpl_intelligence.rules import best_lineup, score_gameweek, transition
 from fpl_intelligence.storage import Store, atomic_json
+
+
+def test_existing_install_can_read_bundled_results_without_overwriting_its_database(tmp_path):
+    store = Store(tmp_path / "data")
+    state = store.put("state", {"bank": 5})
+    report = {
+        "protocol": {"events": [1]},
+        "weeks": [{"event": 1}],
+        "verification": {"independently_scored_actions": 3},
+    }
+    bundled = tmp_path / "benchmark.json"
+    atomic_json(bundled, report)
+    assert published_report(store, bundled)["weeks"] == report["weeks"]
+    assert store.list("composed_policy_replay", 1) == []
+    assert store.get("state")["id"] == state
+    local = store.put("composed_policy_replay", {"source": "local"})
+    assert published_report(store, bundled)["id"] == local
+
+
+def test_incomplete_bundled_results_are_rejected(tmp_path):
+    store = Store(tmp_path / "data")
+    bundled = tmp_path / "benchmark.json"
+    atomic_json(bundled, {"protocol": {"events": [1, 2]}, "weeks": [{"event": 1}]})
+    with pytest.raises(ValueError, match="incomplete"):
+        published_report(store, bundled)
 
 
 def sealed_replay(tmp_path, monkeypatch, market, rules, state):

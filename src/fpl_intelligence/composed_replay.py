@@ -34,6 +34,32 @@ POLICIES = ("composed_multiweek", "future_reference_multiweek", "composed_one_we
 LIVE = ("state", "market", "decision_model", "forecast", "selected_plan")
 
 
+def published_report(store, bundled=None):
+    """Existing-install updates can display the public benchmark without DB import."""
+    try:
+        return store.get("composed_policy_replay")
+    except ValueError:
+        path = (
+            bundled
+            or Path(__file__).resolve().parents[2] / "artifacts/evaluations/composed_policy_replay.json"
+        )
+        if not path.is_file():
+            raise ValueError("No completed combined-model benchmark is available") from None
+        report = json.loads(path.read_text())
+        count = len(report.get("protocol", {}).get("events", []))
+        proof = report.get("verification", {})
+        if (
+            not count
+            or len(report.get("weeks", [])) != count
+            or proof.get("independently_scored_actions") != len(POLICIES) * count
+        ):
+            raise ValueError("The bundled combined-model benchmark is incomplete")
+        return {
+            **report,
+            "publication": "Bundled historical benchmark; personal account and model pointers are unchanged",
+        }
+
+
 def checked(store, spec):
     path = store.artifact_path(spec["path"])
     if hashlib.sha256(path.read_bytes()).hexdigest() != spec["hash"]:
