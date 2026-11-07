@@ -1,9 +1,9 @@
 {
-  "at": "2026-11-06T15:07:17.396796+00:00",
+  "at": "2026-11-07T02:35:30.999663+00:00",
   "requirements_traced": 94,
   "verification_scope": "Implementation symbols, executed mapped regressions and existing runtime evidence; not a proof that all possible behaviours are error-free",
   "scope": "Concrete behavioral regressions and retained runtime evidence, accompanied by a complete section/body-line review of both original design documents in specification_sections.json. Conditional research alternatives require measured benefit; future performance requires future observations.",
-  "checks_at": "2026-11-06T15:06:33.533740+00:00",
+  "checks_at": "2026-11-07T02:33:26.515946+00:00",
   "items": [
     {
       "id": "data.registry",
@@ -373,7 +373,7 @@
       "runtime_evidence_kind": "evidence_impact",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "140d1490e156d0732c7b1c3e3c864002efe9add571fcd9810967b1b7c3f9bc8d"
+      "runtime_artifact_id": "dae3ae3b6dadd98d6fc902e113fa22f8e11658b1c422bc28ea1d6a570935db06"
     },
     {
       "id": "evidence.free",
@@ -383,7 +383,7 @@
       "runtime_evidence_kind": "provider_setup",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "8577c488bf82eb3eb4e27e67d16a063a9622222fd179af49447a8cdd11fb45a3"
+      "runtime_artifact_id": "352ffe6b086c2944637fbeca9daa309a6e9aec61ce8ed44238bc48b46348c4ec"
     },
     {
       "id": "evidence.ablation",
@@ -443,7 +443,7 @@
       "runtime_evidence_kind": "population_forecast",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "bf424ed0fe2a2e159bd09e5fcc5d888f9c8eea656c6a23ef7929e7ee2d4b659a"
+      "runtime_artifact_id": "f45bf3311ac0bc5665680018d3f856eefa1ab457509fcd5e3666b2ce6969fa21"
     },
     {
       "id": "strategy.mip",
@@ -533,7 +533,7 @@
       "runtime_evidence_kind": "scenario_evaluation",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "440e0fe1bc4a4d5160f063083607f503247d5c756ddb4380a3d3f340922475da"
+      "runtime_artifact_id": "b8990404dfbdc3709c7d97a3d6b06ea6f8f8b7ee2c02cbe1e6116244fb6e9d6b"
     },
     {
       "id": "strategy.chips",
@@ -623,7 +623,7 @@
       "runtime_evidence_kind": "release_checks",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "9de7d9f0b72c7f51176cb3a001e132037ff3851cad5fa22df060509f2702374c"
+      "runtime_artifact_id": "e603e871451cd068f411164c420529ce9f99e63ed9af0d414b5dde069dd9bfef"
     },
     {
       "id": "ops.updater",
@@ -793,7 +793,7 @@
       "runtime_evidence_kind": "release_checks",
       "implementation_symbol_found": true,
       "mapped_regression_passed": true,
-      "runtime_artifact_id": "9de7d9f0b72c7f51176cb3a001e132037ff3851cad5fa22df060509f2702374c"
+      "runtime_artifact_id": "e603e871451cd068f411164c420529ce9f99e63ed9af0d414b5dde069dd9bfef"
     },
     {
       "id": "prospective.ongoing_finances",
@@ -12157,5 +12157,5 @@
     "Unavailable optional inputs are recorded as unavailable; no observations are invented.",
     "Prospective competitive advantage and future ranks require future finalized matches."
   ],
-  "id": "0c381f866ecb1d39a15f31b1bec661b81c041f5fe357578f2f41c2080db2d394"
+  "id": "dd05b7e73ce43f9eb5e6d87cfee811d8fc393d2147c2a8efdde68885b078ddb8"
 }
