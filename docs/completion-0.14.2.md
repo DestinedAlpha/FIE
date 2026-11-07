@@ -1,6 +1,6 @@
 # FIE 0.14.2 completion and verification
 
-The current engineering scope is implemented and exercised. The [202-item disposition ledger](../artifacts/evaluations/release_0_14_2.json) retains all 189 original findings and adds 13 confirmed issues from this implementation. It links present implementation, executed regressions and actual-data evidence. Scientific hypotheses, unavailable external observations and deliberate modelling approximations are distinguished from defects. Original historical reports and supplied research documents remain unchanged.
+The current engineering scope is implemented and exercised. The [204-item disposition ledger](../artifacts/evaluations/release_0_14_2.json) retains all 189 original findings and adds 15 confirmed issues from this implementation. It links present implementation, executed regressions and actual-data evidence. Scientific hypotheses, unavailable external observations and deliberate modelling approximations are distinguished from defects. Original historical reports and supplied research documents remain unchanged.
 
 ## Implemented corrections
 
@@ -31,7 +31,7 @@ A new chronological club-minute reconciliation study improved points MSE and par
 
 - **312 backend tests**, Ruff, formatting, typing and frontend build; **3 frontend unit tests**.
 - **24 desktop/mobile browser journeys**, including account editing, market, planning, exports, research/rival views, background-job discovery/cancellation and the second-half horizon.
-- Windows and Linux CI, including Windows dependency/bootstrap, PowerShell parsing, launcher, built interface and loopback HTTP smoke checks.
+- Windows and Linux CI, including Windows dependency/bootstrap, PowerShell parsing, launcher, packaged updater with a folder containing spaces, retained configuration/weights, built interface and loopback HTTP smoke checks.
 - Actual official refresh/account synchronization, complete workload refresh, cached Understat fallback, current rival comparison and current companion-model loading.
 - Actual free hosted calls: both current providers pass synthetic guard checks; the inspected authentic corpus scores Groq 16/16 and Gemini 12/16. An unsupported Gemini batch and invalid live-article responses were rejected. These are extraction checks, not football-performance improvements.
 - Fresh empty-model training, forecast generation with absent optional feeds, and a complete unrestricted one-week solve finishing **Optimal / gap 0**. An actual longer unrestricted search emitted progress, remained HTTP-responsive and cancelled without replacing the selected plan or account.

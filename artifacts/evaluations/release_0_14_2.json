@@ -2,9 +2,9 @@
   "at": "2026-11-07T15:50:15.559524+00:00",
   "version": "0.14.2",
   "baseline_revision": "4bc1885",
-  "implementation_revision": "1f2bac40ba1533c27ed83cd74a9bfbafc4a6a3b0",
+  "implementation_revision": "95df6c1c11ed56662a250942c922f21abbe5c779",
   "original_findings": 189,
-  "total_findings": 202,
+  "total_findings": 204,
   "scope": "Current actionable engineering completed against available data and retained model scope. Every inherited item has a present disposition and source/test/evidence chain; scientific hypotheses are not mislabeled as reproduced bugs. No finite inspection proves universal optimal football forecasts.",
   "original_audit_sha256": "763fddb4305905112b64ca820810d5fbf41582e1f157d1c6dbc85f693ccaffc9",
   "items": [
@@ -4626,6 +4626,26 @@
       "regressions": [
         "scripts/verify_installed_update.py"
       ]
+    },
+    {
+      "issue": 203,
+      "title": "Windows updater forced an unnecessary complete retrain before opening the app",
+      "current_disposition": "CONFIRMED_DEFECT_FIXED_AND_VERIFIED",
+      "implementation": [
+        "scripts/update.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "evidence": "Updater now preserves accepted fits and delegates necessary migration/refresh to visible startup jobs. Windows CI executes the packaged updater into an installation path containing spaces, checks the actual served app, retained settings/weights and backup."
+    },
+    {
+      "issue": 204,
+      "title": "Portable packaging retained a large redundant uncompressed database during ZIP creation",
+      "current_disposition": "CONFIRMED_DEFECT_FIXED_AND_VERIFIED",
+      "implementation": [
+        "scripts/prepare_bundle.py",
+        "scripts/verify_download.py"
+      ],
+      "evidence": "The SQLite backup is checksummed/compressed before ZIP assembly, then the redundant temporary backup is removed. Verification can recover byte-matched immutable files through hardlinks on constrained disks while genuinely rehydrating SQLite and extracting active outcome worlds."
     }
   ],
   "numerical_verification": {
@@ -16613,9 +16633,9 @@
       "build": "passed"
     },
     "installed_update": {
-      "at": "2026-11-07T15:52:27.800553+00:00",
-      "archive_sha256": "14b35ff01e2d5234bbbff930e497361f2f88f5e58451e1cfac7c2a6178566a4b",
-      "database_bytes": 1048727552,
+      "at": "2026-11-07T19:22:21.879636+00:00",
+      "archive_sha256": "8700a0fdb37b7dbbfc72eea9c8b0d2024b1885a400d27cf852599c6c5bc821cd",
+      "database_bytes": 1048776704,
       "installed_source_api_and_models": {
         "installed_modules": true,
         "accepted_weights_loaded": true,
@@ -16636,9 +16656,10 @@
       "manager_policy_id": "4b26caabed0a5bde0d131aa1c653af13e6da604e21ff7080d098cf2133bb72d9"
     },
     "windows_linux_ci": {
-      "run": 42388009635,
+      "run": 42406172122,
       "conclusion": "success",
-      "url": "https://github.com/DestinedAlpha/FIE/actions/runs/42388009635"
+      "url": "https://github.com/DestinedAlpha/FIE/actions/runs/42406172122",
+      "includes": "312 regressions on each OS, UI build/unit tests, Windows launcher and actual packaged Windows updater with spaced path, retained settings/weights and backup"
     }
   },
   "research_candidate": "artifacts/evaluations/role_balance_validation.json",
