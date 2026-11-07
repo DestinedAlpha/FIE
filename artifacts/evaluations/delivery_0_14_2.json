@@ -1,0 +1,77 @@
+{
+  "at": "2026-11-07T20:30:13.567709+00:00",
+  "version": "0.14.2",
+  "implementation_revision": "93049e73c76389102959d5d86956b8af26ef4f21",
+  "engineering_blockers": [],
+  "update": {
+    "url": "https://github.com/DestinedAlpha/FIE/releases/download/v0.14.2/FPL-Intelligence-0.14.2-Update.zip",
+    "bytes": 3804200,
+    "sha256": "daef94983b30f8e69c441d6e24d4c00270cecee7a54b29be2bd091d096c7367d",
+    "crc_and_installation": "passed",
+    "actual_public_download": "SHA256-identical to tested update",
+    "github_server_digest": "matched",
+    "publication_workflow": "https://github.com/DestinedAlpha/FIE/actions/runs/42410158907"
+  },
+  "private_full_installation": {
+    "commit": "859fe7a3fa063ed878e17db4ff27fdf4f3640cee",
+    "tree": "5ba3840c8fe7c7739316b0fc40b00f910beef1e3",
+    "files": 26193,
+    "content": "All files are byte-matched to the verified portable ZIP and published by immutable Git content hashes",
+    "private": true,
+    "branch": "fie-windows-download-v0.14.2",
+    "url": "https://github.com/DestinedAlpha/fpl-thing/tree/fie-windows-download-v0.14.2"
+  },
+  "portable_archive": {
+    "bytes": 1879700468,
+    "sha256": "ef1ee4244f27051cc1d9bdc41f6df6daa8698251d2f70d43c610d5e622d6ec2c"
+  },
+  "portable_verification": {
+    "crc": "passed",
+    "model_files": 1014,
+    "database": "ok",
+    "credentials": "excluded",
+    "pipeline": {
+      "sealed_deadlines": 28,
+      "validated_actions": 84,
+      "models": "checksums passed",
+      "ledger_and_actual_scoring": "passed",
+      "continuous_actions": 84,
+      "sealed_actions": "matched",
+      "account_continuity": "passed",
+      "availability_checksums": "passed"
+    },
+    "future_expert": {
+      "earlier_policy": {
+        "sealed_deadlines": 19,
+        "training_cutoffs_and_model_checksums": "passed",
+        "current_week_world_identity": "passed",
+        "continuous_accounts_and_actual_scores": "passed"
+      },
+      "current_policy": {
+        "sealed_deadlines": 9,
+        "training_cutoffs_and_model_checksums": "passed",
+        "current_week_world_identity": "passed",
+        "continuous_accounts_and_actual_scores": "passed"
+      },
+      "relocated_expert_inference": "identical"
+    },
+    "restored_worlds_identical": 20000,
+    "immutable_data_recovery": "byte-verified hardlinks"
+  },
+  "backend_tests": 320,
+  "browser_journeys": 24,
+  "frontend_unit_tests": 3,
+  "windows_linux_ci": "https://github.com/DestinedAlpha/FIE/actions/runs/42408640892",
+  "real_database_installed_upgrade": "artifacts/evaluations/release_0_14_2.json",
+  "original_weight_files_preserved": 341,
+  "account_forecast_model_and_selection_pointers": "unchanged",
+  "final_database_integrity": "ok",
+  "operational_readiness": true,
+  "historical_totals": {
+    "independent_weekly_squads": 575,
+    "continuous_combined": 510,
+    "continuous_reference": 510,
+    "continuous_one_week_no_chips": 499
+  },
+  "scope": "Current engineering/research scope completed; accepted models preserved. Partial independent source coverage and inherently uncertain football outcomes do not imply guaranteed future performance. Understat live refreshes were unavailable; validated cache and independent sources remain functional."
+}
