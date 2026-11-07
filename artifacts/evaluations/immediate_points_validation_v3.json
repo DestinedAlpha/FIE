@@ -1,0 +1,233 @@
+{
+  "at": "2026-11-07T07:52:29.300990+00:00",
+  "version": "immediate-statistics-v2",
+  "reference_role_version": "role-minutes-v3",
+  "reference_decision_model_id": "13612366d8d406fa2c9c528b647d322930a42231865a0263a44a1f3e77dfb842",
+  "feature_id": "f5eb8eb039676ab18c5874cd4f4133765e0a7bb7ed71f3d0873c7b7532b5e246",
+  "context_id": "0165a57b829113f74f92978483b89108c261de4368b0a441970982199a5b391c",
+  "key": "de32963fda78c5188d6699083ae64714c4ac9f2fed99408edacf6c9e439ac102",
+  "selected": "advanced_xgb_1.0",
+  "selection_losses": {
+    "form_0.25": 13.305802602040762,
+    "form_0.5": 13.275980317160986,
+    "form_1.0": 13.305439912747937,
+    "advanced_0.25": 13.28753810953908,
+    "advanced_0.5": 13.246546966377014,
+    "advanced_1.0": 13.274955748057547,
+    "advanced_price_0.25": 13.298060122986488,
+    "advanced_price_0.5": 13.259624338315373,
+    "advanced_price_1.0": 13.269243872108433,
+    "advanced_xgb_0.25": 13.281167557619241,
+    "advanced_xgb_0.5": 13.228704443641664,
+    "advanced_xgb_1.0": 13.218865027004167
+  },
+  "metrics": {
+    "acceptance_2024": {
+      "rows": 14492,
+      "reference": {
+        "rmse": 1.8195544867644955,
+        "regular_rmse": 2.9104704931375482,
+        "premium_rmse": 4.158203208159298,
+        "bias": 0.027029168703689075,
+        "captain_points": 129.0
+      },
+      "candidate": {
+        "rmse": 1.8149750173366994,
+        "regular_rmse": 2.9053401663918463,
+        "premium_rmse": 4.185259636138831,
+        "bias": 0.014872062997681183,
+        "captain_points": 166.0
+      },
+      "mse_delta_95ci": [
+        -0.046933314348960524,
+        0.006666822753949385
+      ]
+    },
+    "replication_2025": {
+      "rows": 29644,
+      "reference": {
+        "rmse": 1.8826734001491177,
+        "regular_rmse": 2.9551543681384485,
+        "premium_rmse": 3.98476892877865,
+        "bias": 0.02400216443564926,
+        "captain_points": 262.0
+      },
+      "candidate": {
+        "rmse": 1.8823806007147292,
+        "regular_rmse": 2.9539532571369693,
+        "premium_rmse": 4.045579121708668,
+        "bias": 0.0015284373946798733,
+        "captain_points": 222.0
+      },
+      "mse_delta_95ci": [
+        -0.02048217506068499,
+        0.021897045399595087
+      ]
+    }
+  },
+  "forecast_passed": false,
+  "captain_passed": false,
+  "passed": false,
+  "folds": [
+    {
+      "test": [
+        "2024/25-GW01",
+        "2024/25-GW02",
+        "2024/25-GW03",
+        "2024/25-GW04",
+        "2024/25-GW05",
+        "2024/25-GW06",
+        "2024/25-GW07",
+        "2024/25-GW08"
+      ],
+      "fit_max": "2023/24-GW30",
+      "calibration_max": "2023/24-GW38",
+      "training_rows": 48471,
+      "calibration_rows": 7425
+    },
+    {
+      "test": [
+        "2024/25-GW09",
+        "2024/25-GW10",
+        "2024/25-GW11",
+        "2024/25-GW12",
+        "2024/25-GW13",
+        "2024/25-GW14",
+        "2024/25-GW15",
+        "2024/25-GW16"
+      ],
+      "fit_max": "2023/24-GW38",
+      "calibration_max": "2024/25-GW08",
+      "training_rows": 55896,
+      "calibration_rows": 5177
+    },
+    {
+      "test": [
+        "2024/25-GW17",
+        "2024/25-GW18",
+        "2024/25-GW19",
+        "2024/25-GW20",
+        "2024/25-GW21",
+        "2024/25-GW22",
+        "2024/25-GW23",
+        "2024/25-GW24"
+      ],
+      "fit_max": "2024/25-GW08",
+      "calibration_max": "2024/25-GW16",
+      "training_rows": 61073,
+      "calibration_rows": 5386
+    },
+    {
+      "test": [
+        "2024/25-GW25",
+        "2024/25-GW26",
+        "2024/25-GW27",
+        "2024/25-GW28",
+        "2024/25-GW29",
+        "2024/25-GW30",
+        "2024/25-GW31",
+        "2024/25-GW32"
+      ],
+      "fit_max": "2024/25-GW16",
+      "calibration_max": "2024/25-GW24",
+      "training_rows": 66459,
+      "calibration_rows": 5798
+    },
+    {
+      "test": [
+        "2024/25-GW33",
+        "2024/25-GW34",
+        "2024/25-GW35",
+        "2024/25-GW36",
+        "2024/25-GW37",
+        "2024/25-GW38"
+      ],
+      "fit_max": "2024/25-GW24",
+      "calibration_max": "2024/25-GW32",
+      "training_rows": 72257,
+      "calibration_rows": 6121
+    },
+    {
+      "test": [
+        "2025/26-GW01",
+        "2025/26-GW02",
+        "2025/26-GW03",
+        "2025/26-GW04",
+        "2025/26-GW05",
+        "2025/26-GW06",
+        "2025/26-GW07",
+        "2025/26-GW08"
+      ],
+      "fit_max": "2024/25-GW30",
+      "calibration_max": "2024/25-GW38",
+      "training_rows": 76766,
+      "calibration_rows": 6292
+    },
+    {
+      "test": [
+        "2025/26-GW09",
+        "2025/26-GW10",
+        "2025/26-GW11",
+        "2025/26-GW12",
+        "2025/26-GW13",
+        "2025/26-GW14",
+        "2025/26-GW15",
+        "2025/26-GW16"
+      ],
+      "fit_max": "2024/25-GW38",
+      "calibration_max": "2025/26-GW08",
+      "training_rows": 83058,
+      "calibration_rows": 5796
+    },
+    {
+      "test": [
+        "2025/26-GW17",
+        "2025/26-GW18",
+        "2025/26-GW19",
+        "2025/26-GW20",
+        "2025/26-GW21",
+        "2025/26-GW22",
+        "2025/26-GW23",
+        "2025/26-GW24"
+      ],
+      "fit_max": "2025/26-GW08",
+      "calibration_max": "2025/26-GW16",
+      "training_rows": 88854,
+      "calibration_rows": 6018
+    },
+    {
+      "test": [
+        "2025/26-GW25",
+        "2025/26-GW26",
+        "2025/26-GW27",
+        "2025/26-GW28",
+        "2025/26-GW29",
+        "2025/26-GW30",
+        "2025/26-GW31",
+        "2025/26-GW32"
+      ],
+      "fit_max": "2025/26-GW16",
+      "calibration_max": "2025/26-GW24",
+      "training_rows": 94872,
+      "calibration_rows": 6281
+    },
+    {
+      "test": [
+        "2025/26-GW33",
+        "2025/26-GW34",
+        "2025/26-GW35",
+        "2025/26-GW36",
+        "2025/26-GW37",
+        "2025/26-GW38"
+      ],
+      "fit_max": "2025/26-GW24",
+      "calibration_max": "2025/26-GW32",
+      "training_rows": 101153,
+      "calibration_rows": 6473
+    }
+  ],
+  "prediction_path": "data/models/immediate-validation-de32963fda78c5188d669908/predictions.parquet",
+  "prediction_hash": "ad7d3d23bf49b357d473a118773bb7ab3cd82c25e14cd3f80974c3a126588531",
+  "protocol": "Eight-deadline expanding folds with eight earlier calibration deadlines. Family/blend selected on 2024/25 GW1-19; acceptance GW20-38 and replication all 2025/26. No current-season outcomes select the configuration. Participation and DefCon held identical; final weights never score their own history.",
+  "id": "40dc97f8edebb9bbb1dd954babaee9b28a132aeeb7198a9759bb09c3fa36697d"
+}

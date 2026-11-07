@@ -12,9 +12,10 @@ import tempfile
 from collections import defaultdict
 from pathlib import Path
 
+import numpy as np
 import polars as pl
 
-from .consensus import paired_interval, replay_packets
+from .consensus import replay_packets
 from .decision import canonical_rows, learned_forecast
 from .decision_training import reprice
 from .domain import Action, TeamState
@@ -32,6 +33,18 @@ from .strategy import solve_action
 
 POLICIES = ("composed_multiweek", "future_reference_multiweek", "composed_one_week_no_chips")
 LIVE = ("state", "market", "decision_model", "forecast", "selected_plan")
+
+
+def continuous_interval(values, block=3):
+    """Resample contiguous weeks: carried accounts are not independent squads."""
+    data = np.asarray(values, dtype=float)
+    if len(data) < 2 * block:
+        return None
+    width = min(block, len(data))
+    rng = np.random.default_rng(63179)
+    starts = rng.integers(0, len(data), (3000, int(np.ceil(len(data) / width))))
+    indices = ((starts[:, :, None] + np.arange(width)) % len(data)).reshape(3000, -1)[:, : len(data)]
+    return np.quantile(data[indices].mean(1), [0.025, 0.975]).tolist()
 
 
 def published_report(store, bundled=None):
@@ -65,6 +78,31 @@ def checked(store, spec):
     if hashlib.sha256(path.read_bytes()).hexdigest() != spec["hash"]:
         raise ValueError("Composed replay artifact checksum mismatch")
     return path
+
+
+def embed_decisions(store, report):
+    """Ship the sealed actions, not inaccessible paths into the build workspace."""
+    packets = replay_packets(store)
+    decisions = []
+    for row in report["weeks"]:
+        body = json.loads(
+            checked(store, {"path": row["decision_file"], "hash": row["decision_sha256"]}).read_text()
+        )
+        packet = packets[row["season"], row["event"]]
+        used = {p for action in body["actions"].values() for p in action["ledger"]["playing_squad"]}
+        names = {
+            str(p["id"]): p["web_name"] for p in packet["bootstrap"].get("elements", []) if p["id"] in used
+        }
+        decisions.append(
+            {
+                "season": row["season"],
+                "event": row["event"],
+                "decision_sha256": row["decision_sha256"],
+                "decision": body,
+                "player_names": names,
+            }
+        )
+    return {**report, "decisions": decisions}
 
 
 def attach_role(parent, stage, weekly, model):
@@ -190,7 +228,7 @@ def verify_composed(parent, report):
 
 
 def run_composed(parent, *, end_event=9, worlds=4000, seconds=60):
-    if not 100 <= worlds <= 20000 or seconds <= 0:
+    if not 1 <= end_event <= 38 or not 100 <= worlds <= 20000 or seconds <= 0:
         raise ValueError("Invalid research budget")
     season = parent.get("market")["season"]
     events = list(range(1, end_event + 1))
@@ -211,6 +249,8 @@ def run_composed(parent, *, end_event=9, worlds=4000, seconds=60):
         for r in baseline["weeks"]
         if r["season"] == season and r["policy"] == "primary_multiweek"
     }
+    if set(events) - weeks.keys() or set(events) - reference.keys():
+        raise ValueError("Retain all requested deadline fits with replay-weekly and replay-pipeline first")
     future = frozen_spec(parent, parent.get("horizon_refinement"), season + "-GW01")
     guards = {k: parent.get(k)["id"] for k in LIVE}
     code = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in Path(__file__).parent.glob("*.py")}
@@ -389,7 +429,8 @@ def run_composed(parent, *, end_event=9, worlds=4000, seconds=60):
         "protocol": protocol,
         "weeks": outcomes,
         "totals": {p: sum(r["outcomes"][p]["net_points"] for r in outcomes) for p in POLICIES},
-        "composed_minus_future_reference_95ci": paired_interval(delta),
+        "composed_minus_future_reference_95ci": continuous_interval(delta),
+        "uncertainty_scope": "Exploratory circular three-week block bootstrap of net weekly differences; omitted below six weeks. A short inspected continuous account does not establish future superiority or an independent-sample significance claim.",
         "diagnostic_only": True,
         "promoted": False,
         "live_pointers_unchanged": all(parent.get(k)["id"] == v for k, v in guards.items()),
@@ -397,6 +438,7 @@ def run_composed(parent, *, end_event=9, worlds=4000, seconds=60):
     report["verification"] = verify_composed(parent, report)
     if not report["live_pointers_unchanged"]:
         raise ValueError("Live state changed during the isolated research replay")
+    report = embed_decisions(parent, report)
     report["id"] = parent.put("composed_policy_replay", report)
     atomic_json(Path("artifacts/evaluations/composed_policy_replay.json"), report)
     return report

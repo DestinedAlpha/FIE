@@ -69,3 +69,21 @@ The initial [results](../artifacts/evaluations/authentic_extraction_initial.json
 On the same inspected corpus, [the repeated check](../artifacts/evaluations/authentic_extraction.json) scored Groq 16/16 and Gemini 11/16, with the unsupported Gemini batch again rejected. This is a regression check after fixing known cases, not new held-out accuracy or improved football returns. Neither prompt nor provider was promoted from this small study; Groq was already the selected route, with Gemini remaining an optional validated-source fallback. No historical benchmark claim enters live evidence and no numeric model weights changed.
 
 The existing-install update exposes the bundled completed benchmark without importing its historical accounts into the user database. A locally executed replay takes precedence. Incomplete bundled reports are rejected.
+
+
+### Current-reference scoring experiments
+
+The earlier rejected statistics/bias receipts used role-v2. Both full experiments were rerun against the actual role-v3 participation configuration and current pinned context, preserving the old receipts byte-for-byte. No current-season return chose a family or weight. Selection remains 2024/25 GW1–19; acceptance is GW20–38 and replication is all 2025/26. Eight earlier deadlines are reserved for calibration inside expanding folds.
+
+| Replication, 2025/26 | Reference RMSE | Candidate RMSE | Reference captain diagnostic | Candidate captain diagnostic | Result |
+|---|---:|---:|---:|---:|---|
+| Multi-window form/advanced statistics, selected XGBoost mixture | 1.882673 | 1.882381 | 262 | 222 | Rejected: interval includes zero, premium error increases, captain diagnostic deteriorates |
+| Earlier-error correction, selected decay 0.8 / shrinkage 32 | 1.882673 | 1.883583 | 262 | 243 | Rejected: overall/regular error and captain diagnostic deteriorate |
+
+These captain totals choose a player from the whole eligible market each deadline; they are not team totals or proof that a player was affordable in a particular account. [Statistics results](../artifacts/evaluations/immediate_points_validation_v3.json) · [Bias results](../artifacts/evaluations/online_calibration_validation_v3.json). The accepted numerical model ID and all production weights remained unchanged.
+
+An independent descriptive check of the retained role-v3 predictions found regular-defender replication RMSE 3.02759 → 3.00960 and bias +0.05153 points/player-fixture. Regular-forward RMSE and several MAE cohorts do not improve. These already-inspected subgroup diagnostics neither justify a universal positional boost nor establish superiority on every metric.
+
+The frozen GW6 registry and earlier completed histories agree: Fernandes' five returns were 2, 23, 2, 2, 2; Haaland's were 2, 13, 9, 9, 6. Fernandes' published form was 2.0 and season PPG 6.2; Haaland's were 7.5 and 7.8. The normal served composition, using only pre-deadline inputs, estimated 6.69942 versus 5.90306 immediate points. That identifies a forecast disagreement rather than a captain-selector defect. The historical mean contains the outlier, but it is not a causal explanation of every nonlinear-tree contribution. Rejected recent-form experiments already consume shorter windows; changing the head merely to fit this player or the inspected nine-week result would bypass acceptance.
+
+Public replay downloads include the actual sealed action bodies and player-name mappings, not just local build-machine paths. The dashboard omits those larger bodies while its download retains them. Uncertainty resamples contiguous three-week blocks because continuous accounts are coupled across deadlines; intervals from a short inspected reconstruction remain exploratory, not a claim of future superiority.

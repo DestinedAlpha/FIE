@@ -4,10 +4,24 @@ from copy import deepcopy
 
 import pytest
 
-from fpl_intelligence.composed_replay import POLICIES, published_report, verify_composed
+from fpl_intelligence.composed_replay import (
+    POLICIES,
+    continuous_interval,
+    embed_decisions,
+    published_report,
+    verify_composed,
+)
 from fpl_intelligence.domain import Action
 from fpl_intelligence.rules import best_lineup, score_gameweek, transition
 from fpl_intelligence.storage import Store, atomic_json
+
+
+def test_continuous_uncertainty_keeps_runs_of_correlated_weekly_returns():
+    values = [-1] * 6 + [1] * 6
+    blocked = continuous_interval(values)
+    independent = continuous_interval(values, block=1)
+    assert blocked[0] < independent[0] and blocked[1] > independent[1]
+    assert continuous_interval([2]) is None
 
 
 def test_existing_install_can_read_bundled_results_without_overwriting_its_database(tmp_path):
@@ -138,6 +152,17 @@ def test_changed_decision_or_weights_fail_verification(tmp_path, monkeypatch, ma
     decision.write_text("{}")
     with pytest.raises(ValueError, match="checksum"):
         verify_composed(store, report)
+
+
+def test_released_download_contains_frozen_actions_instead_of_only_local_paths(
+    tmp_path, monkeypatch, market, rules, state
+):
+    store, report, _, _ = sealed_replay(tmp_path, monkeypatch, market, rules, state)
+    published = embed_decisions(store, report)
+    body = published["decisions"][0]
+    assert body["decision_sha256"] == report["weeks"][0]["decision_sha256"]
+    assert set(body["decision"]["actions"]) == set(POLICIES)
+    assert body["decision"]["actions"][POLICIES[0]]["action"]["lineup"]["captain"] in market
 
 
 def test_valid_checksum_cannot_hide_target_week_training(tmp_path, monkeypatch, market, rules, state):

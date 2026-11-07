@@ -558,6 +558,7 @@ def create_app(root=None):
                 if kind == "pipeline_replay":
                     artifact = {k: v for k, v in artifact.items() if k != "epochs"}
                 if kind == "composed_policy_replay":
+                    artifact = {k: v for k, v in artifact.items() if k != "decisions"}
                     artifact["weeks"] = [
                         {
                             **r,
