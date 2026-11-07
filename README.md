@@ -12,6 +12,8 @@ Shot ingestion now diagnoses HTML error pages, validates provider schemas before
 
 `fpl replay-composed` evaluates the combined role, conditional-points and future-fixture models through continuous legal accounts, with matched reference and simpler controls. Sealed decisions are independently re-scored; results appear in Model & data. It is a bounded historical diagnostic and does not certify unlimited live search or future superiority. `fpl benchmark-authentic-extraction` checks the frozen real-news corpus using eligible free providers. See [the research review](docs/research-review-2026-11-06.md).
 
+The completed GW1–9 continuous diagnostic scored **510 / 510 / 499** net points for the combined policy, the future-model reference and the one-week/no-chip control. All 27 actions were independently verified. These results do not establish consistent 550+ performance or a protected acceptance of the unlimited current policy.
+
 ## What changed in 0.14
 
 Live Optimize plan and Refresh data searches have no forced solve-time cutoff and target zero MIP gap, with progress and cooperative cancellation. Explicit finite research budgets remain available for reproducible comparisons. Exact search still optimizes an additive forecast objective, not unknowable future football outcomes.

@@ -889,7 +889,7 @@ def replay_composed(end_event: int = 9, worlds: int = 4000, seconds: float = 60)
     store = Store()
     with replay_lock(store.root / "pipeline-replay.lock"):
         result = run_composed(store, end_event=end_event, worlds=worlds, seconds=seconds)
-    show({k: v for k, v in result.items() if k != "weeks"})
+    show({k: v for k, v in result.items() if k not in ("weeks", "decisions")})
 
 
 @app.command("validate-future-policy")

@@ -87,3 +87,39 @@ An independent descriptive check of the retained role-v3 predictions found regul
 The frozen GW6 registry and earlier completed histories agree: Fernandes' five returns were 2, 23, 2, 2, 2; Haaland's were 2, 13, 9, 9, 6. Fernandes' published form was 2.0 and season PPG 6.2; Haaland's were 7.5 and 7.8. The normal served composition, using only pre-deadline inputs, estimated 6.69942 versus 5.90306 immediate points. That identifies a forecast disagreement rather than a captain-selector defect. The historical mean contains the outlier, but it is not a causal explanation of every nonlinear-tree contribution. Rejected recent-form experiments already consume shorter windows; changing the head merely to fit this player or the inspected nine-week result would bypass acceptance.
 
 Public replay downloads include the actual sealed action bodies and player-name mappings, not just local build-machine paths. The dashboard omits those larger bodies while its download retains them. Uncertainty resamples contiguous three-week blocks because continuous accounts are coupled across deadlines; intervals from a short inspected reconstruction remain exploratory, not a claim of future superiority.
+
+### Completed combined-model continuous replay
+
+This new reconstruction starts all three policies from the same £100m GW1 account. Each deadline uses pinned registries and strictly earlier fitted/calibrated heads. The current combined family includes role-v3, conditional points and the future-fixture expert; the reference omits only the role head. The simpler control plans one week with the same immediate forecast and no chips. Account prices, selling lots, bank, free transfers, actual autosubs/captaincy and hits carry forward. The actual user account is never substituted for this seed.
+
+| GW | Combined net | Future reference net | One-week / no chips net |
+|---|---:|---:|---:|
+| 1 | 41 | 41 | 48 |
+| 2 | 94 | 93 | 84 |
+| 3 | 36 | 36 | 50 |
+| 4 | 61 | 61 | 71 |
+| 5 | 53 | 53 | 56 |
+| 6 | 30 | 29 | 41 |
+| 7 | 49 | 49 | 54 |
+| 8 | 86 | 86 | 46 |
+| 9 | 60 | 62 | 49 |
+| **Total** | **510** | **510** | **499** |
+
+All 27 actions passed independent scoring, continuity, cutoff and model-checksum verification. These runs incurred no hits and retained their chips through GW9. The main policy planned through the first-half chip window, not just the scored nine weeks. All policies used seed 11 and 4,000 worlds; primary research MIPs used 60 seconds, with the existing production selection controls allowed their separate 60–300-second comparisons. This is not equal total CPU time and does not certify the unlimited live solve. Full-window continuation leaves value beyond the scored interval.
+
+The combined-minus-reference weekly-difference exploratory three-week block interval is [-0.55556, 0.33333]. The forecasts were not retuned on these results. The tie does not invalidate the role head's earlier forecast-calibration gains, but it does not establish a continuous-policy points gain. Consistent 550+ points, prospective rank superiority, and a globally optimal strategy under unknown outcomes remain unproven. The earlier 575 fresh-team and 1,202 older-policy scorecards retain their different protocols. [Executed results and actual frozen actions](../artifacts/evaluations/composed_policy_replay.json).
+
+The official account refresh independently synchronized the revealed GW10 transfers and advanced planning to GW11. The expired GW10 proposal cannot be executed as current advice. Retraining on partial GW10 labels was not performed; finalized outcomes through GW9 remain the accepted fit/calibration boundary. Ordinary retraining after new finalized outcomes remains automatic.
+
+
+## Production readiness · 0.14.1
+
+The final local release checks actually passed: Ruff, formatting, mypy, **272 backend tests**, frontend build, **3 frontend tests** and **22 desktop/mobile browser journeys**, with no skipped tests or browser failures. Browser checks use a consistent isolated historical planning fixture and pinned test clock; they do not submit real FPL transfers or establish prospective performance. A separate API smoke check used an existing database with no combined-replay object and successfully served all nine bundled decisions and 27 actions while keeping the dashboard response compact.
+
+Windows and Linux CI passed, including the Windows PowerShell launcher and compressed-database smoke path. The numerical replay itself ran on Linux CPU. The installer was also exercised over exact v0.14 files against a copy of the actual 1.07 GB database: account, market, forecast, selected-plan and numerical-model IDs were preserved; all seven accepted base/role/future weight files retained their checksums and loaded through the installed code. A sandbox private key file was preserved; real API keys were not copied. Backup/rollback and failure-path regressions are included in the backend suite.
+
+The release is verified as a local application with the confirmed ingestion, evidence, update and UI gaps addressed. The original 178-item register remains preserved; its scientific limitations are not relabelled as fixed bugs. The delivery record extends it with the current reproductions, studies and evidence: [release and issue ledger](../artifacts/evaluations/release_0_14_1.json).
+
+Accepted numerical weights remain unchanged because neither new scoring candidate passed. The combined nine-week continuous strategy is now measured, with its exact limits stated above. It has no proven 550+ consistency, protected prospective rank advantage, or guarantee of globally optimal future outcomes. Unlimited live search still solves an additive forecast approximation; the bounded reconstruction does not certify that entire live policy. Understat remains externally unavailable during the source probe, and unresolved joins remain quarantined. These are explicit evidence limits, rather than silent fabricated data or unfinished production branches.
+
+Existing-install updates preserve private accounts, keys and accepted models. The user should recompute from fresh data after the elapsed deadline; expired GW10 suggestions remain invalid. New finalized outcomes trigger the existing chronological refit process. No retraining was performed using unfinished GW10 targets. Obsolete UI/test scratch was removed; raw sources, backups, accepted weights and sealed research decisions were retained.
