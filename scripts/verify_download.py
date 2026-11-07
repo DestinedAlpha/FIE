@@ -103,7 +103,13 @@ def verify(archive: Path, *, reuse_verified_data=False):
                     target.parent.mkdir(parents=True, exist_ok=True)
                     body = zipped.read(entry)
                     retained = source / relative
-                    if reuse_verified_data and retained.is_file():
+                    immutable = len(relative.parts) > 2 and relative.parts[1] in {
+                        "raw",
+                        "models",
+                        "features",
+                        "normalized",
+                    }
+                    if reuse_verified_data and immutable and retained.is_file():
                         if hashlib.sha256(body).digest() != hashlib.sha256(retained.read_bytes()).digest():
                             raise ValueError("Downloaded immutable data differs: " + str(relative))
                         target.hardlink_to(retained)
