@@ -6,6 +6,12 @@ The six supplied documents remain byte-for-byte unchanged in [`research/`](resea
 
 **Current acceptance status:** the role-v3 configuration scores **575** in independent weekly £100m teams. Historical future-expert validation scored **1,202 versus 1,098** in an earlier-season 19-week continuous replay and **538 versus 536** over GW1–9 under its earlier protocol. These different account problems do not certify the complete current policy. **Consistent 550+ continuous-account performance is not established.** See the [data/forecast audit](docs/data-and-forecast-audit.md) and [performance audit](docs/performance-audit.md).
 
+## What changed in 0.14.2
+
+Completed transactional refreshes, optional-source fallback, workload migration/cadence, full forecast-to-world checks, companion lineage, atomic model publication, grounded hosted extraction, current rival comparisons and cancellable Windows startup. Added identity/fixture/cutoff-matched FiveStat comparisons. Accepted numerical models remain preserved; the new minutes-balancing candidate failed its captaincy gate and was rejected.
+
+Verification includes 312 backend tests, 24 desktop/mobile browser journeys, Windows/Linux CI, fresh model training, an optimal unrestricted one-week solve, real long-search cancellation and installation/backup recovery against the real database. The original 189 findings and 13 new issues have [evidence-backed dispositions](artifacts/evaluations/release_0_14_2.json). [Full completion report, numerical checks and installation instructions](docs/completion-0.14.2.md). [Download the existing-installation update](https://github.com/DestinedAlpha/FIE/releases/download/v0.14.2/FPL-Intelligence-0.14.2-Update.zip).
+
 ## What changed in 0.14.1
 
 Shot ingestion now diagnoses HTML error pages, validates provider schemas before caching, and preserves verified observations across partial refreshes. Hosted evidence has independent availability-polarity and training-status guards; upgrades also revalidate old cached claims. The real-news extraction benchmark supplements the earlier synthetic examples without turning language-model opinions into point adjustments.

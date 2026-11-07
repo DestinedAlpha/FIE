@@ -1,0 +1,68 @@
+{
+  "at": "2026-11-07T14:31:29.704071+00:00",
+  "hypothesis": "Reconcile club minute mass without forcing specific players or reviving known absences",
+  "feature_id": "030471ddd575748f5d10fec92e1572c167fb0b6956c5f6a4f92bf797b9741bc7",
+  "role_model_id": "b8f450cbb361f942605b643d75acb962fb49c278a6730a40960a8dbb8c476c68",
+  "selected_weight": 0.5,
+  "metrics": {
+    "acceptance_2024": {
+      "rows": 14492,
+      "delta_95ci": {
+        "brier": [
+          -0.002138757398998669,
+          -0.0016547858579333149
+        ],
+        "points_squared": [
+          -0.02099435719162703,
+          -0.007911559984133648
+        ]
+      },
+      "reference": {
+        "brier": 0.2987041690893578,
+        "points_squared": 3.3107785303048067,
+        "regular_points_squared": 8.470838491424322,
+        "premium_points_squared": 15.009710352090515,
+        "captain_points": 129.0
+      },
+      "candidate": {
+        "brier": 0.2968068795141914,
+        "points_squared": 3.296360134439853,
+        "regular_points_squared": 8.45215914875583,
+        "premium_points_squared": 14.942627929028491,
+        "captain_points": 124.0
+      }
+    },
+    "replication_2025": {
+      "rows": 29644,
+      "delta_95ci": {
+        "brier": [
+          -0.0027786687522855843,
+          -0.00159140303081687
+        ],
+        "points_squared": [
+          -0.019663554642988648,
+          -0.009431231584063365
+        ]
+      },
+      "reference": {
+        "brier": 0.2784391935457252,
+        "points_squared": 3.54445913162904,
+        "regular_points_squared": 8.732937339527753,
+        "premium_points_squared": 13.656243409618972,
+        "captain_points": 262.0
+      },
+      "candidate": {
+        "brier": 0.27635239831114844,
+        "points_squared": 3.530263247447133,
+        "regular_points_squared": 8.72374149284742,
+        "premium_points_squared": 13.565330059005746,
+        "captain_points": 260.0
+      }
+    }
+  },
+  "forecast_gate_passed": false,
+  "promoted": false,
+  "production_unchanged": true,
+  "scope": "Earlier-season chronological reconstruction, selection 2024 GW1\u201319; acceptance GW20\u201338; 2025 replication. Inspected archives, not untouched evidence. Any promotion additionally requires matched continuous-policy acceptance.",
+  "id": "8a09552af71b44dc1c318730735740073cf8acc91836ccf98412eca4230709ae"
+}

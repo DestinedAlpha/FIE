@@ -22,7 +22,7 @@ from fpl_intelligence.simulation import score_plan
 from fpl_intelligence.storage import Store, atomic_json, now
 
 
-def verify(archive: Path):
+def verify(archive: Path, *, reuse_verified_data=False):
     source = Path(__file__).resolve().parents[1]
     original = Store(source / "data")
     plan = original.get("plan", original.get("selected_plan")["plan_id"])
@@ -101,7 +101,14 @@ def verify(archive: Path):
                 if not entry.is_dir():
                     target = root / relative
                     target.parent.mkdir(parents=True, exist_ok=True)
-                    target.write_bytes(zipped.read(entry))
+                    body = zipped.read(entry)
+                    retained = source / relative
+                    if reuse_verified_data and retained.is_file():
+                        if hashlib.sha256(body).digest() != hashlib.sha256(retained.read_bytes()).digest():
+                            raise ValueError("Downloaded immutable data differs: " + str(relative))
+                        target.hardlink_to(retained)
+                    else:
+                        target.write_bytes(body)
         unpack_database(root / "data", root / "data/state.sqlite")
         if secrets:
             overlap, tail = max(map(len, secrets)) - 1, b""
@@ -156,7 +163,13 @@ def verify(archive: Path):
         target.write_bytes(zipped.read(prefix + "data/scenarios/" + scenario))
         if target.suffix == ".json":
             world_manifest = json.loads(target.read_text())
-            for item in {v["path"]: v for v in world_manifest["arrays"].values()}.values():
+            used_events = {str(row["event"]) for row in plan["ledger"]}
+            needed = {
+                v["path"]: v
+                for key, v in world_manifest["arrays"].items()
+                if key.rsplit("_", 1)[-1] in used_events
+            }
+            for item in needed.values():
                 name = Path(item["path"]).name
                 (target.parent / name).write_bytes(zipped.read(prefix + "data/scenarios/" + name))
         expected = score_plan(original, plan, forecast)
@@ -179,6 +192,7 @@ def verify(archive: Path):
             "archive": str(archive),
             "bytes": archive.stat().st_size,
             "crc": "passed",
+            "immutable_data_recovery": "byte-verified hardlinks" if reuse_verified_data else "ZIP extraction",
             "application_files": len(files),
             "model_files": model_count,
             "database": "ok",
@@ -190,7 +204,7 @@ def verify(archive: Path):
             "account_ids": expected_ids,
             "plan_id": plan["id"],
         }
-    release = ".".join(version("fpl-intelligence").split(".")[:2])
+    release = version("fpl-intelligence")
     atomic_json(runtime / f"handoff-{release}-verification.json", result)
     print(json.dumps(result))
     return result
@@ -199,5 +213,10 @@ def verify(archive: Path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("archive", type=Path)
+    parser.add_argument(
+        "--reuse-verified-data",
+        action="store_true",
+        help="Use byte-verified immutable hardlinks when disk space is limited; SQLite and active worlds are still restored from the ZIP",
+    )
     arguments = parser.parse_args()
-    verify(arguments.archive)
+    verify(arguments.archive, reuse_verified_data=arguments.reuse_verified_data)
