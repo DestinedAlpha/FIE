@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import polars as pl
@@ -108,13 +109,13 @@ def validate(store):
             print("Team-minute constraint", block[0], "through", block[-1], flush=True)
     selection = [r for r in rows if r["season"] == "2024/25" and r["event"] <= 19]
     weight = min((0, 0.25, 0.5, 1), key=lambda w: np.mean([r[str(w)]["points_squared"] for r in selection]))
-    metrics = {}
+    metrics: dict[str, Any] = {}
     passed = weight > 0
     for name, period in [
         ("acceptance_2024", [r for r in rows if r["season"] == "2024/25" and r["event"] > 19]),
         ("replication_2025", [r for r in rows if r["season"] == "2025/26"]),
     ]:
-        result = {
+        result: dict[str, Any] = {
             "rows": len(period),
             "delta_95ci": {k: delta_interval(period, k, weight) for k in ("brier", "points_squared")},
         }
@@ -124,7 +125,7 @@ def validate(store):
                 summary[subset + "_points_squared"] = float(
                     np.mean([r[str(w)]["points_squared"] for r in period if r[subset]])
                 )
-            weekly = defaultdict(dict)
+            weekly: dict[str, dict[int, tuple[float, float]]] = defaultdict(dict)
             for r in period:
                 predicted, actual = weekly[r["group"]].get(r["player_id"], (0, 0))
                 weekly[r["group"]][r["player_id"]] = predicted + r[str(w)]["mean"], actual + r["actual"]

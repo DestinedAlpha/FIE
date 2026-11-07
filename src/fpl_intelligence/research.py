@@ -619,9 +619,21 @@ async def extract_with_fallback(store: Store, source: dict, entities: list[dict]
         selected = store.get("provider_selection")
     except ValueError:
         selected = {}
+    quality = {}
+    if store.list("authentic_extraction_benchmark", 1):
+        report = store.get("authentic_extraction_benchmark")
+        if report.get("kind") == "authentic_labeled_extraction_benchmark" and timedelta(0) <= (
+            datetime.fromisoformat(now()) - datetime.fromisoformat(report["at"])
+        ) < timedelta(days=7):
+            quality = {
+                (row["provider"], row["model"]): row["passed_cases"] / row["total_cases"]
+                for row in report["results"]
+                if row.get("total_cases", 0) > 0
+            }
     for cap in sorted(
         capabilities,
         key=lambda c: (
+            -quality.get((c.provider, c.model), 0),
             0 if (c.provider, c.model) == (selected.get("provider"), selected.get("model")) else 1,
             c.provider != "gemini",
             c.model != "gemini-3.8-flash",
