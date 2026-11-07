@@ -102,8 +102,10 @@ class MIP:
             solver.setOptionValue("log_file", os.environ["FPL_SOLVER_LOG"])
             solver.setOptionValue("output_flag", True)
             solver.setOptionValue("log_to_console", False)
-        solver.setOptionValue("time_limit", seconds)
-        solver.setOptionValue("mip_rel_gap", relative_gap)
+        from .search_control import check_cancelled, configure_solver
+
+        check_cancelled()
+        unlimited = configure_solver(solver, seconds, relative_gap)
         solver.setOptionValue("presolve", "on")
         solver.setOptionValue("random_seed", 11)
         solver.setOptionValue("threads", 2)
@@ -116,12 +118,14 @@ class MIP:
             solution.value_valid = True
             solver.setSolution(solution)
         solver.run()
+        check_cancelled()
         status = solver.modelStatusToString(solver.getModelStatus())
         solution, info = solver.getSolution(), solver.getInfo()
         if not solution.value_valid or info.primal_solution_status != 2:
             raise ValueError(f"Solver produced no feasible incumbent: {status}; increase time limit")
         return np.array(solution.col_value), {
             "status": status,
+            "unlimited": unlimited,
             "objective": info.objective_function_value,
             "best_bound": float(info.mip_dual_bound) if np.isfinite(info.mip_dual_bound) else None,
             "gap": float(info.mip_gap) if np.isfinite(info.mip_gap) else None,
@@ -308,7 +312,7 @@ def optimize(
     state_id: str,
     forecast_id: str,
     end_event: int,
-    time_limit: float = 30,
+    time_limit: float | None = None,
     chips: Mapping[int, str] | None = None,
     max_transfers: int = 15,
     automatic_chips: bool = True,
@@ -323,6 +327,33 @@ def optimize(
     started = time.monotonic()
     if first_week_hit_budget is not None and first_week_hit_budget < 0:
         raise ValueError("Immediate hit budget cannot be negative")
+    if time_limit is None:
+        from .search_control import control, search_session
+
+        if not (control.get() and control.get()[0]):
+            with search_session(
+                unlimited=True,
+                cancel=control.get()[1] if control.get() else None,
+                progress=control.get()[2] if control.get() else None,
+            ):
+                return optimize(
+                    store,
+                    state_id,
+                    forecast_id,
+                    end_event,
+                    30,
+                    chips,
+                    max_transfers,
+                    automatic_chips,
+                    pin_chips,
+                    forced_sell,
+                    disabled_chips,
+                    first_week_hit_budget,
+                    use_decision_critic,
+                    relative_gap,
+                    blocked_chips,
+                )
+        time_limit = 30
     if time_limit <= 0 or not 0 <= max_transfers <= 15:
         raise ValueError("Solve time must be positive and per-event transfers must be between 0 and 15")
     players, market = load_market(store)

@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
 import shutil
 import sqlite3
 import tempfile
 from contextlib import closing
-from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 from fpl_intelligence.database_archive import unpack_database
+from fpl_intelligence.storage import atomic_json
 
 RESEARCH_KINDS = {
     "role_minutes_validation",
@@ -162,7 +164,39 @@ def merge_research(source: Path, target: Path):
     return count
 
 
+def _runtime(target):
+    folder = target / "artifacts/runtime"
+    folder.mkdir(parents=True, exist_ok=True)
+    return folder
+
+
+def restore_transaction(target, backup, journal):
+    for name in journal["files"]:
+        destination = target / name
+        if name in journal["existed"]:
+            shutil.copy2(backup / "app" / name, destination)
+        else:
+            destination.unlink(missing_ok=True)
+        destination.with_name(destination.name + ".fie-update").unlink(missing_ok=True)
+    if (backup / "state.sqlite").exists():
+        with (
+            closing(sqlite3.connect(backup / "state.sqlite")) as original,
+            closing(sqlite3.connect(target / "data/state.sqlite")) as saved,
+        ):
+            original.backup(saved)
+    journal["status"] = "rolled_back"
+    atomic_json(backup / "transaction.json", journal)
+    (target / ".fie-update-in-progress").unlink(missing_ok=True)
+
+
 def install(source: Path, target: Path):
+    from fpl_intelligence.pipeline_jobs import replay_lock
+
+    with replay_lock(_runtime(target.resolve()) / "update.lock"):
+        return _install(source, target)
+
+
+def _install(source: Path, target: Path):
     source, target = source.resolve(), target.resolve()
     if source == target:
         raise ValueError("Extract the update into a separate folder, then select your existing installation")
@@ -175,22 +209,35 @@ def install(source: Path, target: Path):
     for name in manifest:
         relative = Path(name)
         if (
-            relative.is_absolute()
+            not name
+            or not relative.parts
+            or PureWindowsPath(name).drive
+            or "\\" in name
+            or relative.is_absolute()
             or ".." in relative.parts
-            or relative.parts[0] in {"data", ".git", ".venv"}
-            or relative.name.startswith(".env")
+            or relative.parts[0].casefold() in {"data", ".git", ".venv"}
+            or relative.name.casefold().startswith(".env")
         ):
             raise ValueError("Update manifest contains a private or unsafe path")
         if not (source / relative).is_file():
             raise ValueError(f"Missing packaged application file: {name}")
         files.append(relative)
-    backup = (
-        target
-        / "artifacts"
-        / "runtime"
-        / ("before-update-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"))
-    )
-    backup.mkdir(parents=True, exist_ok=True)
+    metadata = json.loads((source / "update-checksums.json").read_text(encoding="utf-8"))
+    hashes = metadata["files"]
+    if set(manifest) != set(hashes) or len(manifest) != len(set(manifest)):
+        raise ValueError("Update manifest/checksum entries disagree")
+    for relative in files:
+        if not (source / relative).resolve().is_relative_to(source) or not (
+            target / relative
+        ).resolve().is_relative_to(target):
+            raise ValueError("Update path escapes its application folder")
+        if hashlib.sha256((source / relative).read_bytes()).hexdigest() != hashes[relative.as_posix()]:
+            raise ValueError(f"Update checksum mismatch: {relative}")
+    for previous in sorted(_runtime(target).glob("before-update-*/transaction.json")):
+        journal = json.loads(previous.read_text())
+        if journal.get("status") == "applying":
+            restore_transaction(target, previous.parent, journal)
+    backup = Path(tempfile.mkdtemp(prefix="before-update-", dir=_runtime(target)))
     database = target / "data" / "state.sqlite"
     if database.exists():
         with (
@@ -198,14 +245,42 @@ def install(source: Path, target: Path):
             closing(sqlite3.connect(backup / "state.sqlite")) as saved,
         ):
             original.backup(saved)
+    existed = []
     for relative in files:
         old = target / relative
         if old.is_file():
+            existed.append(relative.as_posix())
             (backup / "app" / relative).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(old, backup / "app" / relative)
-        old.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source / relative, old)
-    imported = merge_research(source, target)
+    journal = {"files": [p.as_posix() for p in files], "existed": existed, "status": "applying"}
+    atomic_json(backup / "transaction.json", journal)
+    marker = target / ".fie-update-in-progress"
+    marker.write_text(str(backup))
+    try:
+        # Install a small guard before changing any other application file.
+        # A process/power interruption must not launch a mixed application tree.
+        launcher = target / "Start.cmd"
+        if "Start.cmd" in journal["existed"]:
+            guard = b'@if exist "%~dp0.fie-update-in-progress" (echo Interrupted update: re-run Update existing.cmd & exit /b 1)\r\n'
+            staged_launcher = launcher.with_name("Start.cmd.fie-update")
+            staged_launcher.write_bytes(guard + launcher.read_bytes())
+            os.replace(staged_launcher, launcher)
+        for relative in files:
+            old = target / relative
+            old.parent.mkdir(parents=True, exist_ok=True)
+            staged = old.with_name(old.name + ".fie-update")
+            shutil.copy2(source / relative, staged)
+            if hashlib.sha256(staged.read_bytes()).hexdigest() != hashes[relative.as_posix()]:
+                raise ValueError(f"Copied update checksum mismatch: {relative}")
+            os.replace(staged, old)
+        imported = merge_research(source, target)
+    except Exception:
+        restore_transaction(target, backup, journal)
+        raise
+    journal["status"] = "completed"
+    atomic_json(backup / "transaction.json", journal)
+    marker.unlink(missing_ok=True)
+
     return {
         "updated_files": len(files),
         "backup": str(backup),

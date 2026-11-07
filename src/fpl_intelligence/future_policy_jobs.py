@@ -69,7 +69,12 @@ def run_future_suite(store, *, worlds=4000, seconds=60, periods=None):
         "decision_model_id": active["id"],
         "future_horizon_model_id": expert["id"],
         "acceptance_id": accepted["id"],
-        "scope": "Production forecast/optimizer constructor; immediate reference refitted at each deadline and future expert weights frozen before the evaluation season; independent continuous account/scoring checks",
+        "matches_current_model_composition": not bool(active.get("role_minutes_model_id")),
+        "evaluated_role_minutes_model_id": None,
+        "matches_current_search_policy": False,
+        "current_policy_acceptance": False,
+        "active_role_minutes_model_id": active.get("role_minutes_model_id"),
+        "scope": "Historical future-expert composition: immediate reference refitted at each deadline, future expert frozen before the evaluation season. Excludes the later role-minutes head and unlimited-search policy; do not treat this receipt as acceptance of the complete current policy.",
         "summaries": {
             r["season"]: {
                 "candidate_points": r["candidate_points"],

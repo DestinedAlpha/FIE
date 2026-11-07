@@ -56,6 +56,16 @@ EXTRACTION_CASES: list[dict[str, Any]] = [
 ]
 
 
+def extraction_eligible(result):
+    return bool(
+        result.get("success")
+        and result.get("f1", 0) >= 0.9
+        and result.get("status_accuracy") == 1
+        and result.get("supported_spans")
+        and result.get("injection_rejected")
+    )
+
+
 async def benchmark_extraction(store: Store) -> dict:
     players, _ = load_market(store)
     cases = [
@@ -121,7 +131,7 @@ async def benchmark_extraction(store: Store) -> dict:
                     "error": str(error),
                 }
             )
-    eligible = [r for r in results if r.get("success") and r["f1"] >= 0.9 and r["injection_rejected"]]
+    eligible = [r for r in results if extraction_eligible(r)]
     selected = (
         max(eligible, key=lambda r: (r["f1"], r["status_accuracy"], r["model"] == "gemini-3.8-flash"))
         if eligible
@@ -139,6 +149,17 @@ async def benchmark_extraction(store: Store) -> dict:
             "Synthetic claims never enter production evidence or probabilities",
         ],
     }
+    if not selected:
+        store.put(
+            "provider_selection",
+            {
+                "at": now(),
+                "provider": None,
+                "model": None,
+                "accepted": False,
+                "reason": "No extractor passed evidence, identity and status checks",
+            },
+        )
     if selected:
         store.put(
             "provider_selection",

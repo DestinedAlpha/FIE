@@ -490,7 +490,7 @@ def simulate(plan_id: str = ""):
 @app.command()
 def optimize(
     end: int = 19,
-    seconds: float = 60,
+    seconds: float | None = None,
     state_id: str = "",
     forecast_id: str = "",
     chips: str = "auto",
@@ -504,21 +504,27 @@ def optimize(
     state_id = state_id or store.get("state")["id"]
     forecast_id = forecast_id or store.get("forecast")["id"]
     fixed = None if chips == "auto" else {int(k): v for k, v in json.loads(chips).items()}
-    result = run(store, state_id, forecast_id, end, seconds, chips=fixed, max_transfers=max_transfers)
-    hold = hold_plan(store, state_id, forecast_id, end)
-    from .objectives import choose_recommendation
+    from .search_control import search_session
 
-    result, _ = choose_recommendation(store, [result, hold], store.get("forecast", forecast_id))
-    store.put("selected_plan", {"plan_id": result["id"], "at": now()})
-    show(
-        {
-            "plan_id": result["id"],
-            "solver": result["solver"],
-            "simulation": result["simulation"],
-            "hold": hold["simulation"],
-            "execution_ready": result["execution_ready"],
-        }
-    )
+    with search_session(unlimited=seconds is None):
+        result = run(store, state_id, forecast_id, end, seconds, chips=fixed, max_transfers=max_transfers)
+        hold = hold_plan(store, state_id, forecast_id, end)
+        from .objectives import choose_recommendation
+
+        result, _ = choose_recommendation(store, [result, hold], store.get("forecast", forecast_id))
+        from .readiness import selection_is_current
+
+        if selection_is_current(store, result):
+            store.put("selected_plan", {"plan_id": result["id"], "at": now()})
+        show(
+            {
+                "plan_id": result["id"],
+                "solver": result["solver"],
+                "simulation": result["simulation"],
+                "hold": hold["simulation"],
+                "execution_ready": result["execution_ready"],
+            }
+        )
 
 
 @app.command()
@@ -760,9 +766,11 @@ def replay_weekly(worlds: int = 4000, seconds: float = 60, end_event: int = 9, c
 @app.command("refresh-current")
 def refresh_current():
     """Reconcile revealed squad, retrain finalized outcomes and replan the next deadline."""
+    from .search_control import search_session
     from .workflow import refresh_cycle
 
-    show(refresh_cycle(Store()))
+    with search_session(unlimited=True):
+        show(refresh_cycle(Store()))
 
 
 @app.command("benchmark-weekly")

@@ -53,8 +53,16 @@ def start_scheduler(store, launch):
                 store.put(
                     "scheduled_refresh", {"at": now(), "job_id": job["job_id"], "interval_minutes": interval}
                 )
-            except ValueError as error:
-                store.put("scheduler_issue", {"at": now(), "reason": str(error)[:240]})
+            except Exception as error:
+                from .settings import redact
+
+                try:
+                    store.put("scheduler_issue", {"at": now(), "reason": redact(error)[:240]})
+                except Exception:
+                    # A failed diagnostic write must not terminate future refreshes.
+                    import logging
+
+                    logging.getLogger(__name__).warning("Scheduler diagnostic could not be saved")
 
     thread = threading.Thread(target=run, name="fpl-refresh-cadence", daemon=True)
     thread.start()

@@ -242,6 +242,11 @@ def test_update_keeps_existing_account_and_credentials(tmp_path):
         db.execute("INSERT INTO account VALUES(3)")
     (source / "app-files.json").write_text(json.dumps(["app.py"]))
     (source / "app.py").write_text("new implementation")
+    import hashlib
+
+    (source / "update-checksums.json").write_text(
+        json.dumps({"files": {"app.py": hashlib.sha256((source / "app.py").read_bytes()).hexdigest()}})
+    )
     (target / "app.py").write_text("old implementation")
     result = install(source, target)
     assert (target / "app.py").read_text() == "new implementation"

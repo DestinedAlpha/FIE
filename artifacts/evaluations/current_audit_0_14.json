@@ -1,0 +1,2430 @@
+{
+  "at": "2026-11-07T02:31:21.238084+00:00",
+  "register_filename": "FIE_Current_Audit.txt",
+  "register_sha256": "fa03817f74e57c4bafb6445c8cece99875932f5221cf552ea3e31c6dd048a730",
+  "baseline_revision": "05aac2836130a35941416c23484183fd603d3782",
+  "issue_count": 178,
+  "scope": "178-item source/artifact triage with targeted reproduction for confirmed engineering defects. This is not 178 independent statistical experiments. Open empirical questions are not certified as solved.",
+  "active_decision_model_id_unchanged": "13612366d8d406fa2c9c528b647d322930a42231865a0263a44a1f3e77dfb842",
+  "forecaster_replaced": false,
+  "raw_data_audit": {
+    "at": "2026-11-07T02:07:19.562616+00:00",
+    "counts": {
+      "duplicate_rows": 10,
+      "rows": 113270,
+      "conflicting_duplicates": 0
+    },
+    "conflict_examples": []
+  },
+  "canonical_compatibility": {
+    "at": "2026-11-07T02:14:01.833989+00:00",
+    "old_rows": 119150,
+    "new_rows": 119150,
+    "rows_identical": true,
+    "metadata_identical": true,
+    "old_quality": {
+      "unknown_start_labels": 8491
+    },
+    "new_quality": {
+      "unknown_start_labels": 8491
+    }
+  },
+  "referenced_file_sha256": {
+    "apps/web/src/main.tsx": "07ad9b4980cc614008b490f3424c6a170e60823fd79922cf636a0b6cac020fec",
+    "artifacts/evaluations/attack_channels.json": "12bc2af92c4d513cc8799b22267cd7597c9c5d4769a2d437556e7670676694c4",
+    "artifacts/evaluations/coherent_model.json": "3ede06abdc3cb2df55eb3b1a3cd1c3c4cd1c0801f5f279278263092ee010f50b",
+    "artifacts/evaluations/context_ablation.json": "94b7eac116b876c4bb282ad860c9ff18468d89cbe3e50fbffb5b9933b7be8311",
+    "artifacts/evaluations/decision_critic.json": "f7b03757d8173a2b8ca0557f8a890c6616e7673f3f39390cd5fc00338ed3d15f",
+    "artifacts/evaluations/decision_model.json": "3533ba540a22df1f02379120209943b13a2043f760cf085bd14d89b062b8d78a",
+    "artifacts/evaluations/decision_uncertainty.json": "abf321c958c1e4f200c2b904f672dea7d03041c514ab2984067230511d60288f",
+    "artifacts/evaluations/fusion_policy_network.json": "c96c3182448bb4501ac646a0d2ba0f04e789478711b709db068587748075fdd3",
+    "artifacts/evaluations/fusion_policy_tree.json": "7be7b9f98b1827845065f79da62332317bda6a75467fde31097eef891664e412",
+    "artifacts/evaluations/fusion_review.json": "74b5f551a61cebb86d515abb0e1c47a823eb4c0f97dee0182b981e81f97a2566",
+    "artifacts/evaluations/future-horizon-refinement.json": "d91e6292018cdbb9cddc51ef8f1c23f61d6fd6e83beb76ba811c027706bde463",
+    "artifacts/evaluations/future-policy-replay.json": "e417310c552a2e3692fda427c4addfe77f5e5ba2075a712b872a5ea60820f871",
+    "artifacts/evaluations/gw10-user-options.json": "d22fb35e8af13b7e12a443ff55051a1f44845dd7037fc4c4a9e3164aa6d56b72",
+    "artifacts/evaluations/hosted_extraction.json": "61f2e4e2eeb9513b7944955ea4b342ede8627a0ee760a72d87ecaf2eff26cc5d",
+    "artifacts/evaluations/intelligence_coverage.json": "32cefdd4637a8257f66d717358641ed9b7a5a5eec1cc33471cf30a9561275a01",
+    "artifacts/evaluations/market_model.json": "82a5cd16305356cfcfd8c7aeffdb4683470932a4f7734e63ac2813e6044e038d",
+    "artifacts/evaluations/odds_coverage.json": "4961d93a599db9be92dbc29ff9692fbd72b5348ef42a02a6d8cfbcd85751bc80",
+    "artifacts/evaluations/release_0_13.json": "b564629e11c486e83a21704d1086c8a9e1d569ea17249745de01e4fc3bea2bdb",
+    "artifacts/evaluations/score_process.json": "f3d0754899db8e95ce5ba3fdf42ad67c57445993f953a3f3093e8740238225ed",
+    "artifacts/evaluations/top_manager_coverage.json": "89d50274a68daa569fe316081171453b9fdab0a80eadd00f6b6ce2e275c0fd21",
+    "artifacts/evaluations/transfer_policy_model.json": "7bec9f1180da696fabd8c6141b0c2c671dcf96ce3c2fbdd5b6a21181e82d17ba",
+    "configs/rules-2026-27.json": "8233de2c52136de441b99a1ed576a77931db1b04e056e097df8d114364842eb8",
+    "configs/source_registry.json": "401b519642c3b6860ac6cfddcc4188a986d44cf88573cac7da2021ff1de8fb59",
+    "docs/data-and-forecast-audit.md": "801e82251e36a6273b85a58d8fb40b951d467f5360162888cf31bcfcf4e86ca6",
+    "docs/football-models.md": "f83bcaaa41a031f233e6fd7cdf0472c903a1943025a3a5c000b96542be9277ea",
+    "docs/gw1-9-and-gw10-review.md": "ab83192c8fb5035f2e76acf03f6ba1297da5c23ec8f0027a6e20dfe250b26dc3",
+    "docs/methodology.md": "ce94eb318a14b70b58959462a98a01586e327965822090e48362b1decd3687ed",
+    "docs/model-card.md": "7e82c55d622ba57facbba3046248471821a57be3b849e5128ea730c5424c7701",
+    "docs/operations.md": "910ef0a43fd845a2f0a2c3db0ab27c16c9ac1f91f775e6528119ea62c741582c",
+    "docs/performance-audit.md": "d39bff83d88df3dc620ad6f8405a045596a868814a39846bba84a79e2e605143",
+    "docs/research-review-2026-11-06.md": "113f2071652eae017921deea2e5adc928114e1dfdf07fd5b7a2b08d9e0ccfbaa",
+    "schemas/optimize.schema.json": "303d1c4a6bea18d94ddf71a28a7457a08896ae34289dc4b1cdf555f8b19cf5b7",
+    "scripts/install_update.py": "8a92df496345f82155d81685ab7f57770dc3aa7a5cf0e19a7db43492009c4391",
+    "scripts/prepare_update.py": "6e5a681cb3e5bad43b99606ce74b536a7d2e689f6bfe8fd48bb90e9cb449cf0f",
+    "scripts/run_checks.py": "09ece25f23ed7c4635ac47935d216a3284f876548f19464e07f87b4907756e4a",
+    "scripts/start.ps1": "f290841b49bd8f03707e7fdf5d84e2cad2fb2c4b5de77f2fed9d4e8ec1e2e909",
+    "scripts/update.ps1": "49d8e1abaa84522a03ed0702014600543c69dd39418b27e3806d1a5bec3b926f",
+    "scripts/verify_update.py": "db31e2f672edc576b2e8df1624d7e991bace88374058f5efd16e2485fde8bb7b",
+    "src/fpl_intelligence/api.py": "287c8ff9ef73face85f75f45ab9b8f3d3bc6d2a85d4d2f82b403657b7add9511",
+    "src/fpl_intelligence/attack.py": "aadd0c4a8772b5c33d39ae920fd9d735d7ee820f740811ac878c613aa13d3b5a",
+    "src/fpl_intelligence/availability.py": "e3ccd5d334c6679cf46e4b338bcb0ce98a8a1907110e19a38ac4badfb7f95349",
+    "src/fpl_intelligence/consensus.py": "6e55c64b6b57dc965131d9381e5dd6c9ef07c29d67c0a42a76db7129e88b60a8",
+    "src/fpl_intelligence/context.py": "9341c4d8aacf0ac641beb180ab55d9b94620e67d033814152df7396419d4ab7e",
+    "src/fpl_intelligence/decision.py": "6b4c2ea74e2c95babae9ba578f9c97a5d3012a4f9556c55e0e98661c25c15a05",
+    "src/fpl_intelligence/decision_training.py": "1e747921fbd833b46518b64d440527197bda766f1365c03663f57267ed0053e5",
+    "src/fpl_intelligence/domain.py": "d6314ddb0ddb522ca116463619f4763fd281aedc5926f0c77a926d66859383a1",
+    "src/fpl_intelligence/features.py": "21ee2e5ac4efef383aa0ac90124c4de5b56d000a1bf68be3f2100c6a266da2f4",
+    "src/fpl_intelligence/fixture_horizon.py": "0fc77d5b8d26c2d9889770f51c9c713027f725aff8a33d1d81293956de54b780",
+    "src/fpl_intelligence/intelligence.py": "33687080090a70a3735f2163cc5f365be06a4edafa5ae63f6deaaf9f46c2f1e2",
+    "src/fpl_intelligence/market_model.py": "057074b0064bbd9f851c2f7b8568743fb3a9d4bf2b872a42200c5d9740543212",
+    "src/fpl_intelligence/model_usage.py": "3210127b1542c54ad57a01e75013e9e9d0855d65df047b217a77a102f282b3b0",
+    "src/fpl_intelligence/objectives.py": "9d26486d901f7107a01c85d1b222451073c7a0ab20eb36331c16c76b524a4ad7",
+    "src/fpl_intelligence/odds.py": "ba2e2bfb46552ee9c23c0ee1d24e4ed157bc3cd0218c13b2239bb2bc87a7f3aa",
+    "src/fpl_intelligence/optimization.py": "7807db0f2ed4cc206bf4cca8fc39367049eaf299a0be149aad1734bab68b990d",
+    "src/fpl_intelligence/providers.py": "b1e015bbecd1e29214c22fdcad94de450a277b073881490ebe27803ff2bb2a5f",
+    "src/fpl_intelligence/research.py": "63eecc294dee67490bb5d270023aa1206b79589669eb1cad21c441c78d2bbcdb",
+    "src/fpl_intelligence/role_minutes.py": "7f380ceab149721b27608ec544e0a48a64911a529225b908bbe7ace640b980bc",
+    "src/fpl_intelligence/rules.py": "90d71d8d5426277b286fd2a48fd58f23309c99dc39237c5bb434cdf2b8ac3124",
+    "src/fpl_intelligence/scheduling.py": "35516903c8218995398e9babd2774bfd59cee30aec16c99c4a4ce4df824788c6",
+    "src/fpl_intelligence/simulation.py": "1433800087513983a7e29df4ac1816af8b8e7c75b6add5d47d49959a65de7b4a",
+    "src/fpl_intelligence/workflow.py": "374b89c41eb451022f49d8f5b3b14e6bc0d1ac6869031205dc70625b27c5df5d",
+    "tests/test_advanced.py": "a6669cc611e02e8fbca6065c0d49874facc7dc909d364b8477dd5b589e5cad8e"
+  },
+  "verdict_counts": {
+    "UNCONFIRMED_HYPOTHESIS_OR_MISSING_VALIDATION": 9,
+    "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF": 110,
+    "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION": 31,
+    "ALREADY_REPAIRED_IN_V013_SCOPE_LIMIT_REMAINS": 2,
+    "CONTRACT_CORRECTED": 2,
+    "LINEAGE_REPORT_CORRECTED": 3,
+    "LIVE_SEARCH_CONFIGURATION_CHANGED": 2,
+    "REPRODUCED_DEFECT_FIXED": 5,
+    "REPRODUCED_FAILURE_PATH_MITIGATED": 4,
+    "REPRODUCED_VERSION_BOUNDARY_FIXED": 3,
+    "CURRENT_EVIDENCE_EXTENDED_WITH_SCOPE_LIMITS": 2,
+    "REPRODUCED_EDGE_CASE_FIXED": 2,
+    "READINESS_CONTRACT_CORRECTED": 1,
+    "CURRENT_EXTRACTION_EVIDENCE_EXTENDED": 2
+  },
+  "items": [
+    {
+      "issue": 1,
+      "title": "FULL CURRENT SYSTEM NOT YET VALIDATED END TO END",
+      "verdict": "UNCONFIRMED_HYPOTHESIS_OR_MISSING_VALIDATION",
+      "review_level": "review only; not individually dynamically reproduced",
+      "evidence_and_action": "The complete current unlimited-search policy has no protected continuous-account performance acceptance. Existing component tests are not substituted for that missing study.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 2,
+      "title": "NO COMPLETED PROSPECTIVE COMPETITIVE EVALUATION",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "Prospective finalized observations cannot be invented. Capture and finalized-only scoring already exist; historical receipts are separate evidence.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 3,
+      "title": "CURRENT-SEASON CONTINUOUS-ACCOUNT ADVANTAGE IS UNCONVINCING",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 4,
+      "title": "COMPLEX MULTIWEEK PLANNING HAS UNDERPERFORMED A SIMPLER CONTROL",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 5,
+      "title": "INDEPENDENT WEEKLY-TEAM RESULTS DO NOT MEASURE A PERSISTENT ACCOUNT",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 6,
+      "title": "RETROSPECTIVE DATA AVAILABILITY IS NOT FULLY PROVEN",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 7,
+      "title": "MAIN OPTIMIZER DID NOT PROVE OPTIMALITY",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The recorded v0.13 6.66% gap remains a truthful historical result. New live defaults remove forced termination, not forecast error or the additive/exact-scoring distinction.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 8,
+      "title": "NO-HIT SEARCH UNCERTAINTY CAN EXCEED APPARENT TRANSFER BENEFITS",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 9,
+      "title": "CHIP-TIMING ADVANTAGES ARE NOT RESOLVED",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 10,
+      "title": "THE RECOMMENDED PLAN CAN DIFFER FROM THE HIGHEST SIMULATED-EV PLAN",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "Expected-points selection intentionally applies separate hit/chip evidence vetoes; it is not unconditional maximum simulated EV. Risk sacrifice and confidence vetoes are different controls.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 11,
+      "title": "SOLVER BOUNDS DO NOT CERTIFY EXACT SIMULATED FPL VALUE",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 12,
+      "title": "FORECAST SOURCES SHOW MATERIAL DISAGREEMENT FOR ACTIONABLE PLAYERS",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 13,
+      "title": "JOINT OUTCOME AND RIVAL PROBABILITIES ARE NOT FULLY VALIDATED",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 14,
+      "title": "PREDICTION INTERVALS ARE CONSERVATIVE IN THE RECORDED TEST",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 15,
+      "title": "SIMULATION PRECISION IS NOT THE SAME AS FORECAST ACCURACY",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 16,
+      "title": "CURRENT PARTICIPATION GAINS ARE REAL BUT MODEST IN POINT ERROR",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 17,
+      "title": "DECISION CRITIC FAILED ITS PROMOTION STANDARD",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 18,
+      "title": "LEARNED CONTINUATION VALUE FAILED ITS POLICY GATE",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 19,
+      "title": "LONG-HORIZON ECONOMICS DEPEND ON ASSUMPTIONS",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 20,
+      "title": "EXTERNAL DATA COVERAGE REMAINS INCOMPLETE",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 21,
+      "title": "MANAGER AND POPULATION REFERENCE GROUPS HAVE LIMITATIONS",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 22,
+      "title": "HISTORICAL PERFORMANCE EVIDENCE IS NOT UNIFORM ACROSS MODEL FAMILIES",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 23,
+      "title": "PHYSICAL MATCH-EVENT SIMULATION IS NOT THE ACTIVE FORECAST ENGINE",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 24,
+      "title": "ENGINEERING TEST PASSES ARE NOT FOOTBALL-PERFORMANCE CERTIFICATION",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 25,
+      "title": "REGISTERED SOURCES ARE NOT THE SAME AS VERIFIED LIVE CONSUMERS [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 26,
+      "title": "LATEST SOURCE FRESHNESS MAY VARY ACROSS THE FORECAST [REVIEW REQUIRED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 27,
+      "title": "RETROSPECTIVE WORKLOAD COVERAGE IS LOW [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 28,
+      "title": "OTHER-COMPETITION MATCH RECORDS WERE SUBSTANTIALLY REJECTED [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 29,
+      "title": "UNDERSTAT PLAYER/MATCH LINKAGE IS INCOMPLETE [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 30,
+      "title": "UNDERSTAT REFRESH FAILED IN THE RECORDED FIVE-SEASON ATTEMPTS [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 31,
+      "title": "PRE-DEADLINE AVAILABILITY OF THIRD-PARTY FACTS IS PARTLY RECONSTRUCTED [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 32,
+      "title": "PRE-DEADLINE BOOTSTRAP RECONSTRUCTION HAS LIMITED CROSS-WEEK PARITY EVIDENCE [DOCUMENTED]",
+      "verdict": "ALREADY_REPAIRED_IN_V013_SCOPE_LIMIT_REMAINS",
+      "review_level": "review only; not individually dynamically reproduced",
+      "evidence_and_action": "The 669-row/57-input zero-difference receipt exists. Limited cross-week scope remains a limitation, not a newly reproduced parity failure.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 33,
+      "title": "SOME ORIGINAL LOCAL NEWS/CONTEXT PACKETS WERE INCOMPLETE [DOCUMENTED]",
+      "verdict": "ALREADY_REPAIRED_IN_V013_SCOPE_LIMIT_REMAINS",
+      "review_level": "review only; not individually dynamically reproduced",
+      "evidence_and_action": "Already repaired in v0.13 using actually retained pre-deadline bootstraps. No later season totals are borrowed.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 34,
+      "title": "PREVIOUSLY RETIRED MODELS AND NEW TRANSFORMS HAVE DIFFERENT LINEAGE [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 35,
+      "title": "HISTORICALLY QUALIFIED MANAGER FEATURES ARE SPARSE [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 36,
+      "title": "CURRENT TOP-1,000 COHORT IS CONDITIONED ON CURRENT SUCCESS [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 37,
+      "title": "TOP-MANAGER BEHAVIOR IS TESTED ON A SHORT HELD-OUT PERIOD [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 38,
+      "title": "RANK POPULATION INFERENCE HAS SMALL STRATUM SAMPLES [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 39,
+      "title": "SOURCE COVERAGE MAY NOT BE REPRESENTATIVE OF DIFFICULT CASES [POTENTIAL ISSUE]",
+      "verdict": "UNCONFIRMED_HYPOTHESIS_OR_MISSING_VALIDATION",
+      "review_level": "review only; not individually dynamically reproduced",
+      "evidence_and_action": "No material current failure has been independently demonstrated. This remains an empirical question, not an accomplished improvement or a mandate to change accepted weights.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 40,
+      "title": "PUBLIC MANAGER RECORDS CANNOT CONFIRM PRIVATE CURRENT ACCOUNT CHANGES [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 41,
+      "title": "EXTERNAL PROJECTION COVERAGE IS NOT ESTABLISHED FOR FULL-MARKET LONG HORIZONS [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 42,
+      "title": "FREE ODDS INPUTS PROVIDE NO RECORDED COMPATIBLE PREMIER LEAGUE MARKETS [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 43,
+      "title": "SCOUT, COMMUNITY AND LLM EVIDENCE IS NOT A CALIBRATED NUMERICAL FEED [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 44,
+      "title": "THIRD-PARTY RIGHTS, ACCESS, QUOTAS AND CONNECTOR CONTINUITY ARE SOURCE-SPECIFIC [REVIEW REQUIRED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 45,
+      "title": "MULTIPLE SOURCES CAN REPORT NON-EQUIVALENT XG/XA AND ASSIST DEFINITIONS [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 46,
+      "title": "DATED FPL STATISTICS AND RULES DO NOT HAVE UNLIMITED HISTORICAL COMPARABILITY [POTENTIAL ISSUE]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 47,
+      "title": "NEWS COMPLETENESS IS NOT EQUAL TO ARCHIVED-NEWS FEATURE COMPLETENESS [REVIEW REQUIRED]",
+      "verdict": "UNCONFIRMED_HYPOTHESIS_OR_MISSING_VALIDATION",
+      "review_level": "review only; not individually dynamically reproduced",
+      "evidence_and_action": "No material current failure has been independently demonstrated. This remains an empirical question, not an accomplished improvement or a mandate to change accepted weights.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 48,
+      "title": "HISTORICAL START STATUS CAN BE INFERRED INCONSISTENTLY WHEN STARTS ARE MISSING [CODE-LEVEL ISSUE TO VERIFY]",
+      "verdict": "UNCONFIRMED_HYPOTHESIS_OR_MISSING_VALIDATION",
+      "review_level": "review only; not individually dynamically reproduced",
+      "evidence_and_action": "The inferred-start feature and observed-only starter-duration evidence are historical heuristics. Changing accepted train/serve transforms requires refit/gates; current canonical hashes are unchanged.",
+      "register_citations": [
+        "src/fpl_intelligence/features.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 49,
+      "title": "COHORT MEMBERSHIP OVERLAP AND EFFECTIVE SAMPLE SIZE ARE NOT ESTABLISHED [REVIEW REQUIRED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "artifacts/evaluations/top_manager_coverage.json"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 50,
+      "title": "SOURCE-ABLATION GAINS MAY NOT GENERALIZE TO THE CURRENT MODEL COMPOSITION [EVIDENCE LIMITATION]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "artifacts/evaluations/context_ablation.json"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 51,
+      "title": "THE CURRENT IMMEDIATE SCORING HEAD HAS A NARROWER FEATURE CONTRACT [POTENTIAL ISSUE]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 52,
+      "title": "FULL PLAYER-LEVEL BURSTINESS AND STREAK CALIBRATION IS NOT DEMONSTRATED [POTENTIAL ISSUE]",
+      "verdict": "UNCONFIRMED_HYPOTHESIS_OR_MISSING_VALIDATION",
+      "review_level": "review only; not individually dynamically reproduced",
+      "evidence_and_action": "No material current failure has been independently demonstrated. This remains an empirical question, not an accomplished improvement or a mandate to change accepted weights.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 53,
+      "title": "START, CAMEO AND SIXTY-MINUTE CALIBRATION MAY DIFFER BY PLAYER SUBGROUP [POTENTIAL ISSUE]",
+      "verdict": "UNCONFIRMED_HYPOTHESIS_OR_MISSING_VALIDATION",
+      "review_level": "review only; not individually dynamically reproduced",
+      "evidence_and_action": "No material current failure has been independently demonstrated. This remains an empirical question, not an accomplished improvement or a mandate to change accepted weights.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 54,
+      "title": "CONDITIONAL POINT ERRORS AMONG HIGH-IMPACT PLAYERS REQUIRE DISTINCT CONFIDENCE [REVIEW REQUIRED]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 55,
+      "title": "CURRENT ROLE-V3 GAINS ARE NOT AN ISOLATED FULL-POLICY BENEFIT [DOCUMENTED]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 56,
+      "title": "MULTI-SOURCE IMMEDIATE-SCORING CHALLENGERS REMAIN UNPROMOTED [DOCUMENTED]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 57,
+      "title": "EXTRA ARCHITECTURAL COMPLEXITY HAS PREVIOUSLY HURT CAPTAINCY [DOCUMENTED]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 58,
+      "title": "PREVIOUS NEURAL-NETWORK EXPERIMENTS DID NOT JUSTIFY PRODUCTION USE [DOCUMENTED]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "No neural runtime or weights are required. Historical chip-free network results do not justify reintroducing that model.",
+      "register_citations": [
+        "artifacts/evaluations/fusion_policy_network.json",
+        "artifacts/evaluations/fusion_policy_tree.json",
+        "docs/research-review-2026-11-06.md"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 59,
+      "title": "DISTANT FIXTURE-LEAD MODEL RELIABILITY MAY VARY ACROSS THE HORIZON [POTENTIAL ISSUE]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 60,
+      "title": "FUTURE FIXTURE SCHEDULES AND TEAM STRENGTHS ARE NOT FIXED FACTS [POTENTIAL ISSUE]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 61,
+      "title": "DEFENSIVE-CONTRIBUTION AND BPS EVENT DISTRIBUTIONS REMAIN APPROXIMATE [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 62,
+      "title": "CLEAN-SHEET, GOAL AND WITHIN-TEAM DEPENDENCE MAY BE MIS-SPECIFIED [POTENTIAL ISSUE]",
+      "verdict": "UNCONFIRMED_HYPOTHESIS_OR_MISSING_VALIDATION",
+      "review_level": "review only; not individually dynamically reproduced",
+      "evidence_and_action": "No material current failure has been independently demonstrated. This remains an empirical question, not an accomplished improvement or a mandate to change accepted weights.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 63,
+      "title": "DOUBLE-GAMEWEEK PLAYING TIME AND ROTATION NEED DISTINCT JOINT VALIDATION [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 64,
+      "title": "DISTRIBUTION TAILS AND HIGH-UPSIDE CAPTAIN OUTCOMES ARE NOT PROVEN WELL CALIBRATED [POTENTIAL ISSUE]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 65,
+      "title": "NOMINAL PREDICTION INTERVALS ARE MISALIGNED WITH OBSERVED COVERAGE [DOCUMENTED]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 66,
+      "title": "POINT-PREDICTION DISAGREEMENT IS NOT DIRECTLY QUANTIFIED AS MODEL-RISK IN EVERY DECISION [POTENTIAL ISSUE]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 67,
+      "title": "NEWS/INJURY PROBABILITIES CAN BE CORRELATED OR DOUBLE COUNTED [POTENTIAL ISSUE]",
+      "verdict": "UNCONFIRMED_HYPOTHESIS_OR_MISSING_VALIDATION",
+      "review_level": "review only; not individually dynamically reproduced",
+      "evidence_and_action": "No material current failure has been independently demonstrated. This remains an empirical question, not an accomplished improvement or a mandate to change accepted weights.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 68,
+      "title": "TRAINING/ACCEPTANCE DATA HAS BEEN REPEATEDLY STUDIED [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 69,
+      "title": "THE MAIN OPTIMIZER HAS INCOMPLETE GLOBAL SEARCH COVERAGE [DOCUMENTED]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 70,
+      "title": "THE ADDITIVE SURROGATE AND EXACT WORLD-SCORED OBJECTIVES DIFFER [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 71,
+      "title": "PAID-TRANSFER EVIDENCE IS ENTANGLED WITH UNEVEN SEARCH QUALITY [DOCUMENTED]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 72,
+      "title": "CHIP-TIMING RESULTS CAN BE DOMINATED BY SEARCH ERROR [DOCUMENTED]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 73,
+      "title": "EVIDENCE-APPROVED AND MATHEMATICALLY BEST-SCORED PLANS ARE DIFFERENT CONCEPTS [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 74,
+      "title": "COUNTERFACTUAL FUTURE TRANSFERS DEPEND ON FROZEN FORECASTS [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 75,
+      "title": "CHANGING TRANSFER PRICES AND UNKNOWN PURCHASE LOTS LIMIT FEASIBILITY CERTAINTY [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 76,
+      "title": "HORIZON-END RESOURCES AND CHIP OPPORTUNITY COSTS ARE MODEL-DEPENDENT [POTENTIAL ISSUE]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 77,
+      "title": "CAPTAINCY DECISIONS HAVE LIMITED DIRECT PROSPECTIVE VALIDATION [POTENTIAL ISSUE]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 78,
+      "title": "BENCH AND FORMATION QUALITY NEED EXACT-DISTRIBUTION DECISION EVIDENCE [POTENTIAL ISSUE]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 79,
+      "title": "THE RIVAL-BEHAVIOR MODEL CANNOT KNOW REAL FUTURE ACTIONS [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 80,
+      "title": "MINI-LEAGUE AND OVERALL-RANK OBJECTIVES REST ON APPROXIMATE OPPONENT POPULATIONS [POTENTIAL ISSUE]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 81,
+      "title": "OWNERSHIP AND MANAGER CONSENSUS ARE NOT EQUIVALENT TO PERFORMANCE EVIDENCE [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 82,
+      "title": "PLAN STABILITY UNDER SMALL FORECAST OR NEWS CHANGES IS NOT FULLY ESTABLISHED [POTENTIAL ISSUE]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 83,
+      "title": "MODEL-DEPENDENT RECOMMENDATIONS CAN CONFLICT WITH ALTERNATIVE REASONABLE BASELINES [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 84,
+      "title": "USER-SPECIFIC PAST MOVES CAN RENDER THE RECORDED COMPARISON INAPPLICABLE [REVIEW REQUIRED]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 85,
+      "title": "GABRIEL\u2013VAN DIJK GW10 MATCHUP DIFFERENCE IS INADEQUATELY EXPLAINED [DOCUMENTED DISAGREEMENT]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Frozen current forecast is Gabriel 5.49695 versus Virgil 5.20385; the quoted older pair is outdated. Component/price differences are documented without inventing clean-sheet attribution.",
+      "register_citations": [
+        "artifacts/evaluations/gw10-user-options.json",
+        "docs/gw1-9-and-gw10-review.md"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 86,
+      "title": "FIXTURE-SPECIFIC CLEAN-SHEET PROBABILITY IS NOT A SEPARATELY VALIDATED ACTIVE POINTS COMPONENT [CODE-OBSERVED; IMPACT UNPROVEN]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "artifacts/evaluations/score_process.json",
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 87,
+      "title": "OPPONENT ATTACK, HOME ADVANTAGE AND FIXTURE CLEAN-SHEET SHIFTS LACK CASE-LEVEL ATTRIBUTION [REVIEW REQUIRED]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [
+        "artifacts/evaluations/gw10-user-options.json",
+        "src/fpl_intelligence/decision.py",
+        "src/fpl_intelligence/features.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 88,
+      "title": "OPPONENT AERIAL WEAKNESS AND HEADER EXPOSURE ARE NOT PROVEN TO ALTER ACTIVE INDIVIDUAL xPTS [POTENTIAL MATCHUP GAP]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "artifacts/evaluations/attack_channels.json",
+        "src/fpl_intelligence/attack.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 89,
+      "title": "PLAYER-SPECIFIC SET-PIECE ROLE AND POSITIONAL THREAT MAY BE UNDERUSED IN IMMEDIATE xPTS [POTENTIAL]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "src/fpl_intelligence/fixture_horizon.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 90,
+      "title": "DIRECT DEFCON PROBABILITY IS NOT OPPONENT-STYLE CONDITIONED [CODE-OBSERVED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "src/fpl_intelligence/decision.py",
+        "src/fpl_intelligence/features.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 91,
+      "title": "DEFCON DISPERSION AND THRESHOLD TAILS USE APPROXIMATE ESTIMATORS [CODE-OBSERVED; CALIBRATION OPEN]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "src/fpl_intelligence/decision.py",
+        "src/fpl_intelligence/features.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 92,
+      "title": "BONUS POINTS AND BPS ARE NOT EXPLICITLY CALIBRATED AS MATCH-WIDE COMPETITION IN ACTIVE xPTS [CODE-OBSERVED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "artifacts/evaluations/coherent_model.json",
+        "src/fpl_intelligence/decision.py",
+        "src/fpl_intelligence/simulation.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 93,
+      "title": "2026/27 RULE-SPECIFIC DEFCON/BPS COMPONENT BACKTESTING IS NOT COMPREHENSIVE [REVIEW REQUIRED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "artifacts/evaluations/decision_model.json",
+        "configs/rules-2026-27.json",
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 94,
+      "title": "MODEL SUBCOMPONENTS CAN HIDE A WRONG CLEAN-SHEET/ATTACK/DEFCON MIX [POTENTIAL]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [
+        "artifacts/evaluations/gw10-user-options.json",
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 95,
+      "title": "MATCH-LEVEL FOOTBALL COHERENCE IS NOT GUARANTEED BY SHARED EMPIRICAL POINT WORLDS [CODE-OBSERVED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "src/fpl_intelligence/decision.py",
+        "src/fpl_intelligence/simulation.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 96,
+      "title": "ATTACKING AND DEFENSIVE RETURNS AGAINST THE SAME OPPONENT MAY HAVE MIS-CALIBRATED DEPENDENCE [POTENTIAL]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 97,
+      "title": "PLAYER LATENT RANDOM FACTOR IS SHARED ACROSS ALL SIMULATED FUTURE GAMEWEEKS [CODE-OBSERVED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 98,
+      "title": "DOUBLE-GAMEWEEK p_START AGGREGATION USES MAXIMUM RATHER THAN CLEAR CONTRACT [CODE-OBSERVED]",
+      "verdict": "CONTRACT_CORRECTED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "DGW display explicitly means maximum individual-fixture start probability; no union probability is invented. Exported optimisation schema is regenerated from the actual four-objective API.",
+      "register_citations": [
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [
+        "decision.py",
+        "apps/web/src/main.tsx",
+        "schemas/optimize.schema.json"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 99,
+      "title": "ROLE MODEL SEASONAL START EXPOSURE USES GAMEWEEK COUNT INSTEAD OF REAL OPPORTUNITIES [CODE-OBSERVED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The feature explicitly measures starts per elapsed GW, not per eligible team fixture. Changing its meaning requires a controlled model refit.",
+      "register_citations": [
+        "src/fpl_intelligence/role_minutes.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 100,
+      "title": "MISSING HISTORICAL START INDICATORS CAN BE APPROXIMATED FROM MINUTES >=60 [CODE-OBSERVED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "Missing supervised start labels remain missing; accepted proxy features are not advertised as observed labels. Partial-null label handling is now guarded.",
+      "register_citations": [
+        "src/fpl_intelligence/decision.py",
+        "src/fpl_intelligence/features.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 101,
+      "title": "UNSUPPORTED OR AMBIGUOUS AVAILABILITY CAN FALL BACK TO A FIXED 0.5 PRIOR [CODE-OBSERVED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 102,
+      "title": "FUTURE AVAILABILITY USES A FIXED EXPONENTIAL REVERSION WHERE RECOVERY EVIDENCE IS INSUFFICIENT [CODE-OBSERVED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "src/fpl_intelligence/availability.py",
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 103,
+      "title": "IN-GW ROTATION CONDITIONING DOES NOT COVER ALL BETWEEN-DEADLINE PARTICIPATION TRANSITIONS [DOCUMENTED LIMIT]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "docs/football-models.md",
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 104,
+      "title": "PREMIUM CAPTAIN POINT-TAIL AND DEFENDER VS FORWARD COVARIANCE ARE NOT FULLY VALIDATED [POTENTIAL]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [
+        "artifacts/evaluations/decision_uncertainty.json",
+        "src/fpl_intelligence/rules.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 105,
+      "title": "OPPONENT AND TACTICAL REGIME SHIFTS LACK VERIFIED IMPACT-SPECIFIC ABLATIONS [POTENTIAL]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [
+        "artifacts/evaluations/context_ablation.json",
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 106,
+      "title": "MATCHUP-SPECIFIC OUTLIER RETURN CONCENTRATION IS NOT DIRECTLY VERIFIED [POTENTIAL]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [
+        "docs/data-and-forecast-audit.md",
+        "src/fpl_intelligence/features.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 107,
+      "title": "PREDICTION ACCURACY BY FUTURE LEAD-TIME AND PLAYER ROLE MAY HIDE WEAK BUCKETS [POTENTIAL]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [
+        "artifacts/evaluations/future-horizon-refinement.json",
+        "src/fpl_intelligence/fixture_horizon.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 108,
+      "title": "ACTUAL TRANSFER EVALUATION IS NOT ROBUST TO ALL CROSS-MODEL REVERSALS [DOCUMENTED EXAMPLE]",
+      "verdict": "HISTORICAL_EVIDENCE_OR_VALIDATION_LIMITATION",
+      "review_level": "source/artifact review; no new statistical replication claimed",
+      "evidence_and_action": "Retained receipts apply to their stated model, period, rules and search budget. They do not establish harm or improvement for the complete current policy; no replacement is justified by this claim alone.",
+      "register_citations": [
+        "artifacts/evaluations/gw10-user-options.json"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 109,
+      "title": "RECORDED OPPONENT MARKET ODDS ARE NOT AVAILABLE TO CROSS-CHECK CLEAN-SHEET PROBABILITIES [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "artifacts/evaluations/odds_coverage.json",
+        "src/fpl_intelligence/odds.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 110,
+      "title": "QUOTED FULL PROJECTION FEEDS ARE NOT DEMONSTRABLY POPULATED AT MATCHING CUTOFFS [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "configs/source_registry.json",
+        "src/fpl_intelligence/consensus.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 111,
+      "title": "ACTIVE SOURCE-GATING AND FORECAST LINEAGE CAN BE CONFUSED IN REPORTS [REVIEW REQUIRED]",
+      "verdict": "LINEAGE_REPORT_CORRECTED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Historical future-expert suite explicitly excludes the later role head and unlimited-search policy. Full-current-policy competitive acceptance remains unproven.",
+      "register_citations": [
+        "artifacts/evaluations/fusion_review.json",
+        "src/fpl_intelligence/decision.py",
+        "src/fpl_intelligence/model_usage.py"
+      ],
+      "changed_areas": [
+        "future_policy_jobs.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 112,
+      "title": "PRICE-CHANGE FORECAST COVERAGE IS BOUNDED TO SHORT HISTORICAL WINDOWS [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "artifacts/evaluations/market_model.json",
+        "src/fpl_intelligence/market_model.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 113,
+      "title": "HISTORIC RECOMMENDATION TESTS DEPEND ON A MIXTURE OF SAMPLED AND NOT OBSERVED ACCOUNT STATES [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "artifacts/evaluations/transfer_policy_model.json",
+        "src/fpl_intelligence/decision_training.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 114,
+      "title": "FULL-MARKET COVERAGE DOES NOT IMPLY COMPLETE LEGAL-ACTION GENERATION AT ALL ROOT STATES [CODE-DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "Free Hit restoration cannot safely infer unknown prior-deadline acquisition lots and bank. Rejecting that unknowable branch is deliberate.",
+      "register_citations": [
+        "docs/methodology.md",
+        "src/fpl_intelligence/optimization.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 115,
+      "title": "SOLVER RESOURCE BUDGETS CAN LEAVE NO VERIFIED FEASIBLE POLICY [CODE-OBSERVED]",
+      "verdict": "LIVE_SEARCH_CONFIGURATION_CHANGED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Default live UI/CLI/refresh solve has no forced clock cutoff and requests zero gap; finite research budgets remain explicit. An old timed-out receipt is not retroactively an optimum.",
+      "register_citations": [
+        "artifacts/evaluations/release_0_13.json",
+        "src/fpl_intelligence/optimization.py"
+      ],
+      "changed_areas": [
+        "optimization.py",
+        "search_control.py",
+        "domain.py",
+        "cli.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 116,
+      "title": "PUBLIC OPTIMIZATION REQUEST SCHEMA CAPS SOLVE TIME AT 300 SECONDS [CODE-OBSERVED]",
+      "verdict": "LIVE_SEARCH_CONFIGURATION_CHANGED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Default live UI/CLI/refresh solve has no forced clock cutoff and requests zero gap; finite research budgets remain explicit. An old timed-out receipt is not retroactively an optimum.",
+      "register_citations": [
+        "schemas/optimize.schema.json",
+        "src/fpl_intelligence/optimization.py"
+      ],
+      "changed_areas": [
+        "optimization.py",
+        "search_control.py",
+        "domain.py",
+        "cli.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 117,
+      "title": "UPDATE FILE COPY DOES NOT ITSELF VERIFY CRYPTOGRAPHIC CONTENT DIGESTS [CODE-OBSERVED; SECURITY REVIEW]",
+      "verdict": "REPRODUCED_DEFECT_FIXED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Tampered payload, private/escaping paths and manifest/hash disagreement rejected before application writes.",
+      "register_citations": [
+        "scripts/install_update.py",
+        "scripts/update.ps1",
+        "scripts/verify_update.py"
+      ],
+      "changed_areas": [
+        "scripts/install_update.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 118,
+      "title": "MULTI-FILE APPLICATION UPDATE IS NOT AN ATOMIC TRANSACTION [CODE-OBSERVED; DEPLOYMENT REVIEW]",
+      "verdict": "REPRODUCED_FAILURE_PATH_MITIGATED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Injected copy/merge failure rolls back application/database. Journals recover on retry; marker/launcher guard blocks mixed-tree startup. Not a claim of an atomic multi-file filesystem transaction.",
+      "register_citations": [
+        "docs/operations.md",
+        "scripts/install_update.py"
+      ],
+      "changed_areas": [
+        "scripts/install_update.py",
+        "Start.cmd"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 119,
+      "title": "RUNTIME DEPENDENCY BOOTSTRAP IS A LIVE EXTERNAL SCRIPT [CODE-OBSERVED; SECURITY/REPRODUCIBILITY REVIEW]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "scripts/start.ps1"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 120,
+      "title": "CI USES SMALL SYNTHETIC LAUNCHER SMOKE DATA RATHER THAN A REAL FULL-SIZE INSTALLATION [CODE-OBSERVED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 121,
+      "title": "CI TIME BUDGET DOES NOT CERTIFY COMPLETE REAL-DATA RESEARCH REPLAYS [CODE-OBSERVED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "docs/operations.md",
+        "scripts/run_checks.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 122,
+      "title": "USER-SELECTABLE RISK/OBJECTIVE METHODS MAY DIFFER BETWEEN INTERNAL FUNCTIONS AND PUBLIC SCHEMAS [REVIEW REQUIRED]",
+      "verdict": "CONTRACT_CORRECTED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "DGW display explicitly means maximum individual-fixture start probability; no union probability is invented. Exported optimisation schema is regenerated from the actual four-objective API.",
+      "register_citations": [
+        "schemas/optimize.schema.json",
+        "src/fpl_intelligence/objectives.py"
+      ],
+      "changed_areas": [
+        "decision.py",
+        "apps/web/src/main.tsx",
+        "schemas/optimize.schema.json"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 123,
+      "title": "RUNTIME FORECAST STALENESS AND MODEL CACHE PROVENANCE ARE HIGH-SENSITIVITY IN MULTI-STAGE UPDATES [REVIEW REQUIRED]",
+      "verdict": "REPRODUCED_VERSION_BOUNDARY_FIXED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Final publication checks account, market, forecast, active model and deadline. Superseded completed work remains analysis-only.",
+      "register_citations": [
+        "docs/operations.md",
+        "src/fpl_intelligence/workflow.py"
+      ],
+      "changed_areas": [
+        "readiness.py",
+        "api.py",
+        "workflow.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 124,
+      "title": "PACKAGE PROVENANCE AND VERIFICATION DO NOT ESTABLISH THE ACTUAL USER INSTALLATION IS ON THIS EXACT COMMIT [OPEN SCOPE LIMIT]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The user laptop is inaccessible from this workspace. Package verification cannot establish its actual installed state.",
+      "register_citations": [
+        "docs/operations.md",
+        "scripts/prepare_update.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 125,
+      "title": "DEFCON IS SAMPLED FROM REPRESENTATIVE MINUTE-BAND VALUES, NOT EACH ACTUAL SIMULATED MINUTE COUNT [CODE-LEVEL ISSUE TO VERIFY]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 126,
+      "title": "RARE GOALKEEPER PENALTIES, BONUS AND SAVE-PATH UPSIDE LACK SEPARATE CURRENT-POLICY ACCEPTANCE [POTENTIAL ISSUE]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 127,
+      "title": "NON-EXPECTED-POINTS OBJECTIVES FOLLOW DIFFERENT HIT/CHIP EVIDENCE PATHS [CODE-LEVEL REVIEW]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "Rank/CVaR modes intentionally permit the explicit expected-points sacrifice. Applying an EV-only veto universally would change the user-selected objective.",
+      "register_citations": [
+        "src/fpl_intelligence/objectives.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 128,
+      "title": "A RISK MODE MAY RECOMMEND A COSTLY HIT WITHOUT THE EXPECTED-POINTS SEARCH-SLACK CHECK [CODE-LEVEL RISK]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "A paid hit is not automatically a defect under an explicitly selected risk/rank objective. Such selection is not equivalent to default EV search-evidence approval.",
+      "register_citations": [
+        "src/fpl_intelligence/objectives.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 129,
+      "title": "RISK-OBJECTIVE SACRIFICE BUDGET DOES NOT CAP ALL FORECAST-MODEL UNCERTAINTY [POTENTIAL ISSUE]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "docs/model-card.md",
+        "src/fpl_intelligence/objectives.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 130,
+      "title": "LAST-MINUTE CAPTAIN/LINEUP RECOMMENDATIONS HAVE DIFFERENT SENSITIVITY TO FROZEN DATA CUTOFFS [POTENTIAL ISSUE]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "src/fpl_intelligence/workflow.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 131,
+      "title": "EXACT UPDATE ZIP AND SOURCE-TREE EQUIVALENCE IS NOT INDEPENDENTLY CONFIRMED [REVIEW REQUIRED]",
+      "verdict": "CURRENT_EVIDENCE_EXTENDED_WITH_SCOPE_LIMITS",
+      "review_level": "review only; not individually dynamically reproduced",
+      "evidence_and_action": "The retained v0.13 ZIP was opened: all 272 hashes passed and tracked payloads match the pinned commit. Generated frontend assets were checked against the manifest.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 132,
+      "title": "THE LINKED ZIP IS NOT A SELF-CONTAINED FULL INSTALLATION [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "This is expressly an existing-installation updater. Private data/models are preserved rather than committed to public source.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 133,
+      "title": "INSTALLED PRIVATE STATE IS NOT GUARANTEED TO MATCH THE AUDITED RESEARCH STATE [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 134,
+      "title": "COMPLETED TRANSFERS AND PENDING CHIPS MAY NOT BE RECONCILED BEFORE SERVING [POTENTIAL ISSUE]",
+      "verdict": "UNCONFIRMED_HYPOTHESIS_OR_MISSING_VALIDATION",
+      "review_level": "review only; not individually dynamically reproduced",
+      "evidence_and_action": "No material current failure has been independently demonstrated. This remains an empirical question, not an accomplished improvement or a mandate to change accepted weights.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 135,
+      "title": "MIGRATION, LEGACY MODEL REMOVAL AND RE-FITTING ARE SIGNIFICANT DEPLOYMENT BOUNDARIES [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 136,
+      "title": "ACTUAL CPU/RAM/LATENCY READINESS IS NOT ESTABLISHED FOR EVERY TARGET INSTALLATION [REVIEW REQUIRED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 137,
+      "title": "DEADLINE SAFETY AND SOURCE-FREEZE GUARANTEES REQUIRE DEPLOYED END-TO-END EVIDENCE [REVIEW REQUIRED]",
+      "verdict": "REPRODUCED_VERSION_BOUNDARY_FIXED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Final publication checks account, market, forecast, active model and deadline. Superseded completed work remains analysis-only.",
+      "register_citations": [],
+      "changed_areas": [
+        "readiness.py",
+        "api.py",
+        "workflow.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 138,
+      "title": "OPTIONAL HOSTED RESEARCH MAY BE MISSING OR INCONSISTENT IN PRODUCTION [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 139,
+      "title": "NUMERICAL MODEL SUCCESS DOES NOT GUARANTEE COMPLETE EXPLANATION TRACEABILITY [POTENTIAL ISSUE]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 140,
+      "title": "PRIVATE ACCOUNT / CREDENTIAL SAFETY IS NOT PROVEN BY PUBLIC SOURCE TESTS [REVIEW REQUIRED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 141,
+      "title": "BACKUP, RESTORE AND INTERRUPTED UPDATE RECOVERY HAVE LIMITED REAL-INSTALL EVIDENCE [REVIEW REQUIRED]",
+      "verdict": "REPRODUCED_FAILURE_PATH_MITIGATED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Injected copy/merge failure rolls back application/database. Journals recover on retry; marker/launcher guard blocks mixed-tree startup. Not a claim of an atomic multi-file filesystem transaction.",
+      "register_citations": [],
+      "changed_areas": [
+        "scripts/install_update.py",
+        "Start.cmd"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 142,
+      "title": "RELEASE TEST COUNTS DO NOT CERTIFY REAL DATA OR FUTURE DECISION QUALITY [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 143,
+      "title": "PROSPECTIVE FULL-PRODUCTION EVALUATION HAS ZERO COMPLETED FINALIZED DEADLINES [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 144,
+      "title": "RETROSPECTIVE POLICY REPLAYS DO NOT ESTABLISH FUTURE PRODUCT SUPERIORITY [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 145,
+      "title": "THE FULL-PRODUCTION FORECAST-TO-ACTION CHAIN LACKS ONE UNIFIED ACCEPTANCE CLAIM [DOCUMENTED]",
+      "verdict": "LINEAGE_REPORT_CORRECTED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Historical future-expert suite explicitly excludes the later role head and unlimited-search policy. Full-current-policy competitive acceptance remains unproven.",
+      "register_citations": [],
+      "changed_areas": [
+        "future_policy_jobs.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 146,
+      "title": "NO OBJECTIVE TEST CAN ESTABLISH PERFECT OR PERMANENTLY OPTIMAL FPL DECISIONS [OPEN LIMITATION]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "Perfect or permanently optimal football decisions are not a meaningful executable completion criterion.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 147,
+      "title": "AUTOMATIC REFRESH IS PROCESS-LOCAL AND DOES NOT CONTINUE WHILE THE APP IS OFF [CODE-LEVEL LIMITATION]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The local scheduler stops with its process/laptop. Always-on hosting was not requested for this local product.",
+      "register_citations": [
+        "src/fpl_intelligence/scheduling.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 148,
+      "title": "AN UNEXPECTED REFRESH-SCHEDULER EXCEPTION CAN END THE BACKGROUND THREAD [CODE-LEVEL RISK]",
+      "verdict": "REPRODUCED_DEFECT_FIXED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Unexpected scheduler exceptions and diagnostic-write failures cannot terminate subsequent refresh checks.",
+      "register_citations": [
+        "src/fpl_intelligence/scheduling.py"
+      ],
+      "changed_areas": [
+        "scheduling.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 149,
+      "title": "CODE-UPDATE AND RESEARCH-DATABASE MERGE FORM DISTINCT FAILURE POINTS [CODE-LEVEL RISK]",
+      "verdict": "REPRODUCED_FAILURE_PATH_MITIGATED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Injected copy/merge failure rolls back application/database. Journals recover on retry; marker/launcher guard blocks mixed-tree startup. Not a claim of an atomic multi-file filesystem transaction.",
+      "register_citations": [
+        "scripts/install_update.py"
+      ],
+      "changed_areas": [
+        "scripts/install_update.py",
+        "Start.cmd"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 150,
+      "title": "FRONTEND COMPLEXITY IS CONCENTRATED IN TWO LARGE COMPONENT FILES [MAINTAINABILITY REVIEW]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "Large components are a maintainability risk, not a demonstrated runtime defect. An unrelated full UI rewrite is not justified.",
+      "register_citations": [
+        "apps/web/src/main.tsx"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 151,
+      "title": "AUTOMATED FRONTEND UNIT COVERAGE IS NARROW RELATIVE TO UI FEATURE SURFACE [DOCUMENTED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "artifacts/evaluations/release_0_13.json"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 152,
+      "title": "FULL-PRODUCTION CLOUD AVAILABILITY IS DISTINCT FROM CLOUD CODING-TASK EXECUTION [SCOPE GAP IF ALWAYS-ON IS REQUIRED]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "A cloud coding workspace is not an always-on production deployment; no such hosting claim is made.",
+      "register_citations": [
+        "docs/operations.md",
+        "src/fpl_intelligence/scheduling.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 153,
+      "title": "FRONTEND OVERRIDES UNKNOWN SELL-QUOTE VERIFICATION WITHOUT USER EVIDENCE [CONFIRMED CODE BEHAVIOR; IMPACT TO VERIFY]",
+      "verdict": "REPRODUCED_DEFECT_FIXED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Account editor preserves quote-confirmation flags, account status and original knowledge timestamp. It no longer silently certifies every edited fact.",
+      "register_citations": [
+        "apps/web/src/main.tsx",
+        "src/fpl_intelligence/domain.py"
+      ],
+      "changed_areas": [
+        "apps/web/src/main.tsx"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 154,
+      "title": "FRONTEND MARKS EDITED ACCOUNT \"CONFIRMED\" EVEN WHEN SOURCE INPUTS REMAIN UNVERIFIED [CONFIRMED CODE BEHAVIOR]",
+      "verdict": "REPRODUCED_DEFECT_FIXED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Account editor preserves quote-confirmation flags, account status and original knowledge timestamp. It no longer silently certifies every edited fact.",
+      "register_citations": [
+        "apps/web/src/main.tsx",
+        "src/fpl_intelligence/api.py",
+        "src/fpl_intelligence/domain.py"
+      ],
+      "changed_areas": [
+        "apps/web/src/main.tsx"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 155,
+      "title": "STATE-UPDATE CONCURRENCY PROTECTION IS OPTIONAL AT API LEVEL [CODE-OBSERVED; RISK DEPENDS ON CLIENT]",
+      "verdict": "REPRODUCED_DEFECT_FIXED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Existing account writes require the matching version ID; omitted or superseded versions receive conflict responses.",
+      "register_citations": [
+        "apps/web/src/main.tsx",
+        "src/fpl_intelligence/api.py"
+      ],
+      "changed_areas": [
+        "api.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 156,
+      "title": "HISTORICAL START-OBSERVATION GATE IS FIXTURE-WIDE, NOT PER RECORD [CODE-OBSERVED; LABEL-QUALITY RISK]",
+      "verdict": "REPRODUCED_EDGE_CASE_FIXED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Partial null start labels remain unobserved; conflicting player-fixture outcomes are rejected. Current 10 duplicates are identical and all 119150 canonical rows/metadata match before and after.",
+      "register_citations": [
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [
+        "decision.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 157,
+      "title": "HISTORICAL PLAYER-FIXTURE DUPLICATES CAN SILENTLY USE LAST-SEEN ROW [CODE-OBSERVED; DATA IMPACT UNPROVEN]",
+      "verdict": "REPRODUCED_EDGE_CASE_FIXED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Partial null start labels remain unobserved; conflicting player-fixture outcomes are rejected. Current 10 duplicates are identical and all 119150 canonical rows/metadata match before and after.",
+      "register_citations": [
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [
+        "decision.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 158,
+      "title": "\"HEALTH: OK\" DOES NOT MEAN CURRENT FORECAST/ACCOUNT/MODEL IS VALID [CODE-OBSERVED]",
+      "verdict": "READINESS_CONTRACT_CORRECTED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Database liveness is distinct from lineage, weight-file existence and deadline readiness. Loaders still verify model hashes.",
+      "register_citations": [
+        "src/fpl_intelligence/api.py"
+      ],
+      "changed_areas": [
+        "api.py",
+        "readiness.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 159,
+      "title": "ONE SERIAL JOB EXECUTOR CREATES DEADLINE-TIME HEAD-OF-LINE BLOCKING [CODE-OBSERVED; PERFORMANCE RISK]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "Serial numerical work avoids uncontrolled mutation. Direct cooperative solver cancellation now lets a long calculation release the queue.",
+      "register_citations": [
+        "src/fpl_intelligence/api.py",
+        "src/fpl_intelligence/workflow.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 160,
+      "title": "CURRENT RELEASE DOES NOT PROVIDE TRACKED MODEL/DATABASE BYTES IN SOURCE TREE [CODE-OBSERVED; REPRODUCIBILITY BOUNDARY]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "Public source intentionally excludes private DB/models. Reproduction uses documented ingestion/training or an existing installation, not JSON receipts as executable weights.",
+      "register_citations": [
+        "docs/operations.md"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 161,
+      "title": "PUBLIC GITHUB REPOSITORY EXPOSES A USER/RIVAL CONTEXT SNAPSHOT [CONFIRMED REPOSITORY STATE; DISCLOSURE REVIEW]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The earlier user explicitly requested the original files on GitHub. Original research is retained; no new credential exposure is asserted or introduced.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 162,
+      "title": "DEADLINE-SENSITIVE MODEL RUNS CAN PRODUCE SEPARATELY VERSIONED DISPLAYS [CURRENT TRACEABILITY RISK]",
+      "verdict": "REPRODUCED_VERSION_BOUNDARY_FIXED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Final publication checks account, market, forecast, active model and deadline. Superseded completed work remains analysis-only.",
+      "register_citations": [
+        "apps/web/src/main.tsx",
+        "src/fpl_intelligence/api.py"
+      ],
+      "changed_areas": [
+        "readiness.py",
+        "api.py",
+        "workflow.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 163,
+      "title": "CURRENT FORECAST MODEL HAS NO COMPLETE EXPLICIT CLEAN-SHEET / BONUS POINT EXPLANATION [CODE-CONFIRMED ARCHITECTURE; EFFECT UNPROVEN]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "src/fpl_intelligence/decision.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 164,
+      "title": "RULE-BASED EXACT SCORING TESTS DO NOT PROVE MODELLED DEFCON/BONUS EVENTS ARE CORRECT [CURRENT VERIFICATION GAP]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "src/fpl_intelligence/rules.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 165,
+      "title": "SOURCE AUDIT MUST DISTINGUISH REGISTERED, FETCHED, FEATURED AND ACTIVE [CURRENT PRODUCT GAP]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The v0.13 Sources panel already lists active versus research/sensitivity consumers. Collection is not advertised as automatic primary points uplift.",
+      "register_citations": [
+        "configs/source_registry.json",
+        "docs/data-and-forecast-audit.md",
+        "src/fpl_intelligence/model_usage.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 166,
+      "title": "CURRENT UPDATE'S SECURITY/RESTORE CLAIMS REST ON SOURCE AND SYNTHETIC EVIDENCE [CURRENT EXECUTION GAP]",
+      "verdict": "REPRODUCED_FAILURE_PATH_MITIGATED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Injected copy/merge failure rolls back application/database. Journals recover on retry; marker/launcher guard blocks mixed-tree startup. Not a claim of an atomic multi-file filesystem transaction.",
+      "register_citations": [
+        "scripts/install_update.py"
+      ],
+      "changed_areas": [
+        "scripts/install_update.py",
+        "Start.cmd"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 167,
+      "title": "MODEL-QUALITY CLAIMS FROM COMPLETED HISTORICAL MATCHES STILL NEED SAME-PROTOCOL DECISION-LEVEL RECHECKS [CURRENT EVIDENCE GAP]",
+      "verdict": "LINEAGE_REPORT_CORRECTED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Historical future-expert suite explicitly excludes the later role head and unlimited-search policy. Full-current-policy competitive acceptance remains unproven.",
+      "register_citations": [
+        "artifacts/evaluations/release_0_13.json",
+        "docs/performance-audit.md"
+      ],
+      "changed_areas": [
+        "future_policy_jobs.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 168,
+      "title": "NO INDEPENDENT RUN OF THE EXACT CURRENT RELEASE IS AVAILABLE IN THE REVIEW MATERIAL [CURRENT AUDIT LIMIT]",
+      "verdict": "CURRENT_EVIDENCE_EXTENDED_WITH_SCOPE_LIMITS",
+      "review_level": "review only; not individually dynamically reproduced",
+      "evidence_and_action": "Current local regressions and exact ZIP-source verification are executed here, not claimed as an independent third-party full retraining.",
+      "register_citations": [],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 169,
+      "title": "HOSTED LLM CALLS ARE NOT EQUIVALENT TO PROVEN LIVE DECISION IMPACT [CURRENT VALIDATION GAP]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "Successful live extraction is measured separately from football-policy gain. No causal points gain from hosted research is established.",
+      "register_citations": [
+        "artifacts/evaluations/intelligence_coverage.json",
+        "src/fpl_intelligence/providers.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 170,
+      "title": "AI EXTRACTION SYNTHETIC TEST HAS A REAL STATUS-CLASSIFICATION WEAKNESS [RECORDED EVIDENCE]",
+      "verdict": "CURRENT_EXTRACTION_EVIDENCE_EXTENDED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Current catalogs authenticated. Clarified status instructions and strict quality gates pass six synthetic cases on both supported providers; expired/unverified alternatives blocked. This is not proof of football-policy gain.",
+      "register_citations": [
+        "artifacts/evaluations/hosted_extraction.json",
+        "src/fpl_intelligence/context.py"
+      ],
+      "changed_areas": [
+        "research.py",
+        "context.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 171,
+      "title": "CURRENT AI PROVIDER DISCOVERY AND REFERENCE MODEL AVAILABILITY NEED RECHECK [CURRENT RELIABILITY GAP]",
+      "verdict": "CURRENT_EXTRACTION_EVIDENCE_EXTENDED",
+      "review_level": "targeted regression / contract correction; statistical impact not asserted",
+      "evidence_and_action": "Current catalogs authenticated. Clarified status instructions and strict quality gates pass six synthetic cases on both supported providers; expired/unverified alternatives blocked. This is not proof of football-policy gain.",
+      "register_citations": [
+        "artifacts/evaluations/hosted_extraction.json",
+        "src/fpl_intelligence/providers.py"
+      ],
+      "changed_areas": [
+        "research.py",
+        "context.py"
+      ],
+      "targeted_regressions": [
+        "tests/test_current_audit.py",
+        "apps/web/e2e/workspace.spec.ts"
+      ],
+      "confidence": "high for reproduced mechanism; limited for unmeasured football impact"
+    },
+    {
+      "issue": 172,
+      "title": "AI EVIDENCE SOURCE COVERAGE IS NARROWER THAN AN ALL-WEB RESEARCH CLAIM [RECORDED GAP]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "artifacts/evaluations/intelligence_coverage.json",
+        "src/fpl_intelligence/intelligence.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 173,
+      "title": "MORE AI-EXTRACTED FACTS OR SOURCES HAVE NO SAME-POLICY INCREMENTAL-GAIN PROOF [CURRENT EVIDENCE GAP]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "The described mechanism/coverage limit is acknowledged, not a reproduced correctness failure. Forcing an unvalidated replacement would not establish an improvement.",
+      "register_citations": [
+        "artifacts/evaluations/context_ablation.json",
+        "docs/data-and-forecast-audit.md"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 174,
+      "title": "A GROUNDED AI DECISION-CRITIC LOOP IS NOT SHOWN TO IMPROVE LIVE ACTIONS [POTENTIAL GAP]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "An additional grounded LLM critic is an unproven enhancement, not a mandatory missing feature or permission to override numeric predictions.",
+      "register_citations": [
+        "artifacts/evaluations/decision_critic.json",
+        "src/fpl_intelligence/context.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 175,
+      "title": "SOURCE-GROUNDED TACTICAL CONTEXT AND CONFLICT RESOLUTION MAY NOT REACH THE RIGHT MODEL CONSUMER [POTENTIAL GAP]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "Tactical/heading/scout claims cannot become fabricated numeric uplifts without dated data and validation.",
+      "register_citations": [
+        "src/fpl_intelligence/research.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 176,
+      "title": "AI ON/OFF POLICY-LEVEL EVALUATION AND COMPUTE/TOKEN COST ARE NOT DEMONSTRATED [CURRENT TEST GAP]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "No historically valid all-source AI ON/OFF full-current-policy gain is established. Later capture times cannot be fabricated as earlier observations.",
+      "register_citations": [
+        "src/fpl_intelligence/context.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 177,
+      "title": "FREE-ONLY AI PRIVACY, PROMPT INJECTION AND FALLBACK HANDLING NEED FULL INTEGRATION CHECKS [CURRENT TEST GAP]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "Existing mock/adversarial guards and new failed-quality exclusion are exercised. This does not certify every future provider term or third-party response.",
+      "register_citations": [
+        "src/fpl_intelligence/research.py",
+        "tests/test_advanced.py"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    },
+    {
+      "issue": 178,
+      "title": "THE SIZE OF ANY PREDICTIVE IMPROVEMENT IS UNKNOWN; A LARGE GAIN CANNOT BE ASSUMED [CURRENT CLAIM-CALIBRATION GAP]",
+      "verdict": "DOCUMENTED_LIMITATION_OR_ACCEPTED_TRADEOFF",
+      "review_level": "scope-qualified source/artifact review",
+      "evidence_and_action": "No new historical FPL points gain is claimed. Accepted numerical weights remain unchanged.",
+      "register_citations": [
+        "artifacts/evaluations/future-policy-replay.json",
+        "docs/performance-audit.md"
+      ],
+      "changed_areas": [],
+      "targeted_regressions": [],
+      "confidence": "scope-limited; no new causal/statistical claim"
+    }
+  ]
+}

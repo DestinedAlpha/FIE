@@ -115,6 +115,36 @@ def canonical_rows(store: Store):
                     "team": team_names[f["team_h"] if r["was_home"] else f["team_a"]],
                 }
             )
+    deduplicated: dict[tuple, dict] = {}
+    protected = (
+        "minutes",
+        "total_points",
+        "starts",
+        "goals_scored",
+        "assists",
+        "expected_goals",
+        "expected_assists",
+        "bps",
+        "defensive_contribution",
+    )
+    for row in rows:
+        player_fixture_key = (row["season"], int(row["element"]), int(row["fixture"]))
+        prior = deduplicated.get(player_fixture_key)
+        if prior is not None:
+            conflict = [
+                name
+                for name in protected
+                if prior.get(name) not in (None, "")
+                and row.get(name) not in (None, "")
+                and float(prior[name]) != float(row[name])
+            ]
+            if conflict:
+                raise ValueError(
+                    f"Conflicting historical player-fixture {player_fixture_key}: {', '.join(conflict)}"
+                )
+            row = {**prior, **{name: value for name, value in row.items() if value not in (None, "")}}
+        deduplicated[player_fixture_key] = row
+    rows = list(deduplicated.values())
     by_fixture = defaultdict(list)
     for r in rows:
         by_fixture[r["season"], int(r["fixture"])].append(r)
@@ -139,8 +169,8 @@ def canonical_rows(store: Store):
         for r in group:
             r["team"] = sides[bool(r["was_home"])]
             r["opponent_name"] = sides[not bool(r["was_home"])]
-            r["start_observed"] = not missing_starts
-            if missing_starts:
+            r["start_observed"] = not missing_starts and r.get("starts") not in (None, "")
+            if not r["start_observed"]:
                 r["starts"] = None
                 unknown_starts += 1
     rows.sort(
@@ -946,6 +976,9 @@ def learned_forecast(
                     "minutes_mean": float(m.mean()),
                     "p_zero": float((m == 0).mean()),
                     "p_start": float(start_prob[col]),
+                    "p_start_semantics": "maximum_fixture_start_probability"
+                    if fixture_count[col] > 1
+                    else "fixture_start_probability",
                     "p_60": float((m >= 60).mean()),
                     "p_haul": float((p >= 10).mean()),
                     "components": {k: round(float(v[col]), 4) for k, v in component_totals.items()},

@@ -16,17 +16,32 @@
       "type": "integer"
     },
     "time_limit": {
-      "default": 30,
-      "maximum": 300,
-      "minimum": 1,
-      "title": "Time Limit",
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Time Limit"
+    },
+    "relative_gap": {
+      "default": 0.0,
+      "maximum": 0.1,
+      "minimum": 0,
+      "title": "Relative Gap",
       "type": "number"
     },
     "objective": {
       "default": "expected_points",
       "enum": [
         "expected_points",
-        "beat_both"
+        "beat_both",
+        "top_one_percent",
+        "cvar"
       ],
       "title": "Objective",
       "type": "string"
@@ -36,6 +51,13 @@
       "maximum": 100,
       "minimum": 0,
       "title": "Sacrifice Budget",
+      "type": "number"
+    },
+    "tail_fraction": {
+      "default": 0.1,
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "title": "Tail Fraction",
       "type": "number"
     },
     "chips": {

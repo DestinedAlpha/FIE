@@ -81,76 +81,80 @@ def full_training(store: Store, samples=24, refresh=False):
     end = 19 if state["event"] <= 19 else 38
 
     def select(plan_id):
+        from .readiness import selection_is_current
+        from .search_control import check_cancelled
+
         with state_lock:
-            if (
-                store.get("state")["id"] != state["id"]
-                or store.get("forecast")["id"] != current_forecast["id"]
-            ):
+            check_cancelled()
+            if not selection_is_current(store, store.get("plan", plan_id)):
                 raise ValueError(
-                    "Account or forecast changed during training; completed plans retained as analyses"
+                    "Inputs or deadline changed during training; completed plans retained as analyses"
                 )
             store.put("selected_plan", {"plan_id": plan_id, "at": now()})
 
-    baseline = optimize(store, state["id"], current_forecast["id"], end, 60, use_decision_critic=False)
-    select(baseline["id"])
-    if state["event"] == 9:
-        from .rivals import case_comparison
+    from .search_control import live_search
 
-        cases = case_comparison(store, state["id"], store.get("forecast")["id"], 30)
-        record("original_case_families", cases)
-        select(cases["selected_plan_id"])
-    record("decisions", analyze_decisions(store))
-    record("frontier", refine_frontier(store))
-    if end - state["event"] > 3:
-        record("horizon_consistency", validate_horizons(store))
-    from .chips import compare_chips, compare_immediate_hit, rebase_chip_comparison
+    with live_search():
+        baseline = optimize(store, state["id"], current_forecast["id"], end, 60, use_decision_critic=False)
+        select(baseline["id"])
+        if state["event"] == 9:
+            from .rivals import case_comparison
 
-    chip_report = compare_chips(store, store.get("selected_plan")["plan_id"])
-    from .objectives import choose_recommendation
+            cases = case_comparison(store, state["id"], store.get("forecast")["id"], 30)
+            record("original_case_families", cases)
+            select(cases["selected_plan_id"])
+        record("decisions", analyze_decisions(store))
+        record("frontier", refine_frontier(store))
+        if end - state["event"] > 3:
+            record("horizon_consistency", validate_horizons(store))
+        from .chips import compare_chips, compare_immediate_hit, rebase_chip_comparison
 
-    selected, selection = choose_recommendation(
-        store, [store.get("plan", store.get("selected_plan")["plan_id"])], current_forecast
-    )
-    select(selected["id"])
-    record("chip_counterfactual", rebase_chip_comparison(store, chip_report, selected["id"]))
-    record("final_selection", selection)
-    from .context import analyze_evidence
+        chip_report = compare_chips(store, store.get("selected_plan")["plan_id"])
+        from .objectives import choose_recommendation
 
-    record("evidence_impact", analyze_evidence(store, selected["id"]))
-    record("timing", timing_analysis(store))
-    record("football_world_comparison", compare_football_worlds(store))
-    record("population_sample", asyncio.run(collect_population(store)))
-    record("population", evaluate_population(store))
-    record("prospective", freeze(store, store.get("selected_plan")["plan_id"]))
-    score_frozen_decisions(store)
-    plan = store.get("plan", store.get("selected_plan")["plan_id"])
-    record("hit_counterfactual", compare_immediate_hit(store, plan["id"]))
-    if end > state["event"]:
-        from .scenarios import PlayerChange, ScenarioSpec, evaluate_scenarios
-
-        reveal = state["event"] + 1
-        record(
-            "contingency_recourse",
-            evaluate_scenarios(
-                store,
-                plan["id"],
-                [
-                    ScenarioSpec(
-                        name="Hypothetical captain absence after next observation",
-                        reveal_event=reveal,
-                        players=[
-                            PlayerChange(
-                                player_id=plan["ledger"][0]["lineup"]["captain"],
-                                from_event=reveal,
-                                through_event=reveal,
-                                availability=0,
-                            )
-                        ],
-                    )
-                ],
-            ),
+        selected, selection = choose_recommendation(
+            store, [store.get("plan", store.get("selected_plan")["plan_id"])], current_forecast
         )
-    export(store, plan, Path("artifacts/runtime/report"))
+        select(selected["id"])
+        record("chip_counterfactual", rebase_chip_comparison(store, chip_report, selected["id"]))
+        record("final_selection", selection)
+        from .context import analyze_evidence
+
+        record("evidence_impact", analyze_evidence(store, selected["id"]))
+        record("timing", timing_analysis(store))
+        record("football_world_comparison", compare_football_worlds(store))
+        record("population_sample", asyncio.run(collect_population(store)))
+        record("population", evaluate_population(store))
+        record("prospective", freeze(store, store.get("selected_plan")["plan_id"]))
+        score_frozen_decisions(store)
+        plan = store.get("plan", store.get("selected_plan")["plan_id"])
+        record("hit_counterfactual", compare_immediate_hit(store, plan["id"]))
+        if end > state["event"]:
+            from .scenarios import PlayerChange, ScenarioSpec, evaluate_scenarios
+
+            reveal = state["event"] + 1
+            record(
+                "contingency_recourse",
+                evaluate_scenarios(
+                    store,
+                    plan["id"],
+                    [
+                        ScenarioSpec(
+                            name="Hypothetical captain absence after next observation",
+                            reveal_event=reveal,
+                            players=[
+                                PlayerChange(
+                                    player_id=plan["ledger"][0]["lineup"]["captain"],
+                                    from_event=reveal,
+                                    through_event=reveal,
+                                    availability=0,
+                                )
+                            ],
+                        )
+                    ],
+                ),
+            )
+        export(store, plan, Path("artifacts/runtime/report"))
     from .replay import run_replay
 
     record("weekly_replay", run_replay(store))
@@ -282,14 +286,20 @@ def refresh_cycle(store: Store):
 
         plan, _ = choose_recommendation(store, [plan], result)
         with state_lock:
-            if store.get("state")["id"] == state["id"] and store.get("forecast")["id"] == result["id"]:
+            from .readiness import selection_is_current
+
+            published = selection_is_current(store, plan)
+            if published:
                 store.put("selected_plan", {"plan_id": plan["id"], "at": now()})
     except ValueError as error:
         from .optimization import hold_plan
 
         fallback = hold_plan(store, state["id"], result["id"], 19 if event <= 19 else 38)
         with state_lock:
-            if store.get("state")["id"] == state["id"] and store.get("forecast")["id"] == result["id"]:
+            from .readiness import selection_is_current
+
+            fallback_current = selection_is_current(store, fallback)
+            if fallback_current:
                 store.put("selected_plan", {"plan_id": fallback["id"], "at": now()})
         return {
             "at": now(),
@@ -297,10 +307,21 @@ def refresh_cycle(store: Store):
             "error": str(error),
             "plan_id": fallback["id"],
             "forecast_id": result["id"],
+            "stale": not fallback_current,
             "fallback": "Validated hold policy retained; inspect the reported planning error before acting",
             "account_sync": synchronization,
             "account_changed": synchronization.get("account_changed", False),
             "consensus_comparison": consensus_status,
+        }
+    if not published:
+        return {
+            "at": now(),
+            "status": "Completed for superseded inputs; refresh again",
+            "stale": True,
+            "plan_id": plan["id"],
+            "forecast_id": result["id"],
+            "account_sync": synchronization,
+            "account_changed": synchronization.get("account_changed", False),
         }
     shadow_status = None
     from .shadow_accounts import freeze_shadow_accounts

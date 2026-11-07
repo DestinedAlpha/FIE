@@ -2,6 +2,7 @@ param([switch]$NoBrowser, [switch]$ConfigureProviders, [switch]$RebuildModel)
 $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $ProjectRoot
+if (Test-Path ".fie-update-in-progress") { throw "An update was interrupted. Re-run Update existing.cmd to recover before starting." }
 
 $UvCommand = Get-Command uv -ErrorAction SilentlyContinue
 if (-not $UvCommand) {

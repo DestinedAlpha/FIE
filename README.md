@@ -6,9 +6,15 @@ The six supplied documents remain byte-for-byte unchanged in [`research/`](resea
 
 **Current acceptance status:** the role-v3 configuration scores **575** in independent weekly £100m teams. Historical future-expert validation scored **1,202 versus 1,098** in an earlier-season 19-week continuous replay and **538 versus 536** over GW1–9 under its earlier protocol. These different account problems do not certify the complete current policy. **Consistent 550+ continuous-account performance is not established.** See the [data/forecast audit](docs/data-and-forecast-audit.md) and [performance audit](docs/performance-audit.md).
 
+## What changed in 0.14
+
+Live Optimize plan and Refresh data searches have no forced solve-time cutoff and target zero MIP gap, with progress and cooperative cancellation. Explicit finite research budgets remain available for reproducible comparisons. Exact search still optimizes an additive forecast objective, not unknowable future football outcomes.
+
+The audit fixes account-editor verification/provenance, version conflicts, late-result publication, scheduler recovery, updater hash checking and rollback/recovery, missing-label and conflicting-duplicate guards, extractor status gates and stale exported schemas. Accepted numerical weights remain unchanged. The 575-point weekly scorecard and older continuous-policy results are retained historical protocols; they do not certify the new unlimited-search policy. See [the audit](docs/current-audit-0.14.md).
+
 ## Windows
 
-**[Download the 0.13 existing-installation update](https://raw.githubusercontent.com/DestinedAlpha/FIE/v0.13.0/updates/FPL-Intelligence-0.13.0-Update.zip).** This small update requires your existing installation with its data and models.
+**[Download the 0.14 existing-installation update](https://raw.githubusercontent.com/DestinedAlpha/FIE/v0.14.0/updates/FPL-Intelligence-0.14.0-Update.zip).** This small update requires your existing installation with its data and models.
 
 For an existing installation, extract the new private download into a **separate folder** and run **Update existing.cmd**. Select the existing folder containing Start.cmd. The updater backs up the database/application, preserves your `.env` and account data, updates the application, retrains against current completed data and recomputes the plan. It does not apply any FPL account transfer.
 

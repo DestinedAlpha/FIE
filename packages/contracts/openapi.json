@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "FPL Intelligence",
-    "version": "0.13.0"
+    "version": "0.14.0"
   },
   "paths": {
     "/api/health": {
@@ -943,6 +943,43 @@
         }
       }
     },
+    "/api/jobs/{identity}/cancel": {
+      "post": {
+        "summary": "Cancel Job",
+        "operationId": "cancel_job_api_jobs__identity__cancel_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/jobs/{identity}": {
       "get": {
         "summary": "Job",
@@ -1856,18 +1893,23 @@
             "title": "End Event"
           },
           "time_limit": {
-            "type": "number",
-            "maximum": 300.0,
-            "minimum": 1.0,
-            "title": "Time Limit",
-            "default": 30
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time Limit"
           },
           "relative_gap": {
             "type": "number",
             "maximum": 0.1,
             "minimum": 0.0,
             "title": "Relative Gap",
-            "default": 0.001
+            "default": 0.0
           },
           "objective": {
             "type": "string",

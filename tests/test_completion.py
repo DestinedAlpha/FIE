@@ -345,6 +345,10 @@ def test_refresh_cycle_replans_from_reconciled_next_deadline(tmp_path, market, r
 
     store, _ = account_store(tmp_path, market, rules, state, monkeypatch)
     store.put("ingestion", {"captured_at": now(), "histories_requested": True})
+    model_id = store.put(
+        "decision_model", {"promoted": True, "predictions": [{"season": "2026/27", "event": 9}]}
+    )
+    monkeypatch.setattr("fpl_intelligence.role_minutes.ensure", lambda *args: None)
     calls = []
 
     async def ingest(self, *, histories=True, entry=None):
@@ -353,14 +357,24 @@ def test_refresh_cycle_replans_from_reconciled_next_deadline(tmp_path, market, r
 
     def forecast(saved, start, end, worlds):
         assert start == 10
-        identity = saved.put("forecast", {"start_event": start, "end_event": end})
+        identity = saved.put(
+            "forecast",
+            {
+                "start_event": start,
+                "end_event": end,
+                "market_id": saved.get("market")["id"],
+                "decision_model_id": model_id,
+            },
+        )
         return saved.get("forecast", identity)
 
     def optimize(saved, state_id, forecast_id, end, seconds):
         current = saved.get("state", state_id)
         assert current["event"] == 10 and current["bank"] == 40
         assert {r["player_id"] for r in current["lots"]} == {*range(2, 16), 16}
-        identity = saved.put("plan", {"state_id": state_id, "forecast_id": forecast_id})
+        identity = saved.put(
+            "plan", {"state_id": state_id, "forecast_id": forecast_id, "market_id": saved.get("market")["id"]}
+        )
         return saved.get("plan", identity)
 
     monkeypatch.setattr(ingestion.Official, "ingest", ingest)

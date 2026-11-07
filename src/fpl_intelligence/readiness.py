@@ -12,6 +12,32 @@ from pathlib import Path
 from .storage import atomic_json, now
 
 
+def selection_is_current(store, plan):
+    """Check all serving pointers and the deadline immediately before publication."""
+    try:
+        state = store.get("state")
+        market = store.get("market")
+        forecast = store.get("forecast")
+        model = store.get("decision_model")
+    except ValueError:
+        return False
+    if (
+        any(
+            plan.get(key) != value
+            for key, value in (
+                ("state_id", state["id"]),
+                ("market_id", market["id"]),
+                ("forecast_id", forecast["id"]),
+            )
+        )
+        or forecast.get("decision_model_id") != model["id"]
+    ):
+        return False
+    from .account_sync import next_event
+
+    return not market.get("events") or state.get("event") == next_event(market)
+
+
 def review_specification(root: Path, evidence: list[dict]) -> dict:
     """Fail on unreviewed document changes, omitted sections or broken evidence.
 
@@ -129,3 +155,68 @@ def build_readiness(store):
     atomic_json(root / "artifacts/evaluations/implementation_audit.json", report)
     atomic_json(root / "artifacts/evaluations/specification_review.json", report["specification_review"])
     return report
+
+
+def operational_readiness(store):
+    """Serving readiness is distinct from database liveness; never mutate the account."""
+    reasons = []
+    objects = {}
+    for kind in ("state", "market", "forecast", "decision_model", "selected_plan"):
+        try:
+            objects[kind] = store.get(kind)
+        except ValueError:
+            reasons.append(f"Missing {kind}")
+    if reasons:
+        return {"ready": False, "reasons": reasons}
+    state, market, forecast, model = (objects[k] for k in ("state", "market", "forecast", "decision_model"))
+    weight_paths: list[Path] = []
+    if model.get("directory"):
+        weight_paths.extend(
+            store.root / "models" / model["directory"] / (name + ".txt")
+            for name in ("points", "minutes", "starter")
+        )
+    else:
+        reasons.append("Core model weight manifest unavailable")
+    for key, kind in (
+        ("role_minutes_model_id", "role_minutes_model"),
+        ("future_horizon_model_id", "future_horizon_model"),
+    ):
+        if model.get(key):
+            try:
+                companion = store.get(kind, model[key])
+                references = (
+                    [companion["path"]]
+                    if "path" in companion
+                    else [item["path"] for item in companion.get("models", {}).values()]
+                )
+                weight_paths.extend(store.artifact_path(reference) for reference in references)
+            except (KeyError, ValueError):
+                reasons.append(f"Missing {kind} weight manifest")
+    if any(not path.is_file() for path in weight_paths):
+        reasons.append("One or more fitted weight files are missing")
+    if forecast.get("market_id") != market["id"]:
+        reasons.append("Forecast uses an older market")
+    if forecast.get("decision_model_id") != model["id"]:
+        reasons.append("Forecast uses an older model")
+    from .account_sync import next_event
+
+    if market.get("events") and state.get("event") != next_event(market):
+        reasons.append("Account needs deadline reconciliation")
+    try:
+        plan = store.get("plan", objects["selected_plan"].get("plan_id"))
+        if any(
+            plan.get(key) != value
+            for key, value in (
+                ("state_id", state["id"]),
+                ("market_id", market["id"]),
+                ("forecast_id", forecast["id"]),
+            )
+        ):
+            reasons.append("Selected plan uses superseded inputs")
+    except ValueError:
+        reasons.append("No selected plan available")
+    return {
+        "ready": not reasons,
+        "reasons": reasons,
+        "scope": "Input lineage, weight-file existence and deadline readiness. Weight integrity is verified by model loaders; this is not a predictive-quality certificate",
+    }

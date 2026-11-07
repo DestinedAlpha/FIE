@@ -111,13 +111,16 @@ function App() {
         const value = await api<{
           status: string;
           error?: string;
+          progress?: {mip_primal_bound?: number; mip_dual_bound?: number; mip_gap?: number};
           result?: { stale?: boolean };
         }>(`/jobs/${job}`);
-        if (["completed", "failed", "interrupted"].includes(value.status)) {
+        if (["completed", "failed", "interrupted", "cancelled"].includes(value.status)) {
           if (!stopped) {
             setJob(null);
             setBusy(false);
-            if (value.status !== "completed")
+            if (value.status === "cancelled")
+              setNotice("Calculation cancelled.");
+            else if (value.status !== "completed")
               setError(value.error || "Job interrupted");
             else {
               setNotice(
@@ -129,6 +132,7 @@ function App() {
             }
           }
         } else if (++ticks % 6 === 0 && !stopped) {
+          if (value.progress) setNotice(`Search continues. Best objective ${value.progress.mip_primal_bound?.toFixed(2) ?? "pending"}; upper bound ${value.progress.mip_dual_bound?.toFixed(2) ?? "pending"}; gap ${value.progress.mip_gap == null ? "pending" : (100 * value.progress.mip_gap).toFixed(2) + "%"}.`);
           await reload();
         }
       } catch (e) {
@@ -221,7 +225,7 @@ function App() {
         state_id: data.state.id,
         forecast_id: data.forecast.id,
         end_event: end,
-        time_limit: 60,
+        time_limit: null,
         objective,
         sacrifice_budget: budget,
       });
@@ -235,9 +239,6 @@ function App() {
   async function saveState() {
     try {
       const state = JSON.parse(stateText);
-      state.known_at = new Date().toISOString();
-      state.status = "confirmed";
-      state.lots = state.lots.map((lot: State["lots"][number]) => ({...lot, quote_confirmed: true}));
       if (await action("/state", { state, expected_state_id: data?.state?.id }))
         setEditor(false);
     } catch (e) {
@@ -319,7 +320,7 @@ function App() {
               <th>{sellQuotes ? "Sell value" : "Price"}</th>
               <th>Fixture</th>
               <th>xMins</th>
-              <th>P(start)</th>
+              <th title="For double gameweeks this is the highest individual fixture start probability, not the chance of starting any match.">P(start, max fixture)</th>
               <th>Ownership</th>
               <th className="numeric">xPts ↓</th>
             </tr>
@@ -541,7 +542,8 @@ function App() {
               </button>
             </div>
           )}
-          {busy && (
+          {job && <button onClick={() => api(`/jobs/${job}/cancel`, {}).then(() => setNotice("Cancellation requested.")).catch(e => setError(e.message))}>Cancel calculation</button>}
+        {busy && (
             <div role="status" className="message">
               <LoaderCircle size={16} className="spin" />
               Calculating in the local engine. You can keep exploring.

@@ -260,6 +260,13 @@ def main():
     result = {
         "at": now(),
         "version": version("fpl-intelligence"),
+        "serving_policy": {
+            "default_solver_time_limit": None,
+            "default_live_mip_gap": 0,
+            "historical_scorecards_recomputed": False,
+            "retained_forecast_cutoff": forecast.get("cutoff"),
+            "scope": "Engineering verification with retained v0.13 forecast/plan evidence; does not certify the unlimited-search policy on historical football outcomes",
+        },
         "account_state_id": state["id"],
         "market_id": market["id"],
         "forecast_id": forecast["id"],

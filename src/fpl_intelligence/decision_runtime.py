@@ -559,7 +559,12 @@ def refine_frontier(store, seconds=20):
 
     with state_lock:
         if store.get("state")["id"] == state["id"] and store.get("forecast")["id"] == forecast["id"]:
-            store.put("selected_plan", {"plan_id": result["selected_plan_id"], "at": now()})
+            from .readiness import selection_is_current
+            from .search_control import check_cancelled
+
+            check_cancelled()
+            if selection_is_current(store, store.get("plan", result["selected_plan_id"])):
+                store.put("selected_plan", {"plan_id": result["selected_plan_id"], "at": now()})
         else:
             result["selection_status"] = (
                 "Account or forecast changed during planning; result retained as an analysis only"

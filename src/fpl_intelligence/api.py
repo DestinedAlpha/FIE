@@ -5,10 +5,11 @@ from __future__ import annotations
 import asyncio
 import json
 import uuid
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import CancelledError, ThreadPoolExecutor
 from contextlib import asynccontextmanager
 from importlib.metadata import version
 from pathlib import Path
+from threading import Event, Lock
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
@@ -134,6 +135,9 @@ def create_app(root=None):
 
         return JSONResponse({"detail": str(exc)}, status_code=422)
 
+    cancellations = {}
+    cancellation_lock = Lock()
+
     def launch(kind, request, work):
         identity = uuid.uuid4().hex
         inputs = {
@@ -155,15 +159,41 @@ def create_app(root=None):
                 (identity, "queued", now(), now(), body, None, None),
             )
 
+        cancelled = Event()
+        with cancellation_lock:
+            cancellations[identity] = cancelled
+
         def execute():
             with store.db() as db:
                 db.execute("UPDATE jobs SET status='running',updated_at=? WHERE id=?", (now(), identity))
             try:
-                result = work()
+                from .search_control import check_cancelled, search_session
+
+                def progress(info):
+                    import math
+
+                    values = {}
+                    for key in ("mip_primal_bound", "mip_dual_bound", "mip_gap", "running_time"):
+                        value = getattr(info, key, None)
+                        if value is not None and math.isfinite(value):
+                            values[key] = value
+                    store.put("solver_progress", {"job_id": identity, "at": now(), **values})
+
+                unlimited = kind in ("refresh-cycle", "startup-account-sync", "scheduled-refresh") or (
+                    kind == "optimize" and request.get("time_limit") is None
+                )
+                with search_session(unlimited, cancelled, progress):
+                    result = work()
+                    check_cancelled()
                 with store.db() as db:
                     db.execute(
                         "UPDATE jobs SET status='completed',result=?,updated_at=? WHERE id=?",
                         (json.dumps(result, allow_nan=False), now(), identity),
+                    )
+            except CancelledError:
+                with store.db() as db:
+                    db.execute(
+                        "UPDATE jobs SET status='cancelled',updated_at=? WHERE id=?", (now(), identity)
                     )
             except Exception as exc:
                 with store.db() as db:
@@ -172,11 +202,16 @@ def create_app(root=None):
                         (f"{type(exc).__name__}: {redact(exc)[:400]}", now(), identity),
                     )
 
+            finally:
+                with cancellation_lock:
+                    cancellations.pop(identity, None)
+
         executor.submit(execute)
         return {"job_id": identity, "status": "queued"}
 
     @app.get("/api/health")
     def health():
+        from .readiness import operational_readiness
         from .transport import request_metrics
 
         with store.db() as db:
@@ -191,6 +226,8 @@ def create_app(root=None):
         return {
             "status": "ok" if integrity == "ok" else "degraded",
             "integrity": integrity,
+            "status_scope": "database_liveness",
+            "readiness": operational_readiness(store),
             "sources": sources,
             "request_metrics_24h": request_metrics(store),
             "quota": quota,
@@ -999,10 +1036,19 @@ def create_app(root=None):
                 max_transfers=request.max_transfers,
                 first_week_hit_budget=request.first_week_hit_budget,
             )
+            from .search_control import check_cancelled
+
+            check_cancelled()
             with state_lock:
                 current = store.get("state")["id"]
                 current_forecast = store.get("forecast")["id"]
-                stale = current != request.state_id or current_forecast != request.forecast_id
+                from .readiness import selection_is_current
+
+                stale = (
+                    current != request.state_id
+                    or current_forecast != request.forecast_id
+                    or not selection_is_current(store, plan)
+                )
                 if not stale:
                     store.put("selected_plan", {"plan_id": plan["id"], "at": now()})
             return {
@@ -1014,6 +1060,15 @@ def create_app(root=None):
 
         return launch("optimize", request.model_dump(), work)
 
+    @app.post("/api/jobs/{identity}/cancel")
+    def cancel_job(identity: str):
+        with cancellation_lock:
+            event = cancellations.get(identity)
+            if event is None:
+                raise HTTPException(409, "Job is no longer cancellable")
+            event.set()
+        return {"job_id": identity, "status": "cancelling"}
+
     @app.get("/api/jobs/{identity}")
     def job(identity: str):
         with store.db() as db:
@@ -1022,6 +1077,10 @@ def create_app(root=None):
             raise HTTPException(404, "Unknown job")
         value = dict(row)
         value["result"] = json.loads(value["result"]) if value["result"] else None
+        if store.list("solver_progress", 1):
+            progress = store.get("solver_progress")
+            if progress.get("job_id") == identity:
+                value["progress"] = progress
         return value
 
     @app.post("/api/state")
@@ -1030,7 +1089,7 @@ def create_app(root=None):
             players, market = load_market(store)
             rules = Rules.from_bootstrap(store.latest("bootstrap", content_hash=market["source_hash"])[0])
             validate_squad(request.state, players, rules)
-            if request.expected_state_id and store.get("state")["id"] != request.expected_state_id:
+            if store.list("state", 1) and store.get("state")["id"] != request.expected_state_id:
                 raise HTTPException(409, "Account changed; reload before saving")
             identity = store.put("state", request.state.model_dump())
             store.event("account_import", identity, {"status": request.state.status})

@@ -113,8 +113,8 @@ class OptimizeRequest(Strict):
     state_id: str
     forecast_id: str
     end_event: int = Field(ge=1, le=38)
-    time_limit: float = Field(default=30, ge=1, le=300)
-    relative_gap: float = Field(default=0.001, ge=0, le=0.1)
+    time_limit: float | None = Field(default=None, gt=0)
+    relative_gap: float = Field(default=0.0, ge=0, le=0.1)
     objective: Literal["expected_points", "beat_both", "top_one_percent", "cvar"] = "expected_points"
     sacrifice_budget: float = Field(default=5, ge=0, le=100)
     tail_fraction: float = Field(default=0.1, gt=0, le=1)

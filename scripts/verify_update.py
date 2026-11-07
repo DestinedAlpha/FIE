@@ -41,6 +41,7 @@ def verify(archive: Path):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(data)
         (stage / "app-files.json").write_text(json.dumps(manifest))
+        (stage / "update-checksums.json").write_text(json.dumps(metadata))
         target = Path(scratch) / "existing"
         target.mkdir()
         (target / "pyproject.toml").write_text('name = "fpl-intelligence"\n')

@@ -13,6 +13,32 @@ async function navigate(page: import("@playwright/test").Page, label: string) {
   await page.getByRole("button", { name: label, exact: true }).click();
 }
 
+test("editing an account preserves unverified quotes and original provenance", async ({ page }) => {
+  let saved: any;
+  let originalTime: string;
+  await page.route("**/api/dashboard*", async route => {
+    const response = await route.fetch();
+    const data = await response.json();
+    data.state.lots[0].quote_confirmed = false;
+    data.state.status = "public_deadline";
+    originalTime = data.state.known_at;
+    await route.fulfill({ response, json: data });
+  });
+  await page.route("**/api/state", async route => {
+    saved = route.request().postDataJSON();
+    await route.fulfill({json: {state_id: "synthetic-editor-check"}});
+  });
+  await openWorkspace(page);
+  await navigate(page, "My squad");
+  await page.getByRole("button", {name: "Edit account state", exact: true}).click();
+  await page.getByRole("button", {name: "Validate & save account", exact: true}).click();
+  await expect(page.getByRole("dialog")).not.toBeVisible();
+  expect(saved.state.lots[0].quote_confirmed).toBe(false);
+  expect(saved.state.status).toBe("public_deadline");
+  expect(saved.state.known_at).toBe(originalTime!);
+  expect(saved.expected_state_id).toBeTruthy();
+});
+
 test("recommendation, legal XI, full market and planner exports", async ({
   page,
 }) => {
