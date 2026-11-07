@@ -108,6 +108,13 @@ function App() {
     reload().catch((e) => setError(e.message));
   }, [event]);
   useEffect(() => {
+    if (job) return;
+    const timer = setInterval(() => {
+      if (document.visibilityState === "visible") reload().catch(e => setError(e.message));
+    }, 30000);
+    return () => clearInterval(timer);
+  }, [job, event]);
+  useEffect(() => {
     if (!job) return;
     let stopped = false;
     let ticks = 0;

@@ -101,6 +101,9 @@ def create_app(root=None):
             yield
         finally:
             stop.set()
+            with cancellation_lock:
+                for cancelled in cancellations.values():
+                    cancelled.set()
             thread.join(timeout=1)
 
     app = FastAPI(title="FPL Intelligence", version=version("fpl-intelligence"), lifespan=lifespan)

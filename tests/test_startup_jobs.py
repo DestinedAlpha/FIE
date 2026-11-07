@@ -48,3 +48,30 @@ def test_startup_refresh_is_visible_cancellable_and_does_not_block_http(tmp_path
             time.sleep(0.01)
         assert status == "cancelled"
     assert store.get("selected_plan")["id"] == selected
+
+
+def test_server_shutdown_signals_running_background_work(tmp_path, monkeypatch):
+    from concurrent.futures import CancelledError
+
+    store = Store(tmp_path)
+    store.put("state", {})
+    store.put("market", {})
+    store.put("decision_model", {"promoted": True})
+    entered, exited = Event(), Event()
+    monkeypatch.setattr("fpl_intelligence.readiness.operational_readiness", lambda *_: {"ready": False})
+
+    def maintenance(*_):
+        entered.set()
+        try:
+            expires = time.monotonic() + 5
+            while time.monotonic() < expires:
+                check_cancelled()
+                time.sleep(0.01)
+        except CancelledError:
+            exited.set()
+            raise
+
+    monkeypatch.setattr("fpl_intelligence.maintenance.maintain_models", maintenance)
+    with TestClient(create_app(tmp_path), base_url="http://127.0.0.1"):
+        assert entered.wait(5)
+    assert exited.wait(2)

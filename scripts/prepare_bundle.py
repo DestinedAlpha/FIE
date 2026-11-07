@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import gzip
+import hashlib
 import json
 import subprocess
 import tempfile
+from importlib.metadata import version
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
@@ -56,6 +58,21 @@ def main():
         ]
         with ZipFile(output, "w", compression=ZIP_DEFLATED, compresslevel=3) as bundle:
             bundle.writestr("FPL-Intelligence/app-files.json", json.dumps(application_files))
+            bundle.writestr(
+                "FPL-Intelligence/update-checksums.json",
+                json.dumps(
+                    {
+                        "version": version("fpl-intelligence"),
+                        "requires_existing_installation": False,
+                        "existing_models_preserved": True,
+                        "files": {
+                            name: hashlib.sha256((root / name).read_bytes()).hexdigest()
+                            for name in application_files
+                        },
+                    },
+                    indent=2,
+                ),
+            )
             for name in sorted(files):
                 path = root / name
                 if (
