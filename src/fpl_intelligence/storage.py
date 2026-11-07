@@ -11,7 +11,7 @@ import sqlite3
 import tempfile
 from contextlib import closing, contextmanager, nullcontext
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any
 
 
@@ -195,7 +195,8 @@ class Store:
                 source.backup(target)
 
     def artifact_path(self, reference: str) -> Path:
-        value = Path(reference)
+        raw = str(reference)
+        value = PureWindowsPath(raw) if "\\" in raw else Path(raw)
         if ".." in value.parts:
             raise ValueError("Unrecognized local artifact reference")
         categories = {"scenarios", "models", "features", "normalized"}

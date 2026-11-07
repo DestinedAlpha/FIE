@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
 
 from .consensus import replay_packets
 from .decision_training import reprice
@@ -19,8 +18,8 @@ def frozen_availability(store, row):
     body = json.loads(path.read_text())
     models = {}
     for name, spec in body["availability"]["models"].items():
-        original = Path(spec["path"])
-        suffix = original.parts[original.parts.index("models") + 1 :]
+        original = store.artifact_path(spec["path"])
+        suffix = original.relative_to(store.root / "models").parts
         retained = path.parent.joinpath(*suffix)
         if hashlib.sha256(retained.read_bytes()).hexdigest() != spec["hash"]:
             raise ValueError("Retained availability model checksum mismatch")

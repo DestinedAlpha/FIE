@@ -182,3 +182,28 @@ def test_new_evaluation_exports_work_without_private_account(tmp_path):
             "shadow_evaluation": None,
         }
         assert client.get("/api/replay/pipeline").status_code == 422
+
+
+def test_windows_sealed_availability_relocates_without_rewriting_its_evidence(tmp_path):
+    from fpl_intelligence.pipeline_verification import frozen_availability
+
+    store = Store(tmp_path)
+    decision = tmp_path / "models/checkpoint/week.json"
+    weights = decision.parent / "availability-v3/recovery.txt"
+    weights.parent.mkdir(parents=True)
+    weights.write_bytes(b"retained availability")
+    original = {
+        "availability": {
+            "models": {
+                "recovery": {
+                    "path": r"C:\old\data\models\availability-v3\recovery.txt",
+                    "hash": hashlib.sha256(weights.read_bytes()).hexdigest(),
+                }
+            }
+        }
+    }
+    decision.write_text(json.dumps(original))
+    before = decision.read_bytes()
+    resolved = frozen_availability(store, {"decision_file": r"C:\old\data\models\checkpoint\week.json"})
+    assert Path(resolved["models"]["recovery"]["path"]).read_bytes() == weights.read_bytes()
+    assert decision.read_bytes() == before

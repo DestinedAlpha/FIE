@@ -114,3 +114,24 @@ def test_api_empty_onboarding_and_invalid_jobs(tmp_path):
         assert client.get(f"/api/plans/{scenario_id}").json()["scenario"]["name"] == "Hypothesis"
         assert client.get(f"/api/export/{scenario_id}/json").status_code == 200
         assert local.list("plan", 1) == []  # Reading a hypothesis never selects a production plan.
+
+
+@pytest.mark.parametrize(
+    "reference",
+    [
+        r"C:\Users\user\FIE\data\models\base\minutes.txt",
+        r"\\server\old\models\base\minutes.txt",
+        "/old/FIE/data/models/base/minutes.txt",
+    ],
+)
+def test_relocated_weights_accept_both_platform_path_formats(tmp_path, reference):
+    store = Store(tmp_path)
+    weights = tmp_path / "models/base/minutes.txt"
+    weights.parent.mkdir(parents=True)
+    weights.write_bytes(b"retained weights")
+    assert store.artifact_path(reference).read_bytes() == b"retained weights"
+
+
+def test_windows_metadata_cannot_traverse_the_relocated_model_directory(tmp_path):
+    with pytest.raises(ValueError, match="Unrecognized"):
+        Store(tmp_path).artifact_path(r"C:\old\models\..\secrets.txt")

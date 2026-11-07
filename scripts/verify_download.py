@@ -163,7 +163,7 @@ def verify(archive: Path, *, reuse_verified_data=False):
         finalized = {e["id"] for e in restored.get("market")["events"] if e.get("data_checked")}
         if any(r["event"] not in finalized for r in shadow["outcomes"]):
             raise ValueError("A prospective outcome has not finalized")
-        scenario = Path(forecast["scenario_path"]).name
+        scenario = restored.artifact_path(forecast["scenario_path"]).name
         target = root / "data/scenarios" / scenario
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(zipped.read(prefix + "data/scenarios/" + scenario))
@@ -176,7 +176,7 @@ def verify(archive: Path, *, reuse_verified_data=False):
                 if key.rsplit("_", 1)[-1] in used_events
             }
             for item in needed.values():
-                name = Path(item["path"]).name
+                name = restored.artifact_path(item["path"]).name
                 (target.parent / name).write_bytes(zipped.read(prefix + "data/scenarios/" + name))
         expected = score_plan(original, plan, forecast)
         actual = score_plan(restored, restored.get("plan", plan["id"]), restored.get("forecast"))
