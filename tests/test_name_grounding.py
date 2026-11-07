@@ -91,3 +91,11 @@ def test_unspecified_publication_zone_remains_a_range_and_stale_sources_fail_bef
         asyncio.run(
             request_claims(Store(tmp_path), {**source, "published_at": "2026-11-01T20:00:00"}, cap, [])
         )
+
+
+def test_club_article_body_excludes_related_stories_and_embedded_cards():
+    from fpl_intelligence.intelligence import article_text
+
+    html = """<article><h1>Current report</h1><section class="article-body"><p>Nico O’Reilly has a back problem.</p><section class="ff-article-content-card-wrapper">Haaland unavailable last month</section><aside>Unrelated transfer</aside></section><section class="article-section">Further reading: Foden ruled out</section><div class="most-read">Trafford injured</div></article>"""
+    body = article_text(html, "https://www.mancity.com/news/test")
+    assert body["text"] == "Nico O’Reilly has a back problem."

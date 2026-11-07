@@ -78,11 +78,13 @@ def article_text(html, url):
                     modified = node.get("dateModified")
         except (ValueError, TypeError):
             pass
-    root = soup.select_one(".entry-content") or soup.find("article")
+    root = soup.select_one('[itemprop="articleBody"], .entry-content, .article-body') or soup.find("article")
     if root is None:
         raise ValueError("A public article body could not be isolated")
     for node in root.select(
-        "script,style,noscript,form,.comments,.paywall-content,.members-only,.locked-content"
+        "script,style,noscript,form,nav,aside,footer,.comments,.paywall-content,.members-only,.locked-content,"
+        ".related-posts,.related-articles,.article-tags-share,.most-read,.further-reading,"
+        ".mc-embedded,.ff-article-content-card-wrapper"
     ):
         node.decompose()
     links = [urljoin(url, a["href"]) for a in root.select("a[href]")]
