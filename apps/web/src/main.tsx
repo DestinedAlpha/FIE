@@ -182,6 +182,9 @@ function App() {
   );
   const currentEvent =
     event || data?.market?.events.find((e) => e.is_next)?.id || 9;
+  useEffect(() => {
+    setEnd(previous => previous < currentEvent ? (currentEvent > 19 ? 38 : currentEvent) : previous);
+  }, [currentEvent]);
   const requestedPlan = viewPlan || data?.plan;
   const plan = requestedPlan?.stale ? null : requestedPlan;
   const first = plan?.stale ? undefined : plan?.ledger[0];

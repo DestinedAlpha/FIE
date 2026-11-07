@@ -751,7 +751,7 @@ async def extract_with_fallback(store: Store, source: dict, entities: list[dict]
         },
     )
     raise ValueError(
-        "Verified free providers unavailable; source queued and numerical planner remains available"
+        "No provider returned usable grounded evidence; source queued and numerical planner remains available"
     )
 
 
