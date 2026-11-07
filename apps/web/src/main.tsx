@@ -95,7 +95,14 @@ function App() {
     const result = await api<Dashboard>(
       "/dashboard" + (event ? `?event=${event}` : ""),
     );
-    if (version === reloadVersion.current) setData(result);
+    if (version === reloadVersion.current) {
+      setData(result);
+      const active = result.active_jobs?.[0];
+      if (active) {
+        setJob((current) => current || active.id);
+        setBusy(true);
+      }
+    }
   }
   useEffect(() => {
     reload().catch((e) => setError(e.message));

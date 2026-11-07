@@ -15,10 +15,10 @@ def maintain_models(store):
     # Revalidate cached evidence once when the guard contract changes. Originals
     # remain immutable; unsupported claims are quarantined, never deleted.
     if store.list("claim", 1) and store.list("market", 1):
-        from .research import EVIDENCE_VERSION, audit_claim_identities
+        from .research import EVIDENCE_VERSION, IDENTITY_VERSION, audit_claim_identities
 
         prior = store.get("claim_identity_audit") if store.list("claim_identity_audit", 1) else {}
-        if prior.get("version") != EVIDENCE_VERSION:
+        if prior.get("version") != EVIDENCE_VERSION or prior.get("identity_version") != IDENTITY_VERSION:
             audit_claim_identities(store)
 
     removed = 0

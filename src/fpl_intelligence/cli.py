@@ -168,24 +168,9 @@ def train(legacy: bool = False):
 
         result = train_evaluate(Store())
     else:
-        from threadpoolctl import threadpool_limits
+        from .training import train_current
 
-        from .decision import train_decisions
-
-        store = Store()
-        active = store.get("decision_model") if store.list("decision_model", 1) else {}
-        with threadpool_limits(limits=1):
-            if active.get("fusion_model_id"):
-                from .context_archive import import_context
-                from .fusion import refit_active_fusion
-
-                asyncio.run(import_context(store))
-                result = refit_active_fusion(store)
-            else:
-                result = train_decisions(store)
-            from .role_minutes import ensure
-
-            result = ensure(store, result)
+        result = train_current(Store())
     show({k: v for k, v in result.items() if k not in ("predictions", "residuals", "curves")})
 
 

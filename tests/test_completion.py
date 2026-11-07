@@ -348,7 +348,7 @@ def test_refresh_cycle_replans_from_reconciled_next_deadline(tmp_path, market, r
     model_id = store.put(
         "decision_model", {"promoted": True, "predictions": [{"season": "2026/27", "event": 9}]}
     )
-    monkeypatch.setattr("fpl_intelligence.role_minutes.ensure", lambda *args: None)
+    monkeypatch.setattr("fpl_intelligence.role_minutes.ensure", lambda saved, model: model)
     calls = []
 
     async def ingest(self, *, histories=True, entry=None):

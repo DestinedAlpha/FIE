@@ -17,6 +17,30 @@ from sklearn.isotonic import IsotonicRegression
 from .features import FEATURE_NAMES
 from .storage import Store, atomic_json, digest, now
 
+
+def save_booster_atomic(booster, path):
+    """Never truncate or replace retained weights while fitting a candidate."""
+    import os
+    import tempfile
+
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, name = tempfile.mkstemp(dir=path.parent, suffix=".txt")
+    os.close(descriptor)
+    temporary = Path(name)
+    try:
+        booster.save_model(str(temporary))
+        with temporary.open("rb+") as stream:
+            os.fsync(stream.fileno())
+        if path.exists():
+            if path.read_bytes() != temporary.read_bytes():
+                raise ValueError("Refusing to overwrite retained model weights with different bytes")
+        else:
+            os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
 PARAMS: dict[str, Any] = {
     "n_estimators": 120,
     "num_leaves": 12,

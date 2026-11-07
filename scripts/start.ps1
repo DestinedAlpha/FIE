@@ -68,9 +68,7 @@ if (-not (Test-Path "apps/web/dist/index.html")) {
     if ($LASTEXITCODE -ne 0) { throw "Frontend build failed." }
 }
 
-& $UvPath run fpl maintain-models
-if ($LASTEXITCODE -ne 0) { throw "Numerical model migration failed; existing account data remains preserved." }
-& $UvPath run python -c "from fpl_intelligence.storage import Store; s=Store(); raise SystemExit(0 if all(s.list(kind, 1) for kind in ('market', 'state', 'forecast', 'selected_plan')) and s.get('forecast').get('model_version') == 'learned-points-v1' else 1)"
+& $UvPath run python -c "from fpl_intelligence.storage import Store; s=Store(); raise SystemExit(0 if all(s.list(kind, 1) for kind in ('market', 'state', 'decision_model')) else 1)"
 $NeedsInitialisation = ($LASTEXITCODE -ne 0) -or $RebuildModel
 if ($NeedsInitialisation) {
     & $UvPath run fpl ingest
@@ -84,14 +82,7 @@ if ($NeedsInitialisation) {
     }
     & $UvPath run fpl train
     if ($LASTEXITCODE -ne 0) { throw "Chronological decision training failed." }
-    & $UvPath run fpl refresh-current
-    if ($LASTEXITCODE -ne 0) { Write-Warning "Current planning could not finish. The app will open so you can inspect data health, correct account details and retry refresh." }
-} else {
-    & $UvPath run python -c "from fpl_intelligence.storage import Store; from fpl_intelligence.readiness import forecast_dependencies_current; s=Store(); f=s.get('forecast'); raise SystemExit(0 if f.get('decision_model_id') == s.get('decision_model')['id'] and forecast_dependencies_current(s,f) else 1)"
-    if ($LASTEXITCODE -ne 0) {
-        & $UvPath run fpl refresh-current
-        if ($LASTEXITCODE -ne 0) { Write-Warning "The model migration completed, but forecasts need a refresh. Open the app to inspect data health and retry." }
-    }
+    Write-Host "Training completed. Forecasting and planning will run in the app with progress and cancellation."
 }
 
 $Port = 8000

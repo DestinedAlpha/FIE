@@ -350,7 +350,7 @@ def test_equivalent_freehit_actions_reuse_a_validated_continuation(
 
 @pytest.mark.parametrize("new_finalized", [False, True])
 def test_refresh_budget_skips_all_player_histories_until_labels_are_due(tmp_path, monkeypatch, new_finalized):
-    from fpl_intelligence import decision, ingestion, optimization, prospective, shadow_accounts, simulation
+    from fpl_intelligence import ingestion, optimization, prospective, shadow_accounts, simulation
     from fpl_intelligence.storage import now
     from fpl_intelligence.workflow import refresh_cycle
 
@@ -392,7 +392,7 @@ def test_refresh_budget_skips_all_player_histories_until_labels_are_due(tmp_path
         return {"id": fid}
 
     monkeypatch.setattr(ingestion.Official, "ingest", ingest)
-    monkeypatch.setattr(decision, "train_decisions", lambda *args: fits.append(True))
+    monkeypatch.setattr("fpl_intelligence.training.train_current", lambda *args, **kwargs: fits.append(True))
     monkeypatch.setattr(prospective, "score_frozen_decisions", lambda *args: {})
     monkeypatch.setattr(shadow_accounts, "advance_shadow_accounts", lambda *args: {})
     monkeypatch.setattr(shadow_accounts, "freeze_shadow_accounts", lambda *args: {"id": "test-capture"})

@@ -84,17 +84,19 @@ def create_app(root=None):
         from .maintenance import maintain_models
         from .scheduling import start_scheduler
 
-        maintain_models(store)
+        def initialize():
+            maintain_models(store)
+            if store.list("state", 1) and store.list("market", 1) and store.list("decision_model", 1):
+                from .readiness import operational_readiness
+
+                if store.get("decision_model").get("promoted") and not operational_readiness(store)["ready"]:
+                    from .workflow import refresh_cycle
+
+                    return refresh_cycle(store)
+            return {"status": "Initialization complete"}
+
+        launch("startup-refresh", {}, initialize)
         stop, thread = start_scheduler(store, launch)
-        if store.list("state", 1) and store.list("market", 1) and store.list("decision_model", 1):
-            from .account_sync import next_event
-
-            saved = store.get("state")
-            upcoming = next_event(store.get("market"))
-            if saved.get("entry_id") and upcoming is not None and saved["event"] != upcoming:
-                from .workflow import refresh_cycle
-
-                launch("startup-account-sync", {}, lambda: refresh_cycle(store))
         try:
             yield
         finally:
@@ -180,9 +182,13 @@ def create_app(root=None):
                             values[key] = value
                     store.put("solver_progress", {"job_id": identity, "at": now(), **values})
 
-                unlimited = kind in ("refresh-cycle", "startup-account-sync", "scheduled-refresh") or (
-                    kind == "optimize" and request.get("time_limit") is None
-                )
+                unlimited = kind in (
+                    "refresh-cycle",
+                    "startup-account-sync",
+                    "scheduled-refresh",
+                    "startup-refresh",
+                    "ingest",
+                ) or (kind == "optimize" and request.get("time_limit") is None)
                 with search_session(unlimited, cancelled, progress):
                     result = work()
                     check_cancelled()
@@ -254,7 +260,18 @@ def create_app(root=None):
 
     @app.get("/api/dashboard")
     def dashboard(event: int | None = None):
+        with store.db() as db:
+            active_jobs = [
+                dict(row)
+                for row in db.execute(
+                    "SELECT id,status,request FROM jobs WHERE status IN ('queued','running') ORDER BY created_at"
+                )
+            ]
         result: dict[str, Any] = {
+            "active_jobs": [
+                {"id": row["id"], "status": row["status"], "kind": json.loads(row["request"]).get("kind")}
+                for row in active_jobs
+            ],
             "at": now(),
             "market": None,
             "state": None,
@@ -711,23 +728,9 @@ def create_app(root=None):
     @app.post("/api/train")
     def train():
         def work():
-            from threadpoolctl import threadpool_limits
+            from .training import train_current
 
-            from .decision import train_decisions
-
-            with threadpool_limits(limits=1):
-                active = store.get("decision_model") if store.list("decision_model", 1) else {}
-                if active.get("fusion_model_id"):
-                    from .context_archive import import_context
-                    from .fusion import refit_active_fusion
-
-                    asyncio.run(import_context(store))
-                    result = refit_active_fusion(store)
-                else:
-                    result = train_decisions(store)
-                from .role_minutes import ensure
-
-                result = ensure(store, result)
+            result = train_current(store)
             return {"decision_model_id": result["id"]}
 
         return launch("train", {}, work)

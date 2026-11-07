@@ -13,6 +13,27 @@ async function navigate(page: import("@playwright/test").Page, label: string) {
   await page.getByRole("button", { name: label, exact: true }).click();
 }
 
+test("reloading discovers a background calculation and exposes cancellation", async ({page}) => {
+  let cancelled = false;
+  await page.route("**/api/dashboard*", async route => {
+    const response = await route.fetch();
+    const data = await response.json();
+    data.active_jobs = cancelled ? [] : [{id:"startup-job", status:"running", kind:"startup-refresh"}];
+    await route.fulfill({response, json:data});
+  });
+  await page.route("**/api/jobs/startup-job", route => route.fulfill({json:{status:cancelled ? "cancelled" : "running"}}));
+  await page.route("**/api/jobs/startup-job/cancel", async route => {
+    cancelled = true;
+    await route.fulfill({json:{status:"cancellation_requested"}});
+  });
+  await openWorkspace(page);
+  await expect(page.getByRole("button", {name:"Cancel calculation", exact:true})).toBeVisible();
+  await page.reload();
+  await page.getByRole("button", {name:"Cancel calculation", exact:true}).click();
+  await expect(page.getByRole("button", {name:"Cancel calculation", exact:true})).not.toBeVisible();
+  await expect(page.getByRole("button", {name:"Refresh data", exact:true})).toBeEnabled();
+});
+
 test("editing an account preserves unverified quotes and original provenance", async ({ page }) => {
   let saved: any;
   let originalTime: string;

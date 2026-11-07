@@ -162,7 +162,8 @@ def test_cancel_reaches_running_highs_callbacks():
 def test_known_failed_extractor_cannot_reach_live_calls(tmp_path, monkeypatch):
     import asyncio
 
-    from fpl_intelligence.research import extract_with_fallback
+    from fpl_intelligence.research import EVIDENCE_VERSION, extract_with_fallback
+    from fpl_intelligence.storage import now
 
     store = Store(tmp_path)
     store.put(
@@ -172,6 +173,8 @@ def test_known_failed_extractor_cannot_reach_live_calls(tmp_path, monkeypatch):
     store.put(
         "extraction_benchmark",
         {
+            "at": now(),
+            "guard_version": EVIDENCE_VERSION,
             "results": [
                 dict(
                     provider="gemini",
@@ -182,7 +185,7 @@ def test_known_failed_extractor_cannot_reach_live_calls(tmp_path, monkeypatch):
                     supported_spans=True,
                     injection_rejected=True,
                 )
-            ]
+            ],
         },
     )
 

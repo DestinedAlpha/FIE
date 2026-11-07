@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import asyncio
-import re
-import unicodedata
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
@@ -15,7 +13,7 @@ import httpx
 from bs4 import BeautifulSoup
 
 from .ingestion import load_market
-from .research import ALLOWED_DOMAINS, extract_with_fallback
+from .research import ALLOWED_DOMAINS, extract_with_fallback, named_players
 from .settings import redact
 from .storage import Store, atomic_json, now
 
@@ -213,30 +211,12 @@ async def refresh_intelligence(store: Store, limit=3):
                         if not source["published_at"]:
                             source["published_at"] = item["published_at"]
                         source["id"] = store.put("source_text", source)
-                        normalized = (
-                            unicodedata.normalize("NFKD", source["text"].casefold())
-                            .encode("ascii", "ignore")
-                            .decode()
-                        )
-                        entities = []
-                        for player in players.values():
-                            aliases = {player.web_name, player.name, player.raw.get("second_name", "")}
-                            names = [
-                                unicodedata.normalize("NFKD", name.casefold())
-                                .encode("ascii", "ignore")
-                                .decode()
-                                for name in aliases
-                                if len(name) > 2
-                            ]
-                            if any(re.search(r"\b" + re.escape(name) + r"\b", normalized) for name in names):
-                                entities.append(
-                                    {
-                                        "id": player.id,
-                                        "name": player.name,
-                                        "position": player.position,
-                                        "club": player.team,
-                                    }
-                                )
+                        mentioned = named_players(source["text"], players)
+                        entities = [
+                            {"id": p.id, "name": p.name, "position": p.position, "club": p.team}
+                            for p in players.values()
+                            if p.id in mentioned
+                        ]
                         if not entities:
                             sources.append({"url": article_url, "status": "no_resolved_players"})
                             continue

@@ -83,7 +83,9 @@ def refit_expert(store, acceptance_id=None):
         models = {}
         for name in ("minutes", "points", "starter"):
             target = directory / (name + ".txt")
-            bundle[name].booster_.save_model(str(target))
+            from .models import save_booster_atomic
+
+            save_booster_atomic(bundle[name].booster_, target)
             models[name] = {"path": str(target), "hash": hashlib.sha256(target.read_bytes()).hexdigest()}
         spec = {
             "version": "future-horizon-v1",

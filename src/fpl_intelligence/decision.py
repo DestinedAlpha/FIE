@@ -487,7 +487,9 @@ def train_decisions(store: Store):
     hashes = {}
     for key in ("minutes", "starter", "points"):
         path = directory / (key + ".txt")
-        fitted[key].booster_.save_model(str(path))
+        from .models import save_booster_atomic
+
+        save_booster_atomic(fitted[key].booster_, path)
         hashes[key] = __import__("hashlib").sha256(path.read_bytes()).hexdigest()
     residuals, dependence = residual_contract(fitted, cal)
     observed_minutes = cal["minutes_target"].to_numpy()

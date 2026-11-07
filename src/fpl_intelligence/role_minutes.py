@@ -259,7 +259,9 @@ def train(store, feature_id=None):
     )
     directory.mkdir(parents=True, exist_ok=True)
     path = directory / "minutes.txt"
-    head.booster_.save_model(str(path))
+    from .models import save_booster_atomic
+
+    save_booster_atomic(head.booster_, path)
     result = {
         "at": now(),
         "version": VERSION,

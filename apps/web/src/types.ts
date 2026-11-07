@@ -92,6 +92,7 @@ export type State = {
   deadline_bank: number | null;
 };
 export type Dashboard = FootballEvidenceData & {
+  active_jobs?: {id:string; status:string; kind:string}[];
   model_input_usage?: { component:string; status:string; feature_count:number|null; explanation:string }[];
   role_contract_audit?: {passed:boolean; rows:number; maximum_core_delta:number; maximum_role_source_delta:number; event:number} | null;
   immediate_points_validation?: { version:string; selected:string; passed:boolean; forecast_passed:boolean; captain_passed:boolean; protocol:string; metrics:Record<string,{rows:number; reference:{rmse:number; regular_rmse:number; premium_rmse:number; captain_points:number}; candidate:{rmse:number; regular_rmse:number; premium_rmse:number; captain_points:number}; mse_delta_95ci:number[]}> } | null;

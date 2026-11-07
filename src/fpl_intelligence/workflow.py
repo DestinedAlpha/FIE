@@ -14,7 +14,6 @@ def full_training(store: Store, samples=24, refresh=False):
     from .coherent import compare_football_worlds, train_components, validate_bonus_model
     from .context_archive import import_context
     from .context_validation import evaluate_context
-    from .decision import train_decisions
     from .decision_runtime import analyze_decisions, refine_frontier, timing_analysis, validate_horizons
     from .decision_training import evolve, train_decision_models
     from .fusion import compare_live, review_fusion, train_fusion
@@ -41,10 +40,10 @@ def full_training(store: Store, samples=24, refresh=False):
         asyncio.run(refresh_sources(store))
     record("context", asyncio.run(import_context(store)))
     record("football_models", football_training(store, refresh))
-    reference = train_decisions(store)
     from .role_minutes import ensure
+    from .training import train_current
 
-    record("reference", ensure(store, reference))
+    record("reference", train_current(store))
     record("source_fusion", train_fusion(store))
     record("fusion_review", review_fusion(store))
     compare_live(store)
@@ -187,7 +186,6 @@ def full_training(store: Store, samples=24, refresh=False):
 
 
 def refresh_cycle(store: Store):
-    from .decision import train_decisions
     from .ingestion import Official
     from .optimization import optimize
     from .simulation import forecast
@@ -245,16 +243,13 @@ def refresh_cycle(store: Store):
                 "shadow_capture_status",
                 {"at": now(), "status": "Scoring requires review", "reason": str(error)},
             )
-        if active.get("fusion_model_id"):
-            from .fusion import refit_active_fusion
+        from .training import train_current
 
-            refit_active_fusion(store)
-        else:
-            train_decisions(store)
-    from .role_minutes import ensure
+        train_current(store)
+    elif store.list("decision_model", 1):
+        from .training import train_current
 
-    if store.list("decision_model", 1):
-        ensure(store, store.get("decision_model"))
+        train_current(store, refit=False)
     from .account_sync import next_event, reconcile_public
 
     synchronization = reconcile_public(store, original_state["id"])

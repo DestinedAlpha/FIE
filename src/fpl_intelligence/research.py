@@ -100,6 +100,25 @@ class TextExtractor(HTMLParser):
             self.parts.append(data.strip())
 
 
+def publication_metadata(value):
+    """Preserve an unspecified zone as a range, never an invented UTC instant."""
+    if not value:
+        return {"published_at": None}
+    parsed = datetime.fromisoformat(value)
+    if parsed.tzinfo is not None:
+        return {"published_at": parsed.isoformat()}
+    earliest = parsed.replace(tzinfo=timezone.utc) - timedelta(hours=14)
+    latest = parsed.replace(tzinfo=timezone.utc) + timedelta(hours=14)
+    if len(value) == 10:
+        latest += timedelta(days=1)
+    return {
+        "published_at": None,
+        "source_publication": value,
+        "publication_window": [earliest.isoformat(), latest.isoformat()],
+        "publication_clock": "Timezone unspecified; conservative UTC bounds",
+    }
+
+
 async def retrieve(store: Store, url: str) -> dict:
     validate_url(url)
     from .transport import PublicTransport
@@ -111,12 +130,11 @@ async def retrieve(store: Store, url: str) -> dict:
     parser = TextExtractor()
     parser.feed(text)
     published = None
+    publication = {"published_at": None}
     for candidate in parser.publication_candidates:
         try:
-            date = datetime.fromisoformat(candidate)
-            if date.tzinfo is None:
-                date = date.replace(tzinfo=timezone.utc)
-            published = date.isoformat()
+            publication = publication_metadata(candidate)
+            published = publication["published_at"]
             break
         except ValueError:
             continue
@@ -133,9 +151,22 @@ async def retrieve(store: Store, url: str) -> dict:
         "url": url,
         "known_at": now(),
         "text": "\n".join(parser.parts)[:60000],
-        "published_at": published,
+        **publication,
         "links": links[:100],
     }
+    from .intelligence import article_text
+
+    try:
+        article = article_text(text, url)
+    except ValueError:
+        pass  # A generic discovery page retains its explicit capture clock.
+    else:
+        body["text"] = article["text"]
+        if article.get("published_at") and (
+            not published or datetime.fromisoformat(article["published_at"]).tzinfo is not None
+        ):
+            body.update(publication_metadata(article["published_at"]))
+        body["links"] = [link for link in article["links"] if link in links][:100]
     store.snapshot("research_" + digest(url), url, body)
     body["id"] = store.put("source_text", body)
     return body
@@ -176,14 +207,19 @@ class Claim(Strict):
             raise ValueError("Evidence clocks require timezone offsets")
         if expires <= known or expires > known + timedelta(days=30):
             raise ValueError("Evidence expiry must be within 30 days")
-        if self.published_at and datetime.fromisoformat(self.published_at) > known:
-            raise ValueError("Publication is later than knowledge time")
+        if self.published_at:
+            published = datetime.fromisoformat(self.published_at)
+            if published.tzinfo is None:
+                raise ValueError("Publication clock requires a timezone offset")
+            if published > known:
+                raise ValueError("Publication is later than knowledge time")
         if any(not 1 <= e <= 38 for e in self.affected_events):
             raise ValueError("Invalid affected event")
         return self
 
 
 EVIDENCE_VERSION = "extraction-v5-availability-polarity"
+IDENTITY_VERSION = "player-names-v2-longest-span"
 
 
 class Belief(Strict):
@@ -210,23 +246,36 @@ class Belief(Strict):
 
 def named_players(text: str, players) -> set[int]:
     def normalize(value):
-        return unicodedata.normalize("NFKD", value.casefold()).encode("ascii", "ignore").decode()
+        value = value.casefold().translate(
+            str.maketrans({"ß": "ss", "ø": "o", "æ": "ae", "ł": "l", "’": "'", "‘": "'"})
+        )
+        return unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode()
 
     aliases: dict[str, set[int]] = defaultdict(set)
+    first_names: dict[str, set[int]] = defaultdict(set)
     for player in players.values():
         names = {player.name, player.web_name, player.raw.get("second_name", "")}
         first = player.raw.get("first_name", "").split()
         if first:
             names.add(first[0] + " " + player.web_name)
+            first_names[normalize(first[0])].add(player.id)
         for name in names:
             if len(name) > 2:
                 aliases[normalize(name)].add(player.id)
+    # A surname that is another player's first name needs fuller identity.
+    for name in aliases.keys() & first_names.keys():
+        aliases[name].update(first_names[name])
     normalized = normalize(text)
-    return {
-        next(iter(ids))
-        for alias, ids in aliases.items()
-        if len(ids) == 1 and re.search(r"\b" + re.escape(alias) + r"\b", normalized)
-    }
+    matches = [
+        (m.start(), m.end(), ids)
+        for name, ids in aliases.items()
+        for m in re.finditer(r"\b" + re.escape(name) + r"\b", normalized)
+    ]
+    selected: list[tuple[int, int, set[int]]] = []
+    for start, end, ids in sorted(matches, key=lambda r: (r[0] - r[1], r[0])):
+        if not any(start < other_end and end > other_start for other_start, other_end, _ in selected):
+            selected.append((start, end, ids))
+    return {next(iter(ids)) for _, _, ids in selected if len(ids) == 1}
 
 
 def grounded_semantics(claim: Claim) -> Claim:
@@ -414,8 +463,14 @@ async def request_claims(
     from .settings import load_environment
 
     load_environment()
-    if source.get("published_at"):
-        age = datetime.fromisoformat(source["known_at"]) - datetime.fromisoformat(source["published_at"])
+    source = (
+        {**source, **publication_metadata(source.get("published_at"))}
+        if source.get("published_at")
+        else source
+    )
+    publication = source.get("published_at") or (source.get("publication_window") or [None])[0]
+    if publication:
+        age = datetime.fromisoformat(source["known_at"]) - datetime.fromisoformat(publication)
         if age > timedelta(days=3) or age < -timedelta(minutes=5):
             raise ValueError("Research source is stale or has a conflicting publication clock")
     key = os.getenv("GEMINI_API_KEY" if cap.provider == "gemini" else "GROQ_API_KEY")
@@ -482,7 +537,12 @@ async def request_claims(
                 output = response.json()["choices"][0]["message"]["content"]
         parsed = ExtractionResult.model_validate_json(output)
         known = source["known_at"]
-        expiry = (datetime.fromisoformat(known) + timedelta(days=3)).isoformat()
+        expiry = min(
+            datetime.fromisoformat(known) + timedelta(days=3),
+            datetime.fromisoformat(publication) + timedelta(days=3)
+            if publication
+            else datetime.fromisoformat(known) + timedelta(days=3),
+        ).isoformat()
         claims = [
             Claim(
                 **item.model_dump(),
@@ -556,11 +616,17 @@ async def extract(store: Store, source: dict, cap: FreeCapability, entities: lis
             "model": cap.model,
             "entities": entities,
             "schema": EVIDENCE_VERSION,
+            "identity": IDENTITY_VERSION,
+            "source_url": source["url"],
         }
     )
     for item in store.list("extraction", 1000):
         saved = store.get("extraction", item["id"])
-        if saved.get("key") == cache_key:
+        if saved.get("key") == cache_key and all(
+            datetime.fromisoformat(store.get("claim", identity)["expires_at"])
+            > datetime.fromisoformat(source["known_at"])
+            for identity in saved["claim_ids"]
+        ):
             return saved["claim_ids"]
     claims = await request_claims(store, source, cap, entities)
     bodies = [validate_claim(store, c, source["text"]) for c in claims]
@@ -585,29 +651,53 @@ async def extract(store: Store, source: dict, cap: FreeCapability, entities: lis
     return identities
 
 
+def quality_is_current(report):
+    if report.get("guard_version") != EVIDENCE_VERSION:
+        return False
+    try:
+        age = datetime.fromisoformat(now()) - datetime.fromisoformat(report["at"])
+    except (KeyError, TypeError, ValueError):
+        return False
+    return timedelta(0) <= age < timedelta(days=7)
+
+
 async def extract_with_fallback(store: Store, source: dict, entities: list[dict]) -> dict:
     capabilities = []
     from .context import extraction_eligible
 
     failed_quality = set()
     if store.list("extraction_benchmark", 1):
+        benchmark = store.get("extraction_benchmark")
+        current_guard = quality_is_current(benchmark)
         failed_quality = {
             (r.get("provider"), r.get("model"))
-            for r in store.get("extraction_benchmark").get("results", [])
-            if r.get("success") and not extraction_eligible(r)
+            for r in benchmark.get("results", [])
+            if current_guard and r.get("success") and not extraction_eligible(r)
         }
     try:
         setup = store.get("provider_setup")
         blocked = {row["provider"] for row in setup["providers"] if row["status"] != "authenticated"}
     except ValueError:
         blocked = set()
+    seen = set()
     for item in store.list("provider_capability", 20):
         body = store.get("provider_capability", item["id"])
+        key = body["provider"], body["model"]
+        if key in seen:
+            continue
+        seen.add(key)
         if body["provider"] in blocked or (body["provider"], body["model"]) in failed_quality:
             continue
-        capabilities.append(
-            FreeCapability.model_validate({k: v for k, v in body.items() if k in FreeCapability.model_fields})
+        cap = FreeCapability.model_validate(
+            {k: v for k, v in body.items() if k in FreeCapability.model_fields}
         )
+        if (
+            cap.free_text_verified
+            and cap.unbilled_account_attested
+            and cap.terms_eligible
+            and datetime.fromisoformat(cap.verified_until) > datetime.fromisoformat(now())
+        ):
+            capabilities.append(cap)
     if not capabilities:
         raise ValueError(
             "No eligible hosted capability: authentication, free eligibility or extraction quality requires review"
@@ -622,9 +712,7 @@ async def extract_with_fallback(store: Store, source: dict, entities: list[dict]
     quality = {}
     if store.list("authentic_extraction_benchmark", 1):
         report = store.get("authentic_extraction_benchmark")
-        if report.get("kind") == "authentic_labeled_extraction_benchmark" and timedelta(0) <= (
-            datetime.fromisoformat(now()) - datetime.fromisoformat(report["at"])
-        ) < timedelta(days=7):
+        if report.get("kind") == "authentic_labeled_extraction_benchmark" and quality_is_current(report):
             quality = {
                 (row["provider"], row["model"]): row["passed_cases"] / row["total_cases"]
                 for row in report["results"]
@@ -736,6 +824,7 @@ def audit_claim_identities(store: Store):
         "at": now(),
         "reviewed": reviewed,
         "version": EVIDENCE_VERSION,
+        "identity_version": IDENTITY_VERSION,
         "active_claims": len(active_claims(store, 10000)),
         "rule": "A source quote must resolve exactly the supplied player; ambiguous pronouns and cross-player spans are rejected",
     }

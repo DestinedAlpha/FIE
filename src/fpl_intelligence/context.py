@@ -8,7 +8,14 @@ from pathlib import Path
 from typing import Any
 
 from .ingestion import load_market, resolve_name
-from .research import FreeCapability, extract_with_fallback, request_claims, retrieve
+from .research import (
+    EVIDENCE_VERSION,
+    FreeCapability,
+    extract_with_fallback,
+    named_players,
+    request_claims,
+    retrieve,
+)
 from .storage import Store, atomic_json, digest, now
 
 EXTRACTION_CASES: list[dict[str, Any]] = [
@@ -141,6 +148,7 @@ async def benchmark_extraction(store: Store) -> dict:
     report = {
         "at": now(),
         "kind": "synthetic_labeled_extraction_benchmark",
+        "guard_version": EVIDENCE_VERSION,
         "examples": len(cases),
         "corpus_hash": digest(cases),
         "results": results,
@@ -275,6 +283,7 @@ async def benchmark_authentic(store: Store, corpus: Path = Path("research/extrac
     report = {
         "at": now(),
         "kind": "authentic_labeled_extraction_benchmark",
+        "guard_version": EVIDENCE_VERSION,
         "corpus_hash": digest(body),
         "examples": len(cases),
         "source_articles": len({r["source_url"] for r in cases}),
@@ -350,11 +359,8 @@ async def research_refresh(store: Store, urls: list[str] | None = None, limit: i
     for url in candidates[:limit]:
         try:
             source = await retrieve(store, url)
-            entities = [
-                {"id": p.id, "name": p.name}
-                for p in players.values()
-                if p.web_name.casefold() in source["text"].casefold()
-            ]
+            mentioned = named_players(source["text"], players)
+            entities = [{"id": p.id, "name": p.name} for p in players.values() if p.id in mentioned]
             if not entities:
                 results.append(
                     {"url": url, "source_id": source["id"], "status": "no_resolved_player_mentions"}

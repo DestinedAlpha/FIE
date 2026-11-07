@@ -13,7 +13,8 @@ from scipy.special import logit, softmax
 from sklearn.metrics import log_loss
 
 from .manager_behavior import behavior_rows, context_packets
-from .storage import atomic_json, now
+from .models import save_booster_atomic
+from .storage import atomic_json, digest, now
 
 CHIPS = ("none", "wildcard", "freehit", "bboost", "3xc")
 PLAYER_FEATURES = (
@@ -88,6 +89,11 @@ def manager_inputs(manager, event, packets, pointmap, ft):
         for p, v in context.items()
     }
     return (values, owned, context)
+
+
+def model_directory(store, history_id, fusion_id, features=PLAYER_FEATURES):
+    signature = {"history": history_id, "fusion": fusion_id, "features": features, "training": "choice-v2"}
+    return store.root / "models" / ("manager-policy-" + digest(signature)[:20])
 
 
 def train_manager_policy(store):
@@ -167,7 +173,7 @@ def train_manager_policy(store):
             print("Prepared manager choice decisions", i + 1, flush=True)
     models = {}
     metrics = {}
-    directory = store.root / "models" / ("manager-policy-" + report["id"][:20])
+    directory = model_directory(store, report["id"], fusion["id"])
     directory.mkdir(parents=True, exist_ok=True)
     for kind in ("buy", "sell"):
         rows = training[kind]
@@ -222,7 +228,7 @@ def train_manager_policy(store):
             "promoted": loss < base,
         }
         path = directory / (kind + ".txt")
-        model.booster_.save_model(str(path))
+        save_booster_atomic(model.booster_, path)
         models[kind] = {"path": str(path), "hash": hashlib.sha256(path.read_bytes()).hexdigest()}
     chiptrain = [r for r in decisions if r["event"] < last - 3]
     chipcal = [r for r in decisions if last - 3 <= r["event"] < last - 1]
@@ -266,7 +272,7 @@ def train_manager_policy(store):
         "test_decisions": len(ty),
     }
     path = directory / "chip.txt"
-    chip.booster_.save_model(str(path))
+    save_booster_atomic(chip.booster_, path)
     models["chip"] = {"path": str(path), "hash": hashlib.sha256(path.read_bytes()).hexdigest()}
     result = {
         "at": now(),
