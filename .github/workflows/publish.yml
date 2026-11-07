@@ -1,0 +1,30 @@
+name: Publish verified update
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Verified version tag
+        required: true
+        default: v0.14.2
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish the committed package
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FIE_TAG: ${{ inputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$FIE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          FIE_ASSET="updates/FPL-Intelligence-${FIE_TAG#v}-Update.zip"
+          test -f "$FIE_ASSET"
+          sha256sum "$FIE_ASSET"
+          if ! gh release view "$FIE_TAG" >/dev/null 2>&1; then
+            gh release create "$FIE_TAG" --target "$GITHUB_SHA" --title "FPL Intelligence $FIE_TAG" --notes "Verified existing-installation update. Extract separately and run Update existing.cmd. Your account, credentials and numerical models are preserved. Completion and validation evidence: https://github.com/DestinedAlpha/FIE/blob/main/docs/completion-0.14.2.md"
+          fi
+          gh release upload "$FIE_TAG" "$FIE_ASSET" --clobber
