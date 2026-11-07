@@ -227,6 +227,7 @@ def choose_recommendation(
 ):
     """Always compare hold and an independently solved no-new-hit alternative."""
     from .optimization import hold_plan, optimize
+    from .search_control import effective_time_limit
     from .simulation import score_plans
     from .storage import now
 
@@ -384,7 +385,7 @@ def choose_recommendation(
         "candidates": rows,
         "immediate_hit_evidence": hit_evidence,
         "immediate_chip_evidence": chip_evidence,
-        "no_hit_search_seconds": comparison_seconds,
+        "no_hit_search_seconds": effective_time_limit(comparison_seconds) if no_hit_search else None,
     }
     receipt["id"] = store.put("policy_selection", receipt)
     return plans[index], receipt

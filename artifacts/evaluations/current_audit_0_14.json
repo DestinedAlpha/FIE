@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-07T02:31:21.238084+00:00",
+  "at": "2026-11-07T02:40:02.472138+00:00",
   "register_filename": "FIE_Current_Audit.txt",
   "register_sha256": "fa03817f74e57c4bafb6445c8cece99875932f5221cf552ea3e31c6dd048a730",
   "baseline_revision": "05aac2836130a35941416c23484183fd603d3782",
@@ -81,9 +81,9 @@
     "src/fpl_intelligence/intelligence.py": "33687080090a70a3735f2163cc5f365be06a4edafa5ae63f6deaaf9f46c2f1e2",
     "src/fpl_intelligence/market_model.py": "057074b0064bbd9f851c2f7b8568743fb3a9d4bf2b872a42200c5d9740543212",
     "src/fpl_intelligence/model_usage.py": "3210127b1542c54ad57a01e75013e9e9d0855d65df047b217a77a102f282b3b0",
-    "src/fpl_intelligence/objectives.py": "9d26486d901f7107a01c85d1b222451073c7a0ab20eb36331c16c76b524a4ad7",
+    "src/fpl_intelligence/objectives.py": "9c380073041664be1cf3797f62b83991d7a2247ef3ded65a404f9521b496c8c2",
     "src/fpl_intelligence/odds.py": "ba2e2bfb46552ee9c23c0ee1d24e4ed157bc3cd0218c13b2239bb2bc87a7f3aa",
-    "src/fpl_intelligence/optimization.py": "7807db0f2ed4cc206bf4cca8fc39367049eaf299a0be149aad1734bab68b990d",
+    "src/fpl_intelligence/optimization.py": "e8a02c7c57ac1ab731f94d957e15aaf6d59015fd993fc0a01e763a0540797300",
     "src/fpl_intelligence/providers.py": "b1e015bbecd1e29214c22fdcad94de450a277b073881490ebe27803ff2bb2a5f",
     "src/fpl_intelligence/research.py": "63eecc294dee67490bb5d270023aa1206b79589669eb1cad21c441c78d2bbcdb",
     "src/fpl_intelligence/role_minutes.py": "7f380ceab149721b27608ec544e0a48a64911a529225b908bbe7ace640b980bc",

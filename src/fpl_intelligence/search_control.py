@@ -31,11 +31,16 @@ def live_search():
         yield
 
 
+def effective_time_limit(seconds):
+    current = control.get()
+    return None if seconds is None or bool(current and current[0]) else seconds
+
+
 def configure_solver(solver, seconds, gap):
     import time
 
     current = control.get()
-    unlimited = seconds is None or bool(current and current[0])
+    unlimited = effective_time_limit(seconds) is None
     solver.setOptionValue("time_limit", float("inf") if unlimited else seconds)
     solver.setOptionValue("mip_rel_gap", 0.0 if unlimited else gap)
     if unlimited:

@@ -22,6 +22,8 @@ def compare_chips(store: Store, plan_id: str, seconds: float = 30) -> dict:
 
     if seconds <= 0:
         raise ValueError("Chip comparison requires a positive per-solve budget")
+    from .search_control import effective_time_limit
+
     base = store.get("plan", plan_id)
     forecast = store.get("forecast", base["forecast_id"])
     state = TeamState.model_validate(
@@ -160,7 +162,7 @@ def compare_chips(store: Store, plan_id: str, seconds: float = 30) -> dict:
         "dates_evaluated": len(calendar),
         "best_candidate_plan_id": best["id"],
         "best_candidate_mean": best["simulation"]["mean"],
-        "per_solve_seconds": seconds,
+        "per_solve_seconds": effective_time_limit(seconds),
         "scope": "Every feasible date of each unused entitlement inside the displayed horizon; each forced-date policy jointly optimizes the other chips, preparation and cleanup. Joint MIP covers combinations without enumerating their cross-product.",
         "uncertainty": "Monte Carlo intervals exclude forecast and solver-incumbent uncertainty; every date retains its actual solver diagnostics. Remaining season dates require a season-end planning horizon.",
     }

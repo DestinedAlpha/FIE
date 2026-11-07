@@ -104,6 +104,7 @@ def test_unlimited_solve_has_no_clock_or_early_gap_and_does_not_leak_to_research
     model.row({x: 1}, upper=1)
     _, result = model.solve(None)
     assert result["status"] == "Optimal" and result["gap"] == 0
+    assert result["time_limit"] is None
 
 
 def test_cancelled_search_stops_before_solving():

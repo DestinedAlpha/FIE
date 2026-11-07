@@ -126,6 +126,7 @@ class MIP:
         return np.array(solution.col_value), {
             "status": status,
             "unlimited": unlimited,
+            "time_limit": None if unlimited else seconds,
             "objective": info.objective_function_value,
             "best_bound": float(info.mip_dual_bound) if np.isfinite(info.mip_dual_bound) else None,
             "gap": float(info.mip_gap) if np.isfinite(info.mip_gap) else None,
