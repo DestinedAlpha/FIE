@@ -1,0 +1,16 @@
+{
+  "at": "2026-11-07T02:37:06.366200+00:00",
+  "archive_sha256": "32c3b1e5f07a32ca9a086849784c5e5f6c588ed6d1da02e3e4cea076bcb6f970",
+  "old_version": "0.13.0",
+  "new_version": "0.14.0",
+  "real_database_bytes": 1065984000,
+  "verified_active_weight_files": 7,
+  "installed_source": "extracted update payload executed in a separate interpreter",
+  "accepted_weight_loaders": "passed with checksum verification",
+  "account_state": "preserved",
+  "market_forecast_selection_model_ids": "preserved",
+  "key_file": "sandbox private value preserved; real API keys not copied",
+  "database_backup": "verified",
+  "source_account": "unchanged",
+  "method": "Clone the actual retained SQLite database and copy accepted base/role/future weight files. Install over exact v0.13 application files, execute installed maintenance/loaders, compare state/model/input IDs and weights. No retraining or football-performance acceptance is claimed."
+}
