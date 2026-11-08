@@ -114,10 +114,18 @@ print(json.dumps({'installed_modules':True,'accepted_weights_loaded':True,'readi
             assert hashlib.sha256((target / ".env").read_bytes()).hexdigest() == secret_hash
         backups = list((target / "artifacts/runtime").glob("before-update-*/state.sqlite"))
         assert len(backups) == 1
-        # Exercise recovery after a real account change in the disposable copy.
+        # Exercise recovery after a real account change and database loss in
+        # the disposable copy. Restoring over a full WAL database would require
+        # another database-sized journal without testing a different account.
         installed.put("state", {"recovery_probe": True})
-        with closing(sqlite3.connect(backups[0])) as saved, installed.db() as destination:
+        with closing(sqlite3.connect(backups[0])) as saved:
             assert saved.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
+        for suffix in ("", "-wal", "-shm"):
+            (data / ("state.sqlite" + suffix)).unlink(missing_ok=True)
+        with (
+            closing(sqlite3.connect(backups[0])) as saved,
+            closing(sqlite3.connect(data / "state.sqlite")) as destination,
+        ):
             saved.backup(destination)
         assert {kind: installed.get(kind)["id"] for kind in kinds} == expected
         with installed.db() as db:

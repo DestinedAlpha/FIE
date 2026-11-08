@@ -24,7 +24,7 @@ jobs:
           FIE_ASSET="updates/FPL-Intelligence-${FIE_TAG#v}-Update.zip"
           test -f "$FIE_ASSET"
           sha256sum "$FIE_ASSET"
-          sha256sum -c "$FIE_ASSET.sha256"
+          (cd updates && sha256sum -c "FPL-Intelligence-${FIE_TAG#v}-Update.zip.sha256")
           if ! gh release view "$FIE_TAG" >/dev/null 2>&1; then
             gh release create "$FIE_TAG" --target "$GITHUB_SHA" --title "FPL Intelligence $FIE_TAG" --notes "Verified existing-installation update. Extract separately and run Update existing.cmd. Your account, credentials and numerical models are preserved. Completion and validation evidence: https://github.com/DestinedAlpha/FIE/blob/main/docs/completion-${FIE_TAG#v}.md"
           fi
