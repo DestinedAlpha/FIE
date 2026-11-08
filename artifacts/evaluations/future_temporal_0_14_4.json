@@ -1,0 +1,296 @@
+{
+  "at": "2026-11-08T13:29:46.331699+00:00",
+  "protocol": {
+    "version": "future-calibration-v1",
+    "data_hash": "f77dfff4e29e0b4b6e8e4796a71591c18a81041c7662eb4fa2b8bca3318f735e",
+    "models": [
+      "A_cal8",
+      "B_cal4",
+      "G_crossfit8"
+    ],
+    "features": [
+      "position",
+      "home",
+      "p_start",
+      "p_cameo",
+      "start_minutes",
+      "goals90",
+      "assists90",
+      "actions90",
+      "saves90",
+      "yellow90",
+      "points_mean",
+      "exposure",
+      "rest_days",
+      "price_lag",
+      "goals_actual90",
+      "assists_actual90",
+      "bonus90",
+      "last3_minutes",
+      "last5_points",
+      "long_probability",
+      "team_attack",
+      "team_defence",
+      "opponent_attack",
+      "opponent_defence",
+      "season_week",
+      "history_missing",
+      "now_cost",
+      "selected_by_percent",
+      "form",
+      "points_per_game",
+      "total_points",
+      "minutes",
+      "starts",
+      "goals_scored",
+      "assists",
+      "clean_sheets",
+      "goals_conceded",
+      "own_goals",
+      "penalties_saved",
+      "penalties_missed",
+      "yellow_cards",
+      "red_cards",
+      "saves",
+      "bonus",
+      "bps",
+      "influence",
+      "creativity",
+      "threat",
+      "ict_index",
+      "expected_goals",
+      "expected_assists",
+      "expected_goal_involvements",
+      "expected_goals_conceded",
+      "expected_goals_per_90",
+      "expected_assists_per_90",
+      "expected_goal_involvements_per_90",
+      "expected_goals_conceded_per_90",
+      "saves_per_90",
+      "clean_sheets_per_90",
+      "starts_per_90",
+      "goals_conceded_per_90",
+      "clearances_blocks_interceptions",
+      "tackles",
+      "recoveries",
+      "defensive_contribution",
+      "transfers_in_event",
+      "transfers_out_event",
+      "cost_change_start",
+      "cost_change_event",
+      "penalties_order",
+      "direct_freekicks_order",
+      "corners_and_indirect_freekicks_order",
+      "chance_of_playing_next_round",
+      "observed_now_cost",
+      "observed_selected_by_percent",
+      "observed_form",
+      "observed_points_per_game",
+      "observed_total_points",
+      "observed_minutes",
+      "observed_starts",
+      "observed_goals_scored",
+      "observed_assists",
+      "observed_clean_sheets",
+      "observed_goals_conceded",
+      "observed_own_goals",
+      "observed_penalties_saved",
+      "observed_penalties_missed",
+      "observed_yellow_cards",
+      "observed_red_cards",
+      "observed_saves",
+      "observed_bonus",
+      "observed_bps",
+      "observed_influence",
+      "observed_creativity",
+      "observed_threat",
+      "observed_ict_index",
+      "observed_expected_goals",
+      "observed_expected_assists",
+      "observed_expected_goal_involvements",
+      "observed_expected_goals_conceded",
+      "observed_expected_goals_per_90",
+      "observed_expected_assists_per_90",
+      "observed_expected_goal_involvements_per_90",
+      "observed_expected_goals_conceded_per_90",
+      "observed_saves_per_90",
+      "observed_clean_sheets_per_90",
+      "observed_starts_per_90",
+      "observed_goals_conceded_per_90",
+      "observed_clearances_blocks_interceptions",
+      "observed_tackles",
+      "observed_recoveries",
+      "observed_defensive_contribution",
+      "observed_transfers_in_event",
+      "observed_transfers_out_event",
+      "observed_cost_change_start",
+      "observed_cost_change_event",
+      "observed_penalties_order",
+      "observed_direct_freekicks_order",
+      "observed_corners_and_indirect_freekicks_order",
+      "observed_chance_of_playing_next_round",
+      "lead_weeks",
+      "lead_days",
+      "source_week",
+      "target_week",
+      "fixture_count",
+      "home_difficulty",
+      "away_difficulty",
+      "official_own_attack",
+      "official_opponent_defence",
+      "rest_scheduled",
+      "ep_next",
+      "ep_available",
+      "selectable",
+      "status_a",
+      "status_d",
+      "status_i",
+      "status_s",
+      "status_u"
+    ],
+    "parameters": {
+      "n_estimators": 260,
+      "num_leaves": 24,
+      "learning_rate": 0.035,
+      "min_child_samples": 100,
+      "reg_lambda": 20,
+      "verbosity": -1,
+      "n_jobs": 1,
+      "random_state": 137
+    },
+    "source_events": [
+      4,
+      12,
+      20,
+      28,
+      36
+    ],
+    "selection": "2024/25 source GW4/12, only target labels through GW19; frozen lowest ownership-weighted MSE",
+    "acceptance": "2024/25 source GW20/28/36; independent 2025/26 five source deadlines; only lead>0, same 50% future mixture and immediate reference",
+    "fit": "Each sampled source deadline is independently refitted. Both source and target label groups precede source cutoff; label finalization time also precedes cutoff. Crossfit teachers purge against each calibration block.",
+    "gate": "Independent periods require upper 95% target-deadline block weighted-MSE delta below zero and all/relevant RMSE no worse; distribution and legal continuous-account gates required before activation",
+    "limits": "Five scheduled refits per season sample the actual per-deadline procedure; previously studied archives, not a blinded prospective claim. Overlapping horizons are blocked by target deadline."
+  },
+  "selection_losses": {
+    "A": 6.648182180153815,
+    "B": 6.660005646558654,
+    "G": 6.648617672987979
+  },
+  "selected": "A",
+  "periods": {
+    "2024/25": {
+      "rows": 10205,
+      "metrics": {
+        "A": {
+          "all": {
+            "n": 10205,
+            "rmse": 1.9218719611186956,
+            "mae": 1.0056491944876857,
+            "bias": 0.011709645493639731
+          },
+          "relevant": {
+            "n": 1704,
+            "rmse": 3.1098906543581615,
+            "mae": 2.2487516058735117,
+            "bias": 0.06988660674113077
+          },
+          "participation_brier": 0.37750735176405426
+        },
+        "B": {
+          "all": {
+            "n": 10205,
+            "rmse": 1.921954293116519,
+            "mae": 1.0031261788105101,
+            "bias": 0.008910594497682462
+          },
+          "relevant": {
+            "n": 1704,
+            "rmse": 3.108222660972081,
+            "mae": 2.2431615301781287,
+            "bias": 0.06177116039157257
+          },
+          "participation_brier": 0.3772717312601099
+        },
+        "G": {
+          "all": {
+            "n": 10205,
+            "rmse": 1.922276908910348,
+            "mae": 1.0051694600535959,
+            "bias": 0.011692347700114248
+          },
+          "relevant": {
+            "n": 1704,
+            "rmse": 3.1102858922789753,
+            "mae": 2.251054584642734,
+            "bias": 0.08019662506044864
+          },
+          "participation_brier": 0.3781668074971775
+        }
+      },
+      "weighted_mse_delta_95ci": [
+        0.0,
+        0.0
+      ],
+      "forecast_gate_passed": false
+    },
+    "2025/26": {
+      "rows": 21565,
+      "metrics": {
+        "A": {
+          "all": {
+            "n": 21565,
+            "rmse": 2.0202441777828497,
+            "mae": 1.075781598062157,
+            "bias": 0.039638646788281044
+          },
+          "relevant": {
+            "n": 3630,
+            "rmse": 3.0890822283366273,
+            "mae": 2.2313222288596855,
+            "bias": 0.15461760414454054
+          },
+          "participation_brier": 0.370655000743517
+        },
+        "B": {
+          "all": {
+            "n": 21565,
+            "rmse": 2.0221498557004893,
+            "mae": 1.0728276405087414,
+            "bias": 0.029603657285039404
+          },
+          "relevant": {
+            "n": 3630,
+            "rmse": 3.092058318771914,
+            "mae": 2.2346438712499372,
+            "bias": 0.15048926032095192
+          },
+          "participation_brier": 0.3716993862758358
+        },
+        "G": {
+          "all": {
+            "n": 21565,
+            "rmse": 2.022526765155045,
+            "mae": 1.0786876544010817,
+            "bias": 0.04607142320018663
+          },
+          "relevant": {
+            "n": 3630,
+            "rmse": 3.0919277026116414,
+            "mae": 2.236970950542935,
+            "bias": 0.1553927279734564
+          },
+          "participation_brier": 0.3720201814450498
+        }
+      },
+      "weighted_mse_delta_95ci": [
+        0.0,
+        0.0
+      ],
+      "forecast_gate_passed": false
+    }
+  },
+  "forecast_gate_passed": false,
+  "promoted": false,
+  "directory": "data/models/future-temporal-b5a5ea43b3611bf132c14940",
+  "id": "6042c237a17aff09d60f9099fcf491eea7f8240c5ba6631791311e312a8a5c76"
+}

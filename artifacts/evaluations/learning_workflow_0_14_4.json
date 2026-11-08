@@ -1,0 +1,122 @@
+{
+  "at": "2026-11-08T12:59:25.003273+00:00",
+  "status": "passed",
+  "source": "Actual official live endpoints and retained pre-GW9 model artifacts; no mocked fitting, forecasts or optimization",
+  "prior": {
+    "core": "0a2dab3ddef9cfe0a99736fa252621fd7d98ffbca4472dd4b12a28e48adf0cd3",
+    "role": "cf50ab1d26acca3a3f8f3edfbcf2062c370e9f12b0b08b0cfe8eb1262531ee61",
+    "future": "77f8707804f3c137b0a8798297b47578d3c6f228488c845e8c83d0984ab5e615",
+    "role_calibrated_through": "2026/27-GW08"
+  },
+  "refresh": {
+    "at": "2026-11-08T12:58:51.741098+00:00",
+    "status": "Refreshed and recomputed",
+    "training_warning": null,
+    "prospective_accounts": {
+      "status": "Synchronized prospective accounts frozen",
+      "cohort_id": "3f56d7810e7b991cddf150be407f526f46bf86e75f66a3fab2d101cac1a93c4d"
+    },
+    "consensus_comparison": {
+      "status": "Updated separate weekly comparison",
+      "id": "9c6085b81296b2bff2b5934721b1a18c1c37b782b98cd5b3ae37bcbf012e7672"
+    },
+    "forecast_id": "8be0e03af634059033d87575f61b6d2cbed3ed9304225bae7c2afae386a5a59d",
+    "plan_id": "1fe34b30c0ae991aaf6c69372eca41a1e8aa95672539c2559ef6eb471593a5ef",
+    "account_sync": {
+      "status": "No entry ID configured",
+      "account_changed": false
+    },
+    "account_changed": false
+  },
+  "training": {
+    "decision_model_id": "ec151ba66e953a8ee89583770b0e713aec0f4f08ce895a1942b3ce938d1588f5",
+    "components": [
+      {
+        "name": "Immediate points",
+        "id": "ec151ba66e953a8ee89583770b0e713aec0f4f08ce895a1942b3ce938d1588f5",
+        "feature_id": "baae513595d670645c65d3875d891038d19d9ec06479a7ea29af226d256fc76b",
+        "fit_min": "2022/23-GW01",
+        "fit_max": "2026/27-GW01",
+        "calibration_min": "2026/27-GW02",
+        "calibration_max": "2026/27-GW09",
+        "completed_labels_through": "2026/27-GW09",
+        "training_rows": 113870,
+        "calibration_rows": 5280
+      },
+      {
+        "name": "Role and minutes",
+        "id": "e01e4ec4f3b2781653018596f9b058a3346830e6b1dee8303ca3dd83d73776c4",
+        "feature_id": "156da35cecc727f2d9dddf9433771e1407adbabd34f44fab6a507ff6a263f40d",
+        "fit_min": "2022/23-GW01",
+        "fit_max": "2026/27-GW01",
+        "calibration_min": "2026/27-GW02",
+        "calibration_max": "2026/27-GW09",
+        "training_rows": 113301,
+        "calibration_rows": 5254
+      },
+      {
+        "name": "Future fixtures",
+        "id": "1775da4c5f00830fa52bea1c5456a08c1de0ec0110b0205473e3c02b68e9d7a8",
+        "fit_max": "2026/27-GW01",
+        "calibration_min": "2026/27-GW02",
+        "calibration_max": "2026/27-GW09",
+        "training_rows": 747484,
+        "calibration_rows": 18930,
+        "fit_before": "2026/27-GW11",
+        "fit_as_of": "2026-11-08T12:30:48.342764+00:00",
+        "data_hash": "e95827d4c3ad657925e6aee1221068420507a2b37f1c4985b5bdac9a34f3d02f"
+      }
+    ],
+    "finalized_through": "2026/27-GW09",
+    "labels_expected_through": "2026/27-GW09",
+    "status": "Current completed labels represented",
+    "warning": null,
+    "policy": "expanding-reserved8-v1",
+    "explanation": "The latest eight completed deadlines calibrate probabilities independently; earlier labels fit weights. Current form, roles, availability and fixtures still update forecast inputs. After new finalized labels, the accepted family refits and all three components publish together. Unchanged effective training data reuses the accepted composition."
+  },
+  "unchanged_data_additional_fits": 0,
+  "production_pointers_unchanged": true,
+  "forecast_validation": {
+    "passed": true,
+    "player_gameweeks": 18788,
+    "player_fixtures": 18788,
+    "scope": "Finite probabilities, physical minute bounds, complete coverage and exact reconciliation with optimizer worlds; statistical accuracy is evaluated separately"
+  },
+  "world_shape": [
+    4000,
+    671
+  ],
+  "directory": "data/models/learning-workflow-0.14.4",
+  "budget": "Actual normal refresh forecasting and chip-window planning; explicitly bounded historical-verification search, live UI/CLI remain unlimited and cancellable",
+  "independent_legal_ledger_rows": 9,
+  "accepted_numerical_composition_identical": true,
+  "observations": {
+    "signature": "98fe14526e3c7409c7ab6fbaae2dc7e80924515334d65d95e64fa881b8413143",
+    "through": "2026/27-GW09",
+    "dependencies": {
+      "workload": "c133250bc6026efad4bc791dae3074441bf3d405838859c7bc94956ed7c4fb5f",
+      "context": "c8f6ef7c3c2a8ce7932d8f653a9e899b468025daae455adb4f6766e4f26bc708"
+    },
+    "rows": 119150,
+    "seasons": {
+      "2022/23": 26505,
+      "2023/24": 29725,
+      "2024/25": 27283,
+      "2025/26": 29747,
+      "2026/27": 5890
+    }
+  },
+  "official_finalized_history_ingestion": {
+    "id": "67bf89cbaece8699c9fc75bac96d9e6d814455eb3af53fbd92566e42bd22107e",
+    "captured_at": "2026-11-08T12:28:52.281120+00:00",
+    "histories_complete": true,
+    "history_requests": 671,
+    "history_successes": 671,
+    "finalized_through": 9
+  },
+  "execution_directory": "Disposable real installation, subsequently archived and independently restored",
+  "archived_database_manifest_sha256": "111528bc87763a27bcfe8321e0dd4894dd3ecd93dd9b610814d2c5bc3d5d510e",
+  "archived_database_restore": "passed",
+  "preserved_new_artifacts": 919,
+  "id": "b92f0d86dfbc668d19b6cc419a519a13f94b1b155a58be5dce80234af99b540c"
+}

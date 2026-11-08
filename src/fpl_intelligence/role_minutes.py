@@ -17,7 +17,8 @@ import polars as pl
 
 from .decision import NAMES, PARAMETERS, fit_components, minute_band, predict_models
 from .models import curve_apply, curve_fit
-from .storage import atomic_json, digest, now
+from .observations import evaluation_report
+from .storage import digest, now
 from .workload import WORKLOAD_TRANSFORM, workload_features
 from .workload import records as workload_records
 
@@ -230,7 +231,7 @@ def validate(store):
         "feature_contract": "Float32 role aggregation; explicitly pinned full deadline context and positive-exposure workload. Live and historical role vectors share the same transform.",
     }
     result["id"] = store.put("role_minutes_validation", result)
-    atomic_json(Path("artifacts/evaluations/role_minutes_validation.json"), result)
+    evaluation_report(store, "role_minutes_validation.json", result)
     return result
 
 
@@ -277,6 +278,15 @@ def train(store, feature_id=None):
         "completed_labels_through": max(groups),
         "width": x.shape[1],
         "workload_transform": WORKLOAD_TRANSFORM,
+        "input_signature": input_signature(x, arrays["minutes"], metadata),
+        "training_evidence": {
+            "fit_min": str(min(groups[training])),
+            "fit_max": str(max(groups[training])),
+            "calibration_min": str(min(groups[calibration])),
+            "calibration_max": str(max(groups[calibration])),
+            "training_rows": len(training),
+            "calibration_rows": len(calibration),
+        },
         "promoted": True,
         "role_features": ROLE_NAMES,
     }
@@ -339,11 +349,11 @@ def apply(store, model_id, rows, market, players, probabilities, start_event):
     return result, included
 
 
-def attach(store, model):
+def attach(store, model, role_id=None):
     """Bind the accepted component explicitly; never alter a frozen model object."""
     if model.get("fusion_model_id"):
         return model
-    spec = store.get("role_minutes_model")
+    spec = store.get("role_minutes_model", role_id)
     if model.get("role_minutes_model_id") == spec["id"]:
         return model
     body = {k: v for k, v in model.items() if k != "id"}
@@ -351,7 +361,11 @@ def attach(store, model):
         at=now(),
         role_minutes_model_id=spec["id"],
         previous_decision_model_id=model["id"],
-        evaluation_scope="Base conditional-points validation is reported below; role minutes has its separate two-season held-out validation",
+        evaluation_scope=(
+            model["evaluation_scope"] + "; role minutes retains its separate model-family validation"
+        )
+        if model.get("training_evidence") and model.get("evaluation_scope")
+        else "Base conditional-points validation is reported below; role minutes has its separate two-season held-out validation",
     )
     body["id"] = store.put("decision_model", body)
     return body
@@ -461,7 +475,7 @@ def audit_input_contract(store, event=None):
             "temporary_inputs_removed": True,
         }
     report["id"] = store.put("role_contract_audit", report)
-    atomic_json(Path("artifacts/evaluations/role_contract_audit.json"), report)
+    evaluation_report(store, "role_contract_audit.json", report)
     return report
 
 
@@ -574,22 +588,60 @@ def ensure(store, model):
     from .context_archive import import_context
     from .fusion_data import build_fusion_data
 
-    latest = max(
+    latest = model.get("completed_labels_through") or max(
         (r.get("deadline_group", f"{r['season']}-GW{r['event']:02d}") for r in model.get("predictions", [])),
         default="",
     )
-    spec = store.get("role_minutes_model") if store.list("role_minutes_model", 1) else {}
+    spec = (
+        store.get("role_minutes_model", model.get("role_minutes_model_id"))
+        if store.list("role_minutes_model", 1)
+        else {}
+    )
     if (
         spec.get("version") != VERSION
         or not spec.get("context_archive_id")
         or spec.get("completed_labels_through", "") < latest
+        or getattr(store, "role_refit_required", False)
     ):
-        asyncio.run(import_context(store))
+        if not store.list("replay_context", 1):
+            asyncio.run(import_context(store))
+        elif not store.list("context_archive", 1):
+            raise ValueError("Historical refitting requires a pinned context archive")
         _, _, features = build_fusion_data(store)
+        if (
+            spec.get("version") == VERSION
+            and spec.get("context_archive_id")
+            and spec.get("completed_labels_through", "") >= latest
+        ):
+            from .fusion import load_data
+
+            old_arrays, old_meta, old_features = load_data(store, spec["feature_id"])
+            old_signature = spec.get("input_signature") or input_signature(
+                historical_inputs(store, old_arrays, old_meta, old_features, spec["context_archive_id"]),
+                old_arrays["minutes"],
+                old_meta,
+            )
+            arrays, meta, _ = load_data(store, features["id"])
+            current_signature = input_signature(
+                historical_inputs(store, arrays, meta, features, store.get("context_archive")["id"]),
+                arrays["minutes"],
+                meta,
+            )
+            if old_signature == current_signature:
+                return attach(store, model, spec["id"])
         validation = store.get("role_minutes_validation") if store.list("role_minutes_validation", 1) else {}
         if validation.get("version") != VERSION:
             validation = validate(store)
         if not validation.get("passed"):
             return model
-        train(store, features["id"])
-    return attach(store, model)
+        spec = train(store, features["id"])
+    return attach(store, model, spec.get("id"))
+
+
+def input_signature(matrix, minutes, metadata):
+    checksum = hashlib.sha256(np.ascontiguousarray(matrix, dtype=np.float32).tobytes())
+    checksum.update(np.ascontiguousarray(minutes, dtype=np.float32).tobytes())
+    checksum.update(
+        digest([(r["season"], r["event"], r["player_id"], r["fixture_id"]) for r in metadata]).encode()
+    )
+    return checksum.hexdigest()

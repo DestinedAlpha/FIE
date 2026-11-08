@@ -97,8 +97,8 @@ def test_role_migration_unpacks_feature_builder_and_retrains_missing_context(tmp
     monkeypatch.setattr(
         "fpl_intelligence.fusion_data.build_fusion_data", lambda _: ({}, [], {"id": "rebuilt"})
     )
-    monkeypatch.setattr(module, "train", lambda _, feature: seen.append(feature))
-    monkeypatch.setattr(module, "attach", lambda _, model: model)
+    monkeypatch.setattr(module, "train", lambda _, feature: seen.append(feature) or {"id": "trained-role"})
+    monkeypatch.setattr(module, "attach", lambda _, model, role_id: model)
     model = {"promoted": True, "predictions": [{"season": "2026/27", "event": 9}]}
     assert module.ensure(store, model) == model and seen == ["rebuilt"]
 

@@ -1,0 +1,67 @@
+{
+  "at": "2026-11-08T12:31:50.251849+00:00",
+  "source": "Official 2026/27 patch notes; Europe/London next-day 09:00 cutoff; contemporaneous live data_checked remains authoritative",
+  "checks": [
+    {
+      "event": 1,
+      "old_rows": 113260,
+      "corrected_rows": 113260,
+      "identical_rows": true
+    },
+    {
+      "event": 2,
+      "old_rows": 113870,
+      "corrected_rows": 113870,
+      "identical_rows": true
+    },
+    {
+      "event": 3,
+      "old_rows": 114496,
+      "corrected_rows": 114496,
+      "identical_rows": true
+    },
+    {
+      "event": 4,
+      "old_rows": 115150,
+      "corrected_rows": 115150,
+      "identical_rows": true
+    },
+    {
+      "event": 5,
+      "old_rows": 115809,
+      "corrected_rows": 115809,
+      "identical_rows": true
+    },
+    {
+      "event": 6,
+      "old_rows": 116476,
+      "corrected_rows": 116476,
+      "identical_rows": true
+    },
+    {
+      "event": 7,
+      "old_rows": 117143,
+      "corrected_rows": 117143,
+      "identical_rows": true
+    },
+    {
+      "event": 8,
+      "old_rows": 117811,
+      "corrected_rows": 117811,
+      "identical_rows": true
+    },
+    {
+      "event": 9,
+      "old_rows": 118480,
+      "corrected_rows": 118480,
+      "identical_rows": true
+    },
+    {
+      "event": 10,
+      "old_rows": 119150,
+      "corrected_rows": 119150,
+      "identical_rows": true
+    }
+  ],
+  "retained_historical_inputs_unchanged": true
+}

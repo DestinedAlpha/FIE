@@ -37,6 +37,7 @@ import { transferPairs } from "./transfers";
 import {
   FootballEvidence,
   ForecastDiagnosticsPanel,
+  TrainingStatusPanel,
   ResearchControls,
   SourceCoverage,
   ManagerSignals,
@@ -1559,6 +1560,7 @@ function App() {
               {tab === "Model & data" && (
                 <>
                   <ForecastDiagnosticsPanel data={data} />
+                  <TrainingStatusPanel modelId={data.decision_model?.id} />
                   <FootballEvidence data={data} busy={busy} act={action} />
                   <DecisionEvidence data={data} busy={busy} act={action} />
                   <StrategyLab data={data} busy={busy} act={action} />

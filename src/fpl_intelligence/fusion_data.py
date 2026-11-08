@@ -5,7 +5,6 @@ from __future__ import annotations
 import hashlib
 import re
 from collections import defaultdict
-from pathlib import Path
 from typing import Any, cast
 
 import numpy as np
@@ -15,7 +14,7 @@ from .context_archive import load_context
 from .decision import NAMES, canonical_rows, player_key
 from .elite import elite_features
 from .features import number
-from .storage import Store, atomic_json, now
+from .storage import Store, now
 from .workload import time_value, workload_features
 
 LENGTH = 12
@@ -318,7 +317,9 @@ def build_fusion_data(store: Store):
         "missing_policy": "Explicit masks; unavailable workload and expert history are never treated as observed zero",
     }
     result["id"] = store.put("fusion_features", result)
-    atomic_json(Path("artifacts/evaluations/fusion_data_coverage.json"), result)
+    from .observations import evaluation_report
+
+    evaluation_report(store, "fusion_data_coverage.json", result)
     return converted, records, result
 
 

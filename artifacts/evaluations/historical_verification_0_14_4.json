@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-08T13:33:20.106361+00:00",
+  "scope": "Independent re-verification of retained sealed actions, model hashes, cutoffs, scoring and account continuity; not a new solver rerun",
+  "composed": {
+    "sealed_deadlines": 9,
+    "independently_scored_actions": 27,
+    "training_cutoffs_and_model_checksums": "passed",
+    "account_continuity": "passed"
+  },
+  "pipeline": {
+    "sealed_deadlines": 28,
+    "validated_actions": 84,
+    "models": "checksums passed",
+    "ledger_and_actual_scoring": "passed",
+    "continuous_actions": 84,
+    "sealed_actions": "matched",
+    "account_continuity": "passed",
+    "availability_checksums": "passed"
+  },
+  "future_acceptance": {
+    "sealed_deadlines": 19,
+    "training_cutoffs_and_model_checksums": "passed",
+    "current_week_world_identity": "passed",
+    "continuous_accounts_and_actual_scores": "passed"
+  },
+  "future_current_diagnostic": {
+    "sealed_deadlines": 9,
+    "training_cutoffs_and_model_checksums": "passed",
+    "current_week_world_identity": "passed",
+    "continuous_accounts_and_actual_scores": "passed"
+  }
+}

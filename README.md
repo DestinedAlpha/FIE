@@ -6,6 +6,10 @@ The six supplied documents remain byte-for-byte unchanged in [`research/`](resea
 
 **Current acceptance status:** the role-v3 configuration scores **575** in independent weekly £100m teams. Historical future-expert validation scored **1,202 versus 1,098** in an earlier-season 19-week continuous replay and **538 versus 536** over GW1–9 under its earlier protocol. These different account problems do not certify the complete current policy. **Consistent 550+ continuous-account performance is not established.** See the [data/forecast audit](docs/data-and-forecast-audit.md) and [performance audit](docs/performance-audit.md).
 
+## What changed in 0.14.4
+
+Completed controlled temporal/calibration research and real automatic-learning verification. Accepted production weights remain unchanged: neither shorter/cross-fitted calibration nor the selected decay candidate justifies replacement. Fixed finalized-data refresh eligibility, companion coverage/publication, typed feature checksums, season-specific scoring/cutoffs and isolated report writes. Model & data now shows actual fitting/calibration coverage. The normal refresh learned GW9, forecast all 671 players and produced an independently checked legal plan; unchanged data caused zero additional fits. Final regressions: **361 backend tests, 3 frontend tests and 28 browser journeys**. [Completion and evidence](docs/completion-0.14.4.md) · [Audit dispositions](artifacts/evaluations/release_0_14_4.json).
+
 ## What changed in 0.14.3
 
 Added population-wide forecasting/calibration diagnostics, integrated API/UI monitoring and a controlled FiveStat-inspired component/scoreline study. The global and positional challengers failed their complete acceptance gates, so accepted production weights remain unchanged. Corrected cached Understat identity joins recovered 7,249 observations without network requests (47,053 retained total), with an offline recovery control and strict ambiguity/cancellation guards. Forecast display/world reconciliation and research-cache integrity are stronger. [Completion and research evidence](docs/completion-0.14.3.md) · [Download update](https://github.com/DestinedAlpha/FIE/releases/download/v0.14.3/FPL-Intelligence-0.14.3-Update.zip).
@@ -32,7 +36,7 @@ The audit fixes account-editor verification/provenance, version conflicts, late-
 
 ## Windows
 
-**[Download the 0.14.3 existing-installation update](https://github.com/DestinedAlpha/FIE/releases/download/v0.14.3/FPL-Intelligence-0.14.3-Update.zip).** This small update requires your existing installation with its data and models.
+**[Download the 0.14.4 existing-installation update](https://github.com/DestinedAlpha/FIE/releases/download/v0.14.4/FPL-Intelligence-0.14.4-Update.zip).** This small update requires your existing installation with its data and models.
 
 For an existing installation, extract the new private download into a **separate folder** and run **Update existing.cmd**. Select the existing folder containing Start.cmd. The updater backs up the database/application, preserves your `.env` and account data, updates the application, migrates incompatible companions when necessary and recomputes stale forecasts/plans. Compatible accepted models are preserved. It does not apply any FPL account transfer.
 

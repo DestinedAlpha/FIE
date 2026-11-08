@@ -204,33 +204,44 @@ def refresh_cycle(store: Store):
         or (datetime.now(timezone.utc) - datetime.fromisoformat(last_full["captured_at"])).total_seconds()
         >= 86400
     )
-    changed_labels = False
-    if new_finalized or daily_due:
+    active = store.get("decision_model") if store.list("decision_model", 1) else {}
+    from .model_refresh import represented_group, training_needed
 
-        def history_hashes():
-            with store.db() as db:
-                return {
-                    r["source"]: r["hash"]
-                    for r in db.execute(
-                        "SELECT source,hash FROM snapshots WHERE id IN "
-                        "(SELECT max(id) FROM snapshots WHERE source LIKE 'history_%' GROUP BY source)"
-                    )
-                }
-
-        before_histories = history_hashes()
-        asyncio.run(Official(store).ingest(histories=True))
+    represented = represented_group(active)
+    finalized = max((e["id"] for e in market["events"] if e.get("data_checked")), default=0)
+    needs_history = represented < f"{market['season']}-GW{finalized:02d}" and (
+        last_full is None or last_full.get("finalized_through", 0) < finalized
+    )
+    if (
+        new_finalized
+        or daily_due
+        or needs_history
+        or (last_full and last_full.get("histories_complete") is False)
+    ):
+        refreshed = asyncio.run(Official(store).ingest(histories=True))
         market = store.get("market")
-        changed_labels = before_histories != history_hashes()
+        if refreshed.get("histories_complete") is False:
+            return {
+                "at": now(),
+                "status": "Incomplete finalized player-history refresh; accepted models and forecasts retained",
+                "history_successes": refreshed.get("history_successes"),
+                "history_requests": refreshed.get("history_requests"),
+                "errors": refreshed.get("errors", []),
+                "training_published": False,
+            }
     from .workload import refresh_workload_due
 
     refresh_workload_due(store)
-    active = store.get("decision_model") if store.list("decision_model", 1) else {}
-    represented = max(
-        (r["event"] for r in active.get("predictions", []) if r["season"] == market.get("season")), default=0
-    )
-    finalized = max((e["id"] for e in market["events"] if e.get("data_checked")), default=0)
-    needs_refit = bool(active) and represented < finalized
-    if new_finalized or changed_labels or needs_refit:
+    if not active:
+        return {
+            "at": now(),
+            "status": "Training required; no accepted numerical model is installed",
+            "training_published": False,
+            "market_id": store.get("market")["id"],
+        }
+    needs_refit = bool(active) and training_needed(store, active)
+    training_warning = None
+    if needs_refit:
         from .prospective import score_frozen_decisions
 
         score_frozen_decisions(store)
@@ -245,7 +256,21 @@ def refresh_cycle(store: Store):
             )
         from .training import train_current
 
-        train_current(store)
+        try:
+            train_current(store)
+        except (ValueError, RuntimeError) as error:
+            from .settings import redact
+
+            training_warning = redact(error)[:500]
+            store.put(
+                "model_update_attempt",
+                {
+                    "at": now(),
+                    "status": "failed",
+                    "decision_model_id": active["id"],
+                    "reason": training_warning,
+                },
+            )
     elif store.list("decision_model", 1):
         from .training import train_current
 
@@ -266,6 +291,16 @@ def refresh_cycle(store: Store):
             "account_changed": synchronization.get("account_changed", False),
         }
     result = forecast(store, event, 38, 4000)
+    if training_warning:
+        store.put(
+            "model_update_warning",
+            {
+                "at": now(),
+                "message": training_warning,
+                "forecast_id": result["id"],
+                "decision_model_id": store.get("decision_model")["id"],
+            },
+        )
     consensus_status = None
     if store.list("consensus_model", 1):
         from .consensus import compare_live_consensus
@@ -336,6 +371,7 @@ def refresh_cycle(store: Store):
     return {
         "at": now(),
         "status": "Refreshed and recomputed",
+        "training_warning": training_warning,
         "prospective_accounts": shadow_status,
         "consensus_comparison": consensus_status,
         "forecast_id": result["id"],

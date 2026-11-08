@@ -355,3 +355,17 @@ test("population diagnostics expose accepted evidence and download the complete 
   const download=await downloadPromise;
   expect(download.suggestedFilename()).toBe('forecast-diagnostics.json');
 });
+
+test('training freshness exposes actual bound model IDs and label cutoffs', async ({page}) => {
+  const result = await page.request.get('/api/models/training');
+  expect(result.status()).toBe(200);
+  const training = await result.json();
+  expect(training.components.length).toBe(3);
+  expect(training.components.every((c:any) => c.fit_max < c.calibration_min && c.calibration_min <= c.calibration_max)).toBe(true);
+  await openWorkspace(page);
+  await navigate(page, 'Model & data');
+  const panel = page.locator('section').filter({has:page.getByRole('heading', {name:'Automatic learning and model freshness', exact:true})});
+  await expect(panel.locator('tbody tr')).toHaveCount(3);
+  await expect(panel.getByText(training.finalized_through, {exact:false}).first()).toBeVisible();
+  await expect(panel.getByRole('link')).toHaveAttribute('href','/api/models/training');
+});

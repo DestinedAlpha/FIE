@@ -40,8 +40,13 @@ def refit_expert(store, acceptance_id=None):
     event = next((e for e in market["events"] if e.get("is_next")), None)
     if event is None:
         raise ValueError("No upcoming deadline for a future expert refit")
-    cutoff = now()
-    if moment(cutoff) >= moment(event["deadline_time"]):
+    from .observations import information_time
+
+    cutoff = information_time(store)
+    replay = bool(store.list("replay_context", 1))
+    if moment(cutoff) > moment(event["deadline_time"]) or (
+        not replay and moment(cutoff) == moment(event["deadline_time"])
+    ):
         raise ValueError("The upcoming deadline has passed; refresh before refitting")
     before = f"{market['season']}-GW{event['id']:02d}"
     path = build_data(store)

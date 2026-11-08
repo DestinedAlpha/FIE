@@ -8,8 +8,10 @@ Import time is retained separately; historical decisions are never prospective.
 from __future__ import annotations
 
 import hashlib
-from datetime import timedelta
+import os
+from datetime import datetime, time, timedelta, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import polars as pl
 
@@ -23,13 +25,41 @@ def information_time(store):
     return now()
 
 
+def finalization_clocks(rows):
+    """Conservative historical finalization; live ingestion uses data_checked.
+
+    Since 2026/27 a whole gameweek locks at 09:00 UK on the next day.
+    Earlier seasons retain the four-hour post-kickoff reconstruction delay.
+    This is not a substitute for a contemporaneous official finalized flag.
+    """
+    latest: dict[tuple[str, int], datetime] = {}
+    for row in rows:
+        if row.get("kickoff_time"):
+            key = (row["season"], int(row["round"]))
+            kickoff = moment(row["kickoff_time"])
+            latest[key] = max(latest.get(key, kickoff), kickoff)
+    london = ZoneInfo("Europe/London")
+    return {
+        key: datetime.combine(
+            kickoff.astimezone(london).date() + timedelta(days=1), time(9), london
+        ).astimezone(timezone.utc)
+        for key, kickoff in latest.items()
+        if key[0] >= "2026/27"
+    }
+
+
+def label_available_at(row, clocks):
+    return clocks.get((row["season"], int(row["round"])), moment(row["kickoff_time"]) + timedelta(hours=4))
+
+
 def completed_before(rows, cutoff, group):
     boundary = moment(cutoff)
+    clocks = finalization_clocks(rows)
     return [
         row
         for row in rows
         if row.get("kickoff_time")
-        and moment(row["kickoff_time"]) + timedelta(hours=4) < boundary
+        and label_available_at(row, clocks) < boundary
         and f"{row['season']}-GW{int(row['round']):02d}" < group
     ]
 
@@ -51,6 +81,7 @@ def evaluation_report(store, filename, report):
     path = (
         store.root / "reports" / filename
         if store.list("replay_context", 1)
+        or store.root.resolve() != Path(os.getenv("FPL_DATA_DIR") or "data").resolve()
         else Path("artifacts/evaluations") / filename
     )
     atomic_json(path, report)

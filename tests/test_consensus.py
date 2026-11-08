@@ -47,14 +47,17 @@ def test_historical_tensors_ignore_target_and_future_history(market):
     builder = object.__new__(DeadlineInputs)
     builder.workload_version = "legacy-v1"
     builder.history = defaultdict(list)
-    # Exact four-hour completion boundary is excluded, as are future seasons.
+    # The unfinished previous week and future seasons cannot enter the tensors.
     builder.history["code", 1] = [
-        {"season": "2026/27", "round": 8, "kickoff_time": "2026-10-24T15:00:00Z", "minutes": 90},
+        {"season": "2026/27", "round": 7, "kickoff_time": "2026-10-24T15:00:00Z", "minutes": 90},
         {"season": "2026/27", "round": 8, "kickoff_time": "2026-10-31T07:00:00Z", "minutes": 999},
         {"season": "2026/27", "round": 9, "kickoff_time": "2026-10-30T15:00:00Z", "minutes": 888},
         {"season": "2027/28", "round": 1, "kickoff_time": "2026-10-20T15:00:00Z", "minutes": 777},
     ]
     builder.experts, builder.samples, builder.workload = {}, {}, defaultdict(list)
+    from fpl_intelligence.observations import finalization_clocks
+
+    builder.finalization = finalization_clocks([row for rows in builder.history.values() for row in rows])
 
     class Enrichment:
         def vector(self, *args):

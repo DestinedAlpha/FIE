@@ -20,7 +20,8 @@ from .features import FEATURE_NAMES, histories, number, profile, vector
 from .history import archived_rows
 from .ingestion import load_market
 from .models import curve_apply, curve_fit, reliability
-from .storage import Store, atomic_json, digest, now
+from .observations import evaluation_report
+from .storage import Store, digest, now
 
 VERSION = "learned-points-v1"
 EXTRA = [
@@ -99,6 +100,13 @@ def canonical_rows(store: Store):
     team_names = {t["id"]: t["name"] for t in market["teams"]}
     fixtures = {f["id"]: f for f in market["fixtures"]}
     finalized = {e["id"] for e in market["events"] if e.get("data_checked")}
+    if frozen is None:
+        rows = [
+            r
+            for r in rows
+            if r["season"] < market["season"]
+            or (r["season"] == market["season"] and int(r["round"]) in finalized)
+        ]
     for identity, history in (histories(store, players) if frozen is None else {}).items():
         player = players[identity]
         for r in history:
@@ -257,15 +265,34 @@ def build_dataset(store: Store):
             club_history[f["home"]].append((f["home_goals"], f["away_goals"]))
             club_history[f["away"]].append((f["away_goals"], f["home_goals"]))
     records_hash = digest(records)
-    path = store.root / "features" / ("decision-" + records_hash[:24] + ".parquet")
-    path.parent.mkdir(exist_ok=True)
+    import hashlib
+    import os
+    import tempfile
+
+    directory = store.root / "features"
+    directory.mkdir(exist_ok=True)
     frame = pl.DataFrame(records, infer_schema_length=None)
-    frame.write_parquet(path)
+    descriptor, name = tempfile.mkstemp(dir=directory, suffix=".parquet")
+    os.close(descriptor)
+    temporary = Path(name)
+    try:
+        frame.write_parquet(temporary)
+        file_hash = hashlib.sha256(temporary.read_bytes()).hexdigest()
+        path = directory / ("decision-" + file_hash[:24] + ".parquet")
+        if path.exists():
+            if hashlib.sha256(path.read_bytes()).hexdigest() != file_hash:
+                raise ValueError("Retained decision feature checksum mismatch")
+        else:
+            os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
     report = {
         "at": now(),
         "version": VERSION,
         "path": str(path),
         "hash": records_hash,
+        "file_hash": file_hash,
+        "hash_contract": "hash identifies source records; file_hash verifies typed Parquet bytes",
         "rows": len(records),
         "seasons": sorted({r["season"] for r in rows}),
         "features": NAMES,
@@ -278,6 +305,25 @@ def build_dataset(store: Store):
     }
     report["id"] = store.put("decision_features", report)
     return (report, frame)
+
+
+def load_decision_data(store, identity=None):
+    """Legacy record hashes are not byte checksums; rebuild from verified facts."""
+    import hashlib
+
+    spec = store.get("decision_features", identity)
+    path = store.artifact_path(spec["path"])
+    actual = hashlib.sha256(path.read_bytes()).hexdigest()
+    expected = spec.get("file_hash")
+    if expected:
+        if actual != expected:
+            raise ValueError("Decision feature file checksum mismatch")
+        return spec, pl.read_parquet(path)
+    if actual == spec["hash"]:
+        return spec, pl.read_parquet(path)  # Early byte-hash-only contracts.
+    # Numeric type coercion means old pre-Parquet record hashes cannot be
+    # reconstructed from typed rows. Do not invent an integrity attestation.
+    return build_dataset(store)
 
 
 def dc_probability(position, p, minutes):
@@ -537,8 +583,9 @@ def train_decisions(store: Store):
 
         summary["future_horizon_model_id"] = refit_expert(store, acceptance_id)["id"]
     summary["id"] = store.put(kind, summary)
-    atomic_json(
-        Path("artifacts/evaluations/decision_model.json"),
+    evaluation_report(
+        store,
+        "decision_model.json",
         {k: v for k, v in summary.items() if k not in ("predictions", "residuals", "curves")},
     )
     return summary
@@ -1154,5 +1201,5 @@ def validate_uncertainty(store: Store, worlds=512):
         ],
     }
     report["id"] = store.put("decision_uncertainty", report)
-    atomic_json(Path("artifacts/evaluations/decision_uncertainty.json"), report)
+    evaluation_report(store, "decision_uncertainty.json", report)
     return report

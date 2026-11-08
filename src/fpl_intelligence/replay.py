@@ -39,6 +39,7 @@ from .decision import (
     strength,
 )
 from .domain import Lot, Player, TeamState
+from .observations import completed_before
 from .optimization import select_squad
 from .rules import Rules, best_lineup, optimize_bench, score_gameweek, validate_squad
 from .storage import atomic_json, digest, now
@@ -278,11 +279,7 @@ def deadline_rows(originals, bootstrap, schedule, season, event, deadline):
     histories = defaultdict(list)
     clubs = defaultdict(list)
     seen = set()
-    for r in originals:
-        if not r.get("kickoff_time") or moment(r["kickoff_time"]) + timedelta(hours=4) >= moment(deadline):
-            continue
-        if (r["season"], int(r["round"])) >= (season, event):
-            continue
+    for r in completed_before(originals, deadline, f"{season}-GW{event:02d}"):
         histories[player_key(r)].append(r)
         key = (r["season"], r["fixture"])
         if key not in seen:
@@ -334,11 +331,7 @@ def fit_deadline(store, frame, deadline, group, directory):
     # Final labels are reconstructed later, but the cutoff excludes every match
     # not completed at the decision time, even if its final GW label is earlier.
     originals, _, _ = canonical_rows(store)
-    completed = {
-        (r["season"], int(r["fixture"]))
-        for r in originals
-        if r.get("kickoff_time") and moment(r["kickoff_time"]) + timedelta(hours=4) < moment(deadline)
-    }
+    completed = {(r["season"], int(r["fixture"])) for r in completed_before(originals, deadline, group)}
     allowed = np.array(
         [(r["season"], r["fixture_id"]) in completed for r in frame.select("season", "fixture_id").to_dicts()]
     )
@@ -513,10 +506,7 @@ def run_replay(store, events=None, worlds=4000, seconds=60, publish=True, partic
             from .role_minutes import fit_head, matrix, predict, role_vector
 
             completed = {
-                (r["season"], int(r["fixture"]))
-                for r in originals
-                if r.get("kickoff_time")
-                and moment(r["kickoff_time"]) + timedelta(hours=4) < moment(item["deadline"])
+                (r["season"], int(r["fixture"])) for r in completed_before(originals, item["deadline"], group)
             }
             eligible = np.array(
                 [

@@ -1,0 +1,61 @@
+{
+  "at": "2026-11-08T13:25:58.017281+00:00",
+  "passed": true,
+  "results": [
+    {
+      "name": "ruff",
+      "returncode": 0,
+      "passed": true,
+      "log": "/workspace/FIE/artifacts/runtime/checks/ruff.log",
+      "finished_at": "2026-11-08T13:22:57.510800+00:00"
+    },
+    {
+      "name": "format",
+      "returncode": 0,
+      "passed": true,
+      "log": "/workspace/FIE/artifacts/runtime/checks/format.log",
+      "finished_at": "2026-11-08T13:22:57.533791+00:00"
+    },
+    {
+      "name": "mypy",
+      "returncode": 0,
+      "passed": true,
+      "log": "/workspace/FIE/artifacts/runtime/checks/mypy.log",
+      "finished_at": "2026-11-08T13:23:06.332078+00:00"
+    },
+    {
+      "name": "backend",
+      "returncode": 0,
+      "passed": true,
+      "log": "/workspace/FIE/artifacts/runtime/checks/backend.log",
+      "finished_at": "2026-11-08T13:23:31.098776+00:00"
+    },
+    {
+      "name": "frontend_build",
+      "returncode": 0,
+      "passed": true,
+      "log": "/workspace/FIE/artifacts/runtime/checks/frontend_build.log",
+      "finished_at": "2026-11-08T13:23:37.076001+00:00"
+    },
+    {
+      "name": "frontend_unit",
+      "returncode": 0,
+      "passed": true,
+      "log": "/workspace/FIE/artifacts/runtime/checks/frontend_unit.log",
+      "finished_at": "2026-11-08T13:23:38.054836+00:00"
+    },
+    {
+      "name": "browser",
+      "returncode": 0,
+      "passed": true,
+      "log": "/workspace/FIE/artifacts/runtime/checks/browser.log",
+      "finished_at": "2026-11-08T13:25:58.015505+00:00"
+    }
+  ],
+  "backend_tests": 361,
+  "backend_skipped": 0,
+  "frontend_unit_tests": 3,
+  "browser_journeys": 28,
+  "browser_failed": 0,
+  "browser_skipped": 0
+}

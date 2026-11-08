@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import hashlib
 from collections import Counter, defaultdict
-from datetime import timedelta
 from pathlib import Path
 
 import lightgbm as lgb
@@ -104,6 +103,9 @@ class DeadlineInputs:
         from .elite import elite_features
 
         self.originals, _, _ = canonical_rows(store)
+        from .observations import finalization_clocks
+
+        self.finalization = finalization_clocks(self.originals)
         feature = store.get("fusion_features", feature_id)
         self.workload_version = feature.get("workload_transform", "legacy-v1")
         self.enrichment = EnrichmentIndex(
@@ -121,6 +123,8 @@ class DeadlineInputs:
             self.workload[record["player_code"]].append(record)
 
     def build(self, rows, players, packet):
+        from .observations import label_available_at
+
         deadline, season, event = packet["deadline"], packet["season"], packet["event"]
         counts = Counter(r["player_id"] for r in rows)
         arrays = defaultdict(list)
@@ -131,7 +135,7 @@ class DeadlineInputs:
                 p
                 for p in self.history["code", player.code]
                 if p.get("kickoff_time")
-                and moment(p["kickoff_time"]) + timedelta(hours=4) < moment(deadline)
+                and label_available_at(p, self.finalization) < moment(deadline)
                 and (p["season"], int(p["round"])) < (season, event)
             ]
             seq, mask = sequence(past)

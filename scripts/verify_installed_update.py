@@ -10,6 +10,7 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
+import tomllib
 from contextlib import closing
 from pathlib import Path
 from zipfile import ZipFile
@@ -27,11 +28,29 @@ def verify(archive):
         for path in (original.root / "models").rglob("*.txt")
     }
     runtime = source / "artifacts/runtime"
+    baseline = runtime / "FPL-Intelligence-0.14.3-Update.zip"
+    if (
+        not baseline.is_file()
+        or hashlib.sha256(baseline.read_bytes()).hexdigest()
+        != "ddd51a3d504eea39e288eef5af85b8c12a75318e9c0799436a8f44f2601de9f1"
+    ):
+        raise ValueError("Real upgrade verification requires the checksum-verified published v0.14.3 archive")
     with tempfile.TemporaryDirectory(prefix="real-update-", dir=runtime) as temporary:
         scratch = Path(temporary)
         target, stage = scratch / "installed", scratch / "package"
         target.mkdir()
-        (target / "pyproject.toml").write_text('name = "fpl-intelligence"\nversion = "0.14.1"\n')
+        with ZipFile(baseline) as zipped:
+            prefix = "FPL-Intelligence-Update/"
+            old_manifest = json.loads(zipped.read(prefix + "app-files.json"))
+            for name in [*old_manifest, "app-files.json", "update-checksums.json"]:
+                relative = Path(name)
+                if relative.is_absolute() or ".." in relative.parts:
+                    raise ValueError("Unsafe baseline application path")
+                path = target / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(zipped.read(prefix + name))
+        baseline_version = tomllib.loads((target / "pyproject.toml").read_text())["project"]["version"]
+        assert baseline_version == "0.14.3"
         secret = source / ".env"
         if secret.exists():
             shutil.copy2(secret, target / ".env")
@@ -46,6 +65,28 @@ def verify(archive):
                 continue
             # Immutable files are hardlinked, avoiding another multi-GB copy.
             shutil.copytree(origin, data / category, copy_function=os.link)
+        baseline_check = r"""
+import sys,json
+from pathlib import Path
+p=Path(sys.argv[1]);sys.path.insert(0,str(p/'src'))
+from fpl_intelligence.api import create_app
+import fpl_intelligence.api
+from fastapi.testclient import TestClient
+assert Path(fpl_intelligence.api.__file__).is_relative_to(p/'src')
+c=TestClient(create_app(p/'data'),base_url='http://127.0.0.1')
+assert c.get('/api/health').status_code==200
+d=c.get('/api/dashboard');assert d.status_code==200 and d.json()['decision_model']['id']==json.loads(sys.argv[2])['decision_model']
+assert c.get('/').status_code==200
+print(json.dumps({'baseline_installed_source':True,'dashboard_and_built_ui':True}))
+"""
+        environment = dict(os.environ, GEMINI_API_KEY="", GROQ_API_KEY="")
+        baseline_result = subprocess.run(
+            [sys.executable, "-c", baseline_check, str(target.resolve()), json.dumps(expected)],
+            check=True,
+            capture_output=True,
+            text=True,
+            env=environment,
+        )
         with ZipFile(archive) as zipped:
             manifest_name = next(name for name in zipped.namelist() if name.endswith("/app-files.json"))
             prefix = manifest_name[: -len("app-files.json")]
@@ -92,13 +133,13 @@ with TestClient(create_app(p/'data'),base_url='http://127.0.0.1') as c:
     health=c.get('/api/health'); assert health.status_code==200 and health.json()['readiness']['ready']
     dashboard=c.get('/api/dashboard'); assert dashboard.status_code==200 and not dashboard.json()['plan']['stale']
     assert c.get('/api/forecast/diagnostics').status_code==200
+    training=c.get('/api/models/training');assert training.status_code==200 and len(training.json()['components'])==3
     plan=s.get('selected_plan')['plan_id']
     for fmt in ('json','csv','md','ics'):
         response=c.get('/api/export/'+plan+'/'+fmt); assert response.status_code==200 and response.content
 assert {k:s.get(k)['id'] for k in expected}==expected
 print(json.dumps({'installed_modules':True,'accepted_weights_loaded':True,'readiness':True,'http_exports':4}))
 """
-        environment = dict(os.environ, GEMINI_API_KEY="", GROQ_API_KEY="")
         checked = subprocess.run(
             [sys.executable, "-c", installed_check, str(target.resolve()), json.dumps(expected)],
             check=True,
@@ -133,6 +174,9 @@ print(json.dumps({'installed_modules':True,'accepted_weights_loaded':True,'readi
         result = {
             "at": now(),
             "archive_sha256": hashlib.sha256(Path(archive).read_bytes()).hexdigest(),
+            "baseline_version": baseline_version,
+            "baseline_archive_sha256": hashlib.sha256(baseline.read_bytes()).hexdigest(),
+            "baseline_installed_checks": json.loads(baseline_result.stdout.splitlines()[-1]),
             "database_bytes": (data / "state.sqlite").stat().st_size,
             "installed_source_api_and_models": json.loads(checked.stdout.splitlines()[-1]),
             "accepted_weight_files_preserved": len(weights),

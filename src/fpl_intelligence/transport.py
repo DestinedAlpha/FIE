@@ -12,6 +12,7 @@ from urllib.parse import urlsplit
 
 import httpx
 
+from .search_control import check_cancelled
 from .storage import now
 
 
@@ -49,13 +50,16 @@ class PublicTransport:
         allow_redirects=False,
         max_bytes=20_000_000,
     ):
+        check_cancelled()
         host = urlsplit(url).hostname or ""
         if self.open_until.get(host, 0) > time.monotonic():
             raise ValueError(f"Source circuit open for {host}; last known snapshot retained")
         async with self.semaphore:
+            check_cancelled()
             if self.open_until.get(host, 0) > time.monotonic():
                 raise ValueError(f"Source circuit open for {host}; queued request deferred")
             for attempt in range(3):
+                check_cancelled()
                 async with self.lock:
                     pause = self.spacing - (time.monotonic() - self.last)
                     if pause > 0:

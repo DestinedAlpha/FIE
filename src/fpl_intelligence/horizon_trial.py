@@ -5,7 +5,6 @@ from __future__ import annotations
 import hashlib
 import json
 from collections import defaultdict
-from datetime import timedelta
 from pathlib import Path
 
 import lightgbm as lgb
@@ -67,13 +66,13 @@ def fitted(store, frame, before, weighting, directory):
 
 
 def reference(store, before, directory):
-    feature = store.get("decision_features")
-    source = store.artifact_path(feature["path"])
-    if hashlib.sha256(source.read_bytes()).hexdigest() != feature["hash"]:
-        raise ValueError("Horizon reference feature checksum mismatch")
+    from .decision import load_decision_data
+
+    feature, frame = load_decision_data(store)
     contract = {
         "before": before,
         "feature_hash": feature["hash"],
+        "file_hash": feature.get("file_hash", feature["hash"]),
         "parameters": PARAMETERS,
         "features": NAMES,
     }
@@ -90,7 +89,7 @@ def reference(store, before, directory):
                 for name in ("minutes", "points", "starter")
             },
         }
-    core = pl.read_parquet(source).filter(pl.col("deadline_group") < before)
+    core = frame.filter(pl.col("deadline_group") < before)
     groups = sorted(core["deadline_group"].unique().to_list())
     cut = groups[-8]
     with threadpool_limits(limits=1):
@@ -175,9 +174,12 @@ def legal_period(store, season, events, signals, originals, packets, directory, 
     truth: dict = defaultdict(lambda: defaultdict(float))
     minutes: dict = defaultdict(lambda: defaultdict(int))
     known_at = {}
+    from .observations import finalization_clocks, label_available_at
+
+    finalization = finalization_clocks(originals)
     for row in originals:
         if row["season"] == season:
-            known_at[int(row["fixture"])] = (moment(row["kickoff_time"]) + timedelta(hours=4)).timestamp()
+            known_at[int(row["fixture"])] = label_available_at(row, finalization).timestamp()
         if row["season"] == season and int(row["round"]) in events:
             event, p = int(row["round"]), int(row["element"])
             truth[event][p] += float(row.get("total_points") or 0)

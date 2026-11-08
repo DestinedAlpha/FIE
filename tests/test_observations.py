@@ -12,7 +12,7 @@ def test_observation_cutoff_excludes_target_future_and_unfinished_matches():
         return {"season": season, "round": gameweek, "kickoff_time": kickoff, "total_points": value}
 
     rows = [
-        row("2026/27", 8, "2026-10-24T15:00:00Z", 2),
+        row("2026/27", 7, "2026-10-24T15:00:00Z", 2),
         row("2026/27", 8, "2026-10-31T07:00:00Z", 3),
         row("2026/27", 9, "2026-10-24T15:00:00Z", 100),
         row("2026/27", 10, "2026-10-24T15:00:00Z", 1000),
@@ -98,3 +98,15 @@ def test_replay_writer_lock_rejects_concurrent_work_and_releases_after_error(tmp
             raise RuntimeError("Worker failed")
     with replay_lock(path):
         assert path.exists()
+
+
+def test_isolated_live_store_cannot_overwrite_production_research_reports(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    main = Store("data")
+    isolated = Store(tmp_path / "verification" / "data")
+    evaluation_report(main, "coverage.json", {"production": True})
+    evaluation_report(isolated, "coverage.json", {"verification": True})
+    import json
+
+    assert json.loads((tmp_path / "artifacts/evaluations/coverage.json").read_text()) == {"production": True}
+    assert json.loads((isolated.root / "reports/coverage.json").read_text()) == {"verification": True}

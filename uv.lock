@@ -194,7 +194,7 @@ wheels = [
 
 [[package]]
 name = "fpl-intelligence"
-version = "0.14.3"
+version = "0.14.4"
 source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
@@ -213,6 +213,7 @@ dependencies = [
     { name = "scipy" },
     { name = "threadpoolctl" },
     { name = "typer" },
+    { name = "tzdata" },
     { name = "uvicorn" },
     { name = "xgboost-cpu" },
 ]
@@ -247,6 +248,7 @@ requires-dist = [
     { name = "scipy", specifier = ">=1.15" },
     { name = "threadpoolctl", specifier = ">=3.6" },
     { name = "typer", specifier = ">=0.15" },
+    { name = "tzdata", specifier = ">=2026.6" },
     { name = "uvicorn", specifier = ">=0.34" },
     { name = "xgboost-cpu", specifier = ">=3.4.1" },
 ]

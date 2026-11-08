@@ -30,6 +30,15 @@ class Official:
         source = source or path.strip("/").replace("/", "_")
         try:
             body = await self.transport.get(client, BASE + path, source)
+            if source.startswith("history_") and (
+                not isinstance(body, dict)
+                or not isinstance(body.get("history"), list)
+                or any(
+                    not isinstance(r, dict) or not {"round", "fixture", "minutes", "total_points"} <= r.keys()
+                    for r in body["history"]
+                )
+            ):
+                raise ValueError("Official player-history schema invalid; preceding snapshot retained")
             if publish:
                 self.store.snapshot(source, BASE + path, body)
             return body
@@ -82,7 +91,9 @@ class Official:
                     )
             if current:
                 tasks.append(self.fetch(client, f"event/{current}/live/", f"live_{current}"))
-            await asyncio.gather(*tasks)
+            results = await asyncio.gather(*tasks)
+            history_count = len(bootstrap["elements"]) if histories else 0
+            histories_complete = all(body is not None for body in results[:history_count])
             if league:
                 for page in range(1, 101):
                     data = await self.fetch(
@@ -111,6 +122,12 @@ class Official:
             "teams": len(bootstrap["teams"]),
             "events": len(bootstrap["events"]),
             "histories_requested": histories,
+            "histories_complete": histories_complete if histories else None,
+            "history_requests": history_count,
+            "history_successes": sum(body is not None for body in results[:history_count]),
+            "finalized_through": max(
+                (e["id"] for e in bootstrap["events"] if e.get("data_checked")), default=0
+            ),
             "errors": self.errors,
             "parser": PARSER,
             "core_hash": digest(bootstrap),

@@ -250,6 +250,12 @@ def create_app(root=None):
             "mode": "local private",
         }
 
+    @app.get("/api/models/training")
+    def model_training_status():
+        from .training_status import status
+
+        return status(store)
+
     @app.get("/api/forecast/diagnostics")
     def forecast_diagnostics():
         from .forecast_population import monitor

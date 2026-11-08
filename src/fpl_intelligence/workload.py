@@ -7,11 +7,10 @@ import csv
 import io
 import re
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 
 import httpx
 
-from .storage import Store, atomic_json, now
+from .storage import Store, now
 
 REPO = "olbauday/FPL-Core-Insights"
 
@@ -245,8 +244,11 @@ def normalize_workload(store, bodies, commit, seasons, paths, fetched_at=None):
         ],
     }
     result["id"] = store.put("workload", result)
-    atomic_json(
-        Path("artifacts/evaluations/workload_coverage.json"),
+    from .observations import evaluation_report
+
+    evaluation_report(
+        store,
+        "workload_coverage.json",
         {k: v for k, v in result.items() if k not in ("records", "scheduled", "rejections", "errors")},
     )
     return result

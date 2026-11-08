@@ -51,7 +51,11 @@ def test_reference_cache_never_reuses_unsealed_legacy_files(tmp_path, monkeypatc
     pl.DataFrame(
         {"deadline_group": [f"2023/24-GW{i:02d}" for i in range(1, 13)], "value": list(range(12))}
     ).write_parquet(source)
-    feature = {"path": str(source), "hash": hashlib.sha256(source.read_bytes()).hexdigest()}
+    feature = {
+        "path": str(source),
+        "hash": "semantic-record-identity",
+        "file_hash": hashlib.sha256(source.read_bytes()).hexdigest(),
+    }
     store.put("decision_features", feature)
     legacy = tmp_path / "reference-2024-25-GW01"
     legacy.mkdir()
@@ -67,5 +71,5 @@ def test_reference_cache_never_reuses_unsealed_legacy_files(tmp_path, monkeypatc
     with pytest.raises(ValueError, match="checksum"):
         horizon_trial.reference(store, "2024/25-GW01", tmp_path)
     source.write_bytes(b"corrupt features")
-    with pytest.raises(ValueError, match="feature checksum"):
+    with pytest.raises(ValueError, match="feature file checksum"):
         horizon_trial.reference(store, "2024/25-GW01", tmp_path)

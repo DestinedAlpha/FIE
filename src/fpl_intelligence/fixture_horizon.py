@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import hashlib
 import inspect
-from datetime import timedelta
 from pathlib import Path
 from typing import Any
 
@@ -192,20 +191,23 @@ def build_data(store):
         .to_dicts()
     )
     truth = {(r["season"], int(r["fixture_id"]), int(r["player_id"])): r for r in labels}
+    from .observations import finalization_clocks, label_available_at
+
+    finalization = finalization_clocks(originals)
     completed = {}
     for r in originals:
         key = r["season"], int(r["fixture"])
         completed[key] = {
             "end_group": f"{r['season']}-GW{int(r['round']):02d}",
             "kickoff": r["kickoff_time"],
-            "known": (moment(r["kickoff_time"]) + timedelta(hours=4)).timestamp(),
+            "known": label_available_at(r, finalization).timestamp(),
         }
     from .decision import context_vector, dc_probability, player_key, strength
 
     transform = {
         "features": FEATURES,
         "leads": LEADS,
-        "data_version": 4,
+        "data_version": 5,
         "functions": [
             inspect.getsource(f)
             for f in (
@@ -348,7 +350,7 @@ def build_data(store):
     return path
 
 
-def partitions(frame, before, before_clock=None):
+def partitions(frame, before, before_clock=None, calibration_groups=8):
     clocks = dict(frame.select("source_group", "source_deadline").unique().iter_rows())
     boundary = before_clock if before_clock is not None else clocks.get(before)
     if boundary is None:
@@ -359,16 +361,16 @@ def partitions(frame, before, before_clock=None):
         & (pl.col("label_known") < boundary)
     )
     groups = sorted(eligible["source_group"].unique().to_list())
-    if len(groups) < 9:
-        raise ValueError("Future expert requires at least nine earlier deadline groups")
-    cut = groups[-8]
+    if calibration_groups < 1 or len(groups) <= calibration_groups:
+        raise ValueError("Future expert requires fitting history before its calibration deadlines")
+    cut = groups[-calibration_groups]
     train = eligible.filter((pl.col("label_end") < cut) & (pl.col("label_known") < clocks[cut]))
     cal = eligible.filter(pl.col("source_group") >= cut)
     return train, cal, cut
 
 
-def fit_models(frame, before, weighting, before_clock=None):
-    train, cal, cut = partitions(frame, before, before_clock)
+def fit_models(frame, before, weighting, before_clock=None, calibration_groups=8):
+    train, cal, cut = partitions(frame, before, before_clock, calibration_groups)
     x, xc = train.select(FEATURES).to_numpy(), cal.select(FEATURES).to_numpy()
 
     def weights(data):

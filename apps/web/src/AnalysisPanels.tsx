@@ -10,6 +10,37 @@ type Props = {
   act: (path: string, body?: unknown) => Promise<unknown>;
 };
 
+type TrainingStatus = {
+  decision_model_id?: string;
+  status: string;
+  warning: string | null;
+  finalized_through?: string | null;
+  explanation?: string;
+  components: {name: string; id: string; fit_max: string; calibration_min: string; calibration_max: string; training_rows: number; calibration_rows: number}[];
+};
+
+export function TrainingStatusPanel({modelId}: {modelId?: string}) {
+  const [result, setResult] = useState<TrainingStatus | null>(null);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let active = true;
+    setResult(null); setError("");
+    api<TrainingStatus>("/models/training").then(value => {if(active)setResult(value);}).catch(e=>{if(active)setError(String(e));});
+    return () => {active = false;};
+  }, [modelId]);
+  return <section className="panel">
+    <h3>Automatic learning and model freshness</h3>
+    {!result && <p role="status">{error || "Loading training provenance…"}</p>}
+    {result && <>
+      <p>{result.status}. Official finalized results: {result.finalized_through || "none"}.</p>
+      {result.warning && <p role="alert">Last update failed; accepted composition retained: {result.warning}</p>}
+      <div className="table-scroll"><table><thead><tr><th>Component</th><th>Weights fitted through</th><th>Calibration labels</th><th>Fit / calibration rows</th></tr></thead><tbody>{result.components.map(c=><tr key={c.id}><td title={c.id}>{c.name}</td><td>{c.fit_max}</td><td>{c.calibration_min} – {c.calibration_max}</td><td>{c.training_rows.toLocaleString()} / {c.calibration_rows.toLocaleString()}</td></tr>)}</tbody></table></div>
+      <p>{result.explanation}</p>
+      <a href="/api/models/training" target="_blank" rel="noreferrer">Exact model IDs and training provenance</a>
+    </>}
+  </section>;
+}
+
 type ForecastDiagnostics = {
   population: {
     forecast_id: string;

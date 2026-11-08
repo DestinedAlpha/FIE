@@ -358,14 +358,25 @@ def test_refresh_budget_skips_all_player_histories_until_labels_are_due(tmp_path
     store.put(
         "market",
         {
+            "season": "2026/27",
             "events": [
                 {"id": 8, "deadline_time": "2020-01-01T00:00:00Z", "data_checked": True, "is_current": True},
                 {"id": 9, "deadline_time": "2099-01-01T00:00:00Z", "data_checked": False, "is_next": True},
-            ]
+            ],
         },
     )
     original = store.put("state", {"event": 9, "bank": 3})
-    store.put("ingestion", {"captured_at": now(), "histories_requested": True})
+    store.put(
+        "ingestion",
+        {
+            "captured_at": now(),
+            "histories_requested": True,
+            "finalized_through": 8,
+            "histories_complete": True,
+        },
+    )
+    store.put("decision_model", {"completed_labels_through": "2026/27-GW08"})
+    monkeypatch.setattr("fpl_intelligence.model_refresh.training_needed", lambda *args: new_finalized)
     calls, fits = [], []
 
     async def ingest(self, *, histories=True, entry=None):
@@ -374,6 +385,7 @@ def test_refresh_budget_skips_all_player_histories_until_labels_are_due(tmp_path
             self.store.put(
                 "market",
                 {
+                    "season": "2026/27",
                     "events": [
                         {
                             "id": 9,
@@ -382,7 +394,7 @@ def test_refresh_budget_skips_all_player_histories_until_labels_are_due(tmp_path
                             "is_current": True,
                         },
                         {"id": 10, "deadline_time": "2099-01-01T00:00:00Z", "is_next": True},
-                    ]
+                    ],
                 },
             )
         return {}
@@ -392,7 +404,11 @@ def test_refresh_budget_skips_all_player_histories_until_labels_are_due(tmp_path
         return {"id": fid}
 
     monkeypatch.setattr(ingestion.Official, "ingest", ingest)
-    monkeypatch.setattr("fpl_intelligence.training.train_current", lambda *args, **kwargs: fits.append(True))
+    monkeypatch.setattr("fpl_intelligence.workload.refresh_workload_due", lambda _: {})
+    monkeypatch.setattr(
+        "fpl_intelligence.training.train_current",
+        lambda *args, **kwargs: fits.append(True) if kwargs.get("refit", True) else None,
+    )
     monkeypatch.setattr(prospective, "score_frozen_decisions", lambda *args: {})
     monkeypatch.setattr(shadow_accounts, "advance_shadow_accounts", lambda *args: {})
     monkeypatch.setattr(shadow_accounts, "freeze_shadow_accounts", lambda *args: {"id": "test-capture"})

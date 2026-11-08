@@ -143,7 +143,9 @@ def score_fixture(events: dict, position: int, rules: Rules) -> int:
     reward = rules.reward
     points = reward("long_play", position, 2) if minutes >= 60 else reward("short_play", position, 1)
     points += events.get("goals_scored", 0) * reward(
-        "goals_scored", position, {"GKP": 10, "DEF": 6, "MID": 5, "FWD": 4}
+        "goals_scored",
+        position,
+        {"GKP": 10 if rules.season >= "2025/26" else 6, "DEF": 6, "MID": 5, "FWD": 4},
     )
     points += events.get("assists", 0) * reward("assists", position, 3)
     if minutes >= 60 and events.get("goals_conceded", 0) == 0:
@@ -168,7 +170,7 @@ def score_fixture(events: dict, position: int, rules: Rules) -> int:
         actions = events.get("clearances_blocks_interceptions", 0) + events.get("tackles", 0)
         if position in (3, 4):
             actions += events.get("recoveries", 0)
-    if actions >= rules.dc_threshold[position]:
+    if rules.season >= "2025/26" and actions >= rules.dc_threshold[position]:
         points += reward("defensive_contribution", position, {"GKP": 0, "DEF": 2, "MID": 2, "FWD": 2})
     return int(points)
 

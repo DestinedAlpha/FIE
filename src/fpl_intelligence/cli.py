@@ -23,6 +23,27 @@ def show(value):
     typer.echo(json.dumps(value, indent=2, default=str))
 
 
+@app.command("training-status")
+def training_status():
+    from .training_status import status
+
+    show(status(Store("data")))
+
+
+@app.command("validate-training-policy")
+def validate_training_policy(weekly: bool = False):
+    from .training_policy import confirm_weekly, run
+
+    show((confirm_weekly if weekly else run)(Store()))
+
+
+@app.command("validate-future-calibration")
+def validate_future_calibration(source_path: Path | None = None):
+    from .future_temporal import run
+
+    show(run(Store(), source_path))
+
+
 @app.command("diagnose-population")
 def diagnose_population(historical: bool = False):
     """Inspect every forecast cohort; optionally run pinned historical research."""
