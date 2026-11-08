@@ -15,7 +15,7 @@ from threadpoolctl import threadpool_limits
 
 from .availability import moment
 from .consensus import mix_distributions, paired_interval, replay_packets
-from .decision import NAMES, canonical_rows, fit_components, predict_models, score_metrics
+from .decision import NAMES, PARAMETERS, canonical_rows, fit_components, predict_models, score_metrics
 from .decision_training import reprice
 from .fixture_horizon import FEATURES, PARAMS, build_data, fit_models, player_bootstrap, predict
 from .pipeline_replay import initial_account
@@ -27,7 +27,17 @@ from .strategy import solve_action
 
 
 def fitted(store, frame, before, weighting, directory):
-    folder = directory / (before.replace("/", "-") + "-" + weighting)
+    # A cutoff/weighting name alone can silently reuse a different dataset.
+    contract = {
+        "before": before,
+        "weighting": weighting,
+        "parameters": PARAMS,
+        "features": FEATURES,
+        "columns": frame.columns,
+        "polars": pl.__version__,
+        "frame_hash": hashlib.sha256(frame.hash_rows(seed=137).to_numpy().tobytes()).hexdigest(),
+    }
+    folder = directory / (before.replace("/", "-") + "-" + weighting + "-" + digest(contract)[:20])
     specfile = folder / "model.json"
     if specfile.exists():
         spec = json.loads(specfile.read_text())
@@ -42,10 +52,14 @@ def fitted(store, frame, before, weighting, directory):
         bundle = fit_models(frame, before, weighting)
     folder.mkdir(parents=True, exist_ok=True)
     spec = {k: v for k, v in bundle.items() if k not in ("minutes", "points", "starter")}
-    spec.update(before=before, weighting=weighting, parameters=PARAMS, features=FEATURES, hashes={})
+    spec.update(
+        before=before, weighting=weighting, parameters=PARAMS, features=FEATURES, hashes={}, contract=contract
+    )
+    from .models import save_booster_atomic
+
     for name in ("minutes", "points", "starter"):
         path = folder / (name + ".txt")
-        bundle[name].booster_.save_model(str(path))
+        save_booster_atomic(bundle[name].booster_, path)
         spec["hashes"][name] = hashlib.sha256(path.read_bytes()).hexdigest()
     atomic_json(specfile, spec)
     print("Fitted horizon expert", before, weighting, spec["training_rows"], flush=True)
@@ -53,9 +67,22 @@ def fitted(store, frame, before, weighting, directory):
 
 
 def reference(store, before, directory):
-    path = directory / ("reference-" + before.replace("/", "-"))
+    feature = store.get("decision_features")
+    source = store.artifact_path(feature["path"])
+    if hashlib.sha256(source.read_bytes()).hexdigest() != feature["hash"]:
+        raise ValueError("Horizon reference feature checksum mismatch")
+    contract = {
+        "before": before,
+        "feature_hash": feature["hash"],
+        "parameters": PARAMETERS,
+        "features": NAMES,
+    }
+    path = directory / ("reference-" + before.replace("/", "-") + "-" + digest(contract)[:20])
     if (path / "model.json").exists():
         spec = json.loads((path / "model.json").read_text())
+        for name in ("minutes", "points", "starter"):
+            if hashlib.sha256((path / (name + ".txt")).read_bytes()).hexdigest() != spec["hashes"][name]:
+                raise ValueError("Horizon reference model checksum mismatch")
         return {
             **spec,
             **{
@@ -63,8 +90,7 @@ def reference(store, before, directory):
                 for name in ("minutes", "points", "starter")
             },
         }
-    feature = store.get("decision_features")
-    core = pl.read_parquet(store.artifact_path(feature["path"])).filter(pl.col("deadline_group") < before)
+    core = pl.read_parquet(source).filter(pl.col("deadline_group") < before)
     groups = sorted(core["deadline_group"].unique().to_list())
     cut = groups[-8]
     with threadpool_limits(limits=1):
@@ -72,9 +98,16 @@ def reference(store, before, directory):
             core.filter(pl.col("deadline_group") < cut), core.filter(pl.col("deadline_group") >= cut)
         )
     path.mkdir(parents=True, exist_ok=True)
+    from .models import save_booster_atomic
+
+    hashes = {}
     for name in ("minutes", "points", "starter"):
-        bundle[name].booster_.save_model(str(path / (name + ".txt")))
-    atomic_json(path / "model.json", {"curves": bundle["curves"], "cut": cut})
+        weight = path / (name + ".txt")
+        save_booster_atomic(bundle[name].booster_, weight)
+        hashes[name] = hashlib.sha256(weight.read_bytes()).hexdigest()
+    atomic_json(
+        path / "model.json", {"curves": bundle["curves"], "cut": cut, "hashes": hashes, "contract": contract}
+    )
     return bundle
 
 

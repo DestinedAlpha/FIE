@@ -1,0 +1,37 @@
+{
+  "at": "2026-11-07T22:57:45.380736+00:00",
+  "composed": {
+    "sealed_deadlines": 9,
+    "independently_scored_actions": 27,
+    "training_cutoffs_and_model_checksums": "passed",
+    "account_continuity": "passed"
+  },
+  "pipeline": {
+    "sealed_deadlines": 28,
+    "validated_actions": 84,
+    "models": "checksums passed",
+    "ledger_and_actual_scoring": "passed",
+    "continuous_actions": 84,
+    "sealed_actions": "matched",
+    "account_continuity": "passed",
+    "availability_checksums": "passed"
+  },
+  "continuity": {
+    "continuous_actions": 84,
+    "sealed_actions": "matched",
+    "account_continuity": "passed",
+    "availability_checksums": "passed"
+  },
+  "future_policy_replay": {
+    "sealed_deadlines": 19,
+    "training_cutoffs_and_model_checksums": "passed",
+    "current_week_world_identity": "passed",
+    "continuous_accounts_and_actual_scores": "passed"
+  },
+  "future_policy_diagnostic": {
+    "sealed_deadlines": 9,
+    "training_cutoffs_and_model_checksums": "passed",
+    "current_week_world_identity": "passed",
+    "continuous_accounts_and_actual_scores": "passed"
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "at": "2026-11-07T23:03:47.743480+00:00",
+  "archive_id": "5c6865fea185fa783ba75aff13fa077a586118f11356312386f8bad94cf23255",
+  "retained": 39804,
+  "counts": {
+    "name_joined": 38041,
+    "unresolved": 10206
+  },
+  "reasons": {
+    "identity_not_uniquely_established": 6180,
+    "stable_identity_candidate": 3076,
+    "missing_official_fixture_population": 950
+  },
+  "candidate_count": 3076,
+  "candidate_examples": [
+    {
+      "source_id": "7701",
+      "code": 431131,
+      "source_role": "DL",
+      "official_position": 3,
+      "source_name": "Moussa Djenepo",
+      "official_name": "Moussa Djenepo"
+    },
+    {
+      "source_id": "7701",
+      "code": 431131,
+      "source_role": "DL",
+      "official_position": 3,
+      "source_name": "Moussa Djenepo",
+      "official_name": "Moussa Djenepo"
+    },
+    {
+      "source_id": "10866",
+      "code": 224995,
+      "source_role": "Sub",
+      "official_position": 3,
+      "source_name": "Luis Sinisterra",
+      "official_name": "Luis Sinisterra Lucum\u00ed"
+    },
+    {
+      "source_id": "900",
+      "code": 159533,
+      "source_role": "Sub",
+      "official_position": 3,
+      "source_name": "Adama Traor\u00e9",
+      "official_name": "Adama Traor\u00e9 Diarra"
+    },
+    {
+      "source_id": "900",
+      "code": 159533,
+      "source_role": "Sub",
+      "official_position": 3,
+      "source_name": "Adama Traor\u00e9",
+      "official_name": "Adama Traor\u00e9 Diarra"
+    },
+    {
+      "source_id": "7701",
+      "code": 431131,
+      "source_role": "DL",
+      "official_position": 3,
+      "source_name": "Moussa Djenepo",
+      "official_name": "Moussa Djenepo"
+    },
+    {
+      "source_id": "10866",
+      "code": 224995,
+      "source_role": "Sub",
+      "official_position": 3,
+      "source_name": "Luis Sinisterra",
+      "official_name": "Luis Sinisterra Lucum\u00ed"
+    },
+    {
+      "source_id": "7701",
+      "code": 431131,
+      "source_role": "DL",
+      "official_position": 3,
+      "source_name": "Moussa Djenepo",
+      "official_name": "Moussa Djenepo"
+    },
+    {
+      "source_id": "10866",
+      "code": 224995,
+      "source_role": "Sub",
+      "official_position": 3,
+      "source_name": "Luis Sinisterra",
+      "official_name": "Luis Sinisterra Lucum\u00ed"
+    },
+    {
+      "source_id": "10866",
+      "code": 224995,
+      "source_role": "AMR",
+      "official_position": 3,
+      "source_name": "Luis Sinisterra",
+      "official_name": "Luis Sinisterra Lucum\u00ed"
+    },
+    {
+      "source_id": "532",
+      "code": 55037,
+      "source_role": "DC",
+      "official_position": 3,
+      "source_name": "Cheikhou Kouyat\u00e9",
+      "official_name": "Cheikhou Kouyat\u00e9"
+    },
+    {
+      "source_id": "900",
+      "code": 159533,
+      "source_role": "Sub",
+      "official_position": 3,
+      "source_name": "Adama Traor\u00e9",
+      "official_name": "Adama Traor\u00e9 Diarra"
+    }
+  ],
+  "network_requests": 0,
+  "scope": "Read-only reconstruction; stable-code candidates require further exact-name anchors before acceptance"
+}

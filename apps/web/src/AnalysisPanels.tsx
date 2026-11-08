@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Activity, FlaskConical, RefreshCw, ShieldCheck } from "lucide-react";
-import { Dashboard, Plan, money, percent } from "./types";
+import { api, Dashboard, Plan, money, percent } from "./types";
 
 const chipNames: Record<string, string> = { freehit: "Free Hit", bboost: "Bench Boost", wildcard: "Wildcard", "3xc": "Triple Captain" };
 
@@ -9,6 +9,46 @@ type Props = {
   busy: boolean;
   act: (path: string, body?: unknown) => Promise<unknown>;
 };
+
+type ForecastDiagnostics = {
+  population: {
+    forecast_id: string;
+    cohorts: {position: number; lead: number; players: number}[];
+    independent_status: string;
+    aligned_cohorts: {position: number; lead: number; fixtures: number; point_bias: number; minute_bias: number}[];
+    material_disagreements: {player_id: number; event: number; points_difference: number; minutes_difference: number; classification: string}[];
+    historical: {compatible: boolean; periods: Record<string, {all: {points: {n: number; rmse: number}; any: {brier: number}; sixty: {brier: number}; mean_crps: number; interval_80_coverage: number}}> } | null;
+    challenger: {decision: string; promoted: boolean} | null;
+    interpretation: string;
+  };
+};
+
+export function ForecastDiagnosticsPanel({data}: {data: Dashboard}) {
+  const [result,setResult] = useState<ForecastDiagnostics | null>(null);
+  const [error,setError] = useState("");
+  useEffect(() => {
+    let active = true;
+    setResult(null); setError("");
+    if (data.forecast?.id) api<ForecastDiagnostics>("/forecast/diagnostics").then(value => {if(active)setResult(value);}).catch(e=>{if(active)setError(String(e));});
+    return () => {active=false;};
+  },[data.forecast?.id]);
+  const report=result?.population;
+  return <section className="panel">
+    <h3>Population forecast diagnostics</h3>
+    {!report && <p role="status">{error || (data.forecast ? "Loading forecast diagnostics…" : "Generate a forecast to inspect its population.")}</p>}
+    {report && <>
+      <p>{report.cohorts.reduce((n,r)=>n+r.players,0).toLocaleString()} player-gameweek projections checked. {report.independent_status}.</p>
+      {report.historical && <>
+        <p>{report.historical.compatible ? "Historical evaluation matches the accepted immediate model contract." : "Historical evaluation uses an earlier model contract; it does not certify this forecast."}</p>
+        <div className="table-scroll"><table><thead><tr><th>Season</th><th>Fixtures</th><th>Points RMSE</th><th>Appearance Brier</th><th>60-minute Brier</th><th>CRPS</th><th>80% coverage</th></tr></thead><tbody>{Object.entries(report.historical.periods).map(([season,p])=><tr key={season}><td>{season}</td><td>{p.all.points.n.toLocaleString()}</td><td>{p.all.points.rmse.toFixed(3)}</td><td>{p.all.any.brier.toFixed(3)}</td><td>{p.all.sixty.brier.toFixed(3)}</td><td>{p.all.mean_crps.toFixed(3)}</td><td>{percent(p.all.interval_80_coverage)}</td></tr>)}</tbody></table></div>
+      </>}
+      {report.challenger && <p>Football component challenger: {report.challenger.decision}.</p>}
+      {!!report.material_disagreements.length && <details><summary>{report.material_disagreements.length} material independent projection disagreements</summary><div className="table-scroll"><table><thead><tr><th>Player</th><th>GW</th><th>FIE − independent xPts</th><th>Minutes difference</th><th>Assumption to inspect</th></tr></thead><tbody>{report.material_disagreements.slice(0,30).map(r=><tr key={`${r.player_id}-${r.event}`}><td>{data.market?.players.find(p=>p.id===r.player_id)?.web_name || r.player_id}</td><td>{r.event}</td><td>{r.points_difference.toFixed(2)}</td><td>{r.minutes_difference.toFixed(1)}</td><td>{r.classification.replaceAll('_',' ')}</td></tr>)}</tbody></table></div></details>}
+      <p>{report.interpretation}</p>
+      <a href="/api/forecast/diagnostics" download="forecast-diagnostics.json">Download all cohorts, calibration and disagreements</a>
+    </>}
+  </section>;
+}
 
 export function ResearchControls({ data, busy, act }: Props) {
   const selection = data.extraction_benchmark?.selected;
@@ -1650,13 +1690,13 @@ export function FootballEvidence({data,busy,act}:Props) {
     {!!data.request_metrics_24h?.length && <section className="panel"><h3>Source requests · past 24 hours</h3><p>{data.request_metrics_24h.reduce((n,r)=>n+r.calls,0).toLocaleString()} measured attempts · {(data.request_metrics_24h.reduce((n,r)=>n+r.bytes,0)/1_000_000).toFixed(1)} MB received · {data.request_metrics_24h.reduce((n,r)=>n+r.errors,0)} failed attempts. Retries respect source limits; cached valid data is retained.</p></section>}
     <section className="panel">
       <div className="section-title"><div><h3>Football models and current coverage</h3><p>Only models that pass later-deadline tests affect their production component.</p></div>
-        <button className="button secondary" disabled={busy} onClick={()=>act('/football/train')}>Update football models</button></div>
+        <div><button className="button secondary" disabled={busy} onClick={()=>act('/football/shots/rejoin')}>Rejoin cached shots</button> <button className="button secondary" disabled={busy} onClick={()=>act('/football/train')}>Update football models</button></div></div>
       {availability && <div className="data-details">
         <div><span>Recovery transitions</span><b>{availability.recovery.promoted?'Accepted':'Statistical fallback'}</b></div>
         <div><span>Joint double-gameweek rotation</span><b>{availability.rotation.joint_validation?.promoted?'Accepted':'Challenger'}</b></div>
         <div><span>Joint rotation test pairs / deadlines</span><b>{availability.rotation.joint_validation?.test_pairs??0} / {availability.rotation.joint_validation?.test_deadlines??0}</b></div>
       </div>}
-      {shots && <p>{shots.matched.toLocaleString()} matched shot/role observations; {shots.coverage.current_players} current-season players. {shots.errors.length>0?'Source refresh failed; last verified observations retained.':''} Unresolved identities are excluded.</p>}
+      {shots && <p>{shots.matched.toLocaleString()} matched shot/role observations; {shots.coverage.current_players} current-season players. {shots.refresh_mode === "verified cache only" ? "Cached match data; live source availability was not checked." : ""} {shots.errors.length>0?'Source refresh failed; last verified observations retained.':''} Unresolved identities are excluded.</p>}
       {data.attack_model && <p>Goal channels: {Object.entries(data.attack_model.metrics).map(([k,v])=>`${k.replaceAll('_',' ')} (${v.promoted?'accepted':'prior retained'})`).join(' · ')}. FPL assist attribution: {data.attack_model.assist.promoted?'accepted':'prior retained'}.</p>}
       {data.score_process_model && <p>Team strength challenger: {data.score_process_model.strength?.promoted?'accepted':'baseline retained'}. Score dependence: {data.score_process_model.score_dependence.adopted.replaceAll('_',' ')}. Extra posterior scale: {data.score_process_model.parameter_uncertainty.adopted_scale}.</p>}
       {data.temporal_model && <p>Attacking-history decay: {data.temporal_model.adopted.decay}. Finishing adjustment: {data.temporal_model.adopted.finishing_strength===null?'disabled; benefit not established':`shrinkage ${data.temporal_model.adopted.finishing_strength}`}. Goals minus xG is a diagnostic, not an identified measure of luck.</p>}

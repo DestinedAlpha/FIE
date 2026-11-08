@@ -23,6 +23,29 @@ def show(value):
     typer.echo(json.dumps(value, indent=2, default=str))
 
 
+@app.command("diagnose-population")
+def diagnose_population(historical: bool = False):
+    """Inspect every forecast cohort; optionally run pinned historical research."""
+    from .forecast_population import monitor
+
+    store = Store()
+    if historical:
+        from .football_challenger import resolve_specialists, run
+
+        show({"global": run(store), "specialists": resolve_specialists(store)})
+    else:
+        show(monitor(store, store.get("forecast")))
+
+
+@app.command("rejoin-cached-shots")
+def rejoin_cached_shots():
+    """Rejoin retained Understat data without making any network request."""
+    from .shot_data import collect_shots
+
+    report = asyncio.run(collect_shots(Store(), offline=True))
+    show({k: v for k, v in report.items() if k != "records"})
+
+
 @app.command()
 def maintain_models():
     """Remove retired weights and refit companions against supported feature contracts."""

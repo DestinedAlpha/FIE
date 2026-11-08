@@ -1,0 +1,847 @@
+{
+  "at": "2026-11-07T22:48:17.900822+00:00",
+  "protocol": {
+    "version": "football-components-v1",
+    "reference": "accepted role-v3 plus conditional-points; future-only expert unchanged",
+    "alphas": [
+      0.0,
+      0.15,
+      0.3,
+      0.5
+    ],
+    "covariances": [
+      0.0,
+      0.05,
+      0.15
+    ],
+    "recent_shares": [
+      0.0,
+      0.3,
+      0.5
+    ],
+    "point_blends": [
+      0.1,
+      0.25,
+      0.5,
+      1.0
+    ],
+    "specialists": [
+      "all",
+      "defenders",
+      "goalkeepers",
+      "midfielders",
+      "forwards"
+    ],
+    "selection": "2024/25 GW1-19 only",
+    "acceptance": "2024/25 GW20-38 and separate full 2025/26 replication",
+    "current": "2026/27 GW1-9 diagnostic only; never selects",
+    "gate": "Both periods: upper deadline-block point-MSE delta interval below zero, no regular/premium/position RMSE or captain diagnostic deterioration. Passing forecasts additionally require distribution and legal-account policy gates before promotion.",
+    "team_selection": "Earlier selection scoreline NLL; report RPS, 1X2 Brier, clean-sheet Brier, O/U and BTTS",
+    "limitation": "Previously studied historical archives, not blinded prospective evidence. No external projection captured today is backdated."
+  },
+  "population_diagnostics_id": "ffdb9364b745421805702aa0bc1873262c704d7080fcd544a10edffe88828022",
+  "selected": {
+    "share_recent": 0.5,
+    "specialist": "all",
+    "position": null,
+    "blend": 0.5,
+    "selection_mse": 3.7679214530556058
+  },
+  "selected_alpha": 0.0,
+  "selected_covariance": 0.0,
+  "selection_candidates": [
+    {
+      "share_recent": 0.0,
+      "specialist": "all",
+      "position": null,
+      "blend": 0.1,
+      "selection_mse": 3.7962100705016635
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "all",
+      "position": null,
+      "blend": 0.25,
+      "selection_mse": 3.782586392314043
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "all",
+      "position": null,
+      "blend": 0.5,
+      "selection_mse": 3.770060572404758
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "all",
+      "position": null,
+      "blend": 1.0,
+      "selection_mse": 3.7831850965989986
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "defenders",
+      "position": 2,
+      "blend": 0.1,
+      "selection_mse": 3.8028315371551673
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "defenders",
+      "position": 2,
+      "blend": 0.25,
+      "selection_mse": 3.7963289698362863
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "defenders",
+      "position": 2,
+      "blend": 0.5,
+      "selection_mse": 3.788175430410853
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "defenders",
+      "position": 2,
+      "blend": 1.0,
+      "selection_mse": 3.7819336244576225
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "goalkeepers",
+      "position": 1,
+      "blend": 0.1,
+      "selection_mse": 3.807295513110073
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "goalkeepers",
+      "position": 1,
+      "blend": 0.25,
+      "selection_mse": 3.8067878605564225
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "goalkeepers",
+      "position": 1,
+      "blend": 0.5,
+      "selection_mse": 3.806756381294034
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "goalkeepers",
+      "position": 1,
+      "blend": 1.0,
+      "selection_mse": 3.8097482039956194
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "midfielders",
+      "position": 3,
+      "blend": 0.1,
+      "selection_mse": 3.8031857818753525
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "midfielders",
+      "position": 3,
+      "blend": 0.25,
+      "selection_mse": 3.7981363192898137
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "midfielders",
+      "position": 3,
+      "blend": 0.5,
+      "selection_mse": 3.7948625881614593
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "midfielders",
+      "position": 3,
+      "blend": 1.0,
+      "selection_mse": 3.8075977753330394
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "forwards",
+      "position": 4,
+      "blend": 0.1,
+      "selection_mse": 3.806410039043863
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "forwards",
+      "position": 4,
+      "blend": 0.25,
+      "selection_mse": 3.8048460433143134
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "forwards",
+      "position": 4,
+      "blend": 0.5,
+      "selection_mse": 3.8037789732212035
+    },
+    {
+      "share_recent": 0.0,
+      "specialist": "forwards",
+      "position": 4,
+      "blend": 1.0,
+      "selection_mse": 3.8074182934955108
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "all",
+      "position": null,
+      "blend": 0.1,
+      "selection_mse": 3.7959662231524574
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "all",
+      "position": null,
+      "blend": 0.25,
+      "selection_mse": 3.7818951259972065
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "all",
+      "position": null,
+      "blend": 0.5,
+      "selection_mse": 3.7684058799583466
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "all",
+      "position": null,
+      "blend": 1.0,
+      "selection_mse": 3.7787870724552155
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "defenders",
+      "position": 2,
+      "blend": 0.1,
+      "selection_mse": 3.8027590111895186
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "defenders",
+      "position": 2,
+      "blend": 0.25,
+      "selection_mse": 3.7961575785728066
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "defenders",
+      "position": 2,
+      "blend": 0.5,
+      "selection_mse": 3.787865726719367
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "defenders",
+      "position": 2,
+      "blend": 1.0,
+      "selection_mse": 3.781446532416541
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "goalkeepers",
+      "position": 1,
+      "blend": 0.1,
+      "selection_mse": 3.8072642906158896
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "goalkeepers",
+      "position": 1,
+      "blend": 0.25,
+      "selection_mse": 3.8067015565589317
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "goalkeepers",
+      "position": 1,
+      "blend": 0.5,
+      "selection_mse": 3.8065562807589473
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "goalkeepers",
+      "position": 1,
+      "blend": 1.0,
+      "selection_mse": 3.8092380327650206
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "midfielders",
+      "position": 3,
+      "blend": 0.1,
+      "selection_mse": 3.803499906103477
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "midfielders",
+      "position": 3,
+      "blend": 0.25,
+      "selection_mse": 3.798842036983993
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "midfielders",
+      "position": 3,
+      "blend": 0.5,
+      "selection_mse": 3.79600871396271
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "midfielders",
+      "position": 3,
+      "blend": 1.0,
+      "selection_mse": 3.8088287885871095
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "forwards",
+      "position": 4,
+      "blend": 0.1,
+      "selection_mse": 3.805955815926365
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "forwards",
+      "position": 4,
+      "blend": 0.25,
+      "selection_mse": 3.8037067545642684
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "forwards",
+      "position": 4,
+      "blend": 0.5,
+      "selection_mse": 3.8014879592001156
+    },
+    {
+      "share_recent": 0.3,
+      "specialist": "forwards",
+      "position": 4,
+      "blend": 1.0,
+      "selection_mse": 3.8027865193693366
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "all",
+      "position": null,
+      "blend": 0.1,
+      "selection_mse": 3.795837708392153
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "all",
+      "position": null,
+      "blend": 0.25,
+      "selection_mse": 3.7816034916399666
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "all",
+      "position": null,
+      "blend": 0.5,
+      "selection_mse": 3.7679214530556058
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "all",
+      "position": null,
+      "blend": 1.0,
+      "selection_mse": 3.778213585896699
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "defenders",
+      "position": 2,
+      "blend": 0.1,
+      "selection_mse": 3.8027138600376618
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "defenders",
+      "position": 2,
+      "blend": 0.25,
+      "selection_mse": 3.7960684851620865
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "defenders",
+      "position": 2,
+      "blend": 0.5,
+      "selection_mse": 3.787766821461003
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "defenders",
+      "position": 2,
+      "blend": 1.0,
+      "selection_mse": 3.7815658481521184
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "goalkeepers",
+      "position": 1,
+      "blend": 0.1,
+      "selection_mse": 3.8072447387258097
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "goalkeepers",
+      "position": 1,
+      "blend": 0.25,
+      "selection_mse": 3.8066532174874377
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "goalkeepers",
+      "position": 1,
+      "blend": 0.5,
+      "selection_mse": 3.80646140479498
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "goalkeepers",
+      "position": 1,
+      "blend": 1.0,
+      "selection_mse": 3.8090554895531685
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "midfielders",
+      "position": 3,
+      "blend": 0.1,
+      "selection_mse": 3.8037320663714813
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "midfielders",
+      "position": 3,
+      "blend": 0.25,
+      "selection_mse": 3.79941373784223
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "midfielders",
+      "position": 3,
+      "blend": 0.5,
+      "selection_mse": 3.7971231163066066
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "midfielders",
+      "position": 3,
+      "blend": 1.0,
+      "selection_mse": 3.8109415957845902
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "forwards",
+      "position": 4,
+      "blend": 0.1,
+      "selection_mse": 3.8056598439399925
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "forwards",
+      "position": 4,
+      "blend": 0.25,
+      "selection_mse": 3.8029808518310046
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "forwards",
+      "position": 4,
+      "blend": 0.5,
+      "selection_mse": 3.8000829111758097
+    },
+    {
+      "share_recent": 0.5,
+      "specialist": "forwards",
+      "position": 4,
+      "blend": 1.0,
+      "selection_mse": 3.8001634530896156
+    }
+  ],
+  "periods": {
+    "acceptance_2024": {
+      "rows": 14492,
+      "reference": {
+        "rmse": 1.8195544867644957,
+        "regular_rmse": 2.9104704931375482,
+        "premium_rmse": 4.158203208159298,
+        "bias": 0.027029168703689082,
+        "captain_points": 129.0
+      },
+      "candidate": {
+        "rmse": 1.8090991715710938,
+        "regular_rmse": 2.8925214198043903,
+        "premium_rmse": 4.040057113474322,
+        "bias": 0.029708468891341794,
+        "captain_points": 151.0
+      },
+      "component": {
+        "rmse": 1.8079475873718032,
+        "regular_rmse": 2.8928202333847324,
+        "premium_rmse": 3.9734155039650316,
+        "bias": 0.032387769078994516,
+        "captain_points": 164.0
+      },
+      "positions": {
+        "1": {
+          "reference": {
+            "n": 1524,
+            "rmse": 1.5775542121146522,
+            "mae": 0.6947780640231879,
+            "bias": 0.030799649032886317
+          },
+          "candidate": {
+            "n": 1524,
+            "rmse": 1.5756425505911102,
+            "mae": 0.6945468543049108,
+            "bias": 0.03511123662037576
+          },
+          "component": {
+            "n": 1524,
+            "rmse": 1.5818335633093614,
+            "mae": 0.6968667280987814,
+            "bias": 0.03942282420786521
+          }
+        },
+        "2": {
+          "reference": {
+            "n": 4922,
+            "rmse": 1.7685343956328419,
+            "mae": 0.9249736339281527,
+            "bias": 0.005744057092054962
+          },
+          "candidate": {
+            "n": 4922,
+            "rmse": 1.756699571510778,
+            "mae": 0.9274596152000013,
+            "bias": 0.02555161453170483
+          },
+          "component": {
+            "n": 4922,
+            "rmse": 1.7546805330240545,
+            "mae": 0.9329310621962594,
+            "bias": 0.045359171971354695
+          }
+        },
+        "3": {
+          "reference": {
+            "n": 6440,
+            "rmse": 1.8713077625179078,
+            "mae": 0.9219594942114666,
+            "bias": 0.0424621718927262
+          },
+          "candidate": {
+            "n": 6440,
+            "rmse": 1.8600199804144864,
+            "mae": 0.9159341508546829,
+            "bias": 0.03723055026834564
+          },
+          "component": {
+            "n": 6440,
+            "rmse": 1.8574474465619388,
+            "mae": 0.9136055441623645,
+            "bias": 0.031998928643965065
+          }
+        },
+        "4": {
+          "reference": {
+            "n": 1606,
+            "rmse": 1.9712922778874635,
+            "mae": 0.9770790150641024,
+            "bias": 0.02679913557378087
+          },
+          "candidate": {
+            "n": 1606,
+            "rmse": 1.9611536712925994,
+            "mae": 0.9683682675539876,
+            "bias": 0.007158042410134215
+          },
+          "component": {
+            "n": 1606,
+            "rmse": 1.9621579276968704,
+            "mae": 0.96164509894142,
+            "bias": -0.012483050753512413
+          }
+        }
+      },
+      "delta_mse_95ci": [
+        -0.05335842749255644,
+        -0.026253990790070507
+      ],
+      "passed": true
+    },
+    "replication_2025": {
+      "rows": 29644,
+      "reference": {
+        "rmse": 1.8826734001491174,
+        "regular_rmse": 2.9551543681384485,
+        "premium_rmse": 3.98476892877865,
+        "bias": 0.024002164435649266,
+        "captain_points": 262.0
+      },
+      "candidate": {
+        "rmse": 1.8753462991756977,
+        "regular_rmse": 2.9404946845573896,
+        "premium_rmse": 3.915461592853971,
+        "bias": 0.018596881185251643,
+        "captain_points": 250.0
+      },
+      "component": {
+        "rmse": 1.8762602222641402,
+        "regular_rmse": 2.9426843493494634,
+        "premium_rmse": 3.904798839096211,
+        "bias": 0.013191597934854029,
+        "captain_points": 223.0
+      },
+      "positions": {
+        "1": {
+          "reference": {
+            "n": 3416,
+            "rmse": 1.389638177339681,
+            "mae": 0.569160813032008,
+            "bias": -0.0075811389179819616
+          },
+          "candidate": {
+            "n": 3416,
+            "rmse": 1.3877535816107531,
+            "mae": 0.5706322147924507,
+            "bias": -0.000623580221384864
+          },
+          "component": {
+            "n": 3416,
+            "rmse": 1.3937622744306164,
+            "mae": 0.5732945675931455,
+            "bias": 0.006333978475212244
+          }
+        },
+        "2": {
+          "reference": {
+            "n": 9707,
+            "rmse": 2.0617903676197775,
+            "mae": 1.0915444400385312,
+            "bias": -0.0033885975455248845
+          },
+          "candidate": {
+            "n": 9707,
+            "rmse": 2.053656715286789,
+            "mae": 1.0923969730636072,
+            "bias": 0.013998622956138134
+          },
+          "component": {
+            "n": 9707,
+            "rmse": 2.0528913223885494,
+            "mae": 1.0964741915846639,
+            "bias": 0.03138584345780114
+          }
+        },
+        "3": {
+          "reference": {
+            "n": 13254,
+            "rmse": 1.8171084063614948,
+            "mae": 0.8904658654427372,
+            "bias": 0.04385651145696706
+          },
+          "candidate": {
+            "n": 13254,
+            "rmse": 1.8093525229101137,
+            "mae": 0.8814339465496768,
+            "bias": 0.025053183837078573
+          },
+          "component": {
+            "n": 13254,
+            "rmse": 1.8097775269749674,
+            "mae": 0.8751904324826807,
+            "bias": 0.006249856217190086
+          }
+        },
+        "4": {
+          "reference": {
+            "n": 3267,
+            "rmse": 2.0288637694982974,
+            "mae": 1.0465636434623076,
+            "bias": 0.05786233443464394
+          },
+          "candidate": {
+            "n": 3267,
+            "rmse": 2.02125607427704,
+            "mae": 1.034327979983257,
+            "bias": 0.02616362543005149
+          },
+          "component": {
+            "n": 3267,
+            "rmse": 2.0253914233366173,
+            "mae": 1.0245625015399678,
+            "bias": -0.0055350835745409796
+          }
+        }
+      },
+      "delta_mse_95ci": [
+        -0.04090303767664029,
+        -0.01664213477593313
+      ],
+      "passed": false
+    },
+    "current_diagnostic": {
+      "rows": 5853,
+      "reference": {
+        "rmse": 2.075564001819117,
+        "regular_rmse": 2.961293879614397,
+        "premium_rmse": 4.771959340726254,
+        "bias": -0.02226091667310442,
+        "captain_points": 73.0
+      },
+      "candidate": {
+        "rmse": 2.0707089666323917,
+        "regular_rmse": 2.955937897624092,
+        "premium_rmse": 4.83938237206156,
+        "bias": -0.012885935110079072,
+        "captain_points": 63.0
+      },
+      "component": {
+        "rmse": 2.073954325642655,
+        "regular_rmse": 2.9641710071635594,
+        "premium_rmse": 4.943782958444831,
+        "bias": -0.0035109535470537285,
+        "captain_points": 52.0
+      },
+      "positions": {
+        "1": {
+          "reference": {
+            "n": 641,
+            "rmse": 1.6223360140262237,
+            "mae": 0.7344598926622822,
+            "bias": -0.0804090459859125
+          },
+          "candidate": {
+            "n": 641,
+            "rmse": 1.6073738927521577,
+            "mae": 0.7378714598501749,
+            "bias": -0.054892860422663135
+          },
+          "component": {
+            "n": 641,
+            "rmse": 1.605089131737134,
+            "mae": 0.7452169132397108,
+            "bias": -0.029376674859413743
+          }
+        },
+        "2": {
+          "reference": {
+            "n": 1915,
+            "rmse": 2.3278804976295664,
+            "mae": 1.3640088561546178,
+            "bias": -0.08497715079295481
+          },
+          "candidate": {
+            "n": 1915,
+            "rmse": 2.314367126442571,
+            "mae": 1.3659619971840118,
+            "bias": -0.05952154860542947
+          },
+          "component": {
+            "n": 1915,
+            "rmse": 2.3086879787139662,
+            "mae": 1.3704996993799579,
+            "bias": -0.03406594641790417
+          }
+        },
+        "3": {
+          "reference": {
+            "n": 2602,
+            "rmse": 1.9761043868082697,
+            "mae": 1.0787636489867523,
+            "bias": 0.01362336538295042
+          },
+          "candidate": {
+            "n": 2602,
+            "rmse": 1.980414199154753,
+            "mae": 1.0797251683353661,
+            "bias": 0.014616829257487607
+          },
+          "component": {
+            "n": 2602,
+            "rmse": 1.9919529388713502,
+            "mae": 1.0840861962997794,
+            "bias": 0.015610293132024805
+          }
+        },
+        "4": {
+          "reference": {
+            "n": 695,
+            "rmse": 2.073890814314639,
+            "mae": 1.1236111234804926,
+            "bias": 0.0698306478149082
+          },
+          "candidate": {
+            "n": 695,
+            "rmse": 2.0700423329347615,
+            "mae": 1.1186748674455376,
+            "bias": 0.05138952688208478
+          },
+          "component": {
+            "n": 695,
+            "rmse": 2.075056759986628,
+            "mae": 1.11654038232133,
+            "bias": 0.032948405949261364
+          }
+        }
+      },
+      "delta_mse_95ci": [
+        -0.0510935268867009,
+        0.016583148371978138
+      ],
+      "passed": false
+    }
+  },
+  "team_metrics": {
+    "2024/25": {
+      "fixtures": 191,
+      "nll": 2.953783383226079,
+      "rps": 0.20143513634955157,
+      "brier": 0.5714487407694562,
+      "goal_mae": 0.9142321274969999,
+      "cs_brier": 0.17333643515565678,
+      "over25_brier": 0.24706812896555513,
+      "btts_brier": 0.2556809148890595
+    },
+    "2025/26": {
+      "fixtures": 380,
+      "nll": 2.897821490951172,
+      "rps": 0.20849070084538535,
+      "brier": 0.6164616495693762,
+      "goal_mae": 0.8974949287622909,
+      "cs_brier": 0.18111050300190215,
+      "over25_brier": 0.2528478493121451,
+      "btts_brier": 0.24720599701462206
+    },
+    "2026/27": {
+      "fixtures": 90,
+      "nll": 2.96854451136724,
+      "rps": 0.2089494050391392,
+      "brier": 0.6153178573008162,
+      "goal_mae": 0.9482295570556021,
+      "cs_brier": 0.20161228511388068,
+      "over25_brier": 0.2563782202177522,
+      "btts_brier": 0.25920552623345655
+    }
+  },
+  "forecast_gate_passed": false,
+  "promoted": false,
+  "decision": "Rejected: predeclared forecast/captain/subgroup gates failed; accepted production composition retained",
+  "prediction_path": "data/models/population-a5dff91e6719437cc2585886/football-player-predictions.parquet",
+  "prediction_hash": "9463f73c2a32ab5d1a1f4485b67d77f01904603c322345731ca917c0c957593f",
+  "id": "e20dbb5c856046dd1d10c79d4880e5263117996d171931eaa0d72359b875b562"
+}

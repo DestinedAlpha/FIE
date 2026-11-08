@@ -36,6 +36,7 @@ import "./style.css";
 import { transferPairs } from "./transfers";
 import {
   FootballEvidence,
+  ForecastDiagnosticsPanel,
   ResearchControls,
   SourceCoverage,
   ManagerSignals,
@@ -1557,6 +1558,7 @@ function App() {
               )}
               {tab === "Model & data" && (
                 <>
+                  <ForecastDiagnosticsPanel data={data} />
                   <FootballEvidence data={data} busy={busy} act={action} />
                   <DecisionEvidence data={data} busy={busy} act={action} />
                   <StrategyLab data={data} busy={busy} act={action} />

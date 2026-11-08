@@ -24,8 +24,17 @@ def validate_forecast(forecast, arrays):
         fixtures[key] = row
         if not np.isfinite([row["mean"], row["minutes"], row["p_zero"], row["p_60"]]).all():
             raise ValueError("Nonfinite fixture forecast")
-        if not (0 <= row["p_60"] <= 1 - row["p_zero"] + 1e-9 and 0 <= row["minutes"] <= 90):
+        if not (
+            0 <= row["p_zero"] <= 1
+            and 0 <= row["p_60"] <= 1 - row["p_zero"] + 1e-9
+            and 0 <= row["minutes"] <= 90
+        ):
             raise ValueError("Invalid fixture participation forecast")
+        if (row["event"], row["player_id"]) not in expected:
+            raise ValueError("Fixture outside forecast market/event coverage")
+    by_player: dict[tuple[int, int], list] = {}
+    for row in fixtures.values():
+        by_player.setdefault((row["event"], row["player_id"]), []).append(row)
     for event in range(forecast["start_event"], forecast["end_event"] + 1):
         points, minutes = arrays[f"points_{event}"], arrays[f"minutes_{event}"]
         shape = (forecast["worlds"], len(ids))
@@ -52,15 +61,28 @@ def validate_forecast(forecast, arrays):
                 ("sd", points[:, col].std()),
                 ("minutes_mean", minutes[:, col].mean()),
                 ("p_zero", (minutes[:, col] == 0).mean()),
+                ("p_haul", (points[:, col] >= 10).mean()),
             ]:
                 if not np.isclose(row[field], expected_value, atol=1e-7):
                     raise ValueError("Forecast summary differs from optimizer worlds: " + field)
+            part = by_player.get((event, pid), [])
+            if row["fixture_count"] != len(part):
+                raise ValueError("Forecast fixture count differs from scheduled fixture records")
+            if not np.isclose(sum(r["mean"] for r in part), row["mean"], atol=1e-7) or not np.isclose(
+                sum(r["minutes"] for r in part), row["minutes_mean"], atol=1e-7
+            ):
+                raise ValueError("Forecast fixture totals differ from gameweek summaries")
+            if len(part) == 1 and not np.isclose(part[0]["p_60"], row["p_60"], atol=1e-7):
+                raise ValueError("Single-fixture sixty-minute probability differs")
             if np.any(minutes[:, col] > 90 * row["fixture_count"]):
                 raise ValueError("Forecast minutes exceed scheduled match exposure")
             for name in ("point_quantiles", "minute_quantiles"):
                 q = np.asarray(row[name])
-                if not np.isfinite(q).all() or np.any(np.diff(q) < 0):
+                if q.shape != (3,) or not np.isfinite(q).all() or np.any(np.diff(q) < 0):
                     raise ValueError("Forecast quantiles are invalid")
+                samples = points[:, col] if name == "point_quantiles" else minutes[:, col]
+                if not np.allclose(q, np.quantile(samples, [0.1, 0.5, 0.9]), atol=1e-7):
+                    raise ValueError("Forecast quantiles differ from optimizer worlds")
             if abs(sum(row["components"].values()) - row["mean"]) > 0.0003:
                 raise ValueError("Forecast scoring components do not reconcile")
     return {

@@ -252,13 +252,16 @@ def create_app(root=None):
 
     @app.get("/api/forecast/diagnostics")
     def forecast_diagnostics():
+        from .forecast_population import monitor
         from .independent_sources import compare_fivestat
 
         forecast = store.get("forecast")
+        comparison = compare_fivestat(store, forecast)
         return {
             "forecast_id": forecast["id"],
             "numerical_contract": forecast.get("validation"),
-            "independent_comparison": compare_fivestat(store, forecast),
+            "independent_comparison": comparison,
+            "population": monitor(store, forecast, comparison),
         }
 
     @app.get("/api/dashboard")
@@ -812,6 +815,16 @@ def create_app(root=None):
         from .workflow import football_training
 
         return launch("football-models", {}, lambda: football_training(store, True))
+
+    @app.post("/api/football/shots/rejoin")
+    def rejoin_cached_shots():
+        from .shot_data import collect_shots
+
+        def run():
+            report = asyncio.run(collect_shots(store, offline=True))
+            return {key: value for key, value in report.items() if key != "records"}
+
+        return launch("shot-cache-rejoin", {}, run)
 
     @app.post("/api/evidence/analyze")
     def evidence_analysis():

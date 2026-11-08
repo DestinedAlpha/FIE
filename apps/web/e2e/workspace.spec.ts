@@ -338,3 +338,20 @@ test("withheld paid hits show search uncertainty, weekly payback and forecast di
   await expect(panel.getByRole('link',{name:'Download raw paid-hit proposal'})).toHaveAttribute('href','/api/export/raw-paid/json');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1)).toBe(false);
 });
+
+test("population diagnostics expose accepted evidence and download the complete report",async ({page})=>{
+  await openWorkspace(page);
+  const loaded=page.waitForResponse(r=>r.url().endsWith('/api/forecast/diagnostics')&&r.status()===200);
+  await navigate(page,'Model & data');
+  const response=await loaded;
+  const result=await response.json();
+  await expect(page.getByRole('heading',{name:'Population forecast diagnostics',exact:true})).toBeVisible();
+  await expect(page.getByText(/player-gameweek projections checked/)).toBeVisible();
+  expect(result.population.cohorts.length).toBeGreaterThan(0);
+  expect(result.population.historical.compatible).toBe(true);
+  expect(result.population.challenger.promoted).toBe(false);
+  const downloadPromise=page.waitForEvent('download');
+  await page.getByRole('link',{name:'Download all cohorts, calibration and disagreements'}).click();
+  const download=await downloadPromise;
+  expect(download.suggestedFilename()).toBe('forecast-diagnostics.json');
+});

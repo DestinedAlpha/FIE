@@ -1,0 +1,11 @@
+{
+  "at": "2026-11-08T08:10:54.007125+00:00",
+  "job_id": "f300f383c3e64aabb4601bcc60628ffd",
+  "status": "completed",
+  "records": 47053,
+  "corpus_hash": "d7be3f5080e6059a613c3d12ab3627a839cda3d4f90078c1b2ed609c9d5985ce",
+  "network_mode": "verified cache only",
+  "summary_bounded": true,
+  "observation_values_unchanged": true,
+  "production_pointers_unchanged": true
+}

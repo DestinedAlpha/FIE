@@ -1,0 +1,100 @@
+{
+  "at": "2026-11-07T22:44:12.969381+00:00",
+  "sources": [
+    {
+      "name": "fivestat",
+      "url": "https://www.fivestat.co.uk/methodology",
+      "status": 200,
+      "captured_at": "2026-11-07T22:44:07.938023+00:00",
+      "sha256": "cf4af1ff19485d4a3bfe14198621d295054f95483ffeccba42b09f940ce67d4e",
+      "bytes": 58897,
+      "snapshot": "ea73be37f09a41f09636469d8ef89fc0b706bc0cb204e1002d8d7e6afa882b4b"
+    },
+    {
+      "name": "core",
+      "url": "https://raw.githubusercontent.com/olbauday/FPL-Core-Insights/main/README.md",
+      "status": 200,
+      "captured_at": "2026-11-07T22:44:08.272320+00:00",
+      "sha256": "8b6a6f028b1337e8f8a7363400a334ef108a12ba0a0c0ed010542afea9c2fd82",
+      "bytes": 24855,
+      "snapshot": "6edd1014426fb4b8ab6b49fdeac08e13665a76e5f586e5e8026e07f96b6fd0bb"
+    },
+    {
+      "name": "solio",
+      "url": "https://raw.githubusercontent.com/solioanalytics/open-fpl-solver/master/README.md",
+      "status": 200,
+      "captured_at": "2026-11-07T22:44:08.615801+00:00",
+      "sha256": "87026276343f5a9567d8c1fc63e411cc6cb62e910549e02205d118b0d8533c77",
+      "bytes": 3302,
+      "snapshot": "4d77e10d08ebc8e1a337fac80ae0b98d0b9808f20093a8cf91c3148acdd0c406"
+    },
+    {
+      "name": "statsbomb_competitions",
+      "url": "https://raw.githubusercontent.com/hudl/open-data/master/data/competitions.json",
+      "status": 200,
+      "captured_at": "2026-11-07T22:44:08.881827+00:00",
+      "sha256": "e6cd42f5d8956d6aa30fb917ce8d4c3b3df1879a93f02f8feba820930a6971fa",
+      "bytes": 34887,
+      "snapshot": "02ceaadae3763a0660c5710307bb52c3f0afa40258a322e347b44ac402f796a0",
+      "epl_seasons": [
+        "2015/2016",
+        "2003/2004"
+      ]
+    },
+    {
+      "name": "statsbomb_licence",
+      "url": "https://raw.githubusercontent.com/hudl/open-data/master/LICENSE.pdf",
+      "status": 200,
+      "captured_at": "2026-11-07T22:44:09.183503+00:00",
+      "sha256": "a5462e69aeb71a39268b760b110c5c2190a2e0cee3015ba976f66bd71f6c2bb4",
+      "bytes": 165130,
+      "snapshot": "aa7a3466c726a3b9b2f2502746509934703513512fcf8d39b3d12f54c49e6871"
+    },
+    {
+      "name": "openfpl",
+      "url": "https://raw.githubusercontent.com/daniegr/OpenFPL/main/README.md",
+      "status": 200,
+      "captured_at": "2026-11-07T22:44:10.109328+00:00",
+      "sha256": "5a6abd7336951c200076d660dbd7e4bc04d46f9e55068d518bced587fab4ab77",
+      "bytes": 2279,
+      "snapshot": "91ad7b66abf5735308af408b38bbe6824a42ac5b9c9103d6a2e8b35e1f655805"
+    },
+    {
+      "name": "sideline",
+      "url": "https://sidelinequant.com/data/latest.json",
+      "status": 404,
+      "captured_at": "2026-11-07T22:44:11.206852+00:00",
+      "sha256": "8ef83a6477608d25fa59b9edb191fb883cfd72f20bf2a2a3c35027962c39b22e",
+      "bytes": 101
+    },
+    {
+      "name": "theopenmodel",
+      "url": "https://raw.githubusercontent.com/Hicruben/theopenmodel/main/README.md",
+      "status": 200,
+      "captured_at": "2026-11-07T22:44:11.401520+00:00",
+      "sha256": "213b67aa4f831927810f7d885594a36bbb759748919af79d473de2dddd645354",
+      "bytes": 5023,
+      "snapshot": "b2f3a02f98d5608ebbbd196b4d9b89ee8f241237916221b826f195617ef0da4c"
+    },
+    {
+      "name": "football_data",
+      "url": "https://www.football-data.co.uk/data.php",
+      "status": 200,
+      "captured_at": "2026-11-07T22:44:12.963952+00:00",
+      "sha256": "47f9c0d05d4fe0fd7398d5e32c60ca7878233aa02280163509c36b8eac5cad76",
+      "bytes": 48066,
+      "snapshot": "4f6ed2167a4291a5324439d5f6bc8b437ea2250b0a9f5ab2b38c0b5885d22655"
+    }
+  ],
+  "understat": "Explicitly not retried; retained validated corpus and existing backoff/fallback used",
+  "decisions": {
+    "fivestat": "Independent scoreline and player-share challenger implemented and evaluated; global and all predeclared specialists fail complete promotion gates. Public predictions remain cutoff-aligned comparisons only.",
+    "core": "Existing official-ID workload/advanced-stat adapter remains active; full historical/live role parity and coverage evidence retained. No uncontrolled score boost.",
+    "solio": "Deterministic HiGHS multi-period mechanics cross-checked against existing legal-account MIP; no unmeasured replacement of stochastic scoring.",
+    "statsbomb": "Accessible EPL event coverage is 2003/04 and 2015/16; lacks current aligned players/fixtures. No wholesale ingestion justified. Licence retained for review.",
+    "openfpl": "Public position-ensemble methodology examined; existing reproduction and prior advanced/XGBoost tests retained. No unvalidated transfer of published accuracy or historical weights.",
+    "sideline": "Advertised free projection endpoint returned 404. Existing FiveStat adapter provides functional independent comparison; no fabricated data or retry loop.",
+    "theopenmodel": "Public Elo/DC approach and archived publication practices examined. Existing model sealing and independently gated score-process alternatives cover the useful methods; external results are not FIE evidence.",
+    "football_data": "Legitimate match-results reference; existing official archives supply matched goals/fixtures with FPL identity and deadlines. No incompatible or unlicensed betting market blended."
+  }
+}

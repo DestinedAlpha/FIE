@@ -127,3 +127,132 @@ def test_partial_refresh_retains_verified_matches_and_rejects_bad_cache(tmp_path
     assert result["errors"][0]["detail"].startswith("Understat league response")
     assert store.latest("shot_league_2024")[0] == {"error": "bad cached shape"}
     assert store.latest("shot_match_10")[0] == match_data()
+
+
+def test_tactical_outfield_role_and_complete_surname_prefix_are_valid_identities():
+    from fpl_intelligence.shot_data import identify
+
+    candidates = [{"name": "Alex Example Extra", "element": 1, "position": 3}]
+    assert identify("Alex Example", "DL", candidates) == candidates[0]
+    assert identify("Alex Example", "GK", candidates) is None
+    keeper = [{"name": "Alex Example", "element": 5, "position": 1}]
+    assert identify("Alex Example", "Sub", keeper) == keeper[0]
+    assert identify("Alex", "DL", candidates) is None
+    assert (
+        identify(
+            "Alex Example", "DL", candidates + [{"name": "Alex Example Other", "element": 2, "position": 2}]
+        )
+        is None
+    )
+
+
+def test_offline_rejoin_cannot_fetch_an_unavailable_source(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    store = Store(tmp_path / "data")
+    store.put(
+        "shot_archive", {"matched": 1, "records": [{"season": "2025/26", "player_code": 42, "fixture_id": 9}]}
+    )
+    monkeypatch.setattr("fpl_intelligence.shot_data.canonical_rows", lambda *_: ([], {}, {}))
+    monkeypatch.setattr("fpl_intelligence.shot_data.load_market", lambda *_: ({}, {"season": "2025/26"}))
+
+    async def forbidden(*args, **kwargs):
+        raise AssertionError("Offline rejoin attempted a network request")
+
+    monkeypatch.setattr(PublicTransport, "get", forbidden)
+    result = asyncio.run(collect_shots(store, [2025], offline=True))
+    assert result["matched"] == 1 and result["records"][0]["player_code"] == 42
+
+
+def test_offline_rejoin_job_is_integrated_and_returns_a_bounded_summary(tmp_path, monkeypatch):
+    import time
+
+    from fastapi.testclient import TestClient
+
+    from fpl_intelligence.api import create_app
+
+    calls = []
+
+    async def rejoin(store, seasons=None, *, offline=False):
+        calls.append(offline)
+        return {
+            "id": "checked",
+            "matched": 1,
+            "records": [{"sensitive_large_corpus": "kept in immutable store"}],
+        }
+
+    monkeypatch.setattr("fpl_intelligence.shot_data.collect_shots", rejoin)
+    with TestClient(create_app(tmp_path / "data"), base_url="http://127.0.0.1") as client:
+        reply = client.post("/api/football/shots/rejoin", json={})
+        assert reply.status_code == 200
+        for _ in range(100):
+            job = client.get("/api/jobs/" + reply.json()["job_id"]).json()
+            if job["status"] in ("completed", "failed", "cancelled"):
+                break
+            time.sleep(0.01)
+        assert job["status"] == "completed" and calls == [True]
+        assert job["result"]["matched"] == 1 and "records" not in job["result"]
+
+
+def test_official_short_alias_is_accepted_only_with_unique_fixture_identity():
+    from fpl_intelligence.shot_data import identify
+
+    keeper = {
+        "name": "Firstname Middle Lastname",
+        "identity_aliases": ["OfficialNickname"],
+        "element": 1,
+        "position": 1,
+    }
+    assert identify("OfficialNickname", "GK", [keeper]) == keeper
+    other = {**keeper, "element": 2}
+    assert identify("OfficialNickname", "GK", [keeper, other]) is None
+
+
+def test_stable_provider_links_require_bijection_multiple_fixtures_and_current_club():
+    from fpl_intelligence.shot_data import club_key, identify_stable, stable_id_links
+
+    history = [
+        {"source_player_id": "7", "player_code": 88, "season": "2024/25", "fixture_id": i} for i in range(3)
+    ]
+    links = stable_id_links(history)
+    assert links == {"7": 88}
+    candidate = {"code": 88, "position": 3, "element": 42}
+    assert identify_stable("7", "DL", [candidate], links) == candidate
+    assert identify_stable("7", "GK", [candidate], links) is None
+    assert identify_stable("7", "DL", [], links) is None
+    assert stable_id_links(history[:2]) == {}
+    assert (
+        stable_id_links(
+            history + [{"source_player_id": "8", "player_code": 88, "season": "2024/25", "fixture_id": 9}]
+        )
+        == {}
+    )
+    assert (
+        stable_id_links(
+            history + [{"source_player_id": "7", "player_code": 99, "season": "2024/25", "fixture_id": 9}]
+        )
+        == {}
+    )
+    assert club_key("Sheffield United") == club_key("Sheffield Utd")
+    assert club_key("Ipswich Town") == club_key("Ipswich")
+
+
+def test_cancelled_cache_rejoin_preserves_the_published_archive(tmp_path, monkeypatch):
+    from concurrent.futures import CancelledError
+    from threading import Event
+
+    from fpl_intelligence.search_control import search_session
+
+    store = Store(tmp_path / "data")
+    previous = store.put("shot_archive", {"matched": 1, "records": []})
+    event = Event()
+
+    def cancelled_setup(*args):
+        event.set()
+        return ({}, {"season": "2025/26"})
+
+    monkeypatch.setattr("fpl_intelligence.shot_data.canonical_rows", lambda *_: ([], {}, {}))
+    monkeypatch.setattr("fpl_intelligence.shot_data.load_market", cancelled_setup)
+    with search_session(cancel=event):
+        with pytest.raises(CancelledError):
+            asyncio.run(collect_shots(store, [2025], offline=True))
+    assert store.get("shot_archive")["id"] == previous

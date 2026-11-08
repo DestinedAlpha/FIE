@@ -56,7 +56,7 @@ def main():
         )
         zipped.writestr(
             prefix + "UPDATE-README.txt",
-            "Requires an existing FPL Intelligence installation. Extract separately, close the old app, and run Update existing.cmd. Select your existing application folder. Your account, keys, accepted tree models and historical data are preserved. The launcher removes retired tensor weights/dependencies, migrates and refits companion trees, validates the role-aware minutes model, then rebuilds forecasts and recommendations. Initial migration/training takes several minutes on a CPU. No account transfers are submitted.\n",
+            "Requires an existing FPL Intelligence installation. Extract separately, close the old app, and run Update existing.cmd. Select your existing application folder. Your account, keys, accepted tree models and historical evidence are preserved. Startup migrates incompatible companions only when required and rebuilds stale forecasts/recommendations; an ordinary compatible update does not force full retraining. Initial migration/training can take several minutes on a CPU. No account transfers are submitted.\n",
         )
     with ZipFile(output) as zipped:
         assert zipped.testzip() is None

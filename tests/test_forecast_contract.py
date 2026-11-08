@@ -106,3 +106,47 @@ def test_zero_minute_disciplinary_penalties_are_valid_worlds():
     arrays["points_1"][:] = 1
     with pytest.raises(ValueError, match="participation"):
         validate_forecast(forecast, arrays)
+
+
+@pytest.mark.parametrize("mutation", ["quantiles", "haul", "count", "fixture_probability", "fixture_total"])
+def test_displayed_distribution_and_fixture_totals_match_optimizer_worlds(mutation):
+    forecast = {
+        "player_ids": [1],
+        "start_event": 1,
+        "end_event": 1,
+        "worlds": 2,
+        "fixtures": [
+            {"event": 1, "player_id": 1, "fixture_id": 1, "mean": 5, "minutes": 90, "p_zero": 0, "p_60": 1}
+        ],
+        "players": [
+            {
+                "event": 1,
+                "player_id": 1,
+                "mean": 5,
+                "sd": 5,
+                "minutes_mean": 90,
+                "p_zero": 0,
+                "p_start": 1,
+                "p_60": 1,
+                "p_haul": 0.5,
+                "fixture_count": 1,
+                "point_quantiles": [1, 5, 9],
+                "minute_quantiles": [90, 90, 90],
+                "components": {"total": 5},
+            }
+        ],
+    }
+    arrays = {"points_1": np.array([[0], [10]]), "minutes_1": np.full((2, 1), 90)}
+    assert validate_forecast(forecast, arrays)["passed"]
+    if mutation == "quantiles":
+        forecast["players"][0]["point_quantiles"] = [2, 5, 8]
+    elif mutation == "haul":
+        forecast["players"][0]["p_haul"] = 0.1
+    elif mutation == "count":
+        forecast["players"][0]["fixture_count"] = 2
+    elif mutation == "fixture_probability":
+        forecast["fixtures"][0]["p_zero"] = -1
+    else:
+        forecast["fixtures"][0]["mean"] = 6
+    with pytest.raises(ValueError):
+        validate_forecast(forecast, arrays)

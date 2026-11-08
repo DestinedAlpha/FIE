@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-07T23:16:25.862695+00:00",
+  "old_id": "5c6865fea185fa783ba75aff13fa077a586118f11356312386f8bad94cf23255",
+  "new_id": "7a31d6a9ce28954e1485da8c3d432b0d260fee488caf317db7292f8a8e43b9d7",
+  "before": 39804,
+  "after": 47053,
+  "additional": 7249,
+  "preserved_old_keys": 39804,
+  "unresolved": 1194,
+  "unresolved_reasons": {
+    "identity_not_uniquely_established": 1194
+  },
+  "errors": [],
+  "refresh_mode": "verified cache only"
+}
