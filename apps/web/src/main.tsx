@@ -128,8 +128,8 @@ function App() {
         const value = await api<{
           status: string;
           error?: string;
-          progress?: {mip_primal_bound?: number; mip_dual_bound?: number; mip_gap?: number};
-          result?: { stale?: boolean };
+          progress?: {phase?: string; mip_primal_bound?: number; mip_dual_bound?: number; mip_gap?: number};
+          result?: { stale?: boolean; status?: string; plan_optimized?: boolean; forecast_updated?: boolean };
         }>(`/jobs/${job}`);
         if (["completed", "failed", "interrupted", "cancelled"].includes(value.status)) {
           if (!stopped) {
@@ -143,14 +143,18 @@ function App() {
               setNotice(
                 value.result?.stale
                   ? "Completed for an older account version. Recompute for your current team."
-                  : "Calculation complete. Your workspace is up to date.",
+                  : value.result?.status || "Calculation complete. Your workspace is up to date.",
               );
-              await reload();
             }
+            await reload();
           }
-        } else if (++ticks % 6 === 0 && !stopped) {
-          if (value.progress) setNotice(`Search continues. Best objective ${value.progress.mip_primal_bound?.toFixed(2) ?? "pending"}; upper bound ${value.progress.mip_dual_bound?.toFixed(2) ?? "pending"}; gap ${value.progress.mip_gap == null ? "pending" : (100 * value.progress.mip_gap).toFixed(2) + "%"}.`);
+        } else if (!stopped) {
+          if(value.status === "cancelling") setNotice("Stopping calculation…");
+          else if(value.progress?.phase) setNotice(value.progress.phase + (value.progress.mip_gap == null ? "" : ` · search gap ${(100 * value.progress.mip_gap).toFixed(2)}%`));
+          if (++ticks % 6 === 0) {
+          if (!value.progress?.phase && value.progress?.mip_primal_bound != null && value.status !== "cancelling") setNotice(`Search continues. Best objective ${value.progress.mip_primal_bound?.toFixed(2) ?? "pending"}; gap ${value.progress.mip_gap == null ? "pending" : (100 * value.progress.mip_gap).toFixed(2) + "%"}.`);
           await reload();
+          }
         }
       } catch (e) {
         if (!stopped) {
@@ -545,6 +549,7 @@ function App() {
                 <RefreshCw size={15} className={busy ? "spin" : ""} />
                 Refresh data
               </button>
+              <button className="button secondary" disabled={busy || !data?.state} onClick={() => action("/refresh-cycle")} title="Learn newly finalized results and update forecasts; optimize transfers separately">Update forecasts</button>
             </div>
           </div>
           {error && !editor && (
@@ -566,7 +571,7 @@ function App() {
               </button>
             </div>
           )}
-          {job && <button onClick={() => api(`/jobs/${job}/cancel`, {}).then(() => setNotice("Cancellation requested.")).catch(e => setError(e.message))}>Cancel calculation</button>}
+          {job && <button onClick={() => api(`/jobs/${job}/cancel`, {}).then(() => setNotice("Stopping calculation…")).catch(e => setError(e.message))}>Cancel calculation</button>}
         {busy && (
             <div role="status" className="message">
               <LoaderCircle size={16} className="spin" />

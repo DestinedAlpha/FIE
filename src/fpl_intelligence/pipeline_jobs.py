@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 @contextmanager
-def replay_lock(path):
+def replay_lock(path, busy_message="The integrated replay is already running; inspect its progress"):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a+b") as lock:
@@ -26,7 +26,7 @@ def replay_lock(path):
 
                 fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         except OSError as error:
-            raise ValueError("The integrated replay is already running; inspect its progress") from error
+            raise ValueError(busy_message) from error
         try:
             yield
         finally:

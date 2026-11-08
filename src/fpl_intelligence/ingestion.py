@@ -6,6 +6,7 @@ import asyncio
 import re
 import unicodedata
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -47,7 +48,11 @@ class Official:
             return None
 
     async def ingest(
-        self, entry: int | None = None, league: int | None = None, histories: bool = True
+        self,
+        entry: int | None = None,
+        league: int | None = None,
+        histories: bool = True,
+        auxiliary: bool = True,
     ) -> dict:
         async with httpx.AsyncClient(
             timeout=30,
@@ -89,7 +94,7 @@ class Official:
                         )
                         for revealed in range(max(1, current - 1), current + 1)
                     )
-            if current:
+            if current and auxiliary:
                 tasks.append(self.fetch(client, f"event/{current}/live/", f"live_{current}"))
             results = await asyncio.gather(*tasks)
             history_count = len(bootstrap["elements"]) if histories else 0
@@ -103,19 +108,20 @@ class Official:
                     )
                     if not data or not data.get("standings", {}).get("has_next"):
                         break
-            try:
-                response = await client.get("https://fpl.solioanalytics.com/api/data/latest.json")
-                response.raise_for_status()
-                body = response.json()
-                self.store.snapshot("solio", str(response.url), body, body.get("generatedAt"))
-            except (httpx.HTTPError, ValueError) as exc:
-                self.errors.append({"source": "solio", "error": str(exc)[:180]})
-            from .independent_sources import collect_fivestat
+            if auxiliary:
+                try:
+                    response = await client.get("https://fpl.solioanalytics.com/api/data/latest.json")
+                    response.raise_for_status()
+                    body = response.json()
+                    self.store.snapshot("solio", str(response.url), body, body.get("generatedAt"))
+                except (httpx.HTTPError, ValueError) as exc:
+                    self.errors.append({"source": "solio", "error": str(exc)[:180]})
+                from .independent_sources import collect_fivestat
 
-            try:
-                await collect_fivestat(self.store)
-            except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
-                self.errors.append({"source": "fivestat", "error": str(exc)[:180]})
+                try:
+                    await collect_fivestat(self.store)
+                except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
+                    self.errors.append({"source": "fivestat", "error": str(exc)[:180]})
         report = {
             "captured_at": now(),
             "players": len(bootstrap["elements"]),
@@ -210,10 +216,21 @@ def normalize(store: Store, bootstrap: dict, fixtures: list, *, publish_core=Fal
         players.append(player.model_dump())
     directory = store.root / "normalized"
     directory.mkdir(exist_ok=True)
-    pl.DataFrame([{k: v for k, v in p.items() if k != "raw"} for p in players]).write_parquet(
-        directory / "players.parquet"
-    )
-    pl.DataFrame(fixtures, infer_schema_length=None).write_parquet(directory / "fixtures.parquet")
+    import os
+    import tempfile
+
+    for name, frame in (
+        ("players.parquet", pl.DataFrame([{k: v for k, v in p.items() if k != "raw"} for p in players])),
+        ("fixtures.parquet", pl.DataFrame(fixtures, infer_schema_length=None)),
+    ):
+        descriptor, filename = tempfile.mkstemp(dir=directory, suffix=".parquet")
+        os.close(descriptor)
+        temporary = Path(filename)
+        try:
+            frame.write_parquet(temporary)
+            os.replace(temporary, directory / name)
+        finally:
+            temporary.unlink(missing_ok=True)
     market = {
         "season": season,
         "players": players,
@@ -224,6 +241,13 @@ def normalize(store: Store, bootstrap: dict, fixtures: list, *, publish_core=Fal
         "fixture_hash": digest(fixtures),
         "known_at": now(),
     }
+    if store.list("market", 1):
+        previous = store.get("market")
+        if (
+            previous.get("source_hash") == market["source_hash"]
+            and previous.get("fixture_hash") == market["fixture_hash"]
+        ):
+            market = {k: v for k, v in previous.items() if k != "id"}
     # Readers observe either the preceding complete core or this complete core.
     # Immutable blobs can safely precede the transaction; failed publication
     # leaves no new snapshot registry pointers or market object behind.

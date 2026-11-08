@@ -1,0 +1,26 @@
+{
+  "at": "2026-11-08T14:48:36.719850+00:00",
+  "scope": "Actual default process-isolated API; real cached models and official live bootstrap/fixtures, no mocked training/forecast/solver success",
+  "first_refresh_seconds": 4.327992654001719,
+  "refresh_result": {
+    "status": "Data and team refreshed",
+    "account_sync": {
+      "status": "Revealed account already synchronized",
+      "account_changed": false,
+      "state_id": "07cd6ab2812d445e81bfeb6a0336cc5bc1e2b476016f8239431226d98abeae74"
+    },
+    "account_changed": false,
+    "market_id": "73f287d45ee96904f3115676d6b76c6640434486088c4004c09dd550810b03b1",
+    "ingestion_id": "4c19f640add408b498bb0b2f6e33906aa9da6b069d82bfbf8bc92bc6ccba7612",
+    "forecast_updated": false,
+    "plan_optimized": false
+  },
+  "cancel_real_forecast_seconds": 0.799947310002608,
+  "worker_pid": 18573,
+  "cancel_terminal_state": "cancelled",
+  "after_cancel_real_refresh_seconds": 4.749856206999539,
+  "after_cancel_status": "completed",
+  "protected_numerical_models_account_forecast_and_plan": "unchanged",
+  "original_installation_pointers": "unchanged",
+  "worker_mode": "separate process; supervisor confirms exit before terminal cancellation"
+}

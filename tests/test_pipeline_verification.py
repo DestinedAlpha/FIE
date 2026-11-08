@@ -175,7 +175,9 @@ def test_new_evaluation_exports_work_without_private_account(tmp_path):
 
     from fpl_intelligence.api import create_app
 
-    with TestClient(create_app(tmp_path), base_url="http://127.0.0.1") as client:
+    with TestClient(
+        create_app(tmp_path, job_runner=lambda s, i, c, work: work()), base_url="http://127.0.0.1"
+    ) as client:
         assert client.get("/api/prospective/accounts").json() == {
             "shadow_registry": None,
             "shadow_cohort": None,

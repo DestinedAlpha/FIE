@@ -28,13 +28,13 @@ def verify(archive):
         for path in (original.root / "models").rglob("*.txt")
     }
     runtime = source / "artifacts/runtime"
-    baseline = runtime / "FPL-Intelligence-0.14.3-Update.zip"
+    baseline = source / "updates/FPL-Intelligence-0.14.4-Update.zip"
     if (
         not baseline.is_file()
         or hashlib.sha256(baseline.read_bytes()).hexdigest()
-        != "ddd51a3d504eea39e288eef5af85b8c12a75318e9c0799436a8f44f2601de9f1"
+        != "fe6932b0fbdd04ae6c0f4b59ab3945f9b8eab3724a2d97e62f458d7a9964cd10"
     ):
-        raise ValueError("Real upgrade verification requires the checksum-verified published v0.14.3 archive")
+        raise ValueError("Real upgrade verification requires the checksum-verified published v0.14.4 archive")
     with tempfile.TemporaryDirectory(prefix="real-update-", dir=runtime) as temporary:
         scratch = Path(temporary)
         target, stage = scratch / "installed", scratch / "package"
@@ -50,7 +50,7 @@ def verify(archive):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(zipped.read(prefix + name))
         baseline_version = tomllib.loads((target / "pyproject.toml").read_text())["project"]["version"]
-        assert baseline_version == "0.14.3"
+        assert baseline_version == "0.14.4"
         secret = source / ".env"
         if secret.exists():
             shutil.copy2(secret, target / ".env")
@@ -130,6 +130,20 @@ with TestClient(create_app(p/'data'),base_url='http://127.0.0.1') as c:
     while c.get('/api/dashboard').json()['active_jobs']:
         assert time.monotonic()<expires,'Unexpected long startup in current installation'
         time.sleep(.1)
+    # Exercise the installed supervisor and child imports with real model data.
+    job=c.post('/api/forecast',json={'worlds':20000}).json()['job_id']
+    expires=time.monotonic()+15
+    while not c.get('/api/jobs/'+job).json().get('progress',{}).get('pid'):
+        assert time.monotonic()<expires,'Installed calculation worker did not start'
+        time.sleep(.05)
+    started=time.monotonic()
+    c.post('/api/jobs/'+job+'/cancel')
+    while c.get('/api/jobs/'+job).json()['status'] not in ('cancelled','failed','completed'):
+        assert time.monotonic()-started<8,'Installed worker did not stop'
+        time.sleep(.05)
+    assert c.get('/api/jobs/'+job).json()['status']=='cancelled'
+    cancelled_seconds=time.monotonic()-started
+    assert not c.get('/api/dashboard').json()['active_jobs']
     health=c.get('/api/health'); assert health.status_code==200 and health.json()['readiness']['ready']
     dashboard=c.get('/api/dashboard'); assert dashboard.status_code==200 and not dashboard.json()['plan']['stale']
     assert c.get('/api/forecast/diagnostics').status_code==200
@@ -138,7 +152,7 @@ with TestClient(create_app(p/'data'),base_url='http://127.0.0.1') as c:
     for fmt in ('json','csv','md','ics'):
         response=c.get('/api/export/'+plan+'/'+fmt); assert response.status_code==200 and response.content
 assert {k:s.get(k)['id'] for k in expected}==expected
-print(json.dumps({'installed_modules':True,'accepted_weights_loaded':True,'readiness':True,'http_exports':4}))
+print(json.dumps({'installed_modules':True,'accepted_weights_loaded':True,'readiness':True,'http_exports':4,'installed_process_cancellation_seconds':cancelled_seconds}))
 """
         checked = subprocess.run(
             [sys.executable, "-c", installed_check, str(target.resolve()), json.dumps(expected)],

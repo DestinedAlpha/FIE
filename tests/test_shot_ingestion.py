@@ -181,7 +181,9 @@ def test_offline_rejoin_job_is_integrated_and_returns_a_bounded_summary(tmp_path
         }
 
     monkeypatch.setattr("fpl_intelligence.shot_data.collect_shots", rejoin)
-    with TestClient(create_app(tmp_path / "data"), base_url="http://127.0.0.1") as client:
+    with TestClient(
+        create_app(tmp_path / "data", job_runner=lambda s, i, c, work: work()), base_url="http://127.0.0.1"
+    ) as client:
         reply = client.post("/api/football/shots/rejoin", json={})
         assert reply.status_code == 200
         for _ in range(100):

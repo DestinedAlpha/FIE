@@ -6,7 +6,7 @@ import asyncio
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .account_sync import state_lock
+from .account_sync import locked_state
 from .storage import Store, now
 
 
@@ -83,7 +83,7 @@ def full_training(store: Store, samples=24, refresh=False):
         from .readiness import selection_is_current
         from .search_control import check_cancelled
 
-        with state_lock:
+        with locked_state(store):
             check_cancelled()
             if not selection_is_current(store, store.get("plan", plan_id)):
                 raise ValueError(
@@ -185,13 +185,43 @@ def full_training(store: Store, samples=24, refresh=False):
     return result
 
 
-def refresh_cycle(store: Store):
+def refresh_data(store: Store, *, expected_state_id=None):
+    """User-facing data/team synchronization never trains or launches a solver."""
+    from .account_sync import reconcile_public
+    from .ingestion import Official
+    from .search_control import report_phase
+
+    original = store.get("state", expected_state_id) if store.list("state", 1) else {}
+    report_phase("Fetching official data and team")
+    report = asyncio.run(
+        Official(store).ingest(entry=original.get("entry_id"), histories=False, auxiliary=False)
+    )
+    report_phase("Updating team and checking forecast freshness")
+    sync = (
+        reconcile_public(store, original["id"])
+        if original
+        else {"status": "Load an account first", "account_changed": False}
+    )
+    return {
+        "status": "Data and team refreshed",
+        "account_sync": sync,
+        "account_changed": sync.get("account_changed", False),
+        "market_id": store.get("market")["id"],
+        "ingestion_id": report["id"],
+        "forecast_updated": False,
+        "plan_optimized": False,
+    }
+
+
+def refresh_cycle(store: Store, *, plan=True, expected_state_id=None):
     from .ingestion import Official
     from .optimization import optimize
+    from .search_control import report_phase
     from .simulation import forecast
 
+    report_phase("Fetching official data")
     previous = store.get("market")
-    original_state = store.get("state")
+    original_state = store.get("state", expected_state_id)
     checked = {e["id"] for e in previous["events"] if e.get("data_checked")}
     asyncio.run(Official(store).ingest(entry=original_state.get("entry_id"), histories=False))
     market = store.get("market")
@@ -242,6 +272,7 @@ def refresh_cycle(store: Store):
     needs_refit = bool(active) and training_needed(store, active)
     training_warning = None
     if needs_refit:
+        report_phase("Learning newly finalized results")
         from .prospective import score_frozen_decisions
 
         score_frozen_decisions(store)
@@ -290,6 +321,7 @@ def refresh_cycle(store: Store):
             "account_sync": synchronization,
             "account_changed": synchronization.get("account_changed", False),
         }
+    report_phase("Generating updated forecasts")
     result = forecast(store, event, 38, 4000)
     if training_warning:
         store.put(
@@ -301,6 +333,17 @@ def refresh_cycle(store: Store):
                 "decision_model_id": store.get("decision_model")["id"],
             },
         )
+    if not plan:
+        return {
+            "at": now(),
+            "status": "Data, models and forecasts updated; optimize the plan separately",
+            "training_warning": training_warning,
+            "forecast_id": result["id"],
+            "plan_optimized": False,
+            "account_sync": synchronization,
+            "account_changed": synchronization.get("account_changed", False),
+        }
+    report_phase("Optimizing transfer and chip strategy")
     consensus_status = None
     if store.list("consensus_model", 1):
         from .consensus import compare_live_consensus
@@ -318,7 +361,7 @@ def refresh_cycle(store: Store):
         from .objectives import choose_recommendation
 
         plan, _ = choose_recommendation(store, [plan], result)
-        with state_lock:
+        with locked_state(store):
             from .readiness import selection_is_current
 
             published = selection_is_current(store, plan)
@@ -328,7 +371,7 @@ def refresh_cycle(store: Store):
         from .optimization import hold_plan
 
         fallback = hold_plan(store, state["id"], result["id"], 19 if event <= 19 else 38)
-        with state_lock:
+        with locked_state(store):
             from .readiness import selection_is_current
 
             fallback_current = selection_is_current(store, fallback)

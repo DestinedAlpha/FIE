@@ -24,6 +24,15 @@ def check_cancelled():
         raise CancelledError("Calculation cancelled")
 
 
+def report_phase(phase):
+    from types import SimpleNamespace
+
+    check_cancelled()
+    current = control.get()
+    if current and current[2]:
+        current[2](SimpleNamespace(phase=phase))
+
+
 @contextmanager
 def live_search():
     current = control.get()

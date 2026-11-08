@@ -132,6 +132,18 @@ class Store:
         return body, meta
 
     def put(self, kind: str, body: dict, *, connection=None) -> str:
+        if kind in (
+            "state",
+            "selected_plan",
+            "decision_model",
+            "forecast",
+            "role_minutes_model",
+            "future_horizon_model",
+            "model_training_state",
+        ):
+            from .search_control import check_cancelled
+
+            check_cancelled()
         identity = digest(body)
         with nullcontext(connection) if connection is not None else self.db() as db:
             db.execute(

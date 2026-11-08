@@ -1,5 +1,10 @@
 import { test, expect } from "@playwright/test";
 
+// Let mocked background dashboard requests finish before closing the page.
+test.afterEach(async ({page}) => {
+  await page.unrouteAll({behavior: "wait"});
+});
+
 async function openWorkspace(page: import("@playwright/test").Page) {
   await Promise.all([
     page.waitForResponse(response => response.url().includes("/api/dashboard") && response.status() === 200),
@@ -368,4 +373,27 @@ test('training freshness exposes actual bound model IDs and label cutoffs', asyn
   await expect(panel.locator('tbody tr')).toHaveCount(3);
   await expect(panel.getByText(training.finalized_through, {exact:false}).first()).toBeVisible();
   await expect(panel.getByRole('link')).toHaveAttribute('href','/api/models/training');
+});
+
+test('cancellation waits for stopped work and then releases refresh controls', async ({page}) => {
+  let requested = false, stopped = false, polls = 0;
+  await page.route('**/api/dashboard*', async route => {
+    const response = await route.fetch(); const body = await response.json();
+    body.active_jobs = stopped ? [] : [{id:'noncooperative-worker',kind:'optimize',status:requested?'cancelling':'running'}];
+    await route.fulfill({response,json:body});
+  });
+  await page.route('**/api/jobs/noncooperative-worker', async route => {
+    if(requested && ++polls >= 2) stopped = true;
+    await route.fulfill({json:{status:stopped?'cancelled':requested?'cancelling':'running',progress:{phase:'Preparing transfer and chip optimization'}}});
+  });
+  await page.route('**/api/jobs/noncooperative-worker/cancel', async route => {
+    requested = true; await route.fulfill({json:{status:'cancelling'}});
+  });
+  await openWorkspace(page);
+  await page.getByRole('button',{name:'Cancel calculation',exact:true}).click();
+  await expect(page.getByText('Stopping calculation…',{exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Refresh data',exact:true})).toBeDisabled();
+  await expect(page.getByRole('button',{name:'Refresh data',exact:true})).toBeEnabled({timeout:10000});
+  await expect(page.getByRole('button',{name:'Update forecasts',exact:true})).toBeEnabled();
+  await expect(page.getByRole('button',{name:'Cancel calculation',exact:true})).not.toBeVisible();
 });

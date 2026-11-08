@@ -24,7 +24,7 @@ def test_startup_refresh_is_visible_cancellable_and_does_not_block_http(tmp_path
     monkeypatch.setattr("fpl_intelligence.api.load_market", no_market)
 
     def refresh(s):
-        assert effective_time_limit(60) is None
+        assert effective_time_limit(60) == 60
         entered.set()
         expires = time.monotonic() + 5
         while not entered.wait(0.01) or time.monotonic() < expires:
@@ -32,8 +32,10 @@ def test_startup_refresh_is_visible_cancellable_and_does_not_block_http(tmp_path
             entered.wait(0.01)
             time.sleep(0.01)
 
-    monkeypatch.setattr("fpl_intelligence.workflow.refresh_cycle", refresh)
-    with TestClient(create_app(tmp_path), base_url="http://127.0.0.1") as client:
+    monkeypatch.setattr("fpl_intelligence.workflow.refresh_data", refresh)
+    with TestClient(
+        create_app(tmp_path, job_runner=lambda s, i, c, work: work()), base_url="http://127.0.0.1"
+    ) as client:
         assert entered.wait(5)
         response = client.get("/api/dashboard")
         assert response.status_code == 200
@@ -72,6 +74,8 @@ def test_server_shutdown_signals_running_background_work(tmp_path, monkeypatch):
             raise
 
     monkeypatch.setattr("fpl_intelligence.maintenance.maintain_models", maintenance)
-    with TestClient(create_app(tmp_path), base_url="http://127.0.0.1"):
+    with TestClient(
+        create_app(tmp_path, job_runner=lambda s, i, c, work: work()), base_url="http://127.0.0.1"
+    ):
         assert entered.wait(5)
     assert exited.wait(2)

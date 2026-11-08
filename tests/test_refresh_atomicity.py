@@ -94,3 +94,31 @@ def test_core_registry_publication_rolls_back_together(tmp_path, monkeypatch):
     assert store.latest("bootstrap")[0] == bootstrap
     with store.db() as db:
         assert db.execute("SELECT count(*) FROM snapshots").fetchone()[0] == 2
+
+
+def test_identical_core_refresh_preserves_forecast_dependency_identity(tmp_path):
+    store = Store(tmp_path)
+    bootstrap, fixtures = core()
+    normalize(store, bootstrap, fixtures, publish_core=True)
+    original = store.get("market")["id"]
+    normalize(store, bootstrap, fixtures, publish_core=True)
+    assert store.get("market")["id"] == original
+
+
+def test_normalization_does_not_mutate_shared_previous_view_bytes(tmp_path):
+    import os
+
+    import polars as pl
+
+    original = Store(tmp_path / "original")
+    isolated = Store(tmp_path / "isolated")
+    bootstrap, fixtures = core()
+    normalize(original, bootstrap, fixtures)
+    source = original.root / "normalized/players.parquet"
+    before = source.read_bytes()
+    (isolated.root / "normalized").mkdir()
+    os.link(source, isolated.root / "normalized/players.parquet")
+    bootstrap["elements"][0]["now_cost"] = 60
+    normalize(isolated, bootstrap, fixtures)
+    assert source.read_bytes() == before
+    assert pl.read_parquet(isolated.root / "normalized/players.parquet")["price"][0] == 60

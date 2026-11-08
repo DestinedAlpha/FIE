@@ -18,7 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import Field
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from .account_sync import state_lock
+from .account_sync import locked_state
 from .discipline import BanDecision
 from .domain import Action, OptimizeRequest, Strict, TeamState
 from .ingestion import Official, freshness, load_market, reconcile_seed
@@ -29,7 +29,26 @@ from .rules import Rules, transition, validate_squad
 from .settings import load_environment, provider_configuration, redact
 from .storage import Store, now
 
-executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="fpl-job")
+
+def initialize_store(store):
+    from .maintenance import maintain_models
+    from .search_control import report_phase
+
+    report_phase("Checking installed models")
+    maintain_models(store)
+    if (
+        store.list("state", 1)
+        and store.list("market", 1)
+        and store.list("decision_model", 1)
+        and store.get("decision_model").get("promoted")
+    ):
+        from .readiness import operational_readiness
+
+        if not operational_readiness(store)["ready"]:
+            from .workflow import refresh_data
+
+            return refresh_data(store)
+    return {"status": "Initialization complete"}
 
 
 class ForecastRequest(Strict):
@@ -76,24 +95,16 @@ class ScenarioRequest(Strict):
     scenarios: list[dict] = Field(min_length=1, max_length=8)
 
 
-def create_app(root=None):
+def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _worker_job=None):
     load_environment()
+    executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="fpl-job")
 
     @asynccontextmanager
     async def lifespan(application):
-        from .maintenance import maintain_models
         from .scheduling import start_scheduler
 
         def initialize():
-            maintain_models(store)
-            if store.list("state", 1) and store.list("market", 1) and store.list("decision_model", 1):
-                from .readiness import operational_readiness
-
-                if store.get("decision_model").get("promoted") and not operational_readiness(store)["ready"]:
-                    from .workflow import refresh_cycle
-
-                    return refresh_cycle(store)
-            return {"status": "Initialization complete"}
+            return initialize_store(store)
 
         launch("startup-refresh", {}, initialize)
         stop, thread = start_scheduler(store, launch)
@@ -105,6 +116,7 @@ def create_app(root=None):
                 for cancelled in cancellations.values():
                     cancelled.set()
             thread.join(timeout=1)
+            executor.shutdown(wait=False, cancel_futures=True)
 
     app = FastAPI(title="FPL Intelligence", version=version("fpl-intelligence"), lifespan=lifespan)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
@@ -118,7 +130,15 @@ def create_app(root=None):
             from fastapi.responses import JSONResponse
 
             return JSONResponse({"detail": "Cross-origin access denied"}, status_code=403)
-        return await call_next(request)
+        from .job_execution import request_context
+
+        # Preserve omitted request fields (notably automatic chip selection).
+        payload = await request.body() if request.method == "POST" else b""
+        token = request_context.set({"request": request, "body": payload})
+        try:
+            return await call_next(request)
+        finally:
+            request_context.reset(token)
 
     store = Store(root)
     app.state.store = store
@@ -131,8 +151,8 @@ def create_app(root=None):
     with store.db() as db:
         db.execute(
             "UPDATE jobs SET status='interrupted',error='Process restarted; submit job again',updated_at=? "
-            "WHERE status IN ('queued','running')",
-            (now(),),
+            "WHERE status IN ('queued','running','cancelling') AND ?=0",
+            (now(), int(_worker)),
         )
 
     @app.exception_handler(ValueError)
@@ -142,58 +162,89 @@ def create_app(root=None):
         return JSONResponse({"detail": str(exc)}, status_code=422)
 
     cancellations = {}
+    futures: dict[str, Any] = {}
     cancellation_lock = Lock()
 
     def launch(kind, request, work):
+        if _worker:
+            from .job_execution import FileCancellation, record_progress
+            from .search_control import report_phase, search_session
+
+            if not _worker_job:
+                raise ValueError("Missing supervised calculation context")
+            identity = _worker_job["id"]
+            with search_session(
+                _worker_job["unlimited"],
+                FileCancellation(store.root / "jobs" / identity / "cancel"),
+                lambda info: record_progress(store, identity, info),
+            ):
+                report_phase(
+                    {
+                        "forecast": "Generating forecasts",
+                        "train": "Training accepted models",
+                        "optimize": "Preparing transfer and chip optimization",
+                    }.get(kind, "Updating workspace")
+                )
+                return work()
+        from .job_execution import record_progress, request_context, run_isolated
+
         identity = uuid.uuid4().hex
         inputs = {
             name: store.get(name)["id"]
             for name in ("state", "market", "forecast", "decision_model")
             if store.list(name, 1)
         }
-        body = json.dumps({"kind": kind, **request, "input_versions": inputs}, sort_keys=True)
+        context = request_context.get()
+        execution = None
+        if context:
+            incoming = context["request"]
+            query = incoming.url.query
+            route = incoming.scope.get("route")
+            execution = {
+                "path": incoming.url.path + ("?" + query if query else ""),
+                "payload": json.loads(context["body"])
+                if context["body"] and getattr(route, "body_field", None) is not None
+                else {},
+            }
+        unlimited = kind == "optimize" and request.get("time_limit") is None
+        body = json.dumps(
+            {
+                "kind": kind,
+                **request,
+                "input_versions": inputs,
+                "_execution": execution,
+                "_unlimited": unlimited,
+            },
+            sort_keys=True,
+        )
         with store.db() as db:
             db.execute("BEGIN IMMEDIATE")
             pending = db.execute(
-                "SELECT id,status FROM jobs WHERE request=? AND status IN ('queued','running') LIMIT 1",
+                "SELECT id,status FROM jobs WHERE request=? AND status IN ('queued','running','cancelling') LIMIT 1",
                 (body,),
             ).fetchone()
             if pending:
                 return {"job_id": pending["id"], "status": pending["status"], "reused": True}
             db.execute(
-                "INSERT INTO jobs VALUES(?,?,?,?,?,?,?)",
-                (identity, "queued", now(), now(), body, None, None),
+                "INSERT INTO jobs VALUES(?,?,?,?,?,?,?)", (identity, "queued", now(), now(), body, None, None)
             )
-
         cancelled = Event()
         with cancellation_lock:
             cancellations[identity] = cancelled
 
         def execute():
-            with store.db() as db:
-                db.execute("UPDATE jobs SET status='running',updated_at=? WHERE id=?", (now(), identity))
             try:
                 from .search_control import check_cancelled, search_session
 
-                def progress(info):
-                    import math
-
-                    values = {}
-                    for key in ("mip_primal_bound", "mip_dual_bound", "mip_gap", "running_time"):
-                        value = getattr(info, key, None)
-                        if value is not None and math.isfinite(value):
-                            values[key] = value
-                    store.put("solver_progress", {"job_id": identity, "at": now(), **values})
-
-                unlimited = kind in (
-                    "refresh-cycle",
-                    "startup-account-sync",
-                    "scheduled-refresh",
-                    "startup-refresh",
-                    "ingest",
-                ) or (kind == "optimize" and request.get("time_limit") is None)
-                with search_session(unlimited, cancelled, progress):
-                    result = work()
+                with search_session(
+                    unlimited, cancelled, lambda info: record_progress(store, identity, info)
+                ):
+                    check_cancelled()
+                    with store.db() as db:
+                        db.execute(
+                            "UPDATE jobs SET status='running',updated_at=? WHERE id=?", (now(), identity)
+                        )
+                    result = (job_runner or run_isolated)(store, identity, cancelled, work)
                     check_cancelled()
                 with store.db() as db:
                     db.execute(
@@ -211,12 +262,15 @@ def create_app(root=None):
                         "UPDATE jobs SET status='failed',error=?,updated_at=? WHERE id=?",
                         (f"{type(exc).__name__}: {redact(exc)[:400]}", now(), identity),
                     )
-
             finally:
                 with cancellation_lock:
                     cancellations.pop(identity, None)
+                    futures.pop(identity, None)
 
-        executor.submit(execute)
+        future = executor.submit(execute)
+        with cancellation_lock:
+            if identity in cancellations:
+                futures[identity] = future
         return {"job_id": identity, "status": "queued"}
 
     @app.get("/api/health")
@@ -276,7 +330,7 @@ def create_app(root=None):
             active_jobs = [
                 dict(row)
                 for row in db.execute(
-                    "SELECT id,status,request FROM jobs WHERE status IN ('queued','running') ORDER BY created_at"
+                    "SELECT id,status,request FROM jobs WHERE status IN ('queued','running','cancelling') ORDER BY created_at"
                 )
             ]
         result: dict[str, Any] = {
@@ -709,19 +763,21 @@ def create_app(root=None):
     @app.post("/api/refresh")
     def refresh():
         try:
-            state = store.get("state")
+            state = store.get("state", (_job_inputs or {}).get("state"))
         except ValueError:
             state = {}
 
         def work():
             if state and store.list("decision_model", 1) and store.list("market", 1):
-                from .workflow import refresh_cycle
+                from .workflow import refresh_data
 
-                return refresh_cycle(store)
+                return refresh_data(store, expected_state_id=state.get("id"))
             from .account_sync import reconcile_public
 
-            report = asyncio.run(Official(store).ingest(entry=state.get("entry_id"), histories=True))
-            with state_lock:
+            report = asyncio.run(
+                Official(store).ingest(entry=state.get("entry_id"), histories=False, auxiliary=False)
+            )
+            with locked_state(store):
                 synchronization = reconcile_public(store, state.get("id")) if state else None
             return {**report, "account_sync": synchronization}
 
@@ -965,7 +1021,11 @@ def create_app(root=None):
     def refresh_all():
         from .workflow import refresh_cycle
 
-        return launch("refresh-cycle", {}, lambda: refresh_cycle(store))
+        return launch(
+            "refresh-cycle",
+            {},
+            lambda: refresh_cycle(store, plan=False, expected_state_id=(_job_inputs or {}).get("state")),
+        )
 
     @app.post("/api/population/analyze")
     def population_analysis():
@@ -1077,6 +1137,13 @@ def create_app(root=None):
     @app.post("/api/optimize")
     def optimization(request: OptimizeRequest):
         def work():
+            from .search_control import effective_time_limit, report_phase
+
+            report_phase(
+                "Optimizing transfers and chips (unlimited; cancel any time)"
+                if effective_time_limit(request.time_limit) is None
+                else "Optimizing transfers and chips"
+            )
             fixed_chips = request.chips if "chips" in request.model_fields_set else None
             plan = optimize(
                 store,
@@ -1106,7 +1173,7 @@ def create_app(root=None):
             from .search_control import check_cancelled
 
             check_cancelled()
-            with state_lock:
+            with locked_state(store):
                 current = store.get("state")["id"]
                 current_forecast = store.get("forecast")["id"]
                 from .readiness import selection_is_current
@@ -1132,9 +1199,28 @@ def create_app(root=None):
         with cancellation_lock:
             event = cancellations.get(identity)
             if event is None:
-                raise HTTPException(409, "Job is no longer cancellable")
+                with store.db() as db:
+                    row = db.execute("SELECT status FROM jobs WHERE id=?", (identity,)).fetchone()
+                if row is None:
+                    raise HTTPException(404, "Unknown job")
+                return {"job_id": identity, "status": row[0]}
             event.set()
-        return {"job_id": identity, "status": "cancelling"}
+            stopped_queued = []
+            for key, future in list(futures.items()):
+                if (key == identity or not future.running()) and future.cancel():
+                    cancellations[key].set()
+                    stopped_queued.append(key)
+                    cancellations.pop(key, None)
+                    futures.pop(key, None)
+        with store.db() as db:
+            db.execute(
+                "UPDATE jobs SET status='cancelling',updated_at=? WHERE id=? AND status IN ('queued','running')",
+                (now(), identity),
+            )
+            for key in stopped_queued:
+                db.execute("UPDATE jobs SET status='cancelled',updated_at=? WHERE id=?", (now(), key))
+        store.put("job_cancellation", {"at": now(), "job_id": identity})
+        return {"job_id": identity, "status": "cancelled" if identity in stopped_queued else "cancelling"}
 
     @app.get("/api/jobs/{identity}")
     def job(identity: str):
@@ -1144,15 +1230,16 @@ def create_app(root=None):
             raise HTTPException(404, "Unknown job")
         value = dict(row)
         value["result"] = json.loads(value["result"]) if value["result"] else None
-        if store.list("solver_progress", 1):
-            progress = store.get("solver_progress")
-            if progress.get("job_id") == identity:
-                value["progress"] = progress
+        value["progress"] = {}
+        for kind in ("solver_progress", "job_phase", "job_worker"):
+            matches = store.list_matching(kind, {"job_id": identity}, 1)
+            if matches:
+                value["progress"].update(store.get(kind, matches[0]["id"]))
         return value
 
     @app.post("/api/state")
     def save_state(request: StateImport):
-        with state_lock:
+        with locked_state(store):
             players, market = load_market(store)
             rules = Rules.from_bootstrap(store.latest("bootstrap", content_hash=market["source_hash"])[0])
             validate_squad(request.state, players, rules)
@@ -1165,7 +1252,8 @@ def create_app(root=None):
     @app.post("/api/state/seed")
     def seed_state():
         path = Path(__file__).resolve().parents[2] / "research" / "04_USER_CONTEXT.json"
-        return reconcile_seed(store, json.loads(path.read_text()))
+        with locked_state(store):
+            return reconcile_seed(store, json.loads(path.read_text()))
 
     @app.post("/api/transfers/check")
     def check_transfers(request: TransferCheck):

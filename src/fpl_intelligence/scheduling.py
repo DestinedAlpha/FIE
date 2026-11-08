@@ -21,7 +21,7 @@ def start_scheduler(store, launch):
                     continue
                 with store.db() as db:
                     if db.execute(
-                        "SELECT 1 FROM jobs WHERE status IN ('queued','running') LIMIT 1"
+                        "SELECT 1 FROM jobs WHERE status IN ('queued','running','cancelling') LIMIT 1"
                     ).fetchone():
                         continue
                 _, metadata = store.latest("bootstrap")
@@ -29,6 +29,10 @@ def start_scheduler(store, launch):
                 at = datetime.now(timezone.utc)
                 event = next((e for e in market["events"] if e.get("is_next")), None)
                 interval = settings.get("interval_minutes", 240)
+                if store.list("job_cancellation", 1):
+                    cancelled_at = datetime.fromisoformat(store.get("job_cancellation")["at"])
+                    if (at - cancelled_at).total_seconds() < 15 * 60:
+                        continue
                 if event:
                     remaining = (
                         datetime.fromisoformat(event["deadline_time"].replace("Z", "+00:00")) - at
@@ -49,7 +53,7 @@ def start_scheduler(store, launch):
                         continue
                 from .workflow import refresh_cycle
 
-                job = launch("scheduled-refresh", {}, lambda: refresh_cycle(store))
+                job = launch("scheduled-refresh", {}, lambda: refresh_cycle(store, plan=False))
                 store.put(
                     "scheduled_refresh", {"at": now(), "job_id": job["job_id"], "interval_minutes": interval}
                 )

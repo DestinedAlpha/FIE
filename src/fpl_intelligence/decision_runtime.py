@@ -555,9 +555,9 @@ def refine_frontier(store, seconds=20):
     result["plans"] = [p["id"] for p in plans]
     result["decision_analysis_id"] = analysis["id"]
     result["id"] = store.put("case_comparison", {k: v for k, v in result.items() if k != "id"})
-    from .account_sync import state_lock
+    from .account_sync import locked_state
 
-    with state_lock:
+    with locked_state(store):
         if store.get("state")["id"] == state["id"] and store.get("forecast")["id"] == forecast["id"]:
             from .readiness import selection_is_current
             from .search_control import check_cancelled

@@ -6,6 +6,10 @@ The six supplied documents remain byte-for-byte unchanged in [`research/`](resea
 
 **Current acceptance status:** the role-v3 configuration scores **575** in independent weekly £100m teams. Historical future-expert validation scored **1,202 versus 1,098** in an earlier-season 19-week continuous replay and **538 versus 536** over GW1–9 under its earlier protocol. These different account problems do not certify the complete current policy. **Consistent 550+ continuous-account performance is not established.** See the [data/forecast audit](docs/data-and-forecast-audit.md) and [performance audit](docs/performance-audit.md).
 
+## What changed in 0.14.5
+
+Refresh data / Load team now retrieves official data and synchronizes the revealed account without training, forecasting or starting an unlimited transfer search. **Update forecasts** handles finalized labels, accepted-model learning and forecasts separately; **Optimize plan** remains explicitly unlimited. Calculations run in supervised processes: Cancel stops an unresponsive worker, cancels queued follow-ups and releases the controls only after exit. Progress reports the actual phase. Cross-process account locks and atomic normalized-data replacement protect concurrent edits and interrupted writes. Accepted numerical models are unchanged. [Verification and update instructions](docs/completion-0.14.5.md).
+
 ## What changed in 0.14.4
 
 Completed controlled temporal/calibration research and real automatic-learning verification. Accepted production weights remain unchanged: neither shorter/cross-fitted calibration nor the selected decay candidate justifies replacement. Fixed finalized-data refresh eligibility, companion coverage/publication, typed feature checksums, season-specific scoring/cutoffs and isolated report writes. Model & data now shows actual fitting/calibration coverage. The normal refresh learned GW9, forecast all 671 players and produced an independently checked legal plan; unchanged data caused zero additional fits. Final regressions: **361 backend tests, 3 frontend tests and 28 browser journeys**. [Completion and evidence](docs/completion-0.14.4.md) · [Audit dispositions](artifacts/evaluations/release_0_14_4.json).
@@ -36,9 +40,9 @@ The audit fixes account-editor verification/provenance, version conflicts, late-
 
 ## Windows
 
-**[Download the 0.14.4 existing-installation update](https://github.com/DestinedAlpha/FIE/releases/download/v0.14.4/FPL-Intelligence-0.14.4-Update.zip).** This small update requires your existing installation with its data and models.
+**[Download the 0.14.5 existing-installation update](https://github.com/DestinedAlpha/FIE/releases/download/v0.14.5/FPL-Intelligence-0.14.5-Update.zip).** This small update requires your existing installation with its data and models.
 
-For an existing installation, extract the new private download into a **separate folder** and run **Update existing.cmd**. Select the existing folder containing Start.cmd. The updater backs up the database/application, preserves your `.env` and account data, updates the application, migrates incompatible companions when necessary and recomputes stale forecasts/plans. Compatible accepted models are preserved. It does not apply any FPL account transfer.
+For an existing installation, extract the new private download into a **separate folder** and run **Update existing.cmd**. Select the existing folder containing Start.cmd. The updater backs up the database/application, preserves your `.env` and account data, updates the application, migrates incompatible companions when necessary and identifies stale forecasts/plans for the explicit update/optimization controls. Compatible accepted models are preserved. It does not apply any FPL account transfer.
 
 For a fresh installation, double-click **Start.cmd** in the extracted package. The prepared ZIP contains the built interface, numerical data and a compressed consistent database. The launcher restores it before provider setup and opens a healthy loopback server. uv installs the CPU numerical dependencies automatically; the prepared package does not require Node.
 
@@ -61,7 +65,7 @@ uv run fpl serve
 
 Open http://127.0.0.1:8000. `reconcile-team` imports the **dated** research seed; confirm current account facts before acting. The private prepared package uses the user's separately confirmed selling quotes, bank, FT and chips. Unknown purchase prices remain null. The original seed cannot overwrite a confirmed account.
 
-`fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. `fpl refresh-current` and the Refresh data button reconcile revealed deadline squads, advance to the next deadline, update finalized labels and recompute the recommendation. Confirm any additional unrevealed transfers in My squad; public endpoints cannot see them.
+`fpl train` imports the four preceding compatible season archives if absent, builds shared train/serve features, runs expanding chronological folds, calibrates minutes on separate earlier deadlines and fits the production points model. The Refresh data / Load team buttons reconcile revealed deadline squads and retrieve current official data. Update forecasts learns newly finalized labels and regenerates forecasts; Optimize plan runs the separate transfer/chip search. The CLI `fpl refresh-current` retains its complete workflow. Confirm any additional unrevealed transfers in My squad; public endpoints cannot see them.
 
 ## What changed in 0.13
 

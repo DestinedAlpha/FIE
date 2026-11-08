@@ -7,6 +7,8 @@ therefore a planning snapshot, not confirmation that no later transfers exist.
 from __future__ import annotations
 
 from collections import Counter
+from contextlib import contextmanager
+from contextvars import ContextVar
 from datetime import datetime
 from threading import RLock
 
@@ -16,6 +18,31 @@ from .rules import Rules, quote, selling_price, validate_squad
 from .storage import now
 
 state_lock = RLock()
+
+
+_held_account_locks: ContextVar[frozenset[str]] = ContextVar("account_locks", default=frozenset())
+
+
+@contextmanager
+def locked_state(store):
+    """Coordinate API edits with calculation processes; OS releases on cancellation."""
+    from .pipeline_jobs import replay_lock
+    from .search_control import check_cancelled
+
+    key = str(store.root.resolve())
+    with state_lock:
+        check_cancelled()
+        if key in _held_account_locks.get():
+            yield
+            return
+        token = _held_account_locks.set(_held_account_locks.get() | {key})
+        try:
+            with replay_lock(
+                store.root / "account-write.lock", busy_message="Account publication in progress; try again"
+            ):
+                yield
+        finally:
+            _held_account_locks.reset(token)
 
 
 def revealed_pick_events(history: dict, released: int) -> list[int]:
@@ -112,7 +139,7 @@ def _lot(identity, player, old, transfers, chip_by_event, through):
 
 
 def reconcile_public(store, expected_state_id: str | None = None) -> dict:
-    with state_lock:
+    with locked_state(store):
         return _reconcile_public(store, expected_state_id)
 
 

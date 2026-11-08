@@ -1,0 +1,100 @@
+{
+  "version": "0.14.5",
+  "at": "2026-11-08T15:06:13.166255+00:00",
+  "scope": "Reported data/team refresh hang and non-cooperative cancellation; accepted numerical models unchanged",
+  "inherited_audit": "release_0_14_4.json retains 230 evidence-backed dispositions; no numerical methodology replaced",
+  "regressions": {
+    "at": "2026-11-08T15:05:30.017494+00:00",
+    "passed": true,
+    "backend_tests": 365,
+    "backend_skipped": 0,
+    "frontend_unit_tests": 3,
+    "browser_journeys": 30,
+    "browser_failed": 0,
+    "browser_skipped": 0
+  },
+  "actual_live_workflow": {
+    "at": "2026-11-08T14:48:36.719850+00:00",
+    "scope": "Actual default process-isolated API; real cached models and official live bootstrap/fixtures, no mocked training/forecast/solver success",
+    "first_refresh_seconds": 4.327992654001719,
+    "refresh_result": {
+      "status": "Data and team refreshed",
+      "account_sync": {
+        "status": "Revealed account already synchronized",
+        "account_changed": false,
+        "state_id": "07cd6ab2812d445e81bfeb6a0336cc5bc1e2b476016f8239431226d98abeae74"
+      },
+      "account_changed": false,
+      "market_id": "73f287d45ee96904f3115676d6b76c6640434486088c4004c09dd550810b03b1",
+      "ingestion_id": "4c19f640add408b498bb0b2f6e33906aa9da6b069d82bfbf8bc92bc6ccba7612",
+      "forecast_updated": false,
+      "plan_optimized": false
+    },
+    "cancel_real_forecast_seconds": 0.799947310002608,
+    "worker_pid": 18573,
+    "cancel_terminal_state": "cancelled",
+    "after_cancel_real_refresh_seconds": 4.749856206999539,
+    "after_cancel_status": "completed",
+    "protected_numerical_models_account_forecast_and_plan": "unchanged",
+    "original_installation_pointers": "unchanged",
+    "worker_mode": "separate process; supervisor confirms exit before terminal cancellation"
+  },
+  "fixes": [
+    {
+      "issue": "Data/team refresh implicitly starts unlimited planning",
+      "status": "implemented and tested",
+      "evidence": [
+        "tests/test_job_isolation.py",
+        "workflow.refresh_data",
+        "refresh_cycle(plan=False)",
+        "apps/web/e2e/workspace.spec.ts"
+      ]
+    },
+    {
+      "issue": "Thread cancellation cannot stop unresponsive calculation",
+      "status": "implemented and tested",
+      "evidence": [
+        "job_execution.run_isolated",
+        "job_worker.run",
+        "tests/test_job_isolation.py",
+        "responsive_jobs_0_14_5.json"
+      ]
+    },
+    {
+      "issue": "Queued/scheduled follow-up work restarts after cancellation",
+      "status": "implemented and tested",
+      "evidence": [
+        "api.cancel_job",
+        "scheduling.start_scheduler",
+        "tests/test_job_isolation.py"
+      ]
+    },
+    {
+      "issue": "Calculation dispatch can lose original request omitted-field semantics",
+      "status": "implemented and tested",
+      "evidence": [
+        "api.launch",
+        "tests/test_job_isolation.py",
+        "tests/test_current_audit.py"
+      ]
+    },
+    {
+      "issue": "Account write protection does not span isolated processes",
+      "status": "implemented and regression tested",
+      "evidence": [
+        "account_sync.locked_state",
+        "tests/test_completion.py",
+        "tests/test_refresh_atomicity.py"
+      ]
+    },
+    {
+      "issue": "Normalized view writes can truncate a prior hardlinked file",
+      "status": "implemented and tested",
+      "evidence": [
+        "ingestion.normalize",
+        "tests/test_refresh_atomicity.py"
+      ]
+    }
+  ],
+  "delivery_checks": "Exact published-byte verification, real installed upgrade/recovery and OS CI receipts are recorded in updates/v0.14.5-delivery.json after publication"
+}

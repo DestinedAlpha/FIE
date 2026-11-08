@@ -396,7 +396,7 @@ def test_plan_endpoint_rejects_retired_model_even_when_state_and_market_match(tm
 
     from fpl_intelligence.api import create_app
 
-    app = create_app(tmp_path)
+    app = create_app(tmp_path, job_runner=lambda s, i, c, work: work())
     store = app.state.store
     state_id = store.put("state", {"event": 10})
     market_id = store.put("market", {"events": [{"id": 10, "deadline_time": "2099-01-01T00:00:00Z"}]})
@@ -441,14 +441,14 @@ def test_duplicate_refresh_reuses_pending_job_without_spending_again(tmp_path, m
     entered, finish = Event(), Event()
     calls = []
 
-    def work(store):
+    def work(store, **kwargs):
         calls.append(True)
         entered.set()
         assert finish.wait(10)
         return {"status": "completed once"}
 
-    monkeypatch.setattr("fpl_intelligence.workflow.refresh_cycle", work)
-    app = create_app(tmp_path)
+    monkeypatch.setattr("fpl_intelligence.workflow.refresh_data", work)
+    app = create_app(tmp_path, job_runner=lambda s, i, c, work: work())
     store = app.state.store
     store.put("state", {"event": 10})
     store.put("market", {"events": [{"id": 10, "deadline_time": "2099-01-01T00:00:00Z"}]})

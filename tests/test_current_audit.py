@@ -307,7 +307,7 @@ def test_existing_account_cannot_be_overwritten_without_matching_version(
 
     from fpl_intelligence.api import create_app
 
-    app = create_app(tmp_path)
+    app = create_app(tmp_path, job_runner=lambda s, i, c, work: work())
     store = app.state.store
     monkeypatch.setattr("fpl_intelligence.api.load_market", lambda *_: (market, {"source_hash": "x"}))
     monkeypatch.setattr(store, "latest", lambda *a, **kw: ({}, {}))
@@ -330,7 +330,7 @@ def test_running_job_can_be_cancelled_without_blocking_serial_queue(tmp_path, mo
 
     entered = Event()
 
-    def work(_):
+    def work(_, **kwargs):
         entered.set()
         until = time.monotonic() + 5
         while time.monotonic() < until:
@@ -339,7 +339,9 @@ def test_running_job_can_be_cancelled_without_blocking_serial_queue(tmp_path, mo
         pytest.fail("Cancellation was not propagated")
 
     monkeypatch.setattr("fpl_intelligence.workflow.refresh_cycle", work)
-    client = TestClient(create_app(tmp_path), base_url="http://localhost")
+    client = TestClient(
+        create_app(tmp_path, job_runner=lambda s, i, c, work: work()), base_url="http://localhost"
+    )
     response = client.post("/api/refresh-cycle")
     assert response.status_code == 200
     identity = response.json()["job_id"]
