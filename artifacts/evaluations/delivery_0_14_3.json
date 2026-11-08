@@ -1,0 +1,108 @@
+{
+  "at": "2026-11-08T08:31:11.046864+00:00",
+  "version": "0.14.3",
+  "implementation_revision": "e2c066d14ae77a0857af450bec64b12fc78ed1ce",
+  "release_revision": "a58dc1bd1d0aeb1e02a83c826aa60b5d5d378020",
+  "engineering_blockers": [],
+  "update": {
+    "at": "2026-11-08T08:28:28.960443+00:00",
+    "url": "https://github.com/DestinedAlpha/FIE/releases/download/v0.14.3/FPL-Intelligence-0.14.3-Update.zip",
+    "bytes": 4104422,
+    "sha256": "ddd51a3d504eea39e288eef5af85b8c12a75318e9c0799436a8f44f2601de9f1",
+    "actual_public_download": "byte-identical to installed and verified archive",
+    "crc": "passed",
+    "checksum_file": "ddd51a3d504eea39e288eef5af85b8c12a75318e9c0799436a8f44f2601de9f1  FPL-Intelligence-0.14.3-Update.zip\n"
+  },
+  "private_full_installation": {
+    "at": "2026-11-08T08:28:26.673473+00:00",
+    "branch": "fie-windows-download-v0.14.3",
+    "commit": "fdeb71602bd94d44b9e802225ac33adb2f571d1c",
+    "tree": "86b4bc5f0967a24e2d920182d1c285df1059229c",
+    "parent": "859fe7a3fa063ed878e17db4ff27fdf4f3640cee",
+    "files": 26323,
+    "new_or_changed_paths": 165,
+    "retired_paths": 1,
+    "private": true,
+    "credentials": "excluded; every changed body scanned and unchanged original blobs reuse the verified v0.14.2 handoff",
+    "database_manifest_sha256": "b42517f24bf27f8e6cc9943e95f6d676fbef41b3c35ca4d60a753f5c82cb9169",
+    "url": "https://github.com/DestinedAlpha/fpl-thing/tree/fie-windows-download-v0.14.3",
+    "tree_verification": "Complete prepared index; all local portable sources hashed and unchanged verified remote blobs reused"
+  },
+  "fresh_installation": {
+    "at": "2026-11-08T08:26:44.509447+00:00",
+    "database_manifest_sha256": "b42517f24bf27f8e6cc9943e95f6d676fbef41b3c35ca4d60a753f5c82cb9169",
+    "checks": {
+      "fresh_database_restoration": true,
+      "installed_api": true,
+      "full_forecast_worlds": true,
+      "accepted_models": true,
+      "historical_diagnostics": true,
+      "exports": 4,
+      "credentials_required": false,
+      "production_pointers": "preserved"
+    }
+  },
+  "existing_installation_upgrade_and_recovery": {
+    "at": "2026-11-08T08:19:48.728257+00:00",
+    "archive_sha256": "ddd51a3d504eea39e288eef5af85b8c12a75318e9c0799436a8f44f2601de9f1",
+    "database_bytes": 1209774080,
+    "installed_source_api_and_models": {
+      "installed_modules": true,
+      "accepted_weights_loaded": true,
+      "readiness": true,
+      "http_exports": 4
+    },
+    "accepted_weight_files_preserved": 473,
+    "account_and_active_objects": "preserved",
+    "credentials": "unchanged; not included in report",
+    "real_database_backup_integrity_and_recovery": "passed",
+    "installer_completed": true
+  },
+  "checks": {
+    "backend_tests": 345,
+    "frontend_unit_tests": 3,
+    "desktop_mobile_browser_journeys": 26,
+    "windows_linux_ci": "https://github.com/DestinedAlpha/FIE/actions/runs/42462661688",
+    "publish_workflow": "https://github.com/DestinedAlpha/FIE/actions/runs/42462921161"
+  },
+  "audit_findings": {
+    "inherited": 206,
+    "total_dispositions": 216,
+    "ledger": "artifacts/evaluations/release_0_14_3.json"
+  },
+  "production_pointers": "unchanged",
+  "original_model_files_byte_preserved": 341,
+  "current_model_text_files_preserved_by_upgrade": 473,
+  "database_integrity": "ok",
+  "operational_readiness": true,
+  "source_improvement": {
+    "before": 39804,
+    "after": 47053,
+    "additional_valid_observations": 7249,
+    "live_enrichment_vectors_verified": 7249,
+    "unresolved_ambiguous_identities_excluded": 1194,
+    "understat_network_requests": 0
+  },
+  "research": {
+    "population_player_fixtures": 62659,
+    "accepted_oof_mean_parity_max_absolute": 0.0,
+    "global_and_all_five_predeclared_specialists": "resolved; failed complete gates and inactive",
+    "production_models": "accepted role-v3, conditional points and future expert retained"
+  },
+  "historical": {
+    "independent_weekly_squads": 575,
+    "composed_continuous": 510,
+    "matched_future_reference": 510,
+    "one_week_no_chip_control": 499,
+    "earlier_19week_future_policy": {
+      "candidate": 1202,
+      "reference": 1098
+    },
+    "scope": "Sealed cutoffs, hashes, legal account continuity and actual scoring independently reverified; recorded research budgets are not unlimited-policy acceptance."
+  },
+  "external_limits": [
+    "Live Understat unavailable; verified cache and official/Core alternatives functional",
+    "Unsupported ambiguous identities and unavailable proprietary observations remain excluded",
+    "No guarantee of future football scores or universal statistical optimality"
+  ]
+}
