@@ -1,0 +1,210 @@
+{
+  "at": "2026-11-08T13:56:44.340998+00:00",
+  "version": "0.14.4",
+  "implementation_commit": "a7e13c0501d259fc328d60bccbc3ecf9252fb2d3",
+  "public_release": "https://github.com/DestinedAlpha/FIE/releases/tag/v0.14.4",
+  "update": {
+    "at": "2026-11-08T13:49:18.764866+00:00",
+    "url": "https://github.com/DestinedAlpha/FIE/releases/download/v0.14.4/FPL-Intelligence-0.14.4-Update.zip",
+    "bytes": 5217255,
+    "sha256": "fe6932b0fbdd04ae6c0f4b59ab3945f9b8eab3724a2d97e62f458d7a9964cd10",
+    "checksum_sidecar": "matched",
+    "zip_crc": "passed",
+    "anonymous_public_download": "passed"
+  },
+  "full_private_payload": {
+    "at": "2026-11-08T13:53:15.101971+00:00",
+    "repository": "DestinedAlpha/fpl-thing",
+    "branch": "fie-windows-download-v0.14.4",
+    "parent": "fdeb71602bd94d44b9e802225ac33adb2f571d1c",
+    "commit": "fbc0c74d56f112a5790197f4c1a13bab7b609ba5",
+    "tree": "d6bdf6756da5bdd3cdb60d6ba080bfb128ca6b35",
+    "files": 28410,
+    "maximum_blob_bytes": 18981813,
+    "content_check": {
+      "files_checked": 28402,
+      "reused_blobs": 26546,
+      "new_blob_bytes": 595867491,
+      "gzip_payloads_checked": 25661
+    },
+    "all_current_files_match_index": true,
+    "credentials": "all payloads and decoded gzip bodies checked; .env excluded",
+    "database_manifest_sha256": "3004ff3b8e266a76748a8f98b4eeef05facc39b7e98ab7707a3b3888ec83902e",
+    "remote_commit_and_tree_verified": true
+  },
+  "full_download": "https://github.com/DestinedAlpha/fpl-thing/archive/refs/heads/fie-windows-download-v0.14.4.zip",
+  "ci": {
+    "run_id": 42486102917,
+    "url": "https://github.com/DestinedAlpha/FIE/actions/runs/42486102917",
+    "commit": "a7e13c0501d259fc328d60bccbc3ecf9252fb2d3",
+    "ubuntu_latest": "passed",
+    "windows_latest": "passed",
+    "windows_launcher_and_packaged_updater_smoke": "passed"
+  },
+  "release_publication_run": 42486470760,
+  "regressions": {
+    "backend_tests": 361,
+    "backend_skipped": 0,
+    "frontend_unit_tests": 3,
+    "browser_journeys": 28,
+    "browser_failed": 0,
+    "browser_skipped": 0
+  },
+  "installed_upgrade": {
+    "at": "2026-11-08T13:38:17.763069+00:00",
+    "archive_sha256": "fe6932b0fbdd04ae6c0f4b59ab3945f9b8eab3724a2d97e62f458d7a9964cd10",
+    "baseline_version": "0.14.3",
+    "baseline_archive_sha256": "ddd51a3d504eea39e288eef5af85b8c12a75318e9c0799436a8f44f2601de9f1",
+    "baseline_installed_checks": {
+      "baseline_installed_source": true,
+      "dashboard_and_built_ui": true
+    },
+    "database_bytes": 1212669952,
+    "installed_source_api_and_models": {
+      "installed_modules": true,
+      "accepted_weights_loaded": true,
+      "readiness": true,
+      "http_exports": 4
+    },
+    "accepted_weight_files_preserved": 517,
+    "account_and_active_objects": "preserved",
+    "credentials": "unchanged; not included in report",
+    "real_database_backup_integrity_and_recovery": "passed",
+    "installer_completed": true
+  },
+  "fresh_install": {
+    "at": "2026-11-08T13:46:12.834751+00:00",
+    "database_manifest_sha256": "3004ff3b8e266a76748a8f98b4eeef05facc39b7e98ab7707a3b3888ec83902e",
+    "result": {
+      "fresh_packaged_source": true,
+      "all_active_models_loaded": true,
+      "forecast_physics": {
+        "passed": true,
+        "player_gameweeks": 18760,
+        "player_fixtures": 18760,
+        "scope": "Finite probabilities, physical minute bounds, complete coverage and exact reconciliation with optimizer worlds; statistical accuracy is evaluated separately"
+      },
+      "api_and_built_ui": true,
+      "exports": 4,
+      "account_and_model_pointers_preserved": true,
+      "optional_hosted_keys": "absent; numerical product operational"
+    }
+  },
+  "active_training": {
+    "decision_model_id": "5428e9347acd901f2379df5a1917dcfaea033338bef07a9a37dc2e0bb75308f1",
+    "components": [
+      {
+        "name": "Immediate points",
+        "id": "5428e9347acd901f2379df5a1917dcfaea033338bef07a9a37dc2e0bb75308f1",
+        "feature_id": "9cadac07d9b06f702ff4dfdd5443da986c3aa41ed1fcc8486af7adb615f06397",
+        "fit_min": "2022/23-GW01",
+        "fit_max": "2026/27-GW01",
+        "calibration_min": "2026/27-GW02",
+        "calibration_max": "2026/27-GW09",
+        "training_rows": 113870,
+        "calibration_rows": 5280,
+        "seasons": [
+          {
+            "season": "2022/23",
+            "len": 26505
+          },
+          {
+            "season": "2023/24",
+            "len": 29725
+          },
+          {
+            "season": "2024/25",
+            "len": 27283
+          },
+          {
+            "season": "2025/26",
+            "len": 29747
+          },
+          {
+            "season": "2026/27",
+            "len": 5890
+          }
+        ]
+      },
+      {
+        "name": "Role and minutes",
+        "id": "b8f450cbb361f942605b643d75acb962fb49c278a6730a40960a8dbb8c476c68",
+        "feature_id": "030471ddd575748f5d10fec92e1572c167fb0b6956c5f6a4f92bf797b9741bc7",
+        "fit_min": "2022/23-GW01",
+        "fit_max": "2026/27-GW01",
+        "calibration_min": "2026/27-GW02",
+        "calibration_max": "2026/27-GW09",
+        "training_rows": 113301,
+        "calibration_rows": 5254,
+        "seasons": [
+          {
+            "season": "2022/23",
+            "len": 26350
+          },
+          {
+            "season": "2023/24",
+            "len": 29546
+          },
+          {
+            "season": "2024/25",
+            "len": 27162
+          },
+          {
+            "season": "2025/26",
+            "len": 29644
+          },
+          {
+            "season": "2026/27",
+            "len": 5853
+          }
+        ]
+      },
+      {
+        "name": "Future fixtures",
+        "id": "d2b407c404852b02d8d8bac6ff36d902162cf280860b333a57606b3865b52b2b",
+        "fit_max": "2026/27-GW01",
+        "calibration_min": "2026/27-GW02",
+        "calibration_max": "2026/27-GW09",
+        "training_rows": 747484,
+        "calibration_rows": 18930,
+        "fit_before": "2026/27-GW11",
+        "fit_as_of": "2026-11-07T10:38:25.095725+00:00",
+        "data_hash": "f77dfff4e29e0b4b6e8e4796a71591c18a81041c7662eb4fa2b8bca3318f735e"
+      }
+    ],
+    "finalized_through": "2026/27-GW09",
+    "labels_expected_through": "2026/27-GW09",
+    "status": "Current completed labels represented",
+    "warning": null,
+    "policy": "expanding-reserved8-v1",
+    "explanation": "The latest eight completed deadlines calibrate probabilities independently; earlier labels fit weights. Current form, roles, availability and fixtures still update forecast inputs. After new finalized labels, the accepted family refits and all three components publish together. Unchanged effective training data reuses the accepted composition."
+  },
+  "preservation": {
+    "original_active_pointers": {
+      "state": "ce9a46b83e23a1e5b9e1ec810fbe4fa4f7b063da43873f27b5f591b5f90484ea",
+      "market": "147a545173ae338de9374064a03eddbcf7280136ab15e451ccbf6fdc79f74d91",
+      "decision_model": "5428e9347acd901f2379df5a1917dcfaea033338bef07a9a37dc2e0bb75308f1",
+      "forecast": "93261b0dc134bb78b985e62c6a07f1bb027d235b5c7b0b7c89bb184946e916d7",
+      "selected_plan": "a93d9313d86197100de5ad056dc7f40f5add294eae6528ebcea0a13d35f0d995"
+    },
+    "all_unchanged": true,
+    "original_numerical_weight_files_checked": 473,
+    "original_numerical_weight_mismatches": 0,
+    "credentials": "retained locally; excluded from release files and decoded compressed payloads"
+  },
+  "audit_dispositions": 230,
+  "model_selection": {
+    "immediate": "Retain accepted expanding fit / eight-deadline calibration; selected half-life-52 challenger fails independent weekly confidence gates",
+    "future": "Eight-deadline purged incumbent wins predeclared earlier selection; four-deadline/crossfit variants are worse on aggregate RMSE in both subsequent periods",
+    "accepted_weights_changed": false,
+    "new_forecast_accuracy_gain_claimed": false,
+    "operational_improvement": "Correct completed-label learning, companion coverage, atomic publication, schema/finalization guards, typed checksums, honest visible freshness and verified recovery"
+  },
+  "known_current_engineering_blockers": [],
+  "external_scientific_boundaries": [
+    "Understat live access unavailable; retained validated cache remains operational",
+    "Unobserved proprietary BPS events are not fabricated",
+    "Future football outcomes and a mathematically proven unlimited multiweek optimum are not implied by historical finite-budget results"
+  ],
+  "completion": "All currently actionable engineering requirements in this release scope are implemented and verified. Rejected research is resolved, not pending integration."
+}
