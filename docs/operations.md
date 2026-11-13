@@ -95,3 +95,11 @@ The 0.9 update imports future-model research, frozen policy proofs and distribut
 Regular `fpl train` and scheduled completed-week refits retain this accepted component. `fpl train-complete` includes the research/acceptance stages when absent. `fpl validate-future-policy` reproduces the earlier-season comparison; `--current` runs a diagnostic with preseason future weights, without using current outcomes for selection. `fpl replay-pipeline` follows the active model family. Completed diagnostic decisions carry forward when extending to a new finalized week.
 
 Large database verification, replay and recourse scratch files stay on the workspace/data disk. The portable package includes checksummed model text, feature data, independent decision proofs and selected worlds. The download verifier checks the actual GitHub archive, relocates model/data paths and reproduces the selected plan's sampled outcomes.
+
+## Responsive planning and frozen flow snapshots (0.14.6)
+
+Normal planning shares 30 seconds of solver search across the primary plan and matched comparisons, then independently replays and scores the results. Its default is the next five gameweeks; changing the viewed gameweek does not change the planning horizon. Exact mode remains unlimited, including its comparisons, while auxiliary warm starts keep their bounded budgets. Solver status and bounds describe the actual search; a feasible incumbent is not labelled a proved optimum.
+
+A second app window reuses the running Windows installation. The backend also holds a cross-process ownership lock. Cancellation is durable and stops non-cooperative workers; atomic results are collected even if interpreter cleanup stalls. Worker parent monitoring uses OS liveness rather than a blocking stdin reader.
+
+Live ownership, transfer counters and price-change predictions may change between consecutive refreshes. A forecast retains its original immutable snapshot for up to one hour across those changes; updating forecasts explicitly consumes the new flow data. Hard price, club, position, availability, news, fixture, football-statistic, scoring-rule and model-dependency changes invalidate it immediately. Historical replay never uses this exception. Current account edits retain their normal version guards.

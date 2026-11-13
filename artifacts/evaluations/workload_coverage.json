@@ -1,17 +1,19 @@
 {
-  "at": "2026-11-06T09:46:57.630326+00:00",
+  "at": "2026-11-13T15:09:41.358337+00:00",
+  "source_fetched_at": "2026-11-13T15:09:41.358346+00:00",
   "source": "olbauday/FPL-Core-Insights",
-  "commit": "f92f7cdf9ee49e444a841d733e81c790153e29a0",
+  "commit": "376a6594239b9c53e261f67eb488022287873f30",
   "requested_files": 180,
   "retrieved_files": 180,
-  "accepted_player_matches": 3451,
-  "rejected_player_matches": 1674,
+  "accepted_player_matches": 3452,
+  "rejected_player_matches": 1711,
   "conflicting_duplicates": 16,
+  "schema_version": "workload-registry-v2",
   "zero_minutes_policy": "Explicit minutes_played=0 is a bench nonappearance; never derived from start/finish timestamps",
   "limits": [
     "Retrospective match enrichment, not original pre-deadline source capture",
     "Conflicting fixture dates are excluded, not guessed",
     "Unobserved competitions, travel and international minutes remain missing"
   ],
-  "id": "b12bc9fc4e554dd6a4abfda7cc11c621dfb05445739df77e62a2ef4087473eff"
+  "id": "fe124f3aeac7f1a56b915c32b1e254cb1fc0b5e00edb257b68bf4a53890e1057"
 }

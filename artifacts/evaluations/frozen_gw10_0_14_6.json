@@ -1,0 +1,53 @@
+{
+  "at": "2026-11-13T15:42:22.019147+00:00",
+  "forecast_id": "c091ddcd4495bb715d003fd3211320166f41a23a1d83cecc0ffad4dd97c94491",
+  "issued_at": "2026-11-05T05:03:42.822206+00:00",
+  "protocol": "Existing forecast issued before the GW10 deadline, compared with finalized official GW10 observations; no current refit is scored against its own training labels",
+  "matched_players": 670,
+  "all_player_rmse": 2.0181901733581875,
+  "regular_player_rmse": 3.1331155294992965,
+  "regular_bias": -0.11270999999999999,
+  "diagnostic_players": [
+    {
+      "id": 4,
+      "name": "Gabriel",
+      "predicted": 5.4266,
+      "actual": 8,
+      "predicted_minutes": 85.79465,
+      "actual_minutes": 90
+    },
+    {
+      "id": 8,
+      "name": "Calafiori",
+      "predicted": 3.10235,
+      "actual": 6,
+      "predicted_minutes": 58.7466,
+      "actual_minutes": 68
+    },
+    {
+      "id": 60,
+      "name": "Hill",
+      "predicted": 4.5691,
+      "actual": 4,
+      "predicted_minutes": 89.1043,
+      "actual_minutes": 90
+    },
+    {
+      "id": 68,
+      "name": "Tavernier",
+      "predicted": 4.08075,
+      "actual": 3,
+      "predicted_minutes": 76.70275,
+      "actual_minutes": 90
+    },
+    {
+      "id": 356,
+      "name": "Virgil",
+      "predicted": 5.166,
+      "actual": 4,
+      "predicted_minutes": 87.7881,
+      "actual_minutes": 90
+    }
+  ],
+  "official_finalized": true
+}

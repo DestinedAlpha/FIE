@@ -1,0 +1,571 @@
+{
+  "at": "2026-11-13T15:20:43.452988+00:00",
+  "scope": "Actual production default subprocess jobs, live official data, accepted model refit and current account, normal planning, real cancellation and subsequent refresh",
+  "refresh_forecast_seconds": 643.738069573,
+  "plan_seconds": 36.17245435699999,
+  "cancel_seconds": 0.8120761960000209,
+  "followup_refresh_seconds": 3.5786655519999613,
+  "model_id": "0d0bd466e04abe52f4939fafbb9f0416a33632a80d329e15b7dd46a342db763b",
+  "forecast_id": "b9c36ade2ad128b6a1450cf7d0b12a1692cd0c9b4c7259cd3f743a6239aa85af",
+  "plan_id": "e13d8c0c318f1cce42de82e204ccd12640c4e9fa416d5810cc54835da596b7cd",
+  "plan_solver": {
+    "status": "Time limit reached",
+    "unlimited": false,
+    "time_limit": 30.0,
+    "objective": 323.43132499999996,
+    "best_bound": 337.8635404997752,
+    "gap": 0.04462219452545367,
+    "bound_available": true,
+    "nodes": 0,
+    "variables": 26220,
+    "constraints": 31962,
+    "raw_solver_best_bound": 337.8635404997752,
+    "independent_relaxation_bound": 350.8266740941653,
+    "initial_warm_objective": 320.095725,
+    "selected_warm_objective": 322.46765,
+    "reused_incumbent_plan_id": null,
+    "validated_cached_incumbents": 1,
+    "validated_full_market_seeds": 2,
+    "runtime_seconds": 28.172,
+    "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+    "market_players": 566,
+    "screened_players": 0,
+    "terminal_value": "Declared fixed terminal sensitivity",
+    "state_value_model_id": null
+  },
+  "plan": [
+    {
+      "event": 11,
+      "sell": [
+        "Calafiori"
+      ],
+      "buy": [
+        "Hill"
+      ],
+      "captain": "Haaland",
+      "hit": 0,
+      "chip": null,
+      "expected_net": 57.103
+    },
+    {
+      "event": 12,
+      "sell": [
+        "De Cuyper"
+      ],
+      "buy": [
+        "Muharemovi\u0107"
+      ],
+      "captain": "Haaland",
+      "hit": 0,
+      "chip": null,
+      "expected_net": 58.299
+    },
+    {
+      "event": 13,
+      "sell": [
+        "Bogle"
+      ],
+      "buy": [
+        "Van Hecke"
+      ],
+      "captain": "Haaland",
+      "hit": 0,
+      "chip": null,
+      "expected_net": 61.171
+    },
+    {
+      "event": 14,
+      "sell": [
+        "Dubravka"
+      ],
+      "buy": [
+        "Leno"
+      ],
+      "captain": "Haaland",
+      "hit": 0,
+      "chip": "bboost",
+      "expected_net": 67.019
+    },
+    {
+      "event": 15,
+      "sell": [
+        "Raya",
+        "Leno",
+        "Van Hecke",
+        "Muharemovi\u0107",
+        "Rogers",
+        "Tavernier",
+        "Palmer",
+        "Evanilson",
+        "Calvert-Lewin"
+      ],
+      "buy": [
+        "Verbruggen",
+        "Dubravka",
+        "Ajer",
+        "Virgil",
+        "Mbeumo",
+        "Cunha",
+        "E.Le F\u00e9e",
+        "N.Jackson",
+        "Isak"
+      ],
+      "captain": "Haaland",
+      "hit": 0,
+      "chip": "freehit",
+      "expected_net": 62.044
+    }
+  ],
+  "hold_comparison": {
+    "hold_plan_id": "67038f91a74af878dae73f0e82767f489f2c93f36571e466f46b9970509e1284",
+    "start_event": 11,
+    "end_event": 15,
+    "policy_net_gain": 25.728,
+    "immediate_net_gain": 1.1450000000000031,
+    "probability_ahead": 0.91175,
+    "paired_mc_standard_error": 0.29421041610085047,
+    "scope": "Same account, horizon, legal scoring and frozen worlds; later moves are conditional"
+  },
+  "training": {
+    "decision_model_id": "0d0bd466e04abe52f4939fafbb9f0416a33632a80d329e15b7dd46a342db763b",
+    "components": [
+      {
+        "name": "Immediate points",
+        "id": "0d0bd466e04abe52f4939fafbb9f0416a33632a80d329e15b7dd46a342db763b",
+        "feature_id": "321305632fc32df1a45844cf631b5a87c6dcb2b36dc0a8f1fa17452b0b26ef01",
+        "fit_min": "2022/23-GW01",
+        "fit_max": "2026/27-GW02",
+        "calibration_min": "2026/27-GW03",
+        "calibration_max": "2026/27-GW10",
+        "training_rows": 114496,
+        "calibration_rows": 5326,
+        "seasons": [
+          {
+            "season": "2022/23",
+            "len": 26505
+          },
+          {
+            "season": "2023/24",
+            "len": 29725
+          },
+          {
+            "season": "2024/25",
+            "len": 27283
+          },
+          {
+            "season": "2025/26",
+            "len": 29747
+          },
+          {
+            "season": "2026/27",
+            "len": 6562
+          }
+        ]
+      },
+      {
+        "name": "Role and minutes",
+        "id": "90698d26f34f4a1bd9a1ae087118827b0e6b8e5b0fdfbb61c50003e338e1dbf1",
+        "feature_id": "f3a8e40fa8be0182f9dac06fc3726bf6a720684429047145d194868185f5052e",
+        "fit_min": "2022/23-GW01",
+        "fit_max": "2026/27-GW02",
+        "calibration_min": "2026/27-GW03",
+        "calibration_max": "2026/27-GW10",
+        "training_rows": 113917,
+        "calibration_rows": 5308,
+        "seasons": [
+          {
+            "season": "2022/23",
+            "len": 26350
+          },
+          {
+            "season": "2023/24",
+            "len": 29546
+          },
+          {
+            "season": "2024/25",
+            "len": 27162
+          },
+          {
+            "season": "2025/26",
+            "len": 29644
+          },
+          {
+            "season": "2026/27",
+            "len": 6523
+          }
+        ]
+      },
+      {
+        "name": "Future fixtures",
+        "id": "74b07a7c5a71a84c90e901e0ea0f9a111557c5a14ec47e0b182fe1c0f8bc9f98",
+        "fit_max": "2026/27-GW02",
+        "calibration_min": "2026/27-GW03",
+        "calibration_max": "2026/27-GW10",
+        "training_rows": 748699,
+        "calibration_rows": 19183,
+        "fit_before": "2026/27-GW11",
+        "fit_as_of": "2026-11-13T15:11:00.612750+00:00",
+        "data_hash": "eb503057d7e71d6bcea7e18c2e2f1014040b4c105a8addfce7bc05959337aaa6"
+      }
+    ],
+    "finalized_through": "2026/27-GW10",
+    "labels_expected_through": "2026/27-GW10",
+    "status": "Current completed labels represented",
+    "warning": null,
+    "policy": "expanding-reserved8-v1",
+    "explanation": "The latest eight completed deadlines calibrate probabilities independently; earlier labels fit weights. Current form, roles, availability and fixtures still update forecast inputs. After new finalized labels, the accepted family refits and all three components publish together. Unchanged effective training data reuses the accepted composition."
+  },
+  "original_weights_preserved": true,
+  "previous_primary_pointers_retained": true,
+  "original_backup_sha256": "4e1c3ed8f30ffbbd8d960deb0e7c9eab91321fca37bd262f05ff8b85cebe0496",
+  "final_planning_with_roll_control": {
+    "at": "2026-11-13T15:45:25.921891+00:00",
+    "plan_seconds": 35.165678,
+    "refresh_seconds": 12.58912250000003,
+    "plan_id": "84b2380e25d529c70f3b862a4277a14d56603e037832694161dc65e8522a08cc",
+    "solver": {
+      "status": "Time limit reached",
+      "unlimited": false,
+      "time_limit": 30.0,
+      "objective": 323.431325,
+      "best_bound": 350.8266740941653,
+      "gap": 0.08470221334982096,
+      "bound_available": true,
+      "nodes": 0,
+      "variables": 26220,
+      "constraints": 31962,
+      "raw_solver_best_bound": 9482.686275,
+      "independent_relaxation_bound": 350.8266740941653,
+      "initial_warm_objective": 320.095725,
+      "selected_warm_objective": 323.431325,
+      "first_week_roll": false,
+      "reused_incumbent_plan_id": "e13d8c0c318f1cce42de82e204ccd12640c4e9fa416d5810cc54835da596b7cd",
+      "validated_cached_incumbents": 5,
+      "validated_full_market_seeds": 2,
+      "runtime_seconds": 13.688,
+      "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+      "market_players": 566,
+      "screened_players": 0,
+      "terminal_value": "Declared fixed terminal sensitivity",
+      "state_value_model_id": null
+    },
+    "roll_comparison": {
+      "hold_plan_id": "5611fac9d0dc87a7fc6bacfa3555f5bfc2c5ae92354b261e9d8d28db2ef2f042",
+      "start_event": 11,
+      "end_event": 15,
+      "policy_net_gain": 2.757,
+      "immediate_net_gain": 1.1450000000000031,
+      "probability_ahead": 0.548,
+      "paired_mc_standard_error": 0.30409719914302347,
+      "comparison_solver": {
+        "status": "Time limit reached",
+        "unlimited": false,
+        "time_limit": 60.0,
+        "objective": 320.86282500000004,
+        "best_bound": 337.44028201857617,
+        "gap": 0.05166524672522011,
+        "bound_available": true,
+        "nodes": 0,
+        "variables": 26139,
+        "constraints": 30264,
+        "raw_solver_best_bound": 337.44028201857617,
+        "independent_relaxation_bound": 350.8266740941653,
+        "initial_warm_objective": 318.77572499999997,
+        "selected_warm_objective": 320.86282500000004,
+        "first_week_roll": true,
+        "reused_incumbent_plan_id": "8828314007897b5796ca445e852893e584e1165180f28154e46c2532456d3c78",
+        "validated_cached_incumbents": 5,
+        "validated_full_market_seeds": 2,
+        "runtime_seconds": 10.739,
+        "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+        "market_players": 566,
+        "screened_players": 0,
+        "terminal_value": "Declared fixed terminal sensitivity",
+        "state_value_model_id": null
+      },
+      "scope": "Roll this deadline only; the same later transfer and chip options remain available"
+    },
+    "first_action_inputs": [
+      {
+        "player_id": 8,
+        "name": "Riccardo Calafiori",
+        "direction": "sell",
+        "expected_points": 3.232,
+        "expected_minutes": 68.981,
+        "p_sixty": 0.77875,
+        "horizon_expected_points": 14.4335,
+        "observed": {
+          "minutes": 767,
+          "starts": 9,
+          "expected_goals": "1.22",
+          "expected_assists": "1.01",
+          "clean_sheets": 6,
+          "defensive_contribution": 42,
+          "bonus": 3,
+          "status": "a",
+          "news": ""
+        },
+        "fixtures": [
+          {
+            "event": 11,
+            "team_h": 17,
+            "team_a": 1,
+            "kickoff_time": "2026-11-21T17:30:00Z"
+          },
+          {
+            "event": 12,
+            "team_h": 1,
+            "team_a": 15,
+            "kickoff_time": "2026-11-29T16:30:00Z"
+          },
+          {
+            "event": 13,
+            "team_h": 4,
+            "team_a": 1,
+            "kickoff_time": "2026-12-02T20:15:00Z"
+          },
+          {
+            "event": 14,
+            "team_h": 19,
+            "team_a": 1,
+            "kickoff_time": "2026-12-06T16:30:00Z"
+          },
+          {
+            "event": 15,
+            "team_h": 1,
+            "team_a": 3,
+            "kickoff_time": "2026-12-13T14:00:00Z"
+          }
+        ]
+      },
+      {
+        "player_id": 60,
+        "name": "James Hill",
+        "direction": "buy",
+        "expected_points": 4.552,
+        "expected_minutes": 87.98475,
+        "p_sixty": 0.97625,
+        "horizon_expected_points": 24.15475,
+        "observed": {
+          "minutes": 900,
+          "starts": 10,
+          "expected_goals": "0.40",
+          "expected_assists": "0.92",
+          "clean_sheets": 3,
+          "defensive_contribution": 115,
+          "bonus": 4,
+          "status": "a",
+          "news": ""
+        },
+        "fixtures": [
+          {
+            "event": 11,
+            "team_h": 3,
+            "team_a": 18,
+            "kickoff_time": "2026-11-21T15:00:00Z"
+          },
+          {
+            "event": 12,
+            "team_h": 10,
+            "team_a": 3,
+            "kickoff_time": "2026-11-29T14:05:00Z"
+          },
+          {
+            "event": 13,
+            "team_h": 3,
+            "team_a": 5,
+            "kickoff_time": "2026-12-02T20:15:00Z"
+          },
+          {
+            "event": 14,
+            "team_h": 3,
+            "team_a": 11,
+            "kickoff_time": "2026-12-05T15:00:00Z"
+          },
+          {
+            "event": 15,
+            "team_h": 1,
+            "team_a": 3,
+            "kickoff_time": "2026-12-13T14:00:00Z"
+          }
+        ]
+      }
+    ],
+    "forecast_remains_valid_after_real_flow_refresh": true,
+    "forecast_id": "b9c36ade2ad128b6a1450cf7d0b12a1692cd0c9b4c7259cd3f743a6239aa85af",
+    "current_market_id": "4e0ec853c34424c3fdfccb1db1b5f4676b69dea38613e706069eb3e032ab5251"
+  },
+  "final_live_build": {
+    "at": "2026-11-13T16:11:36.516542+00:00",
+    "forecast_seconds": 143.37269486600007,
+    "normal_plan_seconds": 34.4473658349998,
+    "refresh_seconds": 3.7827504770002633,
+    "health_seconds": 2.067805901999691,
+    "integrity_checked_at": "2026-11-13T16:03:15.573021+00:00",
+    "model_id": "0d0bd466e04abe52f4939fafbb9f0416a33632a80d329e15b7dd46a342db763b",
+    "forecast_id": "e838f833bb45d6d289d6d116a39ef1c01913a78e2f1e0f86d725f19e0569f7ba",
+    "plan_id": "eceb1747d02df003f5e28d452825be614f84d7aaa10b66fd85a4477d5cdf1896",
+    "forecast_validation": {
+      "passed": true,
+      "player_gameweeks": 18816,
+      "player_fixtures": 18816,
+      "scope": "Finite probabilities, physical minute bounds, complete coverage and exact reconciliation with optimizer worlds; statistical accuracy is evaluated separately"
+    },
+    "first_week": {
+      "sell": [
+        "Calafiori"
+      ],
+      "buy": [
+        "Hill"
+      ],
+      "captain": "Haaland",
+      "vice": "Gabriel",
+      "hit": 0,
+      "expected_net": 57.103
+    },
+    "roll_comparison": {
+      "hold_plan_id": "5ee29469ca8ba918785bb42ef94832ce275c4e7c0646cb388cdde005ab64d911",
+      "start_event": 11,
+      "end_event": 15,
+      "policy_net_gain": 2.936,
+      "immediate_net_gain": 1.1450000000000031,
+      "probability_ahead": 0.54525,
+      "paired_mc_standard_error": 0.30523887152879636,
+      "comparison_solver": {
+        "status": "Time limit reached",
+        "unlimited": false,
+        "time_limit": 60.0,
+        "objective": 320.75235,
+        "best_bound": 336.243077256872,
+        "gap": 0.04829497665994357,
+        "bound_available": true,
+        "nodes": 0,
+        "variables": 26139,
+        "constraints": 30264,
+        "raw_solver_best_bound": 336.243077256872,
+        "independent_relaxation_bound": 350.7432718508693,
+        "initial_warm_objective": 318.69797500000004,
+        "selected_warm_objective": 320.75235,
+        "first_week_roll": true,
+        "reused_incumbent_plan_id": "8828314007897b5796ca445e852893e584e1165180f28154e46c2532456d3c78",
+        "validated_cached_incumbents": 8,
+        "validated_full_market_seeds": 2,
+        "runtime_seconds": 11.914,
+        "formulation": "full-market multiweek MIP; additive XI/captain, FT network, original lots, joint chips",
+        "market_players": 566,
+        "screened_players": 0,
+        "terminal_value": "Declared fixed terminal sensitivity",
+        "state_value_model_id": null
+      },
+      "scope": "Roll this deadline only; the same later transfer and chip options remain available"
+    },
+    "player_evidence": [
+      {
+        "player_id": 8,
+        "name": "Riccardo Calafiori",
+        "direction": "sell",
+        "expected_points": 3.232,
+        "expected_minutes": 68.981,
+        "p_sixty": 0.77875,
+        "horizon_expected_points": 14.4335,
+        "observed": {
+          "minutes": 767,
+          "starts": 9,
+          "expected_goals": "1.22",
+          "expected_assists": "1.01",
+          "clean_sheets": 6,
+          "defensive_contribution": 42,
+          "bonus": 3,
+          "status": "a",
+          "news": ""
+        },
+        "fixtures": [
+          {
+            "event": 11,
+            "team_h": 17,
+            "team_a": 1,
+            "kickoff_time": "2026-11-21T17:30:00Z"
+          },
+          {
+            "event": 12,
+            "team_h": 1,
+            "team_a": 15,
+            "kickoff_time": "2026-11-29T16:30:00Z"
+          },
+          {
+            "event": 13,
+            "team_h": 4,
+            "team_a": 1,
+            "kickoff_time": "2026-12-02T20:15:00Z"
+          },
+          {
+            "event": 14,
+            "team_h": 19,
+            "team_a": 1,
+            "kickoff_time": "2026-12-06T16:30:00Z"
+          },
+          {
+            "event": 15,
+            "team_h": 1,
+            "team_a": 3,
+            "kickoff_time": "2026-12-13T14:00:00Z"
+          }
+        ]
+      },
+      {
+        "player_id": 60,
+        "name": "James Hill",
+        "direction": "buy",
+        "expected_points": 4.552,
+        "expected_minutes": 87.98475,
+        "p_sixty": 0.97625,
+        "horizon_expected_points": 24.15475,
+        "observed": {
+          "minutes": 900,
+          "starts": 10,
+          "expected_goals": "0.40",
+          "expected_assists": "0.92",
+          "clean_sheets": 3,
+          "defensive_contribution": 115,
+          "bonus": 4,
+          "status": "a",
+          "news": ""
+        },
+        "fixtures": [
+          {
+            "event": 11,
+            "team_h": 3,
+            "team_a": 18,
+            "kickoff_time": "2026-11-21T15:00:00Z"
+          },
+          {
+            "event": 12,
+            "team_h": 10,
+            "team_a": 3,
+            "kickoff_time": "2026-11-29T14:05:00Z"
+          },
+          {
+            "event": 13,
+            "team_h": 3,
+            "team_a": 5,
+            "kickoff_time": "2026-12-02T20:15:00Z"
+          },
+          {
+            "event": 14,
+            "team_h": 3,
+            "team_a": 11,
+            "kickoff_time": "2026-12-05T15:00:00Z"
+          },
+          {
+            "event": 15,
+            "team_h": 1,
+            "team_a": 3,
+            "kickoff_time": "2026-12-13T14:00:00Z"
+          }
+        ]
+      }
+    ],
+    "historical_family_retained": true,
+    "forecast_and_plan_current_after_refresh": true
+  }
+}

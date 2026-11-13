@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-06T14:08:29.687571+00:00",
+  "at": "2026-11-13T15:17:04.822738+00:00",
   "version": "fusion-inputs-v3",
   "workload_transform": "positive-exposure-v2",
   "enrichment_features": [
@@ -35,8 +35,8 @@
     "shots_observed",
     "history_observed"
   ],
-  "rows": 118555,
-  "excluded_not_registered_before_deadline": 595,
+  "rows": 119225,
+  "excluded_not_registered_before_deadline": 597,
   "numerical_features": [
     "position",
     "home",
@@ -135,27 +135,27 @@
   "token_buckets": 4096,
   "text_length": 40,
   "sources": {
-    "news_deadlines": 160,
+    "news_deadlines": 161,
     "verified_prior_managers": 100,
     "manager_gameweeks": 900
   },
-  "inputs_path": "data/features/fusion-eeda5d98f79c8a360bdf7eac.npz",
-  "metadata_path": "data/features/fusion-2b1494a0779a14fe90ae39ff.parquet",
-  "hash": "eeda5d98f79c8a360bdf7eac11d55ecd18901d70e134c9c9ba77f945f01ba0af",
-  "metadata_hash": "2b1494a0779a14fe90ae39ffdfa386a016f16e99bd31f7b9f4cfbfe34a121d13",
+  "inputs_path": "/workspace/FIE/data/features/fusion-ed0adb75de93c7a9620eac63.npz",
+  "metadata_path": "/workspace/FIE/data/features/fusion-02e0d30e51c4b2e60a65bc99.parquet",
+  "hash": "ed0adb75de93c7a9620eac63d4347d61386789c2a0221c6146cf3d759aaf409c",
+  "metadata_hash": "02e0d30e51c4b2e60a65bc997540998edfc0628e0268bb920f8111c55105cce9",
   "lineage": {
-    "shot_archive": "9f3717f5a189cef2a2828eacbcee64f3fd18b64f0bda4897dc22f9c71042c3e0",
+    "shot_archive": "18b3f40d018d542ebfa80bc106714fd4f482ab73009c8ba7eec5e60d43fddcdb",
     "temporal_model": "025078e5b28ce375c09b3d29c3d3367b2ec8558cc2ba6d0fdafc6ba1d4e083d3",
-    "context_archive": "1d89529fbbcfc4dff1624469db48a46d15fd8212245ccd75ae328489b5fc23cf",
+    "context_archive": "2eabd4857020576c422a92423557582fe6fdaf4d7daf1e0637fc0a5898c95284",
     "elite_cohort": "982c841b479de7258566580fc9fcf7e510fde035d9e7c47a4c9fc0544dc2456e",
-    "workload": "b12bc9fc4e554dd6a4abfda7cc11c621dfb05445739df77e62a2ef4087473eff"
+    "workload": "fe124f3aeac7f1a56b915c32b1e254cb1fc0b5e00edb257b68bf4a53890e1057"
   },
   "coverage": {
     "news": 1.0,
-    "expert_lag": 0.04431698367846147,
-    "workload": 0.16332504153251648
+    "expert_lag": 0.049687565527364225,
+    "workload": 0.16734744608402252
   },
   "rules": "Archived news has pre-deadline capture proof; expert choices lag one deadline; workload uses retrospective match facts and a four-hour completion cutoff, not original publication proof",
   "missing_policy": "Explicit masks; unavailable workload and expert history are never treated as observed zero",
-  "id": "f5eb8eb039676ab18c5874cd4f4133765e0a7bb7ed71f3d0873c7b7532b5e246"
+  "id": "f3a8e40fa8be0182f9dac06fc3726bf6a720684429047145d194868185f5052e"
 }
