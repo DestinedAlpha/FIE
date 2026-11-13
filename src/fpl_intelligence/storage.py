@@ -53,6 +53,7 @@ class Store:
                 UNIQUE(source, captured_at, hash));
             CREATE TABLE IF NOT EXISTS objects (
                 kind TEXT, id TEXT, created_at TEXT, body TEXT, PRIMARY KEY(kind,id));
+            CREATE INDEX IF NOT EXISTS objects_kind_created ON objects(kind,created_at);
             CREATE TABLE IF NOT EXISTS events (
                 seq INTEGER PRIMARY KEY AUTOINCREMENT, kind TEXT, object_id TEXT,
                 recorded_at TEXT, body TEXT);

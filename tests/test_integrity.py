@@ -169,3 +169,18 @@ def test_health_probe_uses_cached_integrity_without_rescanning_the_database(tmp_
         assert not any("quick_check" in statement.lower() for statement in statements)
         store.put("database_integrity", {"at": now(), "result": "corrupt test fixture"})
         assert client.get("/api/health").json()["status"] == "degraded"
+
+
+def test_latest_artifact_lookup_preserves_ties_without_sorting_large_bodies(tmp_path):
+    store = Store(tmp_path)
+    first = store.put("large_artifact", {"value": 1})
+    second = store.put("large_artifact", {"value": 2})
+    with store.db() as db:
+        db.execute("UPDATE objects SET created_at='2026-01-01T00:00:00Z' WHERE kind='large_artifact'")
+        plan = db.execute(
+            "EXPLAIN QUERY PLAN SELECT body,id FROM objects WHERE kind=? ORDER BY created_at DESC,rowid DESC LIMIT 1",
+            ("large_artifact",),
+        ).fetchall()
+    assert store.get("large_artifact")["id"] == second
+    assert [r["id"] for r in store.list("large_artifact")] == [second, first]
+    assert not any("TEMP B-TREE" in str(tuple(r)) for r in plan)
