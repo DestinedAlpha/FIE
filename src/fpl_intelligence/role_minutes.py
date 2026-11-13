@@ -245,10 +245,14 @@ def train(store, feature_id=None):
         raise ValueError("Role minutes failed its chronological forecast gate")
     arrays, metadata, features = load_data(store, feature_id or validation["feature_id"])
     context_id = store.get("context_archive")["id"] if feature_id else validation["context_archive_id"]
+    from .search_control import report_phase
+
+    report_phase("Preparing role-aware minutes training inputs")
     x = historical_inputs(store, arrays, metadata, features, context_id)
     groups = np.array([r["deadline_group"] for r in metadata])
     cut = sorted(set(groups))[-8]
     training, calibration = np.flatnonzero(groups < cut), np.flatnonzero(groups >= cut)
+    report_phase("Fitting the accepted role-aware minutes model")
     head, curves = fit_head(x, arrays["minutes"], training, calibration)
     directory = (
         store.root

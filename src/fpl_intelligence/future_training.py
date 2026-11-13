@@ -49,6 +49,9 @@ def refit_expert(store, acceptance_id=None):
     ):
         raise ValueError("The upcoming deadline has passed; refresh before refitting")
     before = f"{market['season']}-GW{event['id']:02d}"
+    from .search_control import report_phase
+
+    report_phase("Preparing future-fixture training data")
     path = build_data(store)
     checksum = hashlib.sha256(path.read_bytes()).hexdigest()
     frame = pl.read_parquet(path)
@@ -82,6 +85,7 @@ def refit_expert(store, acceptance_id=None):
         spec = json.loads(manifest.read_text())
         load_expert(store, spec)
     else:
+        report_phase("Fitting the accepted future-fixture model")
         with threadpool_limits(limits=1):
             bundle = fit_models(frame, before, family, moment(cutoff).timestamp())
         directory.mkdir(parents=True, exist_ok=True)

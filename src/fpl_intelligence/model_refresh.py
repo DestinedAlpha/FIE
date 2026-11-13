@@ -181,6 +181,9 @@ def refit_reference(store, active):
     feature, frame = build_dataset(store)
     train, cal, bounds = fit_bounds(frame)
     check_cancelled()
+    from .search_control import report_phase
+
+    report_phase("Fitting points and participation models on finalized historical labels")
     bundle = fit_components(train, cal)
     parameters = {
         "version": VERSION,

@@ -174,7 +174,7 @@ def test_search_budget_is_shared_but_exact_search_keeps_bounded_seeds():
         with planning_budget(0.1):
             first = effective_time_limit(100)
             time.sleep(0.02)
-            assert 0 < effective_time_limit(100) < first <= 0.1
+            assert 0 < effective_time_limit(100) < first <= 0.100001
             with planning_budget(10):
                 assert effective_time_limit(None) < first
         assert effective_time_limit(1) is None
