@@ -238,6 +238,9 @@ export type Dashboard = FootballEvidenceData & {
   } | null;
   state: State | null;
   forecast: {
+    inputs_current?: boolean;
+    market_flow_snapshot_frozen?: boolean;
+    market_flow_max_age_minutes?: number;
     id: string;
     issued_at: string;
     start_event: number;

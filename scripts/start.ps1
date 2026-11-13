@@ -106,7 +106,7 @@ if (-not $NoBrowser) {
         param($PageUrl)
         for ($Attempt=0; $Attempt -lt 60; $Attempt++) {
             try {
-                $Health = Invoke-RestMethod "$PageUrl/api/health" -TimeoutSec 1
+                $Health = Invoke-RestMethod "$PageUrl/api/runtime" -TimeoutSec 1
                 if ($Health.status -eq "ok") { Start-Process $PageUrl; return }
             } catch { }
             Start-Sleep -Milliseconds 500

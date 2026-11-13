@@ -354,7 +354,8 @@ test("population diagnostics expose accepted evidence and download the complete 
   await expect(page.getByRole('heading',{name:'Population forecast diagnostics',exact:true})).toBeVisible();
   await expect(page.getByText(/player-gameweek projections checked/)).toBeVisible();
   expect(result.population.cohorts.length).toBeGreaterThan(0);
-  expect(result.population.historical.compatible).toBe(true);
+  expect(result.population.historical.family_compatible).toBe(true);
+  expect(result.population.historical.compatible).toBe(result.population.historical.historical_feature_id === result.population.historical.active_feature_id);
   expect(result.population.challenger.promoted).toBe(false);
   const downloadPromise=page.waitForEvent('download');
   await page.getByRole('link',{name:'Download all cohorts, calibration and disagreements'}).click();

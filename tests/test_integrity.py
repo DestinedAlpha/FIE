@@ -104,7 +104,8 @@ def test_api_empty_onboarding_and_invalid_jobs(tmp_path):
         create_app(tmp_path, job_runner=lambda s, i, c, work: work()), base_url="http://localhost"
     ) as client:
         assert client.get("/openapi.json").json()["info"]["version"] == version("fpl-intelligence")
-        assert client.get("/api/health").json()["integrity"] == "ok"
+        health = client.get("/api/health").json()
+        assert health["status"] == "ok" and health["integrity"] in ("ok", "not_checked")
         assert client.get("/api/dashboard").json()["market"] is None
         assert client.get("/api/jobs/missing").status_code == 404
         assert client.post("/api/forecast", json={"end_event": 99}).status_code == 422
@@ -137,3 +138,34 @@ def test_relocated_weights_accept_both_platform_path_formats(tmp_path, reference
 def test_windows_metadata_cannot_traverse_the_relocated_model_directory(tmp_path):
     with pytest.raises(ValueError, match="Unrecognized"):
         Store(tmp_path).artifact_path(r"C:\old\models\..\secrets.txt")
+
+
+def test_health_probe_uses_cached_integrity_without_rescanning_the_database(tmp_path, monkeypatch):
+    from contextlib import contextmanager
+
+    from fpl_intelligence.storage import now
+
+    app = create_app(tmp_path)
+    store = app.state.store
+    with store.db() as db:
+        result = db.execute("PRAGMA quick_check").fetchone()[0]
+    store.put("database_integrity", {"at": now(), "result": result})
+    original = store.db
+    statements = []
+
+    @contextmanager
+    def traced():
+        with original() as db:
+            db.set_trace_callback(statements.append)
+            yield db
+
+    monkeypatch.setattr(store, "db", traced)
+    with TestClient(app, base_url="http://localhost") as client:
+        result = client.get("/api/health").json()
+        assert result["status"] == "ok" and result["integrity"] == "ok"
+        assert result["integrity_checked_at"]
+        statements.clear()
+        assert client.get("/api/health").json()["status"] == "ok"
+        assert not any("quick_check" in statement.lower() for statement in statements)
+        store.put("database_integrity", {"at": now(), "result": "corrupt test fixture"})
+        assert client.get("/api/health").json()["status"] == "degraded"

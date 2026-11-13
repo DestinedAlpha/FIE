@@ -246,7 +246,7 @@ function App() {
     }
   }
   function solve() {
-    if (data?.state && data?.forecast)
+    if (data?.state && data?.forecast && data.forecast.inputs_current !== false)
       action("/optimize", {
         state_id: data.state.id,
         forecast_id: data.forecast.id,
@@ -580,6 +580,8 @@ function App() {
               Calculating in the local engine. You can keep exploring.
             </div>
           )}
+          {data?.forecast?.inputs_current === false && <div className="message">Data changed. Choose Update forecasts before planning.</div>}
+          {data?.forecast?.inputs_current !== false && data?.forecast?.market_flow_snapshot_frozen && <div className="message">Forecast snapshot: {new Date(data.forecast.issued_at).toLocaleTimeString("en-GB", {timeZone:"Asia/Dubai",hour:"2-digit",minute:"2-digit"})} Dubai. Live transfer and ownership flows update separately; Update forecasts includes their latest values.</div>}
           {requestedPlan?.stale && (
             <div className="message">
               This plan uses an older account, forecast or market version.
@@ -1143,7 +1145,7 @@ function App() {
                       )}
                       <button
                         className="button primary"
-                        disabled={busy || !data.forecast || !data.state}
+                        disabled={busy || !data.forecast || !data.state || data.forecast.inputs_current === false}
                         onClick={solve}
                       >
                         Optimize plan <Sparkles size={16} />
@@ -1324,7 +1326,7 @@ function App() {
                     </button>
                     <button
                       className="button primary"
-                      disabled={busy || !data.forecast || !data.state}
+                      disabled={busy || !data.forecast || !data.state || data.forecast.inputs_current === false}
                       onClick={() =>
                         action("/rivals", {
                           league_id: 1873551,

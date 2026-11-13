@@ -48,7 +48,7 @@ type ForecastDiagnostics = {
     independent_status: string;
     aligned_cohorts: {position: number; lead: number; fixtures: number; point_bias: number; minute_bias: number}[];
     material_disagreements: {player_id: number; event: number; points_difference: number; minutes_difference: number; classification: string}[];
-    historical: {compatible: boolean; periods: Record<string, {all: {points: {n: number; rmse: number}; any: {brier: number}; sixty: {brier: number}; mean_crps: number; interval_80_coverage: number}}> } | null;
+    historical: {compatible: boolean; family_compatible?: boolean; periods: Record<string, {all: {points: {n: number; rmse: number}; any: {brier: number}; sixty: {brier: number}; mean_crps: number; interval_80_coverage: number}}> } | null;
     challenger: {decision: string; promoted: boolean} | null;
     interpretation: string;
   };
@@ -70,7 +70,7 @@ export function ForecastDiagnosticsPanel({data}: {data: Dashboard}) {
     {report && <>
       <p>{report.cohorts.reduce((n,r)=>n+r.players,0).toLocaleString()} player-gameweek projections checked. {report.independent_status}.</p>
       {report.historical && <>
-        <p>{report.historical.compatible ? "Historical evaluation matches the accepted immediate model contract." : "Historical evaluation uses an earlier model contract; it does not certify this forecast."}</p>
+        <p>{report.historical.compatible ? "Historical evaluation matches the accepted immediate model contract." : report.historical.family_compatible ? "The accepted model family is retained; its current refit includes newer observations. Historical results retain their original evaluation periods." : "Historical evaluation uses an earlier model contract; it does not certify this forecast."}</p>
         <div className="table-scroll"><table><thead><tr><th>Season</th><th>Fixtures</th><th>Points RMSE</th><th>Appearance Brier</th><th>60-minute Brier</th><th>CRPS</th><th>80% coverage</th></tr></thead><tbody>{Object.entries(report.historical.periods).map(([season,p])=><tr key={season}><td>{season}</td><td>{p.all.points.n.toLocaleString()}</td><td>{p.all.points.rmse.toFixed(3)}</td><td>{p.all.any.brier.toFixed(3)}</td><td>{p.all.sixty.brier.toFixed(3)}</td><td>{p.all.mean_crps.toFixed(3)}</td><td>{percent(p.all.interval_80_coverage)}</td></tr>)}</tbody></table></div>
       </>}
       {report.challenger && <p>Football component challenger: {report.challenger.decision}.</p>}

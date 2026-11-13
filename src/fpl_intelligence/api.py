@@ -31,9 +31,18 @@ from .storage import Store, now
 
 
 def initialize_store(store):
+    from .availability import moment
     from .maintenance import maintain_models
     from .search_control import report_phase
 
+    previous = store.get("database_integrity") if store.list("database_integrity", 1) else {}
+    if previous.get("result") != "ok" or (moment(now()) - moment(previous["at"])).total_seconds() > 86400:
+        report_phase("Checking database integrity")
+        with store.db() as db:
+            result = db.execute("PRAGMA quick_check").fetchone()[0]
+        store.put("database_integrity", {"at": now(), "result": result})
+        if result != "ok":
+            raise ValueError("Database integrity check failed; restore a verified backup")
     report_phase("Checking installed models")
     maintain_models(store)
     if (
@@ -289,7 +298,12 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
         import os
 
         identity = hashlib.sha256(os.path.normcase(str(store.root.resolve())).encode()).hexdigest()
-        return {"version": version("fpl-intelligence"), "installation_id": identity, "pid": os.getpid()}
+        return {
+            "status": "ok",
+            "version": version("fpl-intelligence"),
+            "installation_id": identity,
+            "pid": os.getpid(),
+        }
 
     @app.get("/api/health")
     def health():
@@ -297,7 +311,7 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
         from .transport import request_metrics
 
         with store.db() as db:
-            integrity = db.execute("PRAGMA quick_check").fetchone()[0]
+            db.execute("SELECT 1").fetchone()
             sources = [
                 dict(r)
                 for r in db.execute(
@@ -305,9 +319,11 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
                 )
             ]
             quota = [dict(r) for r in db.execute("SELECT * FROM quota ORDER BY day DESC LIMIT 10")]
+        checked = store.get("database_integrity") if store.list("database_integrity", 1) else {}
         return {
-            "status": "ok" if integrity == "ok" else "degraded",
-            "integrity": integrity,
+            "status": "ok" if checked.get("result", "ok") == "ok" else "degraded",
+            "integrity": checked.get("result", "not_checked"),
+            "integrity_checked_at": checked.get("at"),
             "status_scope": "database_liveness",
             "readiness": operational_readiness(store),
             "sources": sources,
@@ -525,6 +541,13 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
                     artifact["players"] = [r for r in artifact["players"] if r["event"] == event]
                     artifact["market_flow_snapshot_frozen"] = artifact.get("market_id") != market["id"]
                     artifact["market_flow_max_age_minutes"] = 60
+                    from .readiness import forecast_dependencies_current, forecast_market_current
+
+                    artifact["inputs_current"] = (
+                        artifact.get("decision_model_id") == store.get("decision_model")["id"]
+                        and forecast_market_current(store, artifact, market)
+                        and forecast_dependencies_current(store, artifact)
+                    )
                 if kind == "decision_model":
                     future_id = artifact.get("future_horizon_model_id")
                     if future_id:

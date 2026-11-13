@@ -440,6 +440,13 @@ def monitor(store, forecast, independent=None):
         "historical": {
             "id": historical["id"],
             "compatible": compatible,
+            "family_compatible": bool(
+                role
+                and historical["contract"]["role_validation"] == role["validation_id"]
+                and model.get("version") == "learned-points-v1"
+            ),
+            "historical_feature_id": historical["contract"]["feature_id"],
+            "active_feature_id": role["feature_id"] if role else None,
             "periods": historical["periods"],
             "scope": historical["scope"],
         }
