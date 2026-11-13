@@ -153,7 +153,7 @@ def repair_data_contract(store):
     Preserve the entire immediate head and every original artifact. Publication
     of the repaired future weights and composed model is one guarded transaction.
     """
-    if not store.list("decision_model", 1):
+    if store.list("replay_context", 1) or not store.list("decision_model", 1):
         return None
     original = store.get("decision_model")
     identity = original.get("future_horizon_model_id")

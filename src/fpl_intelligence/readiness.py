@@ -89,7 +89,7 @@ def workload_is_current(store, forecast, model=None):
 
 def forecast_dependencies_current(store, forecast, model=None):
     model = model if model is not None else store.get("decision_model")
-    if model.get("future_horizon_model_id"):
+    if model.get("future_horizon_model_id") and not store.list("replay_context", 1):
         from .fixture_horizon import DATA_CONTRACT
 
         if (

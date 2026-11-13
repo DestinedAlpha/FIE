@@ -120,3 +120,13 @@ def test_scoring_contract_repair_is_atomic_preserves_immediate_head_and_runs_onc
         assert store.get("model_training_state")["decision_model_id"] == model["id"]
         assert future_training.repair_data_contract(store) is None
         assert calls == ["accepted-family"]
+
+
+def test_scoring_repair_does_not_mutate_a_frozen_historical_replay(tmp_path):
+    from fpl_intelligence.future_training import repair_data_contract
+
+    store = Store(tmp_path / "data")
+    store.put("replay_context", {"information_cutoff": "2025-08-01T11:00:00Z"})
+    original = store.put("decision_model", {"promoted": True, "future_horizon_model_id": "frozen-expert"})
+    assert repair_data_contract(store) is None
+    assert store.get("decision_model")["id"] == original
