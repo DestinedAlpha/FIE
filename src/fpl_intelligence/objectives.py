@@ -249,6 +249,8 @@ def choose_recommendation(
         ):
             plans.append(p)
     plans = list({p["id"]: p for p in plans}.values())
+    from .planning_defaults import chips_assessed
+
     plans = [
         p
         for p in plans
@@ -258,9 +260,19 @@ def choose_recommendation(
             for row in p["ledger"]
         )
         and (first_week_hit_budget is None or p["ledger"][0]["hit"] <= first_week_hit_budget)
+        and chips_assessed(store, p, fixed_chips)
     ]
     if not plans:
         raise ValueError("No candidate satisfies the requested transfer/chip constraints")
+    reference = plans[0]
+    transfer_comparisons = []
+    if mode == "expected_points":
+        from .transfer_alternatives import compare_cheaper_actions
+
+        transfer_comparisons = compare_cheaper_actions(
+            store, reference, forecast, fixed_chips=fixed_chips, max_transfers=max_transfers
+        )
+        plans.extend(transfer_comparisons)
     roll_search = None
     if (
         mode == "expected_points"
@@ -495,6 +507,7 @@ def choose_recommendation(
         "hold_comparison": comparison,
         "roll_comparison": roll_comparison,
         "first_action_inputs": inputs,
+        "transfer_comparisons": [p["id"] for p in transfer_comparisons],
         "market_known_at": market.get("known_at"),
         "no_hit_search_seconds": effective_time_limit(comparison_seconds) if no_hit_search else None,
     }

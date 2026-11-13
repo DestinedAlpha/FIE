@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "FPL Intelligence",
-    "version": "0.14.6"
+    "version": "0.14.7"
   },
   "paths": {
     "/api/runtime": {
@@ -1983,14 +1983,14 @@
               }
             ],
             "title": "Time Limit",
-            "default": 30.0
+            "default": 180.0
           },
           "relative_gap": {
             "type": "number",
             "maximum": 0.1,
             "minimum": 0.0,
             "title": "Relative Gap",
-            "default": 0.005
+            "default": 0.001
           },
           "objective": {
             "type": "string",

@@ -614,6 +614,11 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
             selected_plan["stale"] |= not forecast_dependencies_current(
                 store, result["forecast"] or {}, result["decision_model"] or {}
             )
+            from .planning_defaults import chips_assessed
+
+            if not chips_assessed(store, selected_plan):
+                selected_plan["stale"] = True
+                selected_plan["stale_reason"] = "Recompute with the remaining chip window assessed"
             if selected_plan["ledger"][0]["hit"] > 0 or selected_plan["ledger"][0].get("chip"):
                 from .objectives import stale_paid_evidence
 
@@ -809,6 +814,9 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
                 result[name] = active_claims(store)
             else:
                 result[name] = [store.get(kind, r["id"]) for r in store.list(kind, 100)]
+        from .planning_defaults import defaults
+
+        result["planning_defaults"] = defaults(store, result["state"] or {}, market)
         return result
 
     @app.post("/api/refresh")
@@ -1219,7 +1227,7 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
                 and not saved_state.get("active_chip")
                 and not (fixed_chips or {}).get(saved_state["event"])
             )
-            first_budget = remaining / 2 if remaining is not None and reserve_roll else remaining
+            first_budget = remaining / 3 if remaining is not None and reserve_roll else remaining
             with planning_budget(first_budget):
                 plan = optimize(
                     store,

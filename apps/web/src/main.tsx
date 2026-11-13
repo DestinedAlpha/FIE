@@ -76,8 +76,8 @@ function App() {
   const [filter, setFilter] = useState(0);
   const [sort, setSort] = useState<"points" | "value" | "minutes">("points");
   const [chosenEnd, setEnd] = useState<number | null>(null);
-  const end = Math.min(38, Math.max(data?.state?.event || 1, chosenEnd ?? ((data?.state?.event || 1) + 4)));
-  const [searchMode, setSearchMode] = useState("normal");
+  const end = Math.min(38, Math.max(data?.state?.event || 1, chosenEnd ?? data?.planning_defaults?.end_event ?? ((data?.state?.event || 1) + 7)));
+  const [searchMode, setSearchMode] = useState("thorough");
   const [objective, setObjective] = useState("expected_points");
   const [budget, setBudget] = useState(5);
   const [editor, setEditor] = useState(false);
@@ -251,8 +251,8 @@ function App() {
         state_id: data.state.id,
         forecast_id: data.forecast.id,
         end_event: end,
-        time_limit: searchMode === "exact" ? null : 30,
-        relative_gap: searchMode === "exact" ? 0 : 0.005,
+        time_limit: searchMode === "exact" ? null : searchMode === "quick" ? 30 : 180,
+        relative_gap: searchMode === "exact" ? 0 : searchMode === "quick" ? 0.005 : 0.001,
         objective,
         sacrifice_budget: budget,
       });
@@ -1113,9 +1113,13 @@ function App() {
                       <label>
                         Search
                         <select aria-label="Search mode" value={searchMode} onChange={e => setSearchMode(e.target.value)}>
-                          <option value="normal">Normal · 30 seconds of search</option>
+                          <option value="thorough">Thorough · up to 3 minutes of search</option>
+                          <option value="quick">Quick · 30 seconds of search</option>
                           <option value="exact">Exact · unlimited search</option>
                         </select>
+                        {chosenEnd === null && data.planning_defaults && (
+                          <small>{data.planning_defaults.reason}. Later moves are conditional.</small>
+                        )}
                       </label>
                       <label>
                         Objective

@@ -1,0 +1,23 @@
+{
+  "at": "2026-11-13T17:14:09.629580+00:00",
+  "old_data_hash": "eb503057d7e71d6bcea7e18c2e2f1014040b4c105a8addfce7bc05959337aaa6",
+  "repaired_data_hash": "f3d75c83b7b00b5dd186ce75490cc32fdead72fef525a91a251ec484215ead90",
+  "rows": 773358,
+  "canonical_base_targets": "All rows match canonical normalized labels; missing nonappearances are zero",
+  "actual_outcomes": "Unchanged for every row",
+  "changed_target_rows": 11032,
+  "target_corrections_by_season": [
+    {
+      "season": "2025/26",
+      "len": 9577,
+      "mean_removed_points": 2.0
+    },
+    {
+      "season": "2026/27",
+      "len": 1455,
+      "mean_removed_points": 2.0
+    }
+  ],
+  "unavailable_strength_rows_masked": 26473,
+  "unchanged_immediate_model": true
+}

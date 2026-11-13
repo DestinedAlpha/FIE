@@ -119,6 +119,10 @@ def selection_is_current(store, plan):
         model = store.get("decision_model")
     except ValueError:
         return False
+    from .planning_defaults import chips_assessed
+
+    if not chips_assessed(store, plan):
+        return False
     if (
         any(
             plan.get(key) != value

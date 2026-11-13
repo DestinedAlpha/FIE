@@ -519,6 +519,13 @@ def optimize(
             try:
                 a, b = rules.chip_window(chip, t)
                 allowed = not any(c.chip == chip and a <= c.event <= b for c in state.used_chips)
+                # A truncated solve cannot value the same entitlement after its
+                # horizon. Keep it unless the entire window is assessed or the
+                # user has explicitly committed/pinned its use.
+                requested = (chips or pin_chips or {}).get(t) == chip
+                committed = state.active_chip == chip and t == state.event
+                if automatic_chips and end_event < b and not requested and not committed:
+                    allowed = False
             except ValueError:
                 pass
             if (
@@ -1114,6 +1121,10 @@ def optimize(
         "final_state": current.model_dump(),
         "objective": "expected_points",
         "first_week_hit_budget": first_week_hit_budget,
+        "chip_constraints": {
+            "pinned": dict(chips if chips is not None else pin_chips or {}),
+            "automatic_full_window_required": True,
+        },
         "validation": {"legal": True, "affordable": True, "independent_transition": True},
         "contingencies": [
             {
