@@ -261,6 +261,34 @@ def choose_recommendation(
     ]
     if not plans:
         raise ValueError("No candidate satisfies the requested transfer/chip constraints")
+    roll_search = None
+    if (
+        mode == "expected_points"
+        and not reference["ledger"][0].get("chip")
+        and not (fixed_chips or {}).get(reference["ledger"][0]["event"])
+    ):
+        state = store.get("state", reference["state_id"]) if store.list("state", 1) else {}
+        if state and not state.get("initial") and not state.get("active_chip"):
+            # Roll only the immediate deadline; preserve ALL later transfer and
+            # chip options. Holding the squad for the whole horizon is a
+            # different, much weaker comparator.
+            from .search_control import report_phase
+
+            report_phase("Comparing rolling this week with later transfers still available")
+            roll_search = optimize(
+                store,
+                reference["state_id"],
+                forecast["id"],
+                reference["end_event"],
+                comparison_seconds,
+                first_week_hit_budget=0,
+                first_week_roll=True,
+                chips=fixed_chips,
+                max_transfers=max_transfers,
+                use_decision_critic=False,
+            )
+            plans.append(roll_search)
+            plans = list({p["id"]: p for p in plans}.values())
     if any(p["ledger"][0]["hit"] > 0 for p in plans):
         no_hit_search = optimize(
             store,
@@ -393,6 +421,23 @@ def choose_recommendation(
             "paired_mc_standard_error": float(delta.std(ddof=1) / np.sqrt(len(delta))),
             "scope": "Same account, horizon, legal scoring and frozen worlds; later moves are conditional",
         }
+    roll_comparison = None
+    if roll_search:
+        rolled = next(i for i, p in enumerate(plans) if p["id"] == roll_search["id"])
+        delta = outcomes[index] - outcomes[rolled]
+        roll_comparison = {
+            "hold_plan_id": roll_search["id"],
+            "start_event": selected["start_event"],
+            "end_event": selected["end_event"],
+            "policy_net_gain": float(delta.mean()),
+            "immediate_net_gain": float(
+                selected["ledger"][0]["simulated_net_mean"] - roll_search["ledger"][0]["simulated_net_mean"]
+            ),
+            "probability_ahead": float(np.mean(delta > 0)),
+            "paired_mc_standard_error": float(delta.std(ddof=1) / np.sqrt(len(delta))),
+            "comparison_solver": roll_search["solver"],
+            "scope": "Roll this deadline only; the same later transfer and chip options remain available",
+        }
     from .ingestion import load_market
 
     first = selected["ledger"][0]
@@ -448,6 +493,7 @@ def choose_recommendation(
         "immediate_hit_evidence": hit_evidence,
         "immediate_chip_evidence": chip_evidence,
         "hold_comparison": comparison,
+        "roll_comparison": roll_comparison,
         "first_action_inputs": inputs,
         "market_known_at": market.get("known_at"),
         "no_hit_search_seconds": effective_time_limit(comparison_seconds) if no_hit_search else None,

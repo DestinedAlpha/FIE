@@ -401,7 +401,7 @@ def test_plan_endpoint_rejects_retired_model_even_when_state_and_market_match(tm
     state_id = store.put("state", {"event": 10})
     market_id = store.put("market", {"events": [{"id": 10, "deadline_time": "2099-01-01T00:00:00Z"}]})
     model_id = store.put("decision_model", {"marker": "validated original"})
-    forecast_id = store.put("forecast", {"decision_model_id": model_id})
+    forecast_id = store.put("forecast", {"decision_model_id": model_id, "market_id": market_id})
     plan_id = store.put(
         "plan",
         {

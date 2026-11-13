@@ -683,7 +683,12 @@ function App() {
                           ? `GW${first.event}–${plan?.ledger.at(-1)?.event} · Independently checked for squad legality and affordability.`
                           : "Freeze a forecast, then calculate legal transfers, your XI, captain and chip timing."}
                       </p>
-                      {data.policy_selection?.selection.selected_plan_id === plan?.id && data.policy_selection?.hold_comparison && (
+                      {data.policy_selection?.selection.selected_plan_id === plan?.id && data.policy_selection?.roll_comparison && (
+                        <p className="recommendation-copy">
+                          Compared with rolling this week and optimizing later moves: {data.policy_selection.roll_comparison.immediate_net_gain.toFixed(1)} expected net points this week; {data.policy_selection.roll_comparison.policy_net_gain.toFixed(1)} across GW{data.policy_selection.roll_comparison.start_event}–{data.policy_selection.roll_comparison.end_event}.
+                        </p>
+                      )}
+                      {data.policy_selection?.selection.selected_plan_id === plan?.id && !data.policy_selection?.roll_comparison && data.policy_selection?.hold_comparison && (
                         <p className="recommendation-copy">
                           Compared with keeping your squad: {data.policy_selection.hold_comparison.immediate_net_gain.toFixed(1)} expected net points this week; {data.policy_selection.hold_comparison.policy_net_gain.toFixed(1)} across GW{data.policy_selection.hold_comparison.start_event}–{data.policy_selection.hold_comparison.end_event}, including conditional later moves.
                         </p>

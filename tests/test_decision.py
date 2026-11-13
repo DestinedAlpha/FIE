@@ -327,6 +327,19 @@ def test_no_immediate_hit_budget_is_enforced_by_solver_and_ledger(
     )
     assert strict["ledger"][0]["hit"] == 0
     assert strict["solver"]["reused_incumbent_plan_id"] != unrestricted["id"]
+    rolled = optimizer.optimize(
+        store,
+        state_id,
+        forecast_id,
+        9,
+        3,
+        chips={},
+        automatic_chips=False,
+        first_week_hit_budget=0,
+        first_week_roll=True,
+    )
+    assert not rolled["ledger"][0]["buy"] and not rolled["ledger"][0]["sell"]
+    assert rolled["ledger"][0]["hit"] == 0 and rolled["solver"]["first_week_roll"]
     store.put("decision_model", {"promoted": True, "retrained": True})
     with pytest.raises(ValueError, match="current model"):
         optimizer.optimize(store, state_id, forecast_id, 9, 3, chips={}, automatic_chips=False)

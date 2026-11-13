@@ -523,6 +523,8 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
                 if kind == "forecast":
                     artifact = {k: v for k, v in artifact.items() if k not in ("match_audit", "fixtures")}
                     artifact["players"] = [r for r in artifact["players"] if r["event"] == event]
+                    artifact["market_flow_snapshot_frozen"] = artifact.get("market_id") != market["id"]
+                    artifact["market_flow_max_age_minutes"] = 60
                 if kind == "decision_model":
                     future_id = artifact.get("future_horizon_model_id")
                     if future_id:
@@ -571,14 +573,21 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
             selected_plan["stale"] = (
                 selected_plan["state_id"] != (result["state"] or {}).get("id")
                 or selected_plan["forecast_id"] != (result["forecast"] or {}).get("id")
-                or selected_plan["market_id"] != market["id"]
-                or (result["forecast"] or {}).get("market_id") != market["id"]
                 or (result["forecast"] or {}).get("model_version") != "learned-points-v1"
                 or (result["forecast"] or {}).get("decision_model_id")
                 != (result["decision_model"] or {}).get("id")
             )
-            from .readiness import forecast_dependencies_current
+            from .readiness import (
+                decision_market_signature,
+                forecast_dependencies_current,
+                forecast_market_current,
+            )
 
+            selected_plan["stale"] |= not forecast_market_current(store, result["forecast"] or {}, market)
+            if selected_plan["market_id"] != market["id"]:
+                selected_plan["stale"] |= decision_market_signature(
+                    store.get("market", selected_plan["market_id"])
+                ) != decision_market_signature(market)
             selected_plan["stale"] |= not forecast_dependencies_current(
                 store, result["forecast"] or {}, result["decision_model"] or {}
             )
@@ -1177,17 +1186,29 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
                         store.put("selected_plan", {"plan_id": hold["id"], "at": now()})
             report_phase("Current lineup ready; searching transfer and chip alternatives", plan_id=hold["id"])
             fixed_chips = request.chips if "chips" in request.model_fields_set else None
-            plan = optimize(
-                store,
-                request.state_id,
-                request.forecast_id,
-                request.end_event,
-                request.time_limit,
-                chips=fixed_chips,
-                max_transfers=request.max_transfers,
-                first_week_hit_budget=request.first_week_hit_budget,
-                relative_gap=request.relative_gap,
+            from .search_control import planning_budget
+
+            saved_state = store.get("state", request.state_id)
+            remaining = effective_time_limit(request.time_limit)
+            reserve_roll = (
+                request.objective == "expected_points"
+                and not saved_state.get("initial")
+                and not saved_state.get("active_chip")
+                and not (fixed_chips or {}).get(saved_state["event"])
             )
+            first_budget = remaining / 2 if remaining is not None and reserve_roll else remaining
+            with planning_budget(first_budget):
+                plan = optimize(
+                    store,
+                    request.state_id,
+                    request.forecast_id,
+                    request.end_event,
+                    request.time_limit,
+                    chips=fixed_chips,
+                    max_transfers=request.max_transfers,
+                    first_week_hit_budget=request.first_week_hit_budget,
+                    relative_gap=request.relative_gap,
+                )
             from .objectives import choose_recommendation
 
             plan, selection = choose_recommendation(
@@ -1373,13 +1394,13 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
             plan["stale"] = (
                 plan["state_id"] != current_state["id"]
                 or plan["forecast_id"] != current_forecast["id"]
-                or plan["market_id"] != current_market["id"]
                 or current_forecast.get("decision_model_id") != store.get("decision_model")["id"]
                 or (deadline is not None and moment(deadline) <= moment(now()))
             )
-            from .readiness import forecast_dependencies_current
+            from .readiness import forecast_dependencies_current, selection_is_current
 
             plan["stale"] |= not forecast_dependencies_current(store, current_forecast)
+            plan["stale"] |= not selection_is_current(store, plan)
         except (ValueError, KeyError):
             plan["stale"] = True
         if plan["stale"]:

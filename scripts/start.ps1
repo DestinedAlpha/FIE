@@ -85,7 +85,7 @@ if ($NeedsInitialisation) {
     Write-Host "Training completed. Forecasting and planning will run in the app with progress and cancellation."
 }
 
-$InstallationId = (& $UvPath run python -c "import hashlib,os; from pathlib import Path; print(hashlib.sha256(os.path.normcase(str(Path('data').resolve())).encode()).hexdigest())").Trim()
+$InstallationId = (& $UvPath run python -c "import hashlib,os; from fpl_intelligence.settings import load_environment; load_environment(); from fpl_intelligence.storage import Store; print(hashlib.sha256(os.path.normcase(str(Store().root.resolve())).encode()).hexdigest())").Trim()
 $Port = 8000
 while (Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue) {
     try {

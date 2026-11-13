@@ -11,6 +11,72 @@ from pathlib import Path
 
 from .storage import atomic_json, now
 
+MARKET_FLOW_FIELDS = frozenset(
+    {
+        "transfers_in",
+        "transfers_out",
+        "transfers_in_event",
+        "transfers_out_event",
+        "selected_by_percent",
+        "selected_rank",
+        "selected_rank_type",
+        "price_change_hourly_rate",
+        "price_change_locked_until",
+        "price_change_calibrating",
+        "price_change_percent",
+        "price_change_projections",
+    }
+)
+
+
+def decision_market_signature(market):
+    """Hard facts must match; a declared frozen market-flow snapshot may age."""
+    from .storage import digest
+
+    players = []
+    for player in market.get("players", []):
+        body = {k: v for k, v in player.items() if k not in ("raw", "ownership")}
+        body["raw"] = {k: v for k, v in player.get("raw", {}).items() if k not in MARKET_FLOW_FIELDS}
+        players.append(body)
+    return digest(
+        {
+            "season": market.get("season"),
+            "players": players,
+            "teams": market.get("teams"),
+            "events": market.get("events"),
+            "fixtures": market.get("fixtures"),
+        }
+    )
+
+
+def forecast_market_current(store, forecast, market=None):
+    """Live flow-only refreshes reuse a labelled, at-most-one-hour forecast.
+
+    Prices, football stats, news, availability, fixtures and model dependencies
+    are never waived. Historical evaluation always requires the exact snapshot.
+    """
+    market = market if market is not None else store.get("market")
+    if forecast.get("market_id") == market["id"]:
+        return True
+    if store.list("replay_context", 1) or not forecast.get("market_id"):
+        return False
+    from .availability import moment
+
+    try:
+        age = (moment(now()) - moment(forecast["information_cutoff"])).total_seconds()
+        if not 0 <= age <= 3600:
+            return False
+        from .rules import Rules
+
+        bootstrap, _ = store.latest("bootstrap", content_hash=market["source_hash"])
+        if Rules.from_bootstrap(bootstrap).hash != forecast.get("rules_hash"):
+            return False
+        return decision_market_signature(
+            store.get("market", forecast["market_id"])
+        ) == decision_market_signature(market)
+    except (KeyError, ValueError):
+        return False
+
 
 def workload_is_current(store, forecast, model=None):
     model = model if model is not None else store.get("decision_model")
@@ -49,15 +115,22 @@ def selection_is_current(store, plan):
             plan.get(key) != value
             for key, value in (
                 ("state_id", state["id"]),
-                ("market_id", market["id"]),
                 ("forecast_id", forecast["id"]),
             )
         )
-        or forecast.get("market_id") != market["id"]
+        or not forecast_market_current(store, forecast, market)
         or forecast.get("decision_model_id") != model["id"]
         or not forecast_dependencies_current(store, forecast, model)
     ):
         return False
+    if plan.get("market_id") != market["id"]:
+        try:
+            if decision_market_signature(store.get("market", plan["market_id"])) != decision_market_signature(
+                market
+            ):
+                return False
+        except (ValueError, KeyError):
+            return False
     from .account_sync import next_event
 
     return not market.get("events") or state.get("event") == next_event(market)
@@ -219,7 +292,7 @@ def operational_readiness(store):
                 reasons.append(f"Missing {kind} weight manifest")
     if any(not path.is_file() for path in weight_paths):
         reasons.append("One or more fitted weight files are missing")
-    if forecast.get("market_id") != market["id"]:
+    if not forecast_market_current(store, forecast, market):
         reasons.append("Forecast uses an older market")
     if forecast.get("decision_model_id") != model["id"]:
         reasons.append("Forecast uses an older model")
@@ -233,14 +306,7 @@ def operational_readiness(store):
         reasons.append("Account needs deadline reconciliation")
     try:
         plan = store.get("plan", objects["selected_plan"].get("plan_id"))
-        if any(
-            plan.get(key) != value
-            for key, value in (
-                ("state_id", state["id"]),
-                ("market_id", market["id"]),
-                ("forecast_id", forecast["id"]),
-            )
-        ):
+        if not selection_is_current(store, plan):
             reasons.append("Selected plan uses superseded inputs")
     except ValueError:
         reasons.append("No selected plan available")

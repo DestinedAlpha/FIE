@@ -98,6 +98,14 @@ print(json.dumps({'baseline_installed_source':True,'dashboard_and_built_ui':True
                 path = stage / relative
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(zipped.read(prefix + name))
+        # Optional separate backup filesystem for resource-constrained verification.
+        # Product installation/recovery code is unchanged and still exercised.
+        backup_directory = os.getenv("FPL_VERIFY_BACKUP_DIR")
+        if backup_directory:
+            destination = Path(backup_directory).resolve()
+            destination.mkdir(parents=True, exist_ok=True)
+            (target / "artifacts").mkdir(exist_ok=True)
+            (target / "artifacts/runtime").symlink_to(destination, target_is_directory=True)
         outcome = subprocess.run(
             [sys.executable, str(stage / "scripts/install_update.py"), "--target", str(target)],
             check=True,

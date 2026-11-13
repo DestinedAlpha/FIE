@@ -333,6 +333,7 @@ def optimize(
     use_decision_critic: bool = True,
     relative_gap: float = 0.001,
     blocked_chips: Mapping[int, tuple[str, ...]] | None = None,
+    first_week_roll: bool = False,
 ) -> dict:
     started = time.monotonic()
     if first_week_hit_budget is not None and first_week_hit_budget < 0:
@@ -362,6 +363,7 @@ def optimize(
                     use_decision_critic,
                     relative_gap,
                     blocked_chips,
+                    first_week_roll,
                 )
         time_limit = 30
     if time_limit <= 0 or not 0 <= max_transfers <= 15:
@@ -390,11 +392,17 @@ def optimize(
         raise ValueError("Forecast predates current model inputs; rebuild forecasts before solving")
     rules = Rules.from_bootstrap(store.latest("bootstrap")[0])
     validate_squad(state, players, rules)
-    if forecast["market_id"] != market["id"] or forecast["rules_hash"] != rules.hash:
+    from .readiness import forecast_market_current
+
+    if not forecast_market_current(store, forecast, market) or forecast["rules_hash"] != rules.hash:
         raise ValueError("Forecast inputs are stale: refresh/recompute before solving")
     if not forecast["start_event"] <= state.event <= end_event <= forecast["end_event"]:
         raise ValueError("State/horizon is outside the forecast")
     requested_first_chip = (chips if chips is not None else pin_chips or {}).get(state.event)
+    if first_week_roll and (
+        state.active_chip or requested_first_chip or (forced_sell or {}).get(state.event)
+    ):
+        raise ValueError("A rolled first week conflicts with an activated chip or forced sale")
     if state.active_chip is not None and requested_first_chip not in (None, state.active_chip):
         raise ValueError("Requested chip conflicts with an already activated chip")
     if state.active_chip == "freehit" or (requested_first_chip == "freehit" and state.transfers_made):
@@ -446,6 +454,7 @@ def optimize(
         pin_chips = {**(pin_chips or {}), state.event: state.active_chip}
     if (
         use_decision_critic
+        and not first_week_roll
         and chips is None
         and pin_chips is None
         and not forced_sell
@@ -512,7 +521,11 @@ def optimize(
                 allowed = not any(c.chip == chip and a <= c.event <= b for c in state.used_chips)
             except ValueError:
                 pass
-            if chip in disabled_chips or chip in (blocked_chips or {}).get(t, ()):
+            if (
+                chip in disabled_chips
+                or chip in (blocked_chips or {}).get(t, ())
+                or (first_week_roll and t == state.event)
+            ):
                 allowed = False
             if chip == "freehit" and state.transfers_made and t == state.event:
                 # Keep prior-event transfer restoration out of the generator;
@@ -741,6 +754,10 @@ def optimize(
             mip.equal({outgoing[event, p]: 1}, 1)
     # Supply an independently feasible incumbent. Time limits must still return a
     # legal usable plan, even when the large joint-chip formulation has a weak LP.
+    if first_week_roll:
+        for p in ids:
+            mip.upper[incoming[state.event, p]] = 0
+            mip.upper[outgoing[state.event, p]] = 0
     warm = np.zeros(len(mip.costs))
     warm_state = state
     surviving_original = set(old_ids)
@@ -851,7 +868,7 @@ def optimize(
                     )
                     for p in ids
                 }
-                warm_limit = min(2, max_transfers)
+                warm_limit = 0 if first_week_roll and t == state.event else min(2, max_transfers)
                 if t == state.event and first_week_hit_budget is not None and not state.initial:
                     warm_limit = min(
                         warm_limit,
@@ -914,7 +931,11 @@ def optimize(
         try:
             for t in events:
                 seed_kind = schedule.get(t)
-                limit = min(max_transfers, max(2, len((forced_sell or {}).get(t, []))))
+                limit = (
+                    0
+                    if first_week_roll and t == state.event
+                    else min(max_transfers, max(2, len((forced_sell or {}).get(t, []))))
+                )
                 if t == state.event and first_week_hit_budget is not None and not state.initial:
                     limit = min(
                         limit,
@@ -1021,6 +1042,7 @@ def optimize(
     diagnostics.update(
         initial_warm_objective=objective_before,
         selected_warm_objective=warm_value,
+        first_week_roll=first_week_roll,
         reused_incumbent_plan_id=reused_plan,
         validated_cached_incumbents=candidate_count,
         validated_full_market_seeds=exact_seed_count,
@@ -1156,7 +1178,9 @@ def hold_plan(store: Store, state_id: str, forecast_id: str, end_event: int) -> 
     players, market = load_market(store)
     forecast = store.get("forecast", forecast_id)
     rules = Rules.from_bootstrap(store.latest("bootstrap")[0])
-    if forecast["market_id"] != market["id"] or forecast["rules_hash"] != rules.hash:
+    from .readiness import forecast_market_current
+
+    if not forecast_market_current(store, forecast, market) or forecast["rules_hash"] != rules.hash:
         raise ValueError("Forecast inputs are stale: update forecasts before planning")
     if not forecast["start_event"] <= state.event <= end_event <= forecast["end_event"]:
         raise ValueError("State/horizon is outside the forecast")
