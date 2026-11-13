@@ -685,7 +685,7 @@ function App() {
                           ? `GW${first.event}–${plan?.ledger.at(-1)?.event} · Independently checked for squad legality and affordability.`
                           : "Freeze a forecast, then calculate legal transfers, your XI, captain and chip timing."}
                       </p>
-                      {data.policy_selection?.selection.selected_plan_id === plan?.id && data.policy_selection.free_transfer_evidence?.supported === false && (
+                      {data.policy_selection?.selection.selected_plan_id === plan?.id && data.policy_selection?.free_transfer_evidence?.supported === false && (
                         <p className="recommendation-copy">Keep the free transfer for flexibility. The alternatives have not shown a reliable advantage over rolling and planning later moves.</p>
                       )}
                       {data.policy_selection?.selection.selected_plan_id === plan?.id && data.policy_selection?.roll_comparison && (
