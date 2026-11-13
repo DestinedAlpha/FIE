@@ -99,3 +99,48 @@ def test_explicit_recovery_does_not_apply_the_old_injury_prior_again(tmp_path, m
     args = inputs(tmp_path, market, monkeypatch, availability=1.0)
     p, _, starts, _ = future_expert.combine(*args)
     assert np.isclose(1 - p[1, 0], 0.8) and np.isclose(starts[1], 0.7)
+
+
+def test_live_forecasting_cannot_reuse_unrepaired_scoring_weights(tmp_path, market, monkeypatch):
+    args = list(inputs(tmp_path, market, monkeypatch))
+    store = args[0]
+    with store.db() as db:
+        db.execute("DELETE FROM objects WHERE kind='replay_context'")
+    proof = store.put("future_distribution_validation", {"passed": True})
+    spec = store.get("future_horizon_model")
+    body = {k: v for k, v in spec.items() if k != "id"}
+    body.update(policy_gate_passed=True, distribution_validation_id=proof)
+    args[1] = {"future_horizon_model_id": store.put("future_horizon_model", body)}
+    with pytest.raises(ValueError, match="one-time model repair"):
+        future_expert.combine(*args)
+
+
+def test_refinement_replay_uses_the_selected_content_addressed_model(tmp_path):
+    import json
+
+    store = Store(tmp_path / "data")
+    folder = store.root / "models" / "research" / "2025-26-GW01-uniform-selected-hash"
+    folder.mkdir(parents=True)
+    (folder / "model.json").write_text(
+        json.dumps(
+            {
+                "hashes": {"minutes": "selected-weight-hash"},
+                "curves": {},
+                "fit_max_label": "2024/25-GW30",
+                "cal_max_label": "2024/25-GW38",
+                "cut": "2024/25-GW31",
+                "training_rows": 100,
+                "calibration_rows": 20,
+                "data_contract": "repaired-target",
+            }
+        )
+    )
+    refinement = {
+        "id": "selected-refinement",
+        "forecast_gate_passed": True,
+        "selected": "uniform_0.5",
+        "model_paths": {"2025/26-GW01": str(folder)},
+    }
+    frozen = future_expert.frozen_spec(store, refinement, "2025/26-GW01")
+    assert frozen["models"]["minutes"]["path"] == str(folder / "minutes.txt")
+    assert frozen["data_contract"] == "repaired-target"

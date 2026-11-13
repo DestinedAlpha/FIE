@@ -31,6 +31,10 @@ def observation_signature(store):
     groups = [f"{r['season']}-GW{int(r['round']):02d}" for r in rows]
     through = max(groups, default="")
     dependencies = {}
+    if store.list("future_horizon_model", 1):
+        from .fixture_horizon import DATA_CONTRACT
+
+        dependencies["future_data_contract"] = DATA_CONTRACT
     market = store.get("market")
     event = int(through.split("GW")[-1]) if through.startswith(market["season"]) else None
     cutoff = next((e["deadline_time"] for e in market["events"] if e["id"] == event), None)

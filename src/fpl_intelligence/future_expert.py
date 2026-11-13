@@ -9,7 +9,7 @@ import numpy as np
 import polars as pl
 
 from .consensus import mix_distributions
-from .fixture_horizon import FEATURES, feature_vector, predict
+from .fixture_horizon import DATA_CONTRACT, FEATURES, feature_vector, predict
 from .models import curve_apply
 
 
@@ -39,6 +39,8 @@ def combine(store, decision_model, rows, scheduled, market, players, p, c, start
         distribution = store.get("future_distribution_validation", spec.get("distribution_validation_id"))
         if not spec.get("distribution_validation_id") or not distribution["passed"]:
             raise ValueError("Future expert requires accepted distribution validation")
+    if not store.list("replay_context", 1) and spec.get("data_contract") != DATA_CONTRACT:
+        raise ValueError("Future scoring inputs need the one-time model repair before forecasting")
     indices = [i for i, r in enumerate(rows) if 0 < r["event"] - start_event <= spec["max_lead"]]
     if not indices:
         return p, c, starts, included
@@ -92,8 +94,13 @@ def frozen_spec(store, refinement, before):
     if not refinement["forecast_gate_passed"]:
         raise ValueError("Future forecast acceptance failed")
     family, weight = refinement["selected"].rsplit("_", 1)
-    directory = store.artifact_path(refinement["directory"] + "/protocol.json").parent
-    folder = directory / (before.replace("/", "-") + "-" + family)
+    reference = refinement.get("model_paths", {}).get(before)
+    if reference:
+        folder = store.artifact_path(reference + "/model.json").parent
+    else:
+        # Original immutable receipts predate content-addressed trial folders.
+        directory = store.artifact_path(refinement["directory"] + "/protocol.json").parent
+        folder = directory / (before.replace("/", "-") + "-" + family)
     body = json.loads((folder / "model.json").read_text())
     models = {
         name: {"path": str(folder / (name + ".txt")), "hash": checksum}
@@ -101,6 +108,7 @@ def frozen_spec(store, refinement, before):
     }
     return {
         "version": "future-horizon-v1",
+        "data_contract": body.get("data_contract"),
         "features": list(FEATURES),
         "models": models,
         "curves": body["curves"],

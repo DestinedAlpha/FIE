@@ -1,0 +1,38 @@
+{
+  "at": "2026-11-13T17:10:07.277056+00:00",
+  "protocol": "Defender-only conditional points with positive goals90/assists90 and negative team-defence/opponent-attack monotonicity. Existing role probabilities, DC and all other positions unchanged. Select blend on 2024/25 GW1-19; independent acceptance GW20-38 and 2025/26 replication. Eight prior calibration deadlines excluded from fitting. Current player preferences do not select a blend.",
+  "feature_hash": "f173acf74d61bbd7029327fe5121322b2949d859f41324ca673c06468518a687",
+  "selected_weight": 0,
+  "selection_losses": {
+    "0": 3.5288866081873635,
+    "0.25": 3.5463774223536677,
+    "0.5": 3.574819881991066,
+    "1": 3.6645597376791432
+  },
+  "metrics": {
+    "acceptance_2024": {
+      "rows": 4922,
+      "reference_rmse": 1.768534395632842,
+      "candidate_rmse": 1.768534395632842,
+      "regular_reference_rmse": 2.7559965594294713,
+      "regular_candidate_rmse": 2.7559965594294713,
+      "deadline_delta_mse_99ci": [
+        0.0,
+        0.0
+      ]
+    },
+    "replication_2025": {
+      "rows": 9707,
+      "reference_rmse": 2.0617903676197775,
+      "candidate_rmse": 2.0617903676197775,
+      "regular_reference_rmse": 3.0095954762283275,
+      "regular_candidate_rmse": 3.0095954762283275,
+      "deadline_delta_mse_99ci": [
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "passed": false,
+  "promoted": false
+}

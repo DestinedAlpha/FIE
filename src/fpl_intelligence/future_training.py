@@ -10,7 +10,7 @@ import polars as pl
 from threadpoolctl import threadpool_limits
 
 from .availability import moment
-from .fixture_horizon import FEATURES, PARAMS, build_data, fit_models, partitions
+from .fixture_horizon import DATA_CONTRACT, FEATURES, PARAMS, build_data, fit_models, partitions
 from .future_expert import load_expert
 from .storage import atomic_json, digest, now
 
@@ -98,6 +98,7 @@ def refit_expert(store, acceptance_id=None):
             models[name] = {"path": str(target), "hash": hashlib.sha256(target.read_bytes()).hexdigest()}
         spec = {
             "version": "future-horizon-v1",
+            "data_contract": DATA_CONTRACT,
             "family": family,
             "parameters": PARAMS,
             "features": list(FEATURES),
@@ -144,6 +145,64 @@ def activate_expert(store, acceptance_id=None):
     model["id"] = store.put("decision_model", model)
     bind_immediate_audits(store, model)
     return model
+
+
+def repair_data_contract(store):
+    """Refit the existing accepted family after a confirmed target/feature defect.
+
+    Preserve the entire immediate head and every original artifact. Publication
+    of the repaired future weights and composed model is one guarded transaction.
+    """
+    if not store.list("decision_model", 1):
+        return None
+    original = store.get("decision_model")
+    identity = original.get("future_horizon_model_id")
+    if not identity or not original.get("promoted"):
+        return None
+    previous = store.get("future_horizon_model", identity)
+    if previous.get("data_contract") == DATA_CONTRACT:
+        return None
+    from .model_refresh import observation_signature
+    from .search_control import check_cancelled, report_phase
+    from .training import DeferredModelStore
+
+    report_phase("Repairing future scoring targets and missing team-strength inputs")
+    before = observation_signature(store)
+    staged = DeferredModelStore(store)
+    expert = refit_expert(staged, previous["acceptance_id"])
+    if expert.get("data_contract") != DATA_CONTRACT:
+        raise ValueError("Future refit did not repair its training-data contract")
+    model = {k: v for k, v in original.items() if k != "id"}
+    model["future_horizon_model_id"] = expert["id"]
+    model["id"] = staged.put("decision_model", model)
+    if observation_signature(store) != before:
+        raise ValueError("Football observations changed during scoring repair; old model retained")
+    staged.put(
+        "model_training_state",
+        {
+            "at": now(),
+            "decision_model_id": model["id"],
+            "observations": before,
+            "refitted": True,
+            "policy": "existing accepted family; repaired future scoring inputs",
+        },
+    )
+    check_cancelled()
+    staged.publish(original["id"])
+    bind_immediate_audits(store, model)
+    result = {
+        "at": now(),
+        "data_contract": DATA_CONTRACT,
+        "previous_decision_model_id": original["id"],
+        "decision_model_id": model["id"],
+        "previous_future_model_id": identity,
+        "future_model_id": expert["id"],
+        "immediate_weights_changed": False,
+        "correction": "Canonical base_target used once; unknown provider strengths masked",
+        "evaluation_scope": "Existing accepted family with corrected data; preceding historical scores are retained as original evidence, not relabelled as evaluations of repaired weights",
+    }
+    result["id"] = store.put("future_data_repair", result)
+    return result
 
 
 def bind_immediate_audits(store, model):

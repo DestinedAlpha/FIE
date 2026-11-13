@@ -46,7 +46,7 @@ def fitted(store, frame, before, weighting, directory):
             if hashlib.sha256(path.read_bytes()).hexdigest() != checksum:
                 raise ValueError("Horizon trial model checksum mismatch")
             models[name] = lgb.Booster(model_file=str(path))
-        return {**spec, **models}
+        return {**spec, **models, "directory": str(folder)}
     with threadpool_limits(limits=1):
         bundle = fit_models(frame, before, weighting)
     folder.mkdir(parents=True, exist_ok=True)
@@ -62,7 +62,7 @@ def fitted(store, frame, before, weighting, directory):
         spec["hashes"][name] = hashlib.sha256(path.read_bytes()).hexdigest()
     atomic_json(specfile, spec)
     print("Fitted horizon expert", before, weighting, spec["training_rows"], flush=True)
-    return bundle
+    return {**bundle, "directory": str(folder)}
 
 
 def reference(store, before, directory):

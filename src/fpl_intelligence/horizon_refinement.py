@@ -87,6 +87,9 @@ def run_refinement(store):
     select = future_mask(data, "2024/25", 1, 19)
     scores = {name: loss(data, pred, select) for name, pred in means.items()}
     selected = min(scores, key=lambda name: scores[name])
+    model_paths = {}
+    if selected != "reference":
+        model_paths["2024/25-GW01"] = models[selected.rsplit("_", 1)[0]]["directory"]
     atomic_json(
         directory / "future-selection.json", {"selected": selected, "scores": scores, "protocol": protocol}
     )
@@ -99,6 +102,7 @@ def run_refinement(store):
             family = selected.rsplit("_", 1)[0]
             data = all_data.filter(pl.col("season") == season)
             models = {family: fitted(store, all_data, season + "-GW01", family, directory)}
+            model_paths[season + "-GW01"] = models[family]["directory"]
             means = distributions(data, reference(store, season + "-GW01", directory), models)
         mask = future_mask(data, season, 20 if season == "2024/25" else 1, 38)
         changes = differences(data, means["reference"], means[selected], mask)
@@ -136,6 +140,7 @@ def run_refinement(store):
         "promoted": False,
         "trial_id": trial["id"],
         "directory": str(directory),
+        "model_paths": model_paths,
         "next_gate": "Full production transfer/chip comparison",
     }
     result["id"] = store.put("horizon_refinement", result)

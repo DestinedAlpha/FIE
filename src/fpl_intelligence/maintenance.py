@@ -50,6 +50,11 @@ def maintain_models(store):
             body.update(at=now(), retired_companion_from=original["id"])
             store.put("decision_model", body)
     refits = []
+    if store.list("decision_model", 1) and store.get("decision_model").get("future_horizon_model_id"):
+        from .future_training import repair_data_contract
+
+        if repair_data_contract(store):
+            refits.append("future_scoring_data_contract")
     input_audit = None
     if all(
         store.list(kind, 1)

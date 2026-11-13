@@ -25,6 +25,9 @@ from .replay import deadline_rows
 from .storage import digest
 
 LEADS = (0, 1, 2, 3, 5, 8, 12, 18)
+DATA_CONTRACT = "base-target-missing-strength-v6"
+# Exactly the published v5 transform; other contracts rebuild from sealed inputs.
+LEGACY_V5_TRANSFORM = "14f778c158820a55dbdddffa2fd277a0038fde777e44d7d84ad94d2065b0f55c"
 RAW = (
     "now_cost",
     "selected_by_percent",
@@ -160,8 +163,8 @@ def feature_vector(player, row, fixture, schedule, teams, source_event, cutoff):
         count,
         number(fixture, "team_h_difficulty", 3),
         number(fixture, "team_a_difficulty", 3),
-        number(own, "strength_attack_home" if home else "strength_attack_away", 1000),
-        number(opp, "strength_defence_away" if home else "strength_defence_home", 1000),
+        positive_strength(own, "strength_attack_home" if home else "strength_attack_away"),
+        positive_strength(opp, "strength_defence_away" if home else "strength_defence_home"),
         rest,
         float(ep) / max(1, count) if use_ep else np.nan,
         float(use_ep),
@@ -169,6 +172,92 @@ def feature_vector(player, row, fixture, schedule, teams, source_event, cutoff):
         *(float(player.status == s) for s in ("a", "d", "i", "s", "u")),
     ]
     return core + fields + observed + extra
+
+
+def positive_strength(team, field):
+    """Zero/absent provider ratings are unknown, not an extremely weak club."""
+    value = number(team, field, np.nan)
+    return value if np.isfinite(value) and value > 0 else np.nan
+
+
+def repair_cached_data(store, path, source, packets, transform, signature):
+    """Apply only the two reviewed column corrections to an exact v5 cache.
+
+    Reuse requires identical sealed packets, labels, transform and file checksum.
+    Unknown old contracts or unobserved ratings rebuild through the normal path.
+    """
+    import json
+
+    from .storage import atomic_json
+
+    if not store.list("future_horizon_model", 1):
+        return False
+    previous = store.get("future_horizon_model")
+    if not previous.get("data_path") or not previous.get("data_hash"):
+        return False
+    old_path = store.artifact_path(previous["data_path"])
+    lineage_path = old_path.parent / "lineage.json"
+    if not lineage_path.is_file():
+        return False
+    lineage = json.loads(lineage_path.read_text())
+    expected = digest(
+        {
+            "packets": [p["id"] for _, p in sorted(packets.items())],
+            "labels": source["hash"],
+            "transform": lineage["transform"],
+        }
+    )
+    if digest(lineage["transform"]) != LEGACY_V5_TRANSFORM or lineage["label_hash"] != source["hash"]:
+        return False
+    ratings = (
+        "strength_attack_home",
+        "strength_attack_away",
+        "strength_defence_home",
+        "strength_defence_away",
+    )
+    if any(
+        team.get(k) is None
+        for packet in packets.values()
+        for team in packet["bootstrap"]["teams"]
+        for k in ratings
+    ):
+        return False  # An old fallback of 1000 cannot be distinguished from a real rating.
+    if hashlib.sha256(old_path.read_bytes()).hexdigest() != previous["data_hash"]:
+        raise ValueError("Prior future training cache checksum mismatch")
+    old = pl.read_parquet(old_path)
+    if lineage["signature"] != expected:
+        # v5 also hashed the changing, unlabelled upcoming packet. It was never
+        # consumed. The exact productive packet set still proves input identity.
+        if "input_id" not in old.columns or set(old["input_id"]) != {p["id"] for p in packets.values()}:
+            return False
+    labels = pl.read_parquet(store.artifact_path(source["path"])).select(
+        "season", "fixture_id", "player_id", pl.col("base_target").alias("canonical_base")
+    )
+    repaired = old.join(
+        labels, on=["season", "fixture_id", "player_id"], how="left", validate="m:1", maintain_order="left"
+    )
+    if repaired.filter(pl.col("canonical_base").is_null() & (pl.col("target") != 0)).height:
+        raise ValueError("A nonzero horizon label lacks its canonical scoring target")
+    repaired = repaired.with_columns(
+        pl.col("canonical_base").fill_null(0).alias("base_target"),
+        *[
+            pl.when(pl.col(k).is_finite() & (pl.col(k) > 0)).then(pl.col(k)).otherwise(float("nan")).alias(k)
+            for k in ("official_own_attack", "official_opponent_defence")
+        ],
+    ).select(old.columns)
+    temporary = path.with_suffix(".temporary.parquet")
+    repaired.write_parquet(temporary)
+    temporary.replace(path)
+    atomic_json(
+        path.parent / "lineage.json",
+        {
+            "signature": signature,
+            "transform": transform,
+            "label_hash": source["hash"],
+            "migrated_from": {"path": str(old_path), "hash": previous["data_hash"]},
+        },
+    )
+    return True
 
 
 def build_data(store):
@@ -190,6 +279,12 @@ def build_data(store):
         )
         .to_dicts()
     )
+    # A newly captured upcoming deadline has no finalized future labels. It
+    # cannot contribute a row and must not invalidate the entire training cache.
+    last_label = max((r["deadline_group"] for r in labels), default="")
+    packets = {
+        key: packet for key, packet in packets.items() if f"{key[0]}-GW{int(key[1]):02d}" <= last_label
+    }
     truth = {(r["season"], int(r["fixture_id"]), int(r["player_id"])): r for r in labels}
     from .observations import finalization_clocks, label_available_at
 
@@ -207,11 +302,13 @@ def build_data(store):
     transform = {
         "features": FEATURES,
         "leads": LEADS,
-        "data_version": 5,
+        "data_version": 6,
+        "data_contract": DATA_CONTRACT,
         "functions": [
             inspect.getsource(f)
             for f in (
                 feature_vector,
+                positive_strength,
                 deadline_rows,
                 context_vector,
                 dc_probability,
@@ -233,6 +330,8 @@ def build_data(store):
     directory.mkdir(parents=True, exist_ok=True)
     path = directory / "data.parquet"
     if path.exists():
+        return path
+    if repair_cached_data(store, path, source, packets, transform, signature):
         return path
     cache = store.root / "features" / "fixture-horizon-chunks"
     cache.mkdir(parents=True, exist_ok=True)
@@ -296,7 +395,7 @@ def build_data(store):
             actual, base, minutes, start = (
                 (
                     label["target"],
-                    label["target"] - 2 * float(label.get("dc_target") or 0),
+                    label["base_target"],
                     label["minutes_target"],
                     label["start_target"],
                 )
@@ -402,6 +501,7 @@ def fit_models(frame, before, weighting, before_clock=None, calibration_groups=8
     )
     return {
         "minutes": minute,
+        "data_contract": DATA_CONTRACT,
         "points": point,
         "starter": starter,
         "curves": curves,

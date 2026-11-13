@@ -88,6 +88,15 @@ def workload_is_current(store, forecast, model=None):
 
 
 def forecast_dependencies_current(store, forecast, model=None):
+    model = model if model is not None else store.get("decision_model")
+    if model.get("future_horizon_model_id"):
+        from .fixture_horizon import DATA_CONTRACT
+
+        if (
+            store.get("future_horizon_model", model["future_horizon_model_id"]).get("data_contract")
+            != DATA_CONTRACT
+        ):
+            return False
     if not workload_is_current(store, forecast, model):
         return False
     for key, kind in (

@@ -73,3 +73,50 @@ def test_immediate_audits_reuse_executed_results_only_for_an_identical_head(tmp_
     changed = current | {"model_hashes": {"minutes": "different"}}
     changed["id"] = store.put("decision_model", {k: v for k, v in changed.items() if k != "id"})
     assert not bind_immediate_audits(store, changed)
+
+
+@pytest.mark.parametrize("cancel", [False, True])
+def test_scoring_contract_repair_is_atomic_preserves_immediate_head_and_runs_once(
+    tmp_path, monkeypatch, cancel
+):
+    from concurrent.futures import CancelledError
+
+    from fpl_intelligence import future_training, model_refresh, search_control
+    from fpl_intelligence.fixture_horizon import DATA_CONTRACT
+
+    store = Store(tmp_path / "data")
+    old_future = store.put("future_horizon_model", {"acceptance_id": "accepted-family"})
+    body = {"promoted": True, "future_horizon_model_id": old_future, "model_hashes": {"points": "retained"}}
+    original = store.put("decision_model", body)
+    calls = []
+
+    def fit(staged, acceptance):
+        assert acceptance == "accepted-family"
+        calls.append(acceptance)
+        repaired = {"data_contract": DATA_CONTRACT}
+        return repaired | {"id": staged.put("future_horizon_model", repaired)}
+
+    def cancelled():
+        if cancel and calls:
+            raise CancelledError("Cancelled after fitting and before publication")
+
+    monkeypatch.setattr(future_training, "refit_expert", fit)
+    monkeypatch.setattr(
+        model_refresh, "observation_signature", lambda _: {"signature": "same-finalized-inputs"}
+    )
+    monkeypatch.setattr(search_control, "check_cancelled", cancelled)
+    if cancel:
+        with pytest.raises(CancelledError):
+            future_training.repair_data_contract(store)
+        assert store.get("decision_model")["id"] == original
+        assert store.get("future_horizon_model")["id"] == old_future
+        assert not store.list("future_data_repair", 1)
+    else:
+        result = future_training.repair_data_contract(store)
+        model = store.get("decision_model")
+        assert result["previous_decision_model_id"] == original
+        assert model["model_hashes"] == body["model_hashes"]
+        assert model["future_horizon_model_id"] != old_future
+        assert store.get("model_training_state")["decision_model_id"] == model["id"]
+        assert future_training.repair_data_contract(store) is None
+        assert calls == ["accepted-family"]

@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-13T17:09:56.792204+00:00",
+  "data_contract": "base-target-missing-strength-v6",
+  "previous_decision_model_id": "0d0bd466e04abe52f4939fafbb9f0416a33632a80d329e15b7dd46a342db763b",
+  "decision_model_id": "b85577dac1618ea0b8db1e2a662d138e1fbae7256c6f53028d2e8648eeb83ccd",
+  "previous_future_model_id": "74b07a7c5a71a84c90e901e0ea0f9a111557c5a14ec47e0b182fe1c0f8bc9f98",
+  "future_model_id": "631db6f02b3ca75480fa26514614aeb9942556951fcbdff070a2e6299efdb3d6",
+  "immediate_weights_changed": false,
+  "correction": "Canonical base_target used once; unknown provider strengths masked",
+  "evaluation_scope": "Existing accepted family with corrected data; preceding historical scores are retained as original evidence, not relabelled as evaluations of repaired weights",
+  "id": "25d6d0af0470da3acb39997169ae2f35580a33cbbad967efd48af283e22efc6c",
+  "seconds": 248.79183759499938,
+  "old_weight_files_preserved": 524,
+  "completed_at": "2026-11-13T17:09:57.524837+00:00"
+}

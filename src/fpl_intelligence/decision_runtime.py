@@ -374,10 +374,10 @@ def conditional_plan(
     from .rules import optimize_bench
     from .simulation import score_plan
 
-    players, market = load_market(store)
+    forecast = store.get("forecast", forecast_id)
+    players, market = load_market(store, forecast.get("market_id"))
     saved = store.get("state", state_id)
     state = TeamState.model_validate({k: v for k, v in saved.items() if k != "id"})
-    forecast = store.get("forecast", forecast_id)
     rules = Rules.from_bootstrap(store.latest("bootstrap", content_hash=market["source_hash"])[0])
     from .worlds import load_worlds
 
