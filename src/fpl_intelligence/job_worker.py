@@ -67,13 +67,36 @@ def run(root, identity):
         raise SystemExit(1)
 
 
+def watch_parent(parent_pid):
+    """No blocking stdin reads: closing buffered stdin can deadlock on Windows."""
+    import os
+    import time
+
+    if os.name == "nt":
+        import ctypes
+        from ctypes import wintypes
+
+        kernel = getattr(ctypes, "WinDLL")("kernel32", use_last_error=True)
+        kernel.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+        kernel.OpenProcess.restype = wintypes.HANDLE
+        kernel.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
+        kernel.WaitForSingleObject.restype = wintypes.DWORD
+        handle = kernel.OpenProcess(0x00100000, False, parent_pid)
+        if not handle:
+            os._exit(2)
+        if kernel.WaitForSingleObject(handle, 0xFFFFFFFF) == 0:
+            os._exit(2)
+    else:
+        while os.getppid() == parent_pid:
+            time.sleep(0.5)
+        os._exit(2)
+
+
 if __name__ == "__main__":
     import os
     from threading import Thread
 
-    def parent_watch():
-        if sys.stdin.buffer.read(1) == b"":
-            os._exit(2)
-
-    Thread(target=parent_watch, daemon=True).start()
+    Thread(
+        target=watch_parent, args=(int(sys.argv[3]) if len(sys.argv) > 3 else os.getppid(),), daemon=True
+    ).start()
     run(Path(sys.argv[1]), sys.argv[2])

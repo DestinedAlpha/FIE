@@ -376,6 +376,68 @@ def choose_recommendation(
                     - float(outcomes[index].mean()),
                     reason=chip_evidence["reason"],
                 )
+    selected = plans[index]
+    held = next((i for i, p in enumerate(plans) if p.get("label") == "hold / roll"), None)
+    comparison = None
+    if held is not None:
+        delta = outcomes[index] - outcomes[held]
+        comparison = {
+            "hold_plan_id": plans[held]["id"],
+            "start_event": selected.get("start_event", selected["ledger"][0]["event"]),
+            "end_event": selected["end_event"],
+            "policy_net_gain": float(delta.mean()),
+            "immediate_net_gain": float(
+                selected["ledger"][0]["simulated_net_mean"] - plans[held]["ledger"][0]["simulated_net_mean"]
+            ),
+            "probability_ahead": float(np.mean(delta > 0)),
+            "paired_mc_standard_error": float(delta.std(ddof=1) / np.sqrt(len(delta))),
+            "scope": "Same account, horizon, legal scoring and frozen worlds; later moves are conditional",
+        }
+    from .ingestion import load_market
+
+    first = selected["ledger"][0]
+    changed = {r["player_id"] for r in first.get("sell", []) + first["buy"]}
+    players, market = load_market(store, forecast["market_id"]) if changed else ({}, {})
+    projections = {(r["event"], r["player_id"]): r for r in forecast.get("players", [])}
+    inputs = []
+    for pid in sorted(changed):
+        player = players[pid]
+        projection = projections[first["event"], pid]
+        inputs.append(
+            {
+                "player_id": pid,
+                "name": player.name,
+                "direction": "buy" if any(r["player_id"] == pid for r in first["buy"]) else "sell",
+                "expected_points": projection["mean"],
+                "expected_minutes": projection["minutes_mean"],
+                "p_sixty": projection["p_60"],
+                "horizon_expected_points": sum(
+                    projections[event, pid]["mean"]
+                    for event in range(first["event"], selected["end_event"] + 1)
+                ),
+                "observed": {
+                    name: player.raw.get(name)
+                    for name in (
+                        "minutes",
+                        "starts",
+                        "expected_goals",
+                        "expected_assists",
+                        "clean_sheets",
+                        "defensive_contribution",
+                        "bonus",
+                        "status",
+                        "news",
+                    )
+                },
+                "fixtures": [
+                    {key: f.get(key) for key in ("event", "team_h", "team_a", "kickoff_time")}
+                    for f in market["fixtures"]
+                    if f.get("event") is not None
+                    and first["event"] <= f["event"] <= selected["end_event"]
+                    and player.team in (f["team_h"], f["team_a"])
+                ],
+            }
+        )
     receipt = {
         "at": now(),
         "selection_version": SELECTION_VERSION,
@@ -385,6 +447,9 @@ def choose_recommendation(
         "candidates": rows,
         "immediate_hit_evidence": hit_evidence,
         "immediate_chip_evidence": chip_evidence,
+        "hold_comparison": comparison,
+        "first_action_inputs": inputs,
+        "market_known_at": market.get("known_at"),
         "no_hit_search_seconds": effective_time_limit(comparison_seconds) if no_hit_search else None,
     }
     receipt["id"] = store.put("policy_selection", receipt)

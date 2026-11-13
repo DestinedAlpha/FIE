@@ -6,6 +6,31 @@ from contextvars import ContextVar
 from typing import Any
 
 control: ContextVar[Any] = ContextVar("fpl_search_control", default=None)
+deadline: ContextVar[Any] = ContextVar("fpl_planning_deadline", default=None)
+
+
+@contextmanager
+def planning_budget(seconds):
+    """Share one interactive search budget across seeds and counterfactuals."""
+    import time
+
+    previous = deadline.get()
+    expires = None if seconds is None else time.monotonic() + seconds
+    if previous is not None:
+        expires = previous if expires is None else min(previous, expires)
+    token = deadline.set(expires)
+    try:
+        yield
+    finally:
+        deadline.reset(token)
+
+
+@contextmanager
+def auxiliary_search():
+    """Warm starts retain their small budget even during an unlimited main solve."""
+    current = control.get()
+    with search_session(False, current[1] if current else None, current[2] if current else None):
+        yield
 
 
 @contextmanager
@@ -24,13 +49,13 @@ def check_cancelled():
         raise CancelledError("Calculation cancelled")
 
 
-def report_phase(phase):
+def report_phase(phase, **details):
     from types import SimpleNamespace
 
     check_cancelled()
     current = control.get()
     if current and current[2]:
-        current[2](SimpleNamespace(phase=phase))
+        current[2](SimpleNamespace(phase=phase, **details))
 
 
 @contextmanager
@@ -41,15 +66,23 @@ def live_search():
 
 
 def effective_time_limit(seconds):
+    import time
+
     current = control.get()
-    return None if seconds is None or bool(current and current[0]) else seconds
+    value = None if seconds is None or bool(current and current[0]) else seconds
+    expires = deadline.get()
+    if expires is not None:
+        remaining = max(0.001, expires - time.monotonic())
+        value = remaining if value is None else min(value, remaining)
+    return value
 
 
 def configure_solver(solver, seconds, gap):
     import time
 
     current = control.get()
-    unlimited = effective_time_limit(seconds) is None
+    seconds = effective_time_limit(seconds)
+    unlimited = seconds is None
     solver.setOptionValue("time_limit", float("inf") if unlimited else seconds)
     solver.setOptionValue("mip_rel_gap", 0.0 if unlimited else gap)
     if unlimited:

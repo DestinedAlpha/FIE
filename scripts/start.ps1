@@ -85,8 +85,19 @@ if ($NeedsInitialisation) {
     Write-Host "Training completed. Forecasting and planning will run in the app with progress and cancellation."
 }
 
+$InstallationId = (& $UvPath run python -c "import hashlib,os; from pathlib import Path; print(hashlib.sha256(os.path.normcase(str(Path('data').resolve())).encode()).hexdigest())").Trim()
 $Port = 8000
-while (Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue) { $Port++ }
+while (Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue) {
+    try {
+        $Running = Invoke-RestMethod "http://127.0.0.1:$Port/api/runtime" -TimeoutSec 2
+        if ($Running.installation_id -eq $InstallationId) {
+            Write-Host "This installation is already running at http://127.0.0.1:$Port"
+            if (-not $NoBrowser) { Start-Process "http://127.0.0.1:$Port" }
+            return
+        }
+    } catch { }
+    $Port++
+}
 $Url = "http://127.0.0.1:$Port"
 Write-Host "FPL Intelligence: $Url"
 Write-Host "Keep this window open while using the private application. Ctrl+C stops it."

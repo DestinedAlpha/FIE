@@ -75,7 +75,9 @@ function App() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState(0);
   const [sort, setSort] = useState<"points" | "value" | "minutes">("points");
-  const [end, setEnd] = useState(19);
+  const [chosenEnd, setEnd] = useState<number | null>(null);
+  const end = Math.min(38, Math.max(data?.state?.event || 1, chosenEnd ?? ((data?.state?.event || 1) + 4)));
+  const [searchMode, setSearchMode] = useState("normal");
   const [objective, setObjective] = useState("expected_points");
   const [budget, setBudget] = useState(5);
   const [editor, setEditor] = useState(false);
@@ -120,6 +122,7 @@ function App() {
     if (!job) return;
     let stopped = false;
     let ticks = 0;
+    let readyPlan: string | undefined;
     let polling = false;
     const poll = async () => {
       if (polling || stopped) return;
@@ -128,7 +131,7 @@ function App() {
         const value = await api<{
           status: string;
           error?: string;
-          progress?: {phase?: string; mip_primal_bound?: number; mip_dual_bound?: number; mip_gap?: number};
+          progress?: {phase?: string; plan_id?: string; mip_primal_bound?: number; mip_dual_bound?: number; mip_gap?: number};
           result?: { stale?: boolean; status?: string; plan_optimized?: boolean; forecast_updated?: boolean };
         }>(`/jobs/${job}`);
         if (["completed", "failed", "interrupted", "cancelled"].includes(value.status)) {
@@ -151,16 +154,16 @@ function App() {
         } else if (!stopped) {
           if(value.status === "cancelling") setNotice("Stopping calculation…");
           else if(value.progress?.phase) setNotice(value.progress.phase + (value.progress.mip_gap == null ? "" : ` · search gap ${(100 * value.progress.mip_gap).toFixed(2)}%`));
-          if (++ticks % 6 === 0) {
+          const newPlan = value.progress?.plan_id && value.progress.plan_id !== readyPlan;
+          if (newPlan) readyPlan = value.progress?.plan_id;
+          if (newPlan || ++ticks % 6 === 0) {
           if (!value.progress?.phase && value.progress?.mip_primal_bound != null && value.status !== "cancelling") setNotice(`Search continues. Best objective ${value.progress.mip_primal_bound?.toFixed(2) ?? "pending"}; gap ${value.progress.mip_gap == null ? "pending" : (100 * value.progress.mip_gap).toFixed(2) + "%"}.`);
           await reload();
           }
         }
       } catch (e) {
         if (!stopped) {
-          setError((e as Error).message);
-          setBusy(false);
-          setJob(null);
+          setError("Connection interrupted; retrying calculation status. " + (e as Error).message);
         }
       } finally {
         polling = false;
@@ -188,9 +191,7 @@ function App() {
   );
   const currentEvent =
     event || data?.market?.events.find((e) => e.is_next)?.id || 9;
-  useEffect(() => {
-    setEnd(previous => previous < currentEvent ? (currentEvent > 19 ? 38 : currentEvent) : previous);
-  }, [currentEvent]);
+
   const requestedPlan = viewPlan || data?.plan;
   const plan = requestedPlan?.stale ? null : requestedPlan;
   const first = plan?.stale ? undefined : plan?.ledger[0];
@@ -250,7 +251,8 @@ function App() {
         state_id: data.state.id,
         forecast_id: data.forecast.id,
         end_event: end,
-        time_limit: null,
+        time_limit: searchMode === "exact" ? null : 30,
+        relative_gap: searchMode === "exact" ? 0 : 0.005,
         objective,
         sacrifice_budget: budget,
       });
@@ -670,7 +672,7 @@ function App() {
                           ? first.chip === "freehit"
                             ? `Play your Free Hit for GW${first.event}.`
                             : first.buy.length
-                              ? `${first.buy.length} move${first.buy.length > 1 ? "s" : ""}. A stronger starting point.`
+                              ? `${first.buy.length} recommended move${first.buy.length > 1 ? "s" : ""}.`
                               : first.chip
                                 ? `Play your ${first.chip === "bboost" ? "Bench Boost" : first.chip === "freehit" ? "Free Hit" : first.chip}.`
                                 : "Hold your transfers. Keep your options."
@@ -681,6 +683,22 @@ function App() {
                           ? `GW${first.event}–${plan?.ledger.at(-1)?.event} · Independently checked for squad legality and affordability.`
                           : "Freeze a forecast, then calculate legal transfers, your XI, captain and chip timing."}
                       </p>
+                      {data.policy_selection?.selection.selected_plan_id === plan?.id && data.policy_selection?.hold_comparison && (
+                        <p className="recommendation-copy">
+                          Compared with keeping your squad: {data.policy_selection.hold_comparison.immediate_net_gain.toFixed(1)} expected net points this week; {data.policy_selection.hold_comparison.policy_net_gain.toFixed(1)} across GW{data.policy_selection.hold_comparison.start_event}–{data.policy_selection.hold_comparison.end_event}, including conditional later moves.
+                        </p>
+                      )}
+                      {data.policy_selection?.selection.selected_plan_id === plan?.id && (data.policy_selection?.first_action_inputs?.length || 0) > 0 && (
+                        <details>
+                          <summary>Player data behind this transfer comparison</summary>
+                          <div className="table-scroll"><table>
+                            <thead><tr><th>Player</th><th>Move</th><th>Next xPts</th><th>Expected minutes</th><th>Season xG / xA</th><th>Defensive contributions</th></tr></thead>
+                            <tbody>{data.policy_selection?.first_action_inputs?.map(r => <tr key={r.player_id}>
+                              <td>{r.name}</td><td>{r.direction}</td><td>{r.expected_points.toFixed(2)}</td><td>{r.expected_minutes.toFixed(0)}</td><td>{String(r.observed.expected_goals ?? "—")} / {String(r.observed.expected_assists ?? "—")}</td><td>{String(r.observed.defensive_contribution ?? "—")}</td>
+                            </tr>)}</tbody>
+                          </table></div>
+                        </details>
+                      )}
                       {first ? (
                         <div className="transfer-list">
                           {first.buy.length ? (
@@ -1077,12 +1095,19 @@ function App() {
                           onChange={(e) => setEnd(+e.target.value)}
                         >
                           {data.market.events
-                            .filter((e) => e.id >= currentEvent)
+                            .filter((e) => e.id >= (data.state?.event || currentEvent))
                             .map((e) => (
                               <option key={e.id} value={e.id}>
                                 Gameweek {e.id}
                               </option>
                             ))}
+                        </select>
+                      </label>
+                      <label>
+                        Search
+                        <select aria-label="Search mode" value={searchMode} onChange={e => setSearchMode(e.target.value)}>
+                          <option value="normal">Normal · 30 seconds of search</option>
+                          <option value="exact">Exact · unlimited search</option>
                         </select>
                       </label>
                       <label>

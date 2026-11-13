@@ -2,13 +2,61 @@
   "openapi": "3.1.0",
   "info": {
     "title": "FPL Intelligence",
-    "version": "0.14.0"
+    "version": "0.14.6"
   },
   "paths": {
+    "/api/runtime": {
+      "get": {
+        "summary": "Runtime Identity",
+        "operationId": "runtime_identity_api_runtime_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/health": {
       "get": {
         "summary": "Health",
         "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/models/training": {
+      "get": {
+        "summary": "Model Training Status",
+        "operationId": "model_training_status_api_models_training_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/forecast/diagnostics": {
+      "get": {
+        "summary": "Forecast Diagnostics",
+        "operationId": "forecast_diagnostics_api_forecast_diagnostics_get",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -313,6 +361,22 @@
         }
       }
     },
+    "/api/football/shots/rejoin": {
+      "post": {
+        "summary": "Rejoin Cached Shots",
+        "operationId": "rejoin_cached_shots_api_football_shots_rejoin_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/evidence/analyze": {
       "post": {
         "summary": "Evidence Analysis",
@@ -431,6 +495,22 @@
       "post": {
         "summary": "Replay Pipeline",
         "operationId": "replay_pipeline_api_replay_pipeline_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/replay/composed": {
+      "get": {
+        "summary": "Replay Composed Results",
+        "operationId": "replay_composed_results_api_replay_composed_get",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -1902,14 +1982,15 @@
                 "type": "null"
               }
             ],
-            "title": "Time Limit"
+            "title": "Time Limit",
+            "default": 30.0
           },
           "relative_gap": {
             "type": "number",
             "maximum": 0.1,
             "minimum": 0.0,
             "title": "Relative Gap",
-            "default": 0.0
+            "default": 0.005
           },
           "objective": {
             "type": "string",
@@ -2039,6 +2120,11 @@
           "compare_case": {
             "type": "boolean",
             "title": "Compare Case",
+            "default": false
+          },
+          "compare_current": {
+            "type": "boolean",
+            "title": "Compare Current",
             "default": false
           }
         },

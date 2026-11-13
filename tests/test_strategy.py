@@ -379,7 +379,7 @@ def test_refresh_budget_skips_all_player_histories_until_labels_are_due(tmp_path
     monkeypatch.setattr("fpl_intelligence.model_refresh.training_needed", lambda *args: new_finalized)
     calls, fits = [], []
 
-    async def ingest(self, *, histories=True, entry=None):
+    async def ingest(self, *, histories=True, entry=None, auxiliary=True):
         calls.append(histories)
         if new_finalized:
             self.store.put(

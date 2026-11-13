@@ -25,11 +25,11 @@
           "type": "null"
         }
       ],
-      "default": null,
+      "default": 30.0,
       "title": "Time Limit"
     },
     "relative_gap": {
-      "default": 0.0,
+      "default": 0.005,
       "maximum": 0.1,
       "minimum": 0,
       "title": "Relative Gap",

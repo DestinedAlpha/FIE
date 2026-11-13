@@ -248,7 +248,7 @@ def refresh_cycle(store: Store, *, plan=True, expected_state_id=None):
         or needs_history
         or (last_full and last_full.get("histories_complete") is False)
     ):
-        refreshed = asyncio.run(Official(store).ingest(histories=True))
+        refreshed = asyncio.run(Official(store).ingest(histories=True, auxiliary=False))
         market = store.get("market")
         if refreshed.get("histories_complete") is False:
             return {

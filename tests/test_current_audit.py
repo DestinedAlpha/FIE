@@ -197,9 +197,10 @@ def test_known_failed_extractor_cannot_reach_live_calls(tmp_path, monkeypatch):
         asyncio.run(extract_with_fallback(store, {"text": "news"}, []))
 
 
-def test_public_schema_defaults_unlimited_and_has_no_300_second_cap():
+def test_public_schema_has_responsive_default_and_retains_explicit_unlimited():
     body = dict(state_id="s", forecast_id="f", end_event=19)
-    assert OptimizeRequest(**body).time_limit is None
+    assert OptimizeRequest(**body).time_limit == 30
+    assert OptimizeRequest(**body, time_limit=None).time_limit is None
     assert OptimizeRequest(**body, time_limit=1000).time_limit == 1000
     assert json.loads(Path("schemas/optimize.schema.json").read_text()) == OptimizeRequest.model_json_schema()
 

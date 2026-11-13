@@ -53,6 +53,7 @@ def selection_is_current(store, plan):
                 ("forecast_id", forecast["id"]),
             )
         )
+        or forecast.get("market_id") != market["id"]
         or forecast.get("decision_model_id") != model["id"]
         or not forecast_dependencies_current(store, forecast, model)
     ):

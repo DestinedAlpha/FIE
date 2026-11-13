@@ -450,6 +450,8 @@ export type Dashboard = FootballEvidenceData & {
     alternative_gap: number | null;
   } | null;
   policy_selection?: {
+    hold_comparison?: {hold_plan_id:string; start_event:number; end_event:number; policy_net_gain:number; immediate_net_gain:number; probability_ahead:number; paired_mc_standard_error:number} | null;
+    first_action_inputs?: {player_id:number; name:string; direction:string; expected_points:number; expected_minutes:number; p_sixty:number; horizon_expected_points:number; observed:Record<string,unknown>}[];
     immediate_chip_evidence?: { chip: string; candidate_plan_id: string; alternative_plan_id: string; net_mean_gain: number; search_allowance: number | null; supported_beyond_search_error: boolean; reason: string } | null;
     selection_version?: string;
     selection: { selected_plan_id: string; reason?: string; actual_ev_sacrifice: number };
@@ -558,8 +560,9 @@ export async function api<T>(path: string, body?: unknown): Promise<T> {
   const response = await fetch(
     "/api" + path,
     body === undefined
-      ? undefined
+      ? { signal: AbortSignal.timeout(45000) }
       : {
+          signal: AbortSignal.timeout(45000),
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),

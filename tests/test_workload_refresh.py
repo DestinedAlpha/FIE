@@ -103,7 +103,12 @@ def test_changed_workload_invalidates_a_plan_without_changing_account_or_model(t
     state = store.put("state", {"event": 11})
     market = store.put("market", {"events": []})
     fid = store.put(
-        "forecast", {"decision_model_id": model["id"], "input_manifest": {"live_workload_id": source}}
+        "forecast",
+        {
+            "decision_model_id": model["id"],
+            "market_id": market,
+            "input_manifest": {"live_workload_id": source},
+        },
     )
     forecast = store.get("forecast")
     plan = {"state_id": state, "market_id": market, "forecast_id": fid}

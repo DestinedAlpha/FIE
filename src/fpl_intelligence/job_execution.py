@@ -32,6 +32,9 @@ def record_progress(store, identity, info):
     phase = getattr(info, "phase", None)
     if phase:
         store.put("job_phase", values | {"phase": phase})
+    plan_id = getattr(info, "plan_id", None)
+    if plan_id:
+        store.put("job_phase", values | {"phase": phase, "plan_id": plan_id})
     for key in ("mip_primal_bound", "mip_dual_bound", "mip_gap", "running_time"):
         value = getattr(info, key, None)
         if value is not None and math.isfinite(value):
@@ -44,7 +47,15 @@ def stop_process(process):
     if process.poll() is not None:
         return
     if os.name == "nt":
-        subprocess.run(["taskkill", "/PID", str(process.pid), "/T", "/F"], capture_output=True, check=False)
+        try:
+            subprocess.run(
+                ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+                capture_output=True,
+                check=False,
+                timeout=3,
+            )
+        except (subprocess.TimeoutExpired, OSError):
+            process.kill()
     else:
         try:
             getattr(os, "killpg")(process.pid, signal.SIGTERM)
@@ -81,26 +92,42 @@ def run_isolated(store, identity, cancel, work=None):
         else {"start_new_session": True}
     )
     process = subprocess.Popen(
-        [sys.executable, "-m", "fpl_intelligence.job_worker", str(store.root.resolve()), identity],
+        [
+            sys.executable,
+            "-m",
+            "fpl_intelligence.job_worker",
+            str(store.root.resolve()),
+            identity,
+            str(os.getpid()),
+        ],
         env=environment,
-        stdin=subprocess.PIPE,
+        stdin=subprocess.DEVNULL,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
         **options,
     )
     from .storage import now
 
-    store.put("job_worker", {"job_id": identity, "pid": process.pid, "at": now()})
     try:
+        store.put("job_worker", {"job_id": identity, "pid": process.pid, "at": now()})
+        store.put("job_phase", {"job_id": identity, "phase": "Starting calculation worker", "at": now()})
         while process.poll() is None:
-            if cancel.wait(0.05):
+            # The atomic result is written only after the operation has ended.
+            # Native-library or interpreter teardown must not hold the UI hostage.
+            if result.is_file():
+                try:
+                    process.wait(timeout=1)
+                except subprocess.TimeoutExpired:
+                    stop_process(process)
+                break
+            if cancel.wait(0.05) or marker.exists():
                 marker.touch(exist_ok=True)
                 try:
                     process.wait(timeout=0.75)
                 except subprocess.TimeoutExpired:
                     stop_process(process)
                 raise CancelledError("Calculation stopped")
-        if cancel.is_set():
+        if cancel.is_set() or marker.exists():
             raise CancelledError("Calculation stopped")
         if not result.is_file():
             raise RuntimeError(

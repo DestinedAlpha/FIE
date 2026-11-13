@@ -44,7 +44,12 @@ def initialize_store(store):
     ):
         from .readiness import operational_readiness
 
-        if not operational_readiness(store)["ready"]:
+        try:
+            _, metadata = store.latest("bootstrap")
+            source_stale = freshness(metadata) > 1
+        except ValueError:
+            source_stale = True
+        if source_stale or not operational_readiness(store)["ready"]:
             from .workflow import refresh_data
 
             return refresh_data(store)
@@ -101,22 +106,32 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
 
     @asynccontextmanager
     async def lifespan(application):
+        from .pipeline_jobs import replay_lock
         from .scheduling import start_scheduler
 
-        def initialize():
-            return initialize_store(store)
-
-        launch("startup-refresh", {}, initialize)
-        stop, thread = start_scheduler(store, launch)
-        try:
-            yield
-        finally:
-            stop.set()
-            with cancellation_lock:
-                for cancelled in cancellations.values():
-                    cancelled.set()
-            thread.join(timeout=1)
-            executor.shutdown(wait=False, cancel_futures=True)
+        # One API owner per installation. A second window must not clobber the
+        # first window's durable queue or lose its cancellation ownership.
+        with replay_lock(
+            store.root / "api-server.lock",
+            busy_message="FIE is already running for this installation; use its existing window",
+        ):
+            with store.db() as db:
+                db.execute(
+                    "UPDATE jobs SET status='interrupted',error='Process restarted; submit job again',updated_at=? "
+                    "WHERE status IN ('queued','running','cancelling')",
+                    (now(),),
+                )
+            launch("startup-refresh", {}, lambda: initialize_store(store))
+            stop, thread = start_scheduler(store, launch)
+            try:
+                yield
+            finally:
+                stop.set()
+                with cancellation_lock:
+                    for cancelled in cancellations.values():
+                        cancelled.set()
+                thread.join(timeout=1)
+                executor.shutdown(wait=True, cancel_futures=True)
 
     app = FastAPI(title="FPL Intelligence", version=version("fpl-intelligence"), lifespan=lifespan)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
@@ -147,13 +162,6 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
 
         review = audit_claim_identities(store)
         store.put("claim_identity_migration", {"version": 1, "review_id": review["id"], "at": now()})
-    # Restart recovery is explicit; an interrupted job is never shown as running forever.
-    with store.db() as db:
-        db.execute(
-            "UPDATE jobs SET status='interrupted',error='Process restarted; submit job again',updated_at=? "
-            "WHERE status IN ('queued','running','cancelling') AND ?=0",
-            (now(), int(_worker)),
-        )
 
     @app.exception_handler(ValueError)
     async def bad_request(request, exc):
@@ -240,6 +248,8 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
                     unlimited, cancelled, lambda info: record_progress(store, identity, info)
                 ):
                     check_cancelled()
+                    if (store.root / "jobs" / identity / "cancel").exists():
+                        raise CancelledError("Calculation cancelled before starting")
                     with store.db() as db:
                         db.execute(
                             "UPDATE jobs SET status='running',updated_at=? WHERE id=?", (now(), identity)
@@ -272,6 +282,14 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
             if identity in cancellations:
                 futures[identity] = future
         return {"job_id": identity, "status": "queued"}
+
+    @app.get("/api/runtime")
+    def runtime_identity():
+        import hashlib
+        import os
+
+        identity = hashlib.sha256(os.path.normcase(str(store.root.resolve())).encode()).hexdigest()
+        return {"version": version("fpl-intelligence"), "installation_id": identity, "pid": os.getpid()}
 
     @app.get("/api/health")
     def health():
@@ -554,6 +572,7 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
                 selected_plan["state_id"] != (result["state"] or {}).get("id")
                 or selected_plan["forecast_id"] != (result["forecast"] or {}).get("id")
                 or selected_plan["market_id"] != market["id"]
+                or (result["forecast"] or {}).get("market_id") != market["id"]
                 or (result["forecast"] or {}).get("model_version") != "learned-points-v1"
                 or (result["forecast"] or {}).get("decision_model_id")
                 != (result["decision_model"] or {}).get("id")
@@ -1136,7 +1155,7 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
 
     @app.post("/api/optimize")
     def optimization(request: OptimizeRequest):
-        def work():
+        def calculate():
             from .search_control import effective_time_limit, report_phase
 
             report_phase(
@@ -1144,6 +1163,19 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
                 if effective_time_limit(request.time_limit) is None
                 else "Optimizing transfers and chips"
             )
+            hold = hold_plan(store, request.state_id, request.forecast_id, request.end_event)
+            from .readiness import selection_is_current
+
+            with locked_state(store):
+                if selection_is_current(store, hold):
+                    try:
+                        previous = store.get("plan", store.get("selected_plan")["plan_id"])
+                        keep_previous = selection_is_current(store, previous)
+                    except ValueError:
+                        keep_previous = False
+                    if not keep_previous:
+                        store.put("selected_plan", {"plan_id": hold["id"], "at": now()})
+            report_phase("Current lineup ready; searching transfer and chip alternatives", plan_id=hold["id"])
             fixed_chips = request.chips if "chips" in request.model_fields_set else None
             plan = optimize(
                 store,
@@ -1156,7 +1188,6 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
                 first_week_hit_budget=request.first_week_hit_budget,
                 relative_gap=request.relative_gap,
             )
-            hold = hold_plan(store, request.state_id, request.forecast_id, request.end_event)
             from .objectives import choose_recommendation
 
             plan, selection = choose_recommendation(
@@ -1192,6 +1223,12 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
                 "stale": stale,
             }
 
+        def work():
+            from .search_control import planning_budget
+
+            with planning_budget(request.time_limit):
+                return calculate()
+
         return launch("optimize", request.model_dump(), work)
 
     @app.post("/api/jobs/{identity}/cancel")
@@ -1203,6 +1240,15 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
                     row = db.execute("SELECT status FROM jobs WHERE id=?", (identity,)).fetchone()
                 if row is None:
                     raise HTTPException(404, "Unknown job")
+                if row[0] in ("queued", "running", "cancelling"):
+                    directory = store.root / "jobs" / identity
+                    directory.mkdir(parents=True, exist_ok=True)
+                    (directory / "cancel").touch()
+                    with store.db() as db:
+                        db.execute(
+                            "UPDATE jobs SET status='cancelling',updated_at=? WHERE id=?", (now(), identity)
+                        )
+                    return {"job_id": identity, "status": "cancelling"}
                 return {"job_id": identity, "status": row[0]}
             event.set()
             stopped_queued = []

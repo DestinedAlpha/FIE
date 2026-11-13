@@ -121,16 +121,22 @@ class MIP:
         check_cancelled()
         status = solver.modelStatusToString(solver.getModelStatus())
         solution, info = solver.getSolution(), solver.getInfo()
-        if not solution.value_valid or info.primal_solution_status != 2:
+        retained = not solution.value_valid or info.primal_solution_status != 2
+        if retained and (warm_start is None or not feasible_incumbent(self, warm_start)):
             raise ValueError(f"Solver produced no feasible incumbent: {status}; increase time limit")
-        return np.array(solution.col_value), {
-            "status": status,
+        vector = np.asarray(warm_start if retained else solution.col_value)
+        objective = float(np.dot(self.costs, vector))
+        bound = float(info.mip_dual_bound) if np.isfinite(info.mip_dual_bound) else None
+        if bound is not None and bound < objective - 1e-5:
+            bound = None
+        return vector, {
+            "status": "Search budget exhausted; legal incumbent retained" if retained else status,
             "unlimited": unlimited,
             "time_limit": None if unlimited else seconds,
-            "objective": info.objective_function_value,
-            "best_bound": float(info.mip_dual_bound) if np.isfinite(info.mip_dual_bound) else None,
-            "gap": float(info.mip_gap) if np.isfinite(info.mip_gap) else None,
-            "bound_available": bool(np.isfinite(info.mip_dual_bound)),
+            "objective": objective,
+            "best_bound": bound,
+            "gap": max(0.0, (bound - objective) / max(1, abs(objective))) if bound is not None else None,
+            "bound_available": bound is not None,
             "nodes": info.mip_node_count,
             "variables": count,
             "constraints": len(self.row_lower),
@@ -292,7 +298,10 @@ def relaxed_horizon_bound(players, rules, means, state, events, terminal, contin
                     upper=max(rules.club_limit, extra[club]),
                 )
             try:
-                _, info = relaxation.solve(1)
+                from .search_control import auxiliary_search
+
+                with auxiliary_search():
+                    _, info = relaxation.solve(1)
             except ValueError:
                 return None
             if info["status"] != "Optimal":
@@ -827,9 +836,12 @@ def optimize(
         reserved = set(current_ids) - set(to_sell)
         if not to_sell:
             if seed_chip in ("freehit", "wildcard"):
-                picked = select_squad(
-                    warm_state, players, rules, {p: means.get((t, p), 0) for p in ids}, seconds=1
-                )
+                from .search_control import auxiliary_search
+
+                with auxiliary_search():
+                    picked = select_squad(
+                        warm_state, players, rules, {p: means.get((t, p), 0) for p in ids}, seconds=1
+                    )
                 action.sell = sorted(current_ids - set(picked))
                 action.buy = sorted(set(picked) - current_ids)
             else:
@@ -917,17 +929,20 @@ def optimize(
                     p: 0.15 * sum(means.get((e, p), 0) for e in range(t + 1, min(t + 3, end_event) + 1))
                     for p in ids
                 }
-                selected = solve_action(
-                    trial,
-                    players,
-                    rules,
-                    {p: means.get((t, p), 0) for p in ids},
-                    chip=seed_kind,
-                    max_transfers=limit,
-                    seconds=0.3,
-                    squad_value=future,
-                    forced_sell=(forced_sell or {}).get(t, []),
-                )
+                from .search_control import auxiliary_search
+
+                with auxiliary_search():
+                    selected = solve_action(
+                        trial,
+                        players,
+                        rules,
+                        {p: means.get((t, p), 0) for p in ids},
+                        chip=seed_kind,
+                        max_transfers=limit,
+                        seconds=0.3,
+                        squad_value=future,
+                        forced_sell=(forced_sell or {}).get(t, []),
+                    )
                 fill_warm(vector, t, trial, selected.action, selected.state, selected.ledger, survivors)
                 trial = selected.state
             if not feasible_incumbent(mip, vector):
@@ -1141,6 +1156,10 @@ def hold_plan(store: Store, state_id: str, forecast_id: str, end_event: int) -> 
     players, market = load_market(store)
     forecast = store.get("forecast", forecast_id)
     rules = Rules.from_bootstrap(store.latest("bootstrap")[0])
+    if forecast["market_id"] != market["id"] or forecast["rules_hash"] != rules.hash:
+        raise ValueError("Forecast inputs are stale: update forecasts before planning")
+    if not forecast["start_event"] <= state.event <= end_event <= forecast["end_event"]:
+        raise ValueError("State/horizon is outside the forecast")
     means = {(r["event"], r["player_id"]): r["mean"] for r in forecast["players"]}
     ledger = []
     from .worlds import load_worlds

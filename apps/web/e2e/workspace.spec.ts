@@ -106,7 +106,8 @@ test("recommendation, legal XI, full market and planner exports", async ({
   );
   await page.getByRole("combobox", {name:"Gameweek", exact:true}).selectOption("20");
   await navigate(page, "Season planner");
-  await expect(page.getByLabel("Plan through", {exact:true})).toHaveValue("38");
+  await expect(page.getByLabel("Plan through", {exact:true})).toHaveValue(String(Math.min(38, market.state.event + 4)));
+  await expect(page.getByLabel("Search mode", {exact:true})).toHaveValue("normal");
   expect(errors).toEqual([]);
   await page.screenshot({
     path: `test-results/${test.info().project.name}-overview.png`,
