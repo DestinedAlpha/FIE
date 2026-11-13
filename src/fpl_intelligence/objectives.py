@@ -4,12 +4,22 @@ from __future__ import annotations
 
 import numpy as np
 
-SELECTION_VERSION = "resource-evidence-v3"
+SELECTION_VERSION = "resource-evidence-v4"
 
 
 def stale_paid_evidence(plan, receipt):
     """Invalidate a persisted expected-points paid recommendation after upgrading."""
     selection = receipt.get("selection", {})
+    if (
+        plan["ledger"][0].get("buy")
+        and not plan["ledger"][0].get("chip")
+        and plan["ledger"][0]["hit"] == 0
+        and selection.get("objective") == "expected_points"
+        and selection.get("selected_plan_id") == plan["id"]
+    ):
+        return receipt.get("selection_version") != SELECTION_VERSION or not receipt.get(
+            "free_transfer_evidence"
+        )
     if (
         plan["ledger"][0].get("chip")
         and selection.get("objective") == "expected_points"
@@ -52,6 +62,20 @@ def chip_use_evidence(candidate, alternative, difference, search):
         if evidence["hit_supported_beyond_search_error"]
         else "Chip retained: its modeled advantage is unresolved against ordinary transfers and later chip use",
         "scope": "Same frozen horizon and outcome worlds; future chip use remains available. Additive search sensitivity excludes forecast error and is not an exact nonlinear bound.",
+    }
+
+
+def free_transfer_evidence(candidate, rolled, difference):
+    """A saved FT is a scarce resource unless using it leaves the same next stock."""
+    evidence = paid_transfer_evidence(candidate, rolled, difference, rolled)
+    consumed = max(
+        0, rolled["ledger"][0]["free_transfers_after"] - candidate["ledger"][0]["free_transfers_after"]
+    )
+    return {
+        **evidence,
+        "free_transfers_consumed": consumed,
+        "supported": not consumed or evidence["hit_supported_beyond_search_error"],
+        "scope": "Paired forecast sampling and unfinished rolled-policy search; not certainty about future football",
     }
 
 
@@ -416,6 +440,54 @@ def choose_recommendation(
                     - float(outcomes[index].mean()),
                     reason=chip_evidence["reason"],
                 )
+    free_evidence = None
+    first = plans[index]["ledger"][0]
+    if (
+        mode == "expected_points"
+        and first.get("buy")
+        and not first.get("chip")
+        and first["hit"] == 0
+        and store.list("state", 1)
+    ):
+        state = store.get("state", reference["state_id"])
+        if not state.get("initial") and not state.get("active_chip"):
+            if roll_search is None:
+                roll_search = optimize(
+                    store,
+                    reference["state_id"],
+                    forecast["id"],
+                    reference["end_event"],
+                    comparison_seconds,
+                    first_week_hit_budget=0,
+                    first_week_roll=True,
+                    chips=fixed_chips,
+                    max_transfers=max_transfers,
+                    use_decision_critic=False,
+                )
+                value = score_plans(store, [roll_search], forecast)[0]
+                plans.append(roll_search)
+                outcomes.append(value)
+                rows.append(
+                    {
+                        "plan_id": roll_search["id"],
+                        "expected_net_points": float(value.mean()),
+                        "cvar_points": cvar(value, tail_fraction),
+                        "immediate_net_points": roll_search["ledger"][0].get("simulated_net_mean"),
+                        "immediate_hit": 0,
+                    }
+                )
+            rolled = next(i for i, p in enumerate(plans) if p["id"] == roll_search["id"])
+            delta = outcomes[index] - outcomes[rolled]
+            free_evidence = free_transfer_evidence(plans[index], roll_search, delta)
+            if float(delta.mean()) <= 0 or not free_evidence["supported"]:
+                index = rolled
+                selection.update(
+                    selected_plan_id=plans[index]["id"],
+                    objective_value=float(outcomes[index].mean()),
+                    actual_ev_sacrifice=max(r["expected_net_points"] for r in rows)
+                    - float(outcomes[index].mean()),
+                    reason="Free transfer retained: the candidate's advantage is unresolved against rolling and optimizing later moves",
+                )
     selected = plans[index]
     held = next((i for i, p in enumerate(plans) if p.get("label") == "hold / roll"), None)
     comparison = None
@@ -504,6 +576,7 @@ def choose_recommendation(
         "candidates": rows,
         "immediate_hit_evidence": hit_evidence,
         "immediate_chip_evidence": chip_evidence,
+        "free_transfer_evidence": free_evidence,
         "hold_comparison": comparison,
         "roll_comparison": roll_comparison,
         "first_action_inputs": inputs,

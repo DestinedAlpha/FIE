@@ -619,7 +619,11 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
             if not chips_assessed(store, selected_plan):
                 selected_plan["stale"] = True
                 selected_plan["stale_reason"] = "Recompute with the remaining chip window assessed"
-            if selected_plan["ledger"][0]["hit"] > 0 or selected_plan["ledger"][0].get("chip"):
+            if (
+                selected_plan["ledger"][0]["hit"] > 0
+                or selected_plan["ledger"][0].get("chip")
+                or selected_plan["ledger"][0].get("buy")
+            ):
                 from .objectives import stale_paid_evidence
 
                 receipt = store.get("policy_selection") if store.list("policy_selection", 1) else {}

@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from fpl_intelligence.objectives import choose_recommendation, paid_transfer_evidence
+from fpl_intelligence.objectives import choose_recommendation, free_transfer_evidence, paid_transfer_evidence
 from fpl_intelligence.storage import Store
 
 
@@ -46,6 +46,25 @@ def test_material_hit_can_pass_and_unknown_or_conditional_bounds_cannot():
         ]
     with pytest.raises(ValueError, match="frozen inputs"):
         paid_transfer_evidence(paid, {**free, "forecast_id": "different"}, np.ones(100), free)
+
+
+def test_free_transfer_requires_support_when_it_consumes_future_flexibility():
+    candidate, rolled = policy("candidate", 602), policy("rolled", 600)
+    candidate["first_week_hit_budget"] = rolled["first_week_hit_budget"] = 0
+    candidate["ledger"][0]["free_transfers_after"] = 1
+    rolled["ledger"][0]["free_transfers_after"] = 2
+    result = free_transfer_evidence(candidate, rolled, np.full(1000, 2.0))
+    assert result["free_transfers_consumed"] == 1 and not result["supported"]
+    rolled["solver"]["best_bound"] = rolled["solver"]["objective"]
+    assert free_transfer_evidence(candidate, rolled, np.full(1000, 2.0))["supported"]
+
+
+def test_using_an_otherwise_expiring_ft_does_not_charge_an_invented_resource_cost():
+    candidate, rolled = policy("candidate", 601), policy("rolled", 600)
+    candidate["first_week_hit_budget"] = rolled["first_week_hit_budget"] = 0
+    candidate["ledger"][0]["free_transfers_after"] = 5
+    rolled["ledger"][0]["free_transfers_after"] = 5
+    assert free_transfer_evidence(candidate, rolled, np.full(1000, 1.0))["supported"]
 
 
 def test_recommendation_retains_free_policy_despite_precise_small_paid_advantage(tmp_path, monkeypatch):
