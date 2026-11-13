@@ -159,8 +159,8 @@ def test_live_means_components_and_optimizer_worlds_are_same_distribution(
             "x": [player.position] + [0] * (len(NAMES) - 1),
             "profile": {"history_count": 20, "action_coverage": 1},
             "availability": 0 if p == 1 else 1,
-            "minutes_cap": 45 if p == 2 else 90,
-            "dc_probability": [0, 0, 0, 0],
+            "minutes_cap": 0 if p == 3 else 45 if p == 2 else 90,
+            "dc_probability": [0, 1, 1, 1] if p == 3 else [0, 0, 0, 0],
         }
         for p, player in market.items()
     ]
@@ -193,6 +193,10 @@ def test_live_means_components_and_optimizer_worlds_are_same_distribution(
             assert np.all(points[minutes[:, i] == 0, i] == 0)
         assert np.all(minutes[:, 1] <= 45)
         assert np.all(points[:, 0] == 0)
+        capped = next(r for r in f["players"] if r["player_id"] == 3)
+        assert capped["mean"] == 0 and capped["p_zero"] == 1 and capped["p_start"] == 0
+        assert all(v == 0 for v in capped["components"].values())
+        assert next(r for r in f["fixtures"] if r["player_id"] == 3)["model_mean_before_mc"] == 0
         forwards = [i for i, p in enumerate(f["player_ids"]) if market[p].position == 4]
         assert np.all(points[:, forwards] == 7)
     assert Path(f["scenario_path"]).is_file()

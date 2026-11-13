@@ -923,7 +923,9 @@ def learned_forecast(
                 probs[1:] *= row["availability"]
                 probs[0] = 1 - probs[1:].sum()
             cap = row["minutes_cap"]
-            if cap < 60:
+            if cap == 0:
+                probs[:] = [1, 0, 0, 0]
+            elif cap < 60:
                 probs[1] += probs[2:].sum()
                 probs[2:] = 0
             elif cap < 90:
