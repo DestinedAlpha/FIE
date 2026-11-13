@@ -1,0 +1,186 @@
+{
+  "at": "2026-11-13T21:31:43.217937+00:00",
+  "version": "0.14.7",
+  "implementation_commit": "58b32ba6e45ff879f87c972f42cc6646cbd40cf0",
+  "package_commit": "34a2d53cb8d5c76d61cab5846bcc9e4c171fa238",
+  "public_release": "https://github.com/DestinedAlpha/FIE/releases/tag/v0.14.7",
+  "public_download": {
+    "at": "2026-11-13T21:30:14.284864+00:00",
+    "url": "https://github.com/DestinedAlpha/FIE/releases/download/v0.14.7/FPL-Intelligence-0.14.7-Update.zip",
+    "anonymous_download": true,
+    "bytes": 5272834,
+    "sha256": "383c46a577d7b95f1aaf2b8cff288710d2d8dba8dc191dfe11711ada40ca23fb",
+    "sidecar_matches": true,
+    "zip_crc_passed": true,
+    "zip_entries": 365,
+    "publish_run": 43510346825
+  },
+  "full_private_payload": {
+    "at": "2026-11-13T21:25:01.588526+00:00",
+    "repository": "DestinedAlpha/fpl-thing",
+    "branch": "fie-windows-download-v0.14.7",
+    "parent": "bc7f4e7ed2fe22cbb0207398bddd6f40c41b57fb",
+    "commit": "a18675f96ea1584effe6251214d082b35fc65e45",
+    "tree": "668669bfdbbe0345e9be0a09e639df5e0ccec9af",
+    "files": 29348,
+    "data": {
+      "new_blobs": 156,
+      "new_bytes": 235370602,
+      "decoded_gzip_checks": 41
+    },
+    "database_manifest_sha256": "6dbcb41c13b99c8ce4829fe0d9f6ae3f2b7301eef07dd9278d327add27e6d710",
+    "all_file_object_ids_verified": true,
+    "original_model_blobs_retained": true,
+    "remote_commit_and_tree_verified": true,
+    "credentials": "Excluded and scanned",
+    "download": "https://github.com/DestinedAlpha/fpl-thing/archive/refs/heads/fie-windows-download-v0.14.7.zip"
+  },
+  "confirmed_repairs": [
+    "Future training uses canonical base-points targets; 11032 duplicate defensive-contribution awards removed from 773358 future-label rows, without changing actual results.",
+    "Unavailable zero official team strengths masked rather than treated as genuinely weak teams; affected accepted-family future weights refitted atomically.",
+    "Live repaired-data contracts enforced; original models and sealed historical replay retained.",
+    "Affordable alternatives proposed from production forecasts, published FPL EP, exposure-shrunk output and xG/xA; every candidate evaluated using matched production worlds and legal account continuity.",
+    "Planning defaults cover remaining chip windows; automatic chips retained if a shorter horizon cannot assess their later use.",
+    "Scarce FT retained when the transfer advantage is unresolved against rolling now and optimizing later; initial formation and otherwise expiring capped FTs remain usable.",
+    "Thorough 180s and Quick 30s shared budgets; Exact unlimited with verified cancellation; preserved completed plan and current forecast after cancellation and refresh.",
+    "Frozen forecast-market consistency, content-addressed research weights and safe optional UI evidence handling."
+  ],
+  "production_verification": {
+    "at": "2026-11-13T21:09:15.765089+00:00",
+    "forecast_id": "44accbd1d8008151310629cdccda2d02c02ed618601588aaaac74e0fa21d3e07",
+    "model_id": "b85577dac1618ea0b8db1e2a662d138e1fbae7256c6f53028d2e8648eeb83ccd",
+    "start_event": 11,
+    "end_event": 19,
+    "worlds": 4000,
+    "forecast_rows_verified": 18816,
+    "selected_plan_id": "c036b6dee583f4f47378f49afb1333c41a5704fe9a9f926992d94d994ff416db",
+    "first_action": {
+      "sell": [],
+      "buy": [],
+      "bank_after": 5,
+      "hit": 0,
+      "chip": null,
+      "lineup": [
+        "Raya",
+        "Gabriel",
+        "Calafiori",
+        "Rogers",
+        "Tavernier",
+        "Evanilson",
+        "Gro\u00df",
+        "Palmer",
+        "Bogle",
+        "Calvert-Lewin",
+        "Haaland"
+      ],
+      "bench": [
+        "Dubravka",
+        "De Cuyper",
+        "Hughes",
+        "Greaves"
+      ],
+      "captain": "Haaland",
+      "vice": "Gabriel"
+    },
+    "planning_seconds": 188.79290120599762,
+    "cancel_exact_seconds": 0.7933907639999234,
+    "refresh_after_cancel_seconds": 3.6011059429984016,
+    "completed_plan_preserved_after_cancellation": true,
+    "refresh_preserves_current_forecast_and_plan": true
+  },
+  "production_interpretation": "The actual selected first action is roll, keeping Calafiori. This is a general FT resource decision, not a player exclusion or a claim that Hill now has lower modeled points than Van Hecke or Vuskovic. Forecasts remain uncertain.",
+  "model_experiments": "Additional defender, recent-form and future-role-anchor candidates did not satisfy controlled acceptance; they were not promoted. The confirmed target/input repairs use the accepted model family.",
+  "regressions": {
+    "passed": true,
+    "backend_tests": 388,
+    "backend_skipped": 0,
+    "frontend_unit_tests": 3,
+    "browser_journeys": 30,
+    "browser_failed": 0,
+    "browser_skipped": 0
+  },
+  "platform_ci": {
+    "run": 43508468988,
+    "url": "https://github.com/DestinedAlpha/FIE/actions/runs/43508468988",
+    "source_commit": "58b32ba6e45ff879f87c972f42cc6646cbd40cf0",
+    "ubuntu": "success",
+    "windows": "success"
+  },
+  "installer": {
+    "at": "2026-11-13T21:19:19.717862+00:00",
+    "archive": "artifacts/runtime/FPL-Intelligence-0.14.7-Update.zip",
+    "bytes": 5272834,
+    "version": "0.14.7",
+    "application_files": 362,
+    "crc": "passed",
+    "application_checksums": "passed",
+    "actual_installation": "passed",
+    "account_database": "preserved",
+    "keys": "preserved",
+    "existing_models": "preserved",
+    "retired_weights": "removed by installed migration",
+    "backup": "verified"
+  },
+  "real_existing_installation_upgrade": {
+    "at": "2026-11-13T21:21:33.034002+00:00",
+    "archive_sha256": "383c46a577d7b95f1aaf2b8cff288710d2d8dba8dc191dfe11711ada40ca23fb",
+    "baseline_version": "0.14.6",
+    "baseline_archive_sha256": "c53c5a90b718cbabe7880ffafbe179692704bbe401df84b64f0d9f8009b9a1e6",
+    "baseline_installed_checks": {
+      "baseline_installed_source": true,
+      "dashboard_and_built_ui": true
+    },
+    "database_bytes": 1382731776,
+    "installed_source_api_and_models": {
+      "installed_modules": true,
+      "accepted_weights_loaded": true,
+      "readiness": true,
+      "http_exports": 4,
+      "installed_process_cancellation_seconds": 0.7741490689986676
+    },
+    "accepted_weight_files_preserved": 527,
+    "account_and_active_objects": "preserved",
+    "credentials": "unchanged; not included in report",
+    "real_database_backup_integrity_and_recovery": "passed",
+    "installer_completed": true
+  },
+  "prepared_database_restore_and_product": {
+    "at": "2026-11-13T21:31:02.206483+00:00",
+    "archive_sha256": "383c46a577d7b95f1aaf2b8cff288710d2d8dba8dc191dfe11711ada40ca23fb",
+    "database_manifest_sha256": "6dbcb41c13b99c8ce4829fe0d9f6ae3f2b7301eef07dd9278d327add27e6d710",
+    "database_restore": "All compressed parts and raw database checksums verified; SQLite integrity passed",
+    "immutable_backing_files": "Reused local bytes whose Git object IDs were verified against the published private tree; no full remote archive download claimed",
+    "checks": {
+      "packaged_source_imported": true,
+      "accepted_model_loaders": true,
+      "weight_files": 527,
+      "forecast_validation": {
+        "passed": true,
+        "player_gameweeks": 18816,
+        "player_fixtures": 18816,
+        "scope": "Finite probabilities, physical minute bounds, complete coverage and exact reconciliation with optimizer worlds; statistical accuracy is evaluated separately"
+      },
+      "ready": true,
+      "dashboard_current_plan": true,
+      "http_exports": 4,
+      "built_ui": true
+    }
+  },
+  "optional_hosted_ai_authentication": {
+    "groq": {
+      "configured": true,
+      "http_status": 200,
+      "models": 11,
+      "generation_calls": 0
+    },
+    "gemini": {
+      "configured": true,
+      "http_status": 200,
+      "models": 50,
+      "generation_calls": 0
+    }
+  },
+  "prior_evidence": "Original 189 findings and subsequent dispositions retained in release_0_14_4.json, release_0_14_5.json and prior delivery receipts; this receipt describes newly executed work.",
+  "known_actionable_release_blockers": [],
+  "scope": "Executed source, model/data repairs, production planning, cancellation, refresh, exports, actual installation/upgrade/recovery and platform workflows. No guarantee of future football scores or a globally optimal finite-budget solve."
+}
