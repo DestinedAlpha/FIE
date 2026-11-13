@@ -450,6 +450,12 @@ def choose_recommendation(
         and store.list("state", 1)
     ):
         state = store.get("state", reference["state_id"])
+        if state.get("initial"):
+            free_evidence = {
+                "free_transfers_consumed": 0,
+                "supported": True,
+                "exemption": "Initial squad formation does not consume a saved transfer",
+            }
         if not state.get("initial") and not state.get("active_chip"):
             if roll_search is None:
                 roll_search = optimize(

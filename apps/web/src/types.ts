@@ -454,6 +454,7 @@ export type Dashboard = FootballEvidenceData & {
     alternative_gap: number | null;
   } | null;
   policy_selection?: {
+    free_transfer_evidence?: {supported:boolean; free_transfers_consumed:number; net_mean_gain?:number; exemption?:string} | null;
     roll_comparison?: {hold_plan_id:string; start_event:number; end_event:number; policy_net_gain:number; immediate_net_gain:number; probability_ahead:number; paired_mc_standard_error:number} | null;
     hold_comparison?: {hold_plan_id:string; start_event:number; end_event:number; policy_net_gain:number; immediate_net_gain:number; probability_ahead:number; paired_mc_standard_error:number} | null;
     first_action_inputs?: {player_id:number; name:string; direction:string; expected_points:number; expected_minutes:number; p_sixty:number; horizon_expected_points:number; observed:Record<string,unknown>}[];
