@@ -6,6 +6,10 @@ The six supplied documents remain byte-for-byte unchanged in [`research/`](resea
 
 **Current acceptance status:** the role-v3 configuration scores **575** in independent weekly £100m teams. Historical future-expert validation scored **1,202 versus 1,098** in an earlier-season 19-week continuous replay and **538 versus 536** over GW1–9 under its earlier protocol. These different account problems do not certify the complete current policy. **Consistent 550+ continuous-account performance is not established.** See the [data/forecast audit](docs/data-and-forecast-audit.md) and [performance audit](docs/performance-audit.md).
 
+## What changed in 0.14.7
+
+Future fixture targets now use the canonical points target, preventing defensive-contribution points from being counted twice. Missing team-strength ratings stay missing, and existing installations repair the affected future weights while preserving the immediate model and original weights. Planning evaluates affordable alternatives using model forecasts and dated football statistics, covers remaining chip windows, and offers Thorough (180 seconds), Quick (30 seconds) and unlimited Exact search. All modes remain cancellable. Scarce free transfers are retained when the matched comparison cannot establish their advantage, with an exemption for a transfer that would otherwise expire at the cap.
+
 ## What changed in 0.14.6
 
 Fixed the Windows worker shutdown hang and confirmed cancellation with real calculation processes. Normal planning uses a shared 30-second search budget and a five-gameweek default; **Exact** retains unlimited search. Browsing another gameweek no longer silently extends the horizon. A legal current lineup is available while searching, and rolling this week is compared with policies that retain later transfers and chips. The dashboard exposes the actual player statistics and matched policy gains.
@@ -46,7 +50,7 @@ The audit fixes account-editor verification/provenance, version conflicts, late-
 
 ## Windows
 
-**[Download the 0.14.6 existing-installation update](https://github.com/DestinedAlpha/FIE/releases/download/v0.14.6/FPL-Intelligence-0.14.6-Update.zip).** This small update requires your existing installation with its data and models.
+**[Download the 0.14.7 existing-installation update](https://github.com/DestinedAlpha/FIE/releases/download/v0.14.7/FPL-Intelligence-0.14.7-Update.zip).** This small update requires your existing installation with its data and models.
 
 For an existing installation, extract the new private download into a **separate folder** and run **Update existing.cmd**. Select the existing folder containing Start.cmd. The updater backs up the database/application, preserves your `.env` and account data, updates the application, migrates incompatible companions when necessary and identifies stale forecasts/plans for the explicit update/optimization controls. Compatible accepted models are preserved. It does not apply any FPL account transfer.
 
