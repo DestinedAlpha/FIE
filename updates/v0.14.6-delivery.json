@@ -1,0 +1,193 @@
+{
+  "at": "2026-11-13T16:44:40.282905+00:00",
+  "version": "0.14.6",
+  "implementation_commit": "55f563da2d08831317c4368e28324d2399490242",
+  "packaged_source_and_evidence_commit": "55fb4e81a2e11b0adffc398c9f3e49e5cf45200b",
+  "inherited_audit": "All 189 original findings and subsequent dispositions remain in release_0_14_4.json and release_0_14_5.json. Prior v0.14.5 Windows success is not asserted: run 42493163670 failed and timed out during worker shutdown. This release corrects that defect.",
+  "public_release": "https://github.com/DestinedAlpha/FIE/releases/tag/v0.14.6",
+  "update": {
+    "url": "https://github.com/DestinedAlpha/FIE/releases/download/v0.14.6/FPL-Intelligence-0.14.6-Update.zip",
+    "sha256": "c53c5a90b718cbabe7880ffafbe179692704bbe401df84b64f0d9f8009b9a1e6",
+    "bytes": 5249484,
+    "download_and_crc": "passed",
+    "published_checksum_sidecar": "matched"
+  },
+  "full_private_payload": {
+    "at": "2026-11-13T16:40:41.285398+00:00",
+    "repository": "DestinedAlpha/fpl-thing",
+    "branch": "fie-windows-download-v0.14.6",
+    "parent": "1e095be506a99b1bafbe5e99b04adb5eebb28e5a",
+    "commit": "bc7f4e7ed2fe22cbb0207398bddd6f40c41b57fb",
+    "tree": "0948a1ec0d6d4cd39b024da90f647b12f6b2e199",
+    "files": 29254,
+    "data": {
+      "new_blobs": 898,
+      "new_bytes": 361715303,
+      "new_decoded_gzip_checks": 764
+    },
+    "database_manifest_sha256": "4c7aa46a600531fb17f3d648c6e587a5438c1caadfbd0d79a14e1071fe11a86c",
+    "all_file_object_ids_verified": true,
+    "original_model_blobs_retained": true,
+    "remote_commit_and_tree_verified": true,
+    "credentials": "Excluded and scanned",
+    "download": "https://github.com/DestinedAlpha/fpl-thing/archive/refs/heads/fie-windows-download-v0.14.6.zip"
+  },
+  "ci": {
+    "run_id": 43464982992,
+    "url": "https://github.com/DestinedAlpha/FIE/actions/runs/43464982992",
+    "commit": "55fb4e81a2e11b0adffc398c9f3e49e5cf45200b",
+    "ubuntu_latest": "passed",
+    "windows_latest": "passed",
+    "windows_launcher_and_packaged_updater_smoke": "passed"
+  },
+  "release_publication_run": 43464988555,
+  "regressions": {
+    "backend_tests": 372,
+    "backend_skipped": 0,
+    "frontend_unit_tests": 3,
+    "browser_journeys": 30,
+    "browser_failed": 0,
+    "browser_skipped": 0,
+    "scope": "Final packaged source passed full Linux/Windows backend and frontend CI. All desktop/mobile browser journeys passed locally against the changed UI and backend; subsequent source changes added the storage index and zero-cap consistency correction."
+  },
+  "installed_upgrade": {
+    "at": "2026-11-13T16:33:03.507099+00:00",
+    "archive_sha256": "c53c5a90b718cbabe7880ffafbe179692704bbe401df84b64f0d9f8009b9a1e6",
+    "baseline_version": "0.14.5",
+    "baseline_archive_sha256": "f01b7c127628dfa785d5cf01df8132d814c668adb967aff55c12a352b62bab60",
+    "baseline_installed_checks": {
+      "baseline_installed_source": true,
+      "dashboard_and_built_ui": true
+    },
+    "database_bytes": 1313579008,
+    "installed_source_api_and_models": {
+      "installed_modules": true,
+      "accepted_weights_loaded": true,
+      "readiness": true,
+      "http_exports": 4,
+      "installed_process_cancellation_seconds": 0.8188930689993867
+    },
+    "accepted_weight_files_preserved": 524,
+    "account_and_active_objects": "preserved",
+    "credentials": "unchanged; not included in report",
+    "real_database_backup_integrity_and_recovery": "passed",
+    "installer_completed": true
+  },
+  "fresh_prepared_restore": {
+    "at": "2026-11-13T16:41:02.923871+00:00",
+    "database_manifest_sha256": "4c7aa46a600531fb17f3d648c6e587a5438c1caadfbd0d79a14e1071fe11a86c",
+    "archive_sha256": "c53c5a90b718cbabe7880ffafbe179692704bbe401df84b64f0d9f8009b9a1e6",
+    "data_files": "Immutable prepared data files reused from verified backing tree; database restored from every packaged part",
+    "result": {
+      "fresh_source_imports": true,
+      "restored_database_integrity": "ok",
+      "accepted_models_loaded": true,
+      "model_weight_files": 524,
+      "forecast_rows_verified": 18816,
+      "readiness": true,
+      "dashboard_and_built_ui": true,
+      "http_exports": 4,
+      "database_active_pointers": {
+        "state": "051766ef49ee467f6298908931eb1b13da153ba0d0b05e7717a099d771b6eaf5",
+        "market": "05d3cc3107eb7b4dd2c815eed80a073f6cd770cb9874293c06a37e8e9651df81",
+        "decision_model": "0d0bd466e04abe52f4939fafbb9f0416a33632a80d329e15b7dd46a342db763b",
+        "forecast": "e838f833bb45d6d289d6d116a39ef1c01913a78e2f1e0f86d725f19e0569f7ba",
+        "selected_plan": "41b39ade0cd053ee54577c585da440e6f15d8d1117e4913271fa421b7c0c073e"
+      }
+    }
+  },
+  "small_installer": {
+    "at": "2026-11-13T16:29:25.964238+00:00",
+    "archive": "artifacts/runtime/FPL-Intelligence-0.14.6-Update.zip",
+    "bytes": 5249484,
+    "version": "0.14.6",
+    "application_files": 352,
+    "crc": "passed",
+    "application_checksums": "passed",
+    "actual_installation": "passed",
+    "account_database": "preserved",
+    "keys": "preserved",
+    "existing_models": "preserved",
+    "retired_weights": "removed by installed migration",
+    "backup": "verified"
+  },
+  "production_execution": "artifacts/evaluations/production_workflow_0_14_6.json",
+  "frozen_predeadline_diagnostic": "artifacts/evaluations/frozen_gw10_0_14_6.json",
+  "accepted_models": "Existing accepted numerical families refit/calibrated through finalized GW10; all original text weights retained; 524 text weights in prepared payload. No unvalidated architecture promoted.",
+  "known_actionable_engineering_blocker": null,
+  "external_boundaries": "Live Understat access unavailable; 47,053 validated cached observations and legitimate alternative sources retained, 1,194 ambiguous identities excluded. Public deadline snapshots cannot disclose unrevealed FPL transfers. Numerical recommendations and future football outcomes remain uncertain.",
+  "fix_dispositions": [
+    {
+      "issue": "Windows worker shutdown hangs",
+      "status": "implemented and tested",
+      "source": "src/fpl_intelligence/job_worker.py",
+      "evidence": "tests/test_job_isolation.py"
+    },
+    {
+      "issue": "Cancellation across controllers",
+      "status": "implemented and tested",
+      "source": "src/fpl_intelligence/job_execution.py",
+      "evidence": "tests/test_job_isolation.py"
+    },
+    {
+      "issue": "Concurrent API owners and interrupted-job recovery",
+      "status": "implemented and tested",
+      "source": "src/fpl_intelligence/api.py",
+      "evidence": "tests/test_job_isolation.py"
+    },
+    {
+      "issue": "Unbounded normal planning and auxiliary searches",
+      "status": "implemented and tested",
+      "source": "src/fpl_intelligence/search_control.py",
+      "evidence": "tests/test_job_isolation.py"
+    },
+    {
+      "issue": "Implicit planning-horizon expansion",
+      "status": "implemented and tested",
+      "source": "apps/web/src/main.tsx",
+      "evidence": "apps/web/e2e/workspace.spec.ts"
+    },
+    {
+      "issue": "Transfer comparison lacks roll-now/optimize-later alternative",
+      "status": "implemented and tested",
+      "source": "src/fpl_intelligence/objectives.py",
+      "evidence": "artifacts/evaluations/production_workflow_0_14_6.json"
+    },
+    {
+      "issue": "Moving live transfer-flow fields invalidate current forecasts",
+      "status": "implemented and tested",
+      "source": "src/fpl_intelligence/readiness.py",
+      "evidence": "artifacts/evaluations/production_workflow_0_14_6.json"
+    },
+    {
+      "issue": "Heavy health polling",
+      "status": "implemented and tested",
+      "source": "src/fpl_intelligence/api.py",
+      "evidence": "tests/test_integrity.py"
+    },
+    {
+      "issue": "Repeated sorting of large latest-artifact records",
+      "status": "implemented and tested",
+      "source": "src/fpl_intelligence/storage.py",
+      "evidence": "tests/test_integrity.py"
+    },
+    {
+      "issue": "Updated data falsely implies accepted model family lacks validation",
+      "status": "implemented and tested",
+      "source": "src/fpl_intelligence/forecast_population.py",
+      "evidence": "artifacts/evaluations/production_workflow_0_14_6.json"
+    },
+    {
+      "issue": "Zero-minute cap leaves nonzero numerical components",
+      "status": "implemented and tested",
+      "source": "src/fpl_intelligence/decision.py",
+      "evidence": "tests/test_decision.py"
+    },
+    {
+      "issue": "Polling failure loses cancellation controls",
+      "status": "implemented and tested",
+      "source": "apps/web/src/main.tsx",
+      "evidence": "apps/web/e2e/workspace.spec.ts"
+    }
+  ]
+}
