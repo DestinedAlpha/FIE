@@ -1,0 +1,115 @@
+{
+  "at": "2026-11-14T15:09:33.627903+00:00",
+  "version": "0.14.8",
+  "implementation_commit": "1edd9743c4c48e786f0e7553711522ac38551465",
+  "package_commit": "de00cb58d9bbab04460021051bc1c6fecf519410",
+  "download": {
+    "url": "https://github.com/DestinedAlpha/FIE/releases/download/v0.14.8/FPL-Intelligence-0.14.8-Update.zip",
+    "bytes": 5280158,
+    "sha256": "b96b110bcf4ce591e1d08da2cd84e52da6f0bb20d4a357db275f134a10e00ec2",
+    "anonymous_download_verified": true,
+    "zip_crc_verified": true,
+    "published_sidecar_matched": true,
+    "publish_run": 43608492490
+  },
+  "regressions": {
+    "backend": 393,
+    "frontend": 3,
+    "browser": 34,
+    "failures": 0,
+    "browser_initial_failures": "Two new mocked UI cases exposed provisional action ordering and an invalid mocked Free Hit transfer list. Ordering was corrected, the mock was made realistic, and the complete final browser run passed."
+  },
+  "ci": {
+    "url": "https://github.com/DestinedAlpha/FIE/actions/runs/43608039956",
+    "ubuntu": "passed",
+    "windows": "passed"
+  },
+  "production": {
+    "forecast_seconds": 141.42670982400068,
+    "forecast_id": "e8dffc70e8f836a2df61520b1ad137ac704cddc0e6772e5e644a9049ae858e6d",
+    "model_before": "b85577dac1618ea0b8db1e2a662d138e1fbae7256c6f53028d2e8648eeb83ccd",
+    "model_after": "b85577dac1618ea0b8db1e2a662d138e1fbae7256c6f53028d2e8648eeb83ccd",
+    "existing_weights_preserved": 527,
+    "planning_seconds": 187.17534386899933,
+    "plan_id": "0c42b80f750cb70b4efabfabfb76b2593e88b1a9c80f4f4243ea6f977d3c3c5f",
+    "first_action": {
+      "sell": [
+        "Calafiori"
+      ],
+      "buy": [
+        "Hill"
+      ],
+      "chip": null,
+      "hit": 0,
+      "captain": "Haaland",
+      "vice": "Gabriel"
+    },
+    "expected_horizon_points": 537.0005,
+    "cancel_seconds": 0.11998068299999431,
+    "four_exports_verified": true,
+    "completed_plan_preserved": true,
+    "account_preserved": true,
+    "freehit_refinements": [
+      {
+        "event": 15,
+        "before": 60.27625,
+        "after": 61.63925,
+        "method": "Exact shared-world autosubs and captain fallback"
+      }
+    ]
+  },
+  "input_preparation": {
+    "previous_seconds": 33.147,
+    "new_seconds": 9.41818918699937,
+    "rows": 18816,
+    "all_inputs_matched": true,
+    "scalar_max_difference": 0
+  },
+  "installed_upgrade": {
+    "at": "2026-11-14T15:04:42.473742+00:00",
+    "archive_sha256": "b96b110bcf4ce591e1d08da2cd84e52da6f0bb20d4a357db275f134a10e00ec2",
+    "baseline_version": "0.14.7",
+    "baseline_archive_sha256": "383c46a577d7b95f1aaf2b8cff288710d2d8dba8dc191dfe11711ada40ca23fb",
+    "baseline_installed_checks": {
+      "baseline_installed_source": true,
+      "dashboard_and_built_ui": true
+    },
+    "database_bytes": 1412468736,
+    "installed_source_api_and_models": {
+      "installed_modules": true,
+      "accepted_weights_loaded": true,
+      "readiness": true,
+      "http_exports": 4,
+      "installed_process_cancellation_seconds": 0.08214600300016173
+    },
+    "accepted_weight_files_preserved": 527,
+    "account_and_active_objects": "preserved",
+    "credentials": "unchanged; not included in report",
+    "real_database_backup_integrity_and_recovery": "passed",
+    "installer_completed": true
+  },
+  "small_installer": {
+    "at": "2026-11-14T15:03:46.822317+00:00",
+    "archive": "artifacts/runtime/FPL-Intelligence-0.14.8-Update.zip",
+    "bytes": 5280158,
+    "version": "0.14.8",
+    "application_files": 364,
+    "crc": "passed",
+    "application_checksums": "passed",
+    "actual_installation": "passed",
+    "account_database": "preserved",
+    "keys": "preserved",
+    "existing_models": "preserved",
+    "retired_weights": "removed by installed migration",
+    "backup": "verified"
+  },
+  "model_study": {
+    "protocol": "Future-only role anchor. Same global conditional points and same frozen future expert in both arms; baseline reference minute boosters and source role predictions are matched from strictly earlier 8-deadline folds. Only established fit current-season regulars (at least five source gameweeks, 80% starts, 75% minutes) whose lagged 24-match start prior is below 80% are anchored; no actual future outcome is an input. Select weight/decay on 2024/25 source+label GW1-19; separate acceptance GW20-38 and complete 2025/26 replication. Paired intervals block by target GW.",
+    "selected": "1.0:3.0",
+    "rows": 229679,
+    "passed": false,
+    "promoted": false
+  },
+  "interpretation": "The completed production run still chooses Calafiori to Hill. Corrected solver selection and better Free Hit substitute scoring do not establish superior football prediction accuracy or prove that choice better than competing forecasts. Accepted numerical weights were retained; no player or club bans were hard-coded.",
+  "scope": "Verified concrete planner, forecast runtime/progress, optional-source handling and installation changes; no blanket claim that every football recommendation will be correct."
+}
