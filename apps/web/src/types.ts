@@ -51,6 +51,7 @@ export type Plan = {
   forecast_id: string;
   execution_ready?: boolean;
   stale?: boolean;
+  provisional?: boolean;
   ledger: Ledger[];
   solver?: {
     status: string;
@@ -454,6 +455,7 @@ export type Dashboard = FootballEvidenceData & {
     alternative_gap: number | null;
   } | null;
   policy_selection?: {
+    best_transfer_comparison?: {plan_id:string; buy:number[]; sell:number[]; net_mean_gain:number; paired_mc_standard_error:number} | null;
     free_transfer_evidence?: {supported:boolean; free_transfers_consumed:number; net_mean_gain?:number; exemption?:string} | null;
     roll_comparison?: {hold_plan_id:string; start_event:number; end_event:number; policy_net_gain:number; immediate_net_gain:number; probability_ahead:number; paired_mc_standard_error:number} | null;
     hold_comparison?: {hold_plan_id:string; start_event:number; end_event:number; policy_net_gain:number; immediate_net_gain:number; probability_ahead:number; paired_mc_standard_error:number} | null;

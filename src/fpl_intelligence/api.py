@@ -619,19 +619,12 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
             if not chips_assessed(store, selected_plan):
                 selected_plan["stale"] = True
                 selected_plan["stale_reason"] = "Recompute with the remaining chip window assessed"
-            if (
-                selected_plan["ledger"][0]["hit"] > 0
-                or selected_plan["ledger"][0].get("chip")
-                or selected_plan["ledger"][0].get("buy")
-            ):
-                from .objectives import stale_paid_evidence
+            from .objectives import stale_paid_evidence
 
-                receipt = store.get("policy_selection") if store.list("policy_selection", 1) else {}
-                if stale_paid_evidence(selected_plan, receipt):
-                    selected_plan["stale"] = True
-                    selected_plan["stale_reason"] = (
-                        "Transfer or chip-use evidence must be recomputed with the current selection policy"
-                    )
+            receipt = store.get("policy_selection") if store.list("policy_selection", 1) else {}
+            if stale_paid_evidence(selected_plan, receipt):
+                selected_plan["stale"] = True
+                selected_plan["stale_reason"] = "Recalculate the plan using the corrected selection policy"
             from .availability import moment
 
             plan_deadline = next(
@@ -784,6 +777,13 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
         from .intelligence import source_coverage
 
         result["source_coverage"] = source_coverage(store)
+        if result.get("plan"):
+            selected = result["plan"]
+            receipt = result.get("policy_selection") or {}
+            selected["provisional"] = (
+                selected.get("objective") == "hold_squad_with_weekly_lineup_optimization"
+                and receipt.get("selection", {}).get("selected_plan_id") != selected["id"]
+            )
         from .transport import request_metrics
 
         result["request_metrics_24h"] = request_metrics(store)
@@ -1336,7 +1336,13 @@ def create_app(root=None, *, job_runner=None, _worker=False, _job_inputs=None, _
         for kind in ("solver_progress", "job_phase", "job_worker"):
             matches = store.list_matching(kind, {"job_id": identity}, 1)
             if matches:
-                value["progress"].update(store.get(kind, matches[0]["id"]))
+                record = store.get(kind, matches[0]["id"])
+                if kind == "job_worker":
+                    value["progress"].update(pid=record["pid"], worker_started_at=record["at"])
+                else:
+                    value["progress"].update(record)
+                    if kind == "job_phase":
+                        value["progress"]["phase_at"] = record["at"]
         return value
 
     @app.post("/api/state")

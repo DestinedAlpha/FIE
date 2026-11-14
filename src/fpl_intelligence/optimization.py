@@ -240,6 +240,49 @@ def greedy_bundle(state, players, rules, means, max_transfers=2):
     return chosen
 
 
+def refine_freehit_lineup(state, lineup, means, players, rules, points, minutes, player_ids, seconds):
+    """Temporary-squad search with exact autosubs; never sacrifice the incumbent.
+
+    A Free Hit restores the permanent account, so its bench can be improved
+    independently without inventing cash or changing later transfer options.
+    Different bench weights propose squads only; exact shared-world scoring
+    chooses the winner, including captain and goalkeeper fallback.
+    """
+    from .search_control import auxiliary_search, effective_time_limit, planning_budget
+    from .simulation import lineup_worlds
+
+    best = lineup
+    best_mean = float(lineup_worlds(best, points, minutes, player_ids, players, rules, "freehit").mean())
+    before = best_mean
+    with planning_budget(seconds):
+        for weight in (0.015, 0.15, 0.4):
+            remaining = effective_time_limit(None)
+            if remaining is not None and remaining < 0.1:
+                break
+            with auxiliary_search():
+                squad = select_squad(
+                    state,
+                    players,
+                    rules,
+                    means,
+                    seconds=1 if remaining is None else min(1, remaining),
+                    bench_weight=weight,
+                )
+            candidate = optimize_bench(
+                best_lineup(squad, means, players, rules), points, minutes, player_ids, players, rules
+            )
+            value = float(
+                lineup_worlds(candidate, points, minutes, player_ids, players, rules, "freehit").mean()
+            )
+            if value > best_mean + 1e-9:
+                best, best_mean = candidate, value
+    return best, {
+        "before": before,
+        "after": best_mean,
+        "method": "Exact shared-world autosubs and captain fallback",
+    }
+
+
 def feasible_incumbent(model, vector):
     """Check bounds, every row and integrality before offering a solver seed."""
     lhs = np.bincount(
@@ -422,7 +465,7 @@ def optimize(
             rules,
             current_means,
             chip="freehit",
-            seconds=min(time_limit, 15),
+            seconds=15 if time_limit is None else min(time_limit, 15),
             forced_sell=(forced_sell or {}).get(state.event, ()),
             relative_gap=relative_gap,
         )
@@ -1030,7 +1073,12 @@ def optimize(
         continuation,
         {key: bool(mip.upper[value]) for key, value in chip_vars.items()},
     )
-    solution, diagnostics = mip.solve(time_limit, warm, relative_gap=relative_gap)
+    from .search_control import effective_time_limit
+
+    remaining = effective_time_limit(time_limit)
+    polish_seconds = 3.0 if remaining is None else min(3.0, max(0.0, remaining * 0.1))
+    search_seconds = None if remaining is None else max(0.001, remaining - polish_seconds)
+    solution, diagnostics = mip.solve(search_seconds, warm, relative_gap=relative_gap)
     if relaxation_bound is not None:
         if relaxation_bound < diagnostics["objective"] - 1e-5:
             raise ValueError("Independent relaxation bound disagrees with the feasible incumbent")
@@ -1059,6 +1107,9 @@ def optimize(
     from .worlds import load_worlds
 
     with load_worlds(store, forecast) as worlds:
+        freehit_seconds = polish_seconds / max(
+            1, sum(solution[chip_vars[t, "freehit"]] > 0.5 for t in events)
+        )
         for t in events:
             fh = solution[chip_vars[t, "freehit"]] > 0.5
             playing = [p for p in ids if solution[z[t, p]] > 0.5]
@@ -1073,6 +1124,34 @@ def optimize(
             lineup = optimize_bench(
                 lineup, worlds[f"points_{t}"], worlds[f"minutes_{t}"], forecast["player_ids"], players, rules
             )
+            if fh and polish_seconds > 0:
+                from .search_control import report_phase
+
+                report_phase(f"Checking GW{t} Free Hit starters and substitute cover")
+                previous_additive = sum(means[t, p] for p in new_xi) + means[t, cap]
+                lineup, refinement = refine_freehit_lineup(
+                    current,
+                    lineup,
+                    {p: means.get((t, p), 0) for p in ids},
+                    players,
+                    rules,
+                    worlds[f"points_{t}"],
+                    worlds[f"minutes_{t}"],
+                    forecast["player_ids"],
+                    freehit_seconds,
+                )
+                new_xi = lineup.xi
+                playing = lineup.xi + lineup.bench
+                diagnostics.setdefault("freehit_refinements", []).append({"event": t, **refinement})
+                diagnostics["objective"] += (
+                    sum(means[t, p] for p in new_xi) + means[t, lineup.captain] - previous_additive
+                )
+                if diagnostics.get("best_bound") is not None:
+                    diagnostics["gap"] = max(
+                        0,
+                        (diagnostics["best_bound"] - diagnostics["objective"])
+                        / max(1, abs(diagnostics["objective"])),
+                    )
             cap = lineup.captain
             old = {lot.player_id for lot in current.lots}
             sell = sorted(old - set(playing)) if fh else [p for p in ids if solution[outgoing[t, p]] > 0.5]

@@ -1,3 +1,5 @@
 """FPL Intelligence: numerical forecasts, deterministic rules, auditable decisions."""
 
-__version__ = "0.5.0"
+from importlib.metadata import version
+
+__version__ = version("fpl-intelligence")

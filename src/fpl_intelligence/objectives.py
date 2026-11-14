@@ -4,12 +4,18 @@ from __future__ import annotations
 
 import numpy as np
 
-SELECTION_VERSION = "resource-evidence-v4"
+SELECTION_VERSION = "paired-free-transfer-v5"
 
 
 def stale_paid_evidence(plan, receipt):
     """Invalidate a persisted expected-points paid recommendation after upgrading."""
     selection = receipt.get("selection", {})
+    if (
+        selection.get("objective") == "expected_points"
+        and selection.get("selected_plan_id") == plan["id"]
+        and receipt.get("selection_version") != SELECTION_VERSION
+    ):
+        return True
     if (
         plan["ledger"][0].get("buy")
         and not plan["ledger"][0].get("chip")
@@ -66,7 +72,13 @@ def chip_use_evidence(candidate, alternative, difference, search):
 
 
 def free_transfer_evidence(candidate, rolled, difference):
-    """A saved FT is a scarce resource unless using it leaves the same next stock."""
+    """Compare legal continuations; never charge a free transfer a solver-proof cost.
+
+    The roll policy already carries its extra FT through all later deadlines.
+    Requiring a global additive bound again makes a normal transfer impossible
+    whenever the large chip MIP times out, however strong the paired advantage.
+    Paid hits retain their separate irreversible-points-cost guard.
+    """
     evidence = paid_transfer_evidence(candidate, rolled, difference, rolled)
     consumed = max(
         0, rolled["ledger"][0]["free_transfers_after"] - candidate["ledger"][0]["free_transfers_after"]
@@ -74,8 +86,12 @@ def free_transfer_evidence(candidate, rolled, difference):
     return {
         **evidence,
         "free_transfers_consumed": consumed,
-        "supported": not consumed or evidence["hit_supported_beyond_search_error"],
-        "scope": "Paired forecast sampling and unfinished rolled-policy search; not certainty about future football",
+        "supported": not consumed or evidence["hit_supported_beyond_mc_error"],
+        "search_complete": evidence["no_hit_search_allowance"] == 0,
+        "reason": "Matched continuation advantage exceeds paired simulation sampling error"
+        if evidence["hit_supported_beyond_mc_error"]
+        else "Transfer advantage is unresolved against the matched rolled continuation",
+        "scope": "The saved FT is valued in the rolled continuation; unfinished search is reported separately and does not impose an additional transfer cost. Forecast error remains additional.",
     }
 
 
@@ -512,6 +528,7 @@ def choose_recommendation(
             "scope": "Same account, horizon, legal scoring and frozen worlds; later moves are conditional",
         }
     roll_comparison = None
+    best_transfer_comparison = None
     if roll_search:
         rolled = next(i for i, p in enumerate(plans) if p["id"] == roll_search["id"])
         delta = outcomes[index] - outcomes[rolled]
@@ -528,6 +545,21 @@ def choose_recommendation(
             "comparison_solver": roll_search["solver"],
             "scope": "Roll this deadline only; the same later transfer and chip options remain available",
         }
+        alternatives = [
+            i
+            for i, p in enumerate(plans)
+            if p["ledger"][0].get("buy") and not p["ledger"][0].get("chip") and p["ledger"][0]["hit"] == 0
+        ]
+        if alternatives:
+            challenger = max(alternatives, key=lambda i: float(outcomes[i].mean()))
+            paired = outcomes[challenger] - outcomes[rolled]
+            best_transfer_comparison = {
+                "plan_id": plans[challenger]["id"],
+                "buy": [r["player_id"] for r in plans[challenger]["ledger"][0]["buy"]],
+                "sell": [r["player_id"] for r in plans[challenger]["ledger"][0]["sell"]],
+                "net_mean_gain": float(paired.mean()),
+                "paired_mc_standard_error": float(paired.std(ddof=1) / np.sqrt(len(paired))),
+            }
     from .ingestion import load_market
 
     first = selected["ledger"][0]
@@ -585,6 +617,7 @@ def choose_recommendation(
         "free_transfer_evidence": free_evidence,
         "hold_comparison": comparison,
         "roll_comparison": roll_comparison,
+        "best_transfer_comparison": best_transfer_comparison,
         "first_action_inputs": inputs,
         "transfer_comparisons": [p["id"] for p in transfer_comparisons],
         "market_known_at": market.get("known_at"),

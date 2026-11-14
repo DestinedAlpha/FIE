@@ -645,8 +645,11 @@ def load_bundle(store, spec):
 
 def future_inputs(store, market, players, start, end, scenario=None, beliefs=()):
     from .observations import information_time
+    from .search_control import report_phase
 
+    report_phase("Reading finalized match history")
     rows, fixtures, _ = canonical_rows(store)
+    cutoff = information_time(store)
     past = defaultdict(list)
     clubs = defaultdict(list)
     for row in rows:
@@ -696,6 +699,11 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
         )
         for club in names
     }
+    # A player's lagged history is identical across scheduled future fixtures.
+    # Compute its expensive profile once, then replace fixture-specific fields.
+    prepared = {}
+    club_strength = {club: strength(history) for club, history in clubs.items()}
+    report_phase("Building player and fixture inputs")
     for f in scheduled:
         event = f.get("event")
         if f.get("finished") or event is None or (not start <= event <= end):
@@ -705,16 +713,21 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
                 continue
             home = player.team == f["team_h"]
             history = past["code", player.code]
-            x, p = context_vector(
-                player.position,
-                home,
-                history,
-                f.get("kickoff_time"),
-                strength(clubs[names[player.team]]),
-                strength(clubs[names[f["team_a"] if home else f["team_h"]]]),
-                event,
-            )
+            if player.id not in prepared:
+                prepared[player.id] = context_vector(player.position, False, history, None, (0, 0), (0, 0), 0)
+            x, p = prepared[player.id]
             values = dict(zip(NAMES, x))
+            team = club_strength.get(names[player.team], strength([]))
+            opponent = club_strength.get(names[f["team_a"] if home else f["team_h"]], strength([]))
+            values.update(
+                home=float(home),
+                rest_days=vector(player.position, home, p, f.get("kickoff_time"))[-1],
+                team_attack=team[0],
+                team_defence=team[1],
+                opponent_attack=opponent[0],
+                opponent_defence=opponent[1],
+                season_week=float(event),
+            )
             if f.get("kickoff_time"):
                 from datetime import datetime
 
@@ -741,7 +754,7 @@ def future_inputs(store, market, players, start, end, scenario=None, beliefs=())
                 elapsed = (
                     moment(f["kickoff_time"]) - moment(first_kickoff[player.team])
                 ).total_seconds() / 86400
-                availability = recovery_path(player.raw, information_time(store), elapsed, recovery)
+                availability = recovery_path(player.raw, cutoff, elapsed, recovery)
             if not player.selectable:
                 availability = 0
             suspension_served = False
@@ -825,6 +838,7 @@ def learned_forecast(
     import time
 
     from .observations import information_time
+    from .search_control import report_phase
 
     started = time.monotonic()
     spec = store.get("decision_model")
@@ -851,6 +865,7 @@ def learned_forecast(
             store, spec, rows, market, players, scenario
         )
     else:
+        report_phase("Predicting current player points and minutes")
         bundle = load_bundle(store, spec)
         matrix = np.asarray([r["x"] for r in rows])
         _, probabilities, conditional = predict_models(bundle, matrix, [r["dc_probability"] for r in rows])
@@ -860,6 +875,7 @@ def learned_forecast(
     if spec.get("future_horizon_model_id"):
         from .future_expert import combine
 
+        report_phase("Predicting future fixture points and minutes")
         probabilities, conditional, starts, availability_included = combine(
             store,
             spec,
@@ -878,6 +894,7 @@ def learned_forecast(
     ):
         from .role_minutes import apply
 
+        report_phase("Applying current roles, availability and workload")
         probabilities, role_availability = apply(
             store, spec["role_minutes_model_id"], rows, market, players, probabilities, start
         )
@@ -899,6 +916,7 @@ def learned_forecast(
 
         availability_models = load_availability(store)
     for event in range(start, end_event + 1):
+        report_phase(f"Simulating GW{event} · {event - start + 1}/{end_event - start + 1} gameweeks")
         previous_simulated: dict[int, dict[str, Any]] = {}
         points = np.zeros((worlds, len(ids)), dtype=np.int16)
         minutes = np.zeros_like(points)
@@ -1120,7 +1138,9 @@ def learned_forecast(
         raise ValueError("Workload changed during forecasting; retry with current inputs")
     from .worlds import save_worlds
 
+    report_phase("Validating forecast probabilities and scoring")
     body["validation"] = validate_forecast(body, arrays)
+    report_phase("Saving completed forecast")
     body["scenario_path"] = save_worlds(store, digest(body), arrays)
     body["id"] = store.put("scenario_forecast" if scenario else "forecast", body)
     if not scenario and body["source_challenger_model_id"]:

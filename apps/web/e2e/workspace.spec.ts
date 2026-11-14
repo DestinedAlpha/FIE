@@ -18,6 +18,38 @@ async function navigate(page: import("@playwright/test").Page, label: string) {
   await page.getByRole("button", { name: label, exact: true }).click();
 }
 
+test("an initial lineup baseline never recommends rolling every future week", async ({page}) => {
+  await page.route("**/api/dashboard*", async route => {
+    const response = await route.fetch(); const data = await response.json();
+    data.plan.stale = false; data.plan.provisional = true;
+    await route.fulfill({response,json:data});
+  });
+  await openWorkspace(page);
+  const panel = page.locator('.horizon-panel');
+  await expect(panel).toContainText('Lineup baseline only');
+  await expect(panel.locator('.timeline-item')).toHaveCount(1);
+  await expect(panel).toContainText('Transfer search pending');
+  await expect(panel).not.toContainText('Roll · retain flexibility');
+});
+
+test("Free Hit preview distinguishes temporary starters and substitutes", async ({page}) => {
+  let benchName = "";
+  await page.route("**/api/dashboard*", async route => {
+    const response = await route.fetch(); const data = await response.json();
+    data.plan.stale = false; data.plan.provisional = false;
+    const row = data.plan.ledger[0]; row.chip = 'freehit';
+    benchName = data.market.players.find((p:any)=>p.id===row.lineup.bench[0]).web_name;
+    await route.fulfill({response,json:data});
+  });
+  await openWorkspace(page);
+  const row = page.locator('.horizon-panel .timeline-item').first();
+  await expect(row.locator('p').first()).toContainText('temporary starting XI');
+  await expect(row.locator('p').first()).not.toContainText(benchName);
+  await row.getByText('Bench and captain',{exact:true}).click();
+  await expect(row.locator('details')).toContainText(benchName);
+  await expect(row.locator('details')).toContainText('Your permanent team returns afterward');
+});
+
 test("reloading discovers a background calculation and exposes cancellation", async ({page}) => {
   let cancelled = false;
   await page.route("**/api/dashboard*", async route => {

@@ -28,13 +28,13 @@ def verify(archive):
         for path in (original.root / "models").rglob("*.txt")
     }
     runtime = source / "artifacts/runtime"
-    baseline = source / "updates/FPL-Intelligence-0.14.6-Update.zip"
-    if (
-        not baseline.is_file()
-        or hashlib.sha256(baseline.read_bytes()).hexdigest()
-        != "c53c5a90b718cbabe7880ffafbe179692704bbe401df84b64f0d9f8009b9a1e6"
-    ):
-        raise ValueError("Real upgrade verification requires the checksum-verified published v0.14.6 archive")
+    baseline_release = os.getenv("FPL_VERIFY_BASELINE_VERSION", "0.14.6")
+    baseline = source / "updates" / f"FPL-Intelligence-{baseline_release}-Update.zip"
+    baseline_hash = os.getenv(
+        "FPL_VERIFY_BASELINE_SHA256", "c53c5a90b718cbabe7880ffafbe179692704bbe401df84b64f0d9f8009b9a1e6"
+    )
+    if not baseline.is_file() or hashlib.sha256(baseline.read_bytes()).hexdigest() != baseline_hash:
+        raise ValueError("Real upgrade verification requires a checksum-verified published baseline archive")
     with tempfile.TemporaryDirectory(prefix="real-update-", dir=runtime) as temporary:
         scratch = Path(temporary)
         target, stage = scratch / "installed", scratch / "package"
@@ -50,7 +50,7 @@ def verify(archive):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(zipped.read(prefix + name))
         baseline_version = tomllib.loads((target / "pyproject.toml").read_text())["project"]["version"]
-        assert baseline_version == "0.14.6"
+        assert baseline_version == baseline_release
         secret = source / ".env"
         if secret.exists():
             shutil.copy2(secret, target / ".env")

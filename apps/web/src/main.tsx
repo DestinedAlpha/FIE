@@ -130,6 +130,7 @@ function App() {
       try {
         const value = await api<{
           status: string;
+          created_at?: string;
           error?: string;
           progress?: {phase?: string; plan_id?: string; mip_primal_bound?: number; mip_dual_bound?: number; mip_gap?: number};
           result?: { stale?: boolean; status?: string; plan_optimized?: boolean; forecast_updated?: boolean };
@@ -153,7 +154,11 @@ function App() {
           }
         } else if (!stopped) {
           if(value.status === "cancelling") setNotice("Stopping calculation…");
-          else if(value.progress?.phase) setNotice(value.progress.phase + (value.progress.mip_gap == null ? "" : ` · search gap ${(100 * value.progress.mip_gap).toFixed(2)}%`));
+          else if(value.progress?.phase) {
+            const seconds = value.created_at ? Math.max(0, Math.floor((Date.now() - Date.parse(value.created_at)) / 1000)) : null;
+            const elapsed = seconds !== null && Number.isFinite(seconds) ? ` · ${Math.floor(seconds / 60)}m ${seconds % 60}s elapsed` : "";
+            setNotice(value.progress.phase + elapsed + (value.progress.mip_gap == null ? "" : ` · search gap ${(100 * value.progress.mip_gap).toFixed(2)}%`));
+          }
           const newPlan = value.progress?.plan_id && value.progress.plan_id !== readyPlan;
           if (newPlan) readyPlan = value.progress?.plan_id;
           if (newPlan || ++ticks % 6 === 0) {
@@ -671,7 +676,9 @@ function App() {
                       </div>
                       <h2>
                         {first
-                          ? first.chip === "freehit"
+                          ? plan?.provisional
+                            ? "Current lineup ready. Transfer search is pending."
+                            : first.chip === "freehit"
                             ? `Play your Free Hit for GW${first.event}.`
                             : first.buy.length
                               ? `${first.buy.length} recommended move${first.buy.length > 1 ? "s" : ""}.`
@@ -688,10 +695,13 @@ function App() {
                       {data.policy_selection?.selection.selected_plan_id === plan?.id && data.policy_selection?.free_transfer_evidence?.supported === false && (
                         <p className="recommendation-copy">Keep the free transfer for flexibility. The alternatives have not shown a reliable advantage over rolling and planning later moves.</p>
                       )}
-                      {data.policy_selection?.selection.selected_plan_id === plan?.id && data.policy_selection?.roll_comparison && (
+                      {data.policy_selection?.selection.selected_plan_id === plan?.id && data.policy_selection?.roll_comparison && data.policy_selection.roll_comparison.hold_plan_id !== plan?.id && (
                         <p className="recommendation-copy">
                           Compared with rolling this week and optimizing later moves: {data.policy_selection.roll_comparison.immediate_net_gain.toFixed(1)} expected net points this week; {data.policy_selection.roll_comparison.policy_net_gain.toFixed(1)} across GW{data.policy_selection.roll_comparison.start_event}–{data.policy_selection.roll_comparison.end_event}.
                         </p>
+                      )}
+                      {data.policy_selection?.selection.selected_plan_id === plan?.id && !first?.buy.length && data.policy_selection?.best_transfer_comparison && (
+                        <p className="recommendation-copy">Best tested free-transfer alternative: {data.policy_selection.best_transfer_comparison.sell.map(name).join(" + ")} → {data.policy_selection.best_transfer_comparison.buy.map(name).join(" + ")}. Its modeled advantage over rolling and planning later moves is {data.policy_selection.best_transfer_comparison.net_mean_gain.toFixed(1)} points across the horizon.</p>
                       )}
                       {data.policy_selection?.selection.selected_plan_id === plan?.id && !data.policy_selection?.roll_comparison && data.policy_selection?.hold_comparison && (
                         <p className="recommendation-copy">
@@ -709,7 +719,7 @@ function App() {
                           </table></div>
                         </details>
                       )}
-                      {first ? (
+                      {first && !plan?.provisional ? (
                         <div className="transfer-list">
                           {first.buy.length ? (
                             transferPairs(first, players).map(({ sale, buy: b }) => (
@@ -867,12 +877,12 @@ function App() {
                       <div className="section-title">
                         <div>
                           <h3>The road ahead</h3>
-                          <p>Your plan, with room to adapt.</p>
+                          <p>{plan?.provisional ? "Lineup baseline only; transfer recommendations are not ready." : "Future moves are conditional. Recalculate with new information."}</p>
                         </div>
                         <CalendarDays size={17} />
                       </div>
                       <div className="timeline">
-                        {plan?.ledger.slice(0, 5).map((r, i) => (
+                        {(!plan?.provisional ? plan?.ledger.slice(0, 5) : plan?.ledger.slice(0, 1))?.map((r, i) => (
                           <div className="timeline-item" key={r.event}>
                             <div
                               className={
@@ -888,13 +898,14 @@ function App() {
                               </span>
                             </div>
                             <p>
-                              {r.chip ? `${r.chip} · ` : ""}
-                              {r.buy.length
+                              {!plan?.provisional && (r.chip === "freehit" ? "Free Hit · temporary starting XI" : r.chip ? `${r.chip} · ` : "")}
+                              {plan?.provisional ? "Transfer search pending" : r.chip === "freehit" ? r.lineup.xi.map(name).join(" + ") : r.buy.length
                                 ? r.buy
                                     .map((p) => name(p.player_id))
                                     .join(" + ")
-                                : "Roll · retain flexibility"}
+                                : i === 0 ? "Roll · retain flexibility" : "No transfer in this conditional plan"}
                             </p>
+                            {r.chip === "freehit" && <details><summary>Bench and captain</summary><p>Bench: {r.lineup.bench.map(name).join(", ")}. Captain: {name(r.lineup.captain)}; vice: {name(r.lineup.vice)}. Your permanent team returns afterward.</p></details>}
                             <small>
                               {money(r.bank_after)} bank ·{" "}
                               {r.free_transfers_after} FT next

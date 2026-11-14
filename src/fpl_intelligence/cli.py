@@ -696,7 +696,7 @@ def serve(host: str = "127.0.0.1", port: int = 8000):
 
     if host not in ("127.0.0.1", "::1", "localhost"):
         raise typer.BadParameter("Personal API binds to loopback only")
-    uvicorn.run(create_app(), host=host, port=port)
+    uvicorn.run(create_app(), host=host, port=port, access_log=False)
 
 
 @app.command("managers-refresh")

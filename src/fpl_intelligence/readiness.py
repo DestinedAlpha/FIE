@@ -123,6 +123,11 @@ def selection_is_current(store, plan):
 
     if not chips_assessed(store, plan):
         return False
+    if not store.list("replay_context", 1) and store.list("policy_selection", 1):
+        from .objectives import stale_paid_evidence
+
+        if stale_paid_evidence(plan, store.get("policy_selection")):
+            return False
     if (
         any(
             plan.get(key) != value

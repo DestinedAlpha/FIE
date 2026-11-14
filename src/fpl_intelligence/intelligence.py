@@ -139,7 +139,7 @@ def feed_items(text):
 
 
 async def refresh_intelligence(store: Store, limit=3):
-    from .transport import PublicTransport
+    from .transport import PublicTransport, SourceDeferred
 
     transport = PublicTransport(store)
     if not 1 <= limit <= 10:
@@ -237,12 +237,16 @@ async def refresh_intelligence(store: Store, limit=3):
                             {"url": item["url"], "status": "unavailable", "reason": redact(error)[:160]}
                         )
             except (ValueError, httpx.HTTPError, ElementTree.ParseError) as error:
+                deferred = isinstance(error, SourceDeferred)
                 health.append(
                     {
                         "source": identity,
                         "url": url,
                         "status": "unavailable",
-                        "reason": redact(error)[:160],
+                        "reason": "Rate limit: requests paused until the source permits retry. Other sources remain available."
+                        if deferred
+                        else redact(error)[:160],
+                        **({"retry_at": error.retry_at} if isinstance(error, SourceDeferred) else {}),
                         "usage": kind,
                     }
                 )

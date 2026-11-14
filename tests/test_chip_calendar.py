@@ -131,3 +131,11 @@ def test_chip_calendar_omits_spent_entitlement_and_consecutive_freehit(planning_
     dates = {(r["chip"], r["event"]) for r in result["calendar"]}
     assert ("3xc", 19) not in dates and ("freehit", 19) not in dates
     assert ("3xc", 20) in dates and ("freehit", 20) in dates
+
+
+def test_unlimited_freehit_after_an_existing_transfer_restores_legal_account(planning_store):
+    store, sid, fid, state = planning_store(10, 11, prior_transfer=True)
+    plan = optimize(store, sid, fid, 11, None, chips={10: "freehit"})
+    assert plan["ledger"][0]["chip"] == "freehit"
+    assert plan["validation"]["legal"]
+    assert set(plan["ledger"][0]["permanent_squad"]) == {lot.player_id for lot in state.deadline_lots}

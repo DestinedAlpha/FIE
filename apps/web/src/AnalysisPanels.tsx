@@ -1025,13 +1025,13 @@ export function SourceCoverage({ data, busy, act }: Props) {
         <p key={source.source}>
           <b>{source.source}</b>: {source.status}
           {source.retrieved !== undefined ? ` · ${source.retrieved} items` : ""}
-          {source.reason ? ` · ${source.reason}` : ""}
+          {source.reason ? ` · ${/429|rate.limit/i.test(source.reason) ? "Rate-limited by the source. Requests are paused; other sources remain available." : source.reason}` : ""}
         </p>
       ))}
       {f ? (
         <>
           <p>
-            <b>Multi-source boosted trees</b>: lagged match history, timestamped
+            <b>Multi-source model comparison</b>: lagged match history, timestamped
             news, manager and market signals, workload and advanced statistics.
             Missing inputs retain explicit coverage indicators.
           </p>

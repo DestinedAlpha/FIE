@@ -48,13 +48,17 @@ def test_material_hit_can_pass_and_unknown_or_conditional_bounds_cannot():
         paid_transfer_evidence(paid, {**free, "forecast_id": "different"}, np.ones(100), free)
 
 
-def test_free_transfer_requires_support_when_it_consumes_future_flexibility():
+def test_free_transfer_compares_continuations_without_charging_missing_search_proof():
     candidate, rolled = policy("candidate", 602), policy("rolled", 600)
     candidate["first_week_hit_budget"] = rolled["first_week_hit_budget"] = 0
     candidate["ledger"][0]["free_transfers_after"] = 1
     rolled["ledger"][0]["free_transfers_after"] = 2
     result = free_transfer_evidence(candidate, rolled, np.full(1000, 2.0))
-    assert result["free_transfers_consumed"] == 1 and not result["supported"]
+    assert result["free_transfers_consumed"] == 1 and result["supported"]
+    rolled["solver"]["best_bound"] = None
+    assert free_transfer_evidence(candidate, rolled, np.full(1000, 20.0))["supported"]
+    uncertain = np.tile([-20.0, 20.1], 50)
+    assert not free_transfer_evidence(candidate, rolled, uncertain)["supported"]
     rolled["solver"]["best_bound"] = rolled["solver"]["objective"]
     assert free_transfer_evidence(candidate, rolled, np.full(1000, 2.0))["supported"]
 

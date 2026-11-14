@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import random
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from typing import Any
 from urllib.parse import urlsplit
@@ -14,6 +14,13 @@ import httpx
 
 from .search_control import check_cancelled
 from .storage import now
+
+
+class SourceDeferred(ValueError):
+    def __init__(self, host, retry_at):
+        self.host = host
+        self.retry_at = retry_at
+        super().__init__(f"Source circuit open for {host}: rate-limited; request deferred until {retry_at}")
 
 
 def retry_seconds(value: str | None, attempt: int) -> float:
@@ -52,10 +59,20 @@ class PublicTransport:
     ):
         check_cancelled()
         host = urlsplit(url).hostname or ""
+
+        def check_backoff():
+            previous = self.store.list_matching("source_backoff", {"host": host}, 1)
+            if previous:
+                retry_at = self.store.get("source_backoff", previous[0]["id"])["retry_at"]
+                if datetime.fromisoformat(retry_at) > datetime.now(timezone.utc):
+                    raise SourceDeferred(host, retry_at)
+
+        check_backoff()
         if self.open_until.get(host, 0) > time.monotonic():
             raise ValueError(f"Source circuit open for {host}; last known snapshot retained")
         async with self.semaphore:
             check_cancelled()
+            check_backoff()
             if self.open_until.get(host, 0) > time.monotonic():
                 raise ValueError(f"Source circuit open for {host}; queued request deferred")
             for attempt in range(3):
@@ -115,6 +132,15 @@ class PublicTransport:
                 except (httpx.HTTPError, ValueError) as exc:
                     latency = time.monotonic() - started
                     error = type(exc).__name__
+                    if status == 429:
+                        pause = max(
+                            60.0,
+                            retry_seconds(response.headers.get("Retry-After") if response else None, attempt),
+                        )
+                        retry_at = (datetime.now(timezone.utc) + timedelta(seconds=pause)).isoformat()
+                        self.store.put("source_backoff", {"at": now(), "host": host, "retry_at": retry_at})
+                        self.open_until[host] = time.monotonic() + pause
+                        raise SourceDeferred(host, retry_at) from exc
                     self.failures[host] = self.failures.get(host, 0) + 1
                     if self.failures[host] >= 5:
                         self.open_until[host] = time.monotonic() + 300
